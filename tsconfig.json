@@ -1,0 +1,31 @@
+{
+	"compileOnSave": false,
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "commonjs",
+		"moduleResolution": "Node",
+		"allowSyntheticDefaultImports": true,
+		"lib": ["ESNext"],
+		"newLine": "lf",
+
+		"alwaysStrict": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"forceConsistentCasingInFileNames": true,
+
+		"strictFunctionTypes": true,
+		"strictNullChecks": true,
+		"strictPropertyInitialization": true,
+
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+
+		"declaration": true,
+		"emitDeclarationOnly": true,
+
+		"types": ["node"],
+		"outDir": "dts"
+	},
+	"include": ["src/**/*.ts", "src/**/*.tsx"]
+}
