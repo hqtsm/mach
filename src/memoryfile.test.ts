@@ -144,13 +144,15 @@ void describe('memoryfile', () => {
 				}
 
 				for (let i = 0, l = 1; i + l < d.length; l *= 2) {
-					const md = new Uint8Array(l);
-					const nd = new Uint8Array(l);
+					const md = new Uint8Array(l + 2);
+					const nd = new Uint8Array(l + 2);
+					nd[0] = md[0] = i % 256;
+					nd[l - 1] = md[l - 1] = (i + 1) % 256;
 
 					// eslint-disable-next-line no-await-in-loop
-					const mr = await m.read(md, 0, l, i);
+					const mr = await m.read(md, 1, l, i);
 					// eslint-disable-next-line no-await-in-loop
-					const nr = await n.read(nd, 0, l, i);
+					const nr = await n.read(nd, 1, l, i);
 
 					strictEqual(mr.bytesRead, nr.bytesRead);
 					deepStrictEqual(md, nd);
