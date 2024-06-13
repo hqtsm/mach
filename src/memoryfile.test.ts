@@ -143,7 +143,7 @@ void describe('memoryfile', () => {
 					await m.write(d, 0, d.length, 0);
 				}
 
-				for (let i = 0, l = 1; i + l < d.length; l *= 2) {
+				for (let i = 0, l = 0; i < d.length; i += l) {
 					const md = new Uint8Array(l + 2);
 					const nd = new Uint8Array(l + 2);
 					nd[0] = md[0] = i % 256;
@@ -156,6 +156,8 @@ void describe('memoryfile', () => {
 
 					strictEqual(mr.bytesRead, nr.bytesRead);
 					deepStrictEqual(md, nd);
+
+					l = Math.round((l || 1) * 1.5);
 				}
 			} finally {
 				await f.close();
