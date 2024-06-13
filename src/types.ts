@@ -4,24 +4,34 @@ export interface BufferView {
 	byteOffset: number;
 }
 
+export interface FileLikeStat {
+	blocks: number;
+	blksize: number;
+	size: number;
+}
+
+export interface FileLikeRead {
+	bytesRead: number;
+}
+
+export interface FileLikeWritten {
+	bytesWritten: number;
+}
+
 export interface FileLike {
-	stat(): Promise<{size: number}>;
+	stat(): Promise<FileLikeStat>;
 
 	read(
 		buffer: Readonly<BufferView>,
 		offset: number,
 		length: number,
 		position: number
-	): Promise<{
-		bytesRead: number;
-	}>;
+	): Promise<FileLikeRead>;
 
 	write(
 		buffer: BufferView,
 		offset: number,
 		length: number,
 		position: number
-	): Promise<{
-		bytesWritten: number;
-	}>;
+	): Promise<FileLikeWritten>;
 }

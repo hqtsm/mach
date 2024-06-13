@@ -1,4 +1,10 @@
-import {BufferView, FileLike} from './types';
+import {
+	BufferView,
+	FileLike,
+	FileLikeRead,
+	FileLikeStat,
+	FileLikeWritten
+} from './types';
 
 // Highest number value before approximation, 2^53-1.
 const INT_LIMIT = 0x1fffffffffffff;
@@ -63,8 +69,12 @@ export class MemoryFile implements FileLike {
 	 * @returns Stat result.
 	 */
 	// eslint-disable-next-line @typescript-eslint/require-await
-	public async stat() {
-		return {size: this.#size};
+	public async stat(): Promise<FileLikeStat> {
+		return {
+			blocks: this.#blocks.length,
+			blksize: this.#blksize,
+			size: this.#size
+		};
 	}
 
 	/**
@@ -82,7 +92,7 @@ export class MemoryFile implements FileLike {
 		offset: number,
 		length: number,
 		position: number
-	) {
+	): Promise<FileLikeRead> {
 		const {buffer: bd, byteOffset: bo, byteLength: bl} = buffer;
 		offset = range('offset', offset, 0, bl);
 		length = range('length', length, 0, bl - offset);
@@ -131,7 +141,7 @@ export class MemoryFile implements FileLike {
 		offset: number,
 		length: number,
 		position: number
-	) {
+	): Promise<FileLikeWritten> {
 		const {buffer: bd, byteOffset: bo, byteLength: bl} = buffer;
 		offset = range('offset', offset, 0, bl);
 		length = range('length', length, 0, bl - offset);

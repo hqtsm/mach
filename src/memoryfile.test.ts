@@ -10,11 +10,13 @@ const BS = 4096;
 void describe('memoryfile', () => {
 	void describe('MemoryFile', () => {
 		void it('stat', async () => {
-			const size = 123456;
+			const size = BS * 2;
 			const m = new MemoryFile(size);
 
 			const r = await m.stat();
 			strictEqual(r.size, size);
+			strictEqual(r.blocks, 2);
+			strictEqual(r.blksize, BS);
 		});
 
 		void it('write expand', async () => {
