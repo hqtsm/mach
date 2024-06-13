@@ -19,6 +19,17 @@ void describe('memoryfile', () => {
 			strictEqual(r.blksize, BS);
 		});
 
+		void it('stat custom blksize', async () => {
+			const CBS = 42;
+			const size = Math.round(CBS * 2.5);
+			const m = new MemoryFile(size, CBS);
+
+			const r = await m.stat();
+			strictEqual(r.size, size);
+			strictEqual(r.blocks, 3);
+			strictEqual(r.blksize, CBS);
+		});
+
 		void it('write expand', async () => {
 			let r;
 			const d = new Uint8Array(1);
