@@ -116,7 +116,7 @@ void describe('memoryfile', () => {
 		void it('read multiple blocks', async () => {
 			let r;
 			const m = new MemoryFile();
-			const dw = new Uint8Array(20000);
+			const dw = new Uint8Array(Math.round(BS * 5.5));
 			for (let i = 0; i < dw.length; i++) {
 				dw[i] = i % 256;
 			}
