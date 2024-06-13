@@ -135,7 +135,6 @@ void describe('memoryfile', () => {
 			const f = await open('LICENSE.txt', 'r');
 			try {
 				const n: FileLike = f;
-
 				let d;
 				{
 					const {size} = await n.stat();
@@ -154,6 +153,7 @@ void describe('memoryfile', () => {
 					const nr = await n.read(nd, 0, l, i);
 
 					strictEqual(mr.bytesRead, nr.bytesRead);
+					deepStrictEqual(md, nd);
 				}
 			} finally {
 				await f.close();
