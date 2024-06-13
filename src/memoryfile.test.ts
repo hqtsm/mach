@@ -132,6 +132,83 @@ void describe('memoryfile', () => {
 			deepStrictEqual(dr, dw);
 		});
 
+		void it('truncate bigger', async () => {
+			for (const size of [0, BS - 1, BS, BS + 1, BS * 2, BS * 3.5]) {
+				const m = new MemoryFile(size);
+
+				const dw = new Uint8Array(size);
+				for (let i = dw.length; i--; ) {
+					dw[i] = (i + 1) % 256;
+				}
+
+				// eslint-disable-next-line no-await-in-loop
+				await m.write(dw, 0, dw.length, 0);
+
+				for (const more of [1, 22, 333, 4444, 55555, 666666]) {
+					const bigger = size + more;
+
+					// eslint-disable-next-line no-await-in-loop
+					await m.truncate(bigger);
+
+					// eslint-disable-next-line no-await-in-loop
+					const r = await m.stat();
+					deepStrictEqual(r.size, bigger);
+					deepStrictEqual(r.blocks, Math.ceil(bigger / BS));
+
+					const dr = new Uint8Array(size);
+
+					// eslint-disable-next-line no-await-in-loop
+					await m.read(dr, 0, size, 0);
+					deepStrictEqual(dr, dw);
+
+					const dm = new Uint8Array(more);
+					dm.fill(1);
+
+					// eslint-disable-next-line no-await-in-loop
+					await m.read(dm, 0, more, size);
+					deepStrictEqual(dm, new Uint8Array(more));
+				}
+			}
+		});
+
+		void it('truncate smaller', async () => {
+			for (const size of [0, BS - 1, BS, BS + 1, BS * 2, BS * 3.5]) {
+				for (const more of [1, 22, 333, 4444, 55555, 666666]) {
+					const bigger = size + more;
+					const m = new MemoryFile(bigger);
+
+					const dw = new Uint8Array(bigger);
+					for (let i = dw.length; i--; ) {
+						dw[i] = (i + 1) % 256;
+					}
+
+					// eslint-disable-next-line no-await-in-loop
+					await m.write(dw, 0, dw.length, 0);
+
+					// eslint-disable-next-line no-await-in-loop
+					await m.truncate(size);
+
+					// eslint-disable-next-line no-await-in-loop
+					const r = await m.stat();
+					deepStrictEqual(r.size, size);
+					deepStrictEqual(r.blocks, Math.ceil(size / BS));
+
+					// eslint-disable-next-line no-await-in-loop
+					await m.truncate(bigger);
+
+					const drKeep = new Uint8Array(size);
+					// eslint-disable-next-line no-await-in-loop
+					await m.read(drKeep, 0, size, 0);
+					deepStrictEqual(drKeep, dw.subarray(0, size));
+
+					const drLost = new Uint8Array(more);
+					// eslint-disable-next-line no-await-in-loop
+					await m.read(drLost, 0, more, size);
+					deepStrictEqual(drLost, new Uint8Array(more));
+				}
+			}
+		});
+
 		void it('like node', async () => {
 			const m = new MemoryFile();
 			const f = await open('LICENSE.txt', 'r');

@@ -78,6 +78,34 @@ export class MemoryFile implements FileLike {
 	}
 
 	/**
+	 * Truncate file to size.
+	 *
+	 * @param size New size.
+	 */
+	// eslint-disable-next-line @typescript-eslint/require-await
+	public async truncate(size: number): Promise<void> {
+		size = range('size', size, 0, INT_LIMIT);
+		const blksize = this.#blksize;
+		const blocks = this.#blocks;
+		const s = this.#size;
+		if (size < s) {
+			const o = size % blksize;
+			const b = (size - o) / blksize;
+			if (o) {
+				blocks.length = b + 1;
+				blocks[b].fill(0, o);
+			} else {
+				blocks.length = b;
+			}
+		} else if (size > s) {
+			for (let i = size / blksize - blocks.length; i-- > 0; ) {
+				blocks.push(new Uint8Array(blksize));
+			}
+		}
+		this.#size = size;
+	}
+
+	/**
 	 * Read from file.
 	 *
 	 * @param buffer Buffer view.

@@ -21,6 +21,8 @@ export interface FileLikeWritten {
 export interface FileLike {
 	stat(): Promise<FileLikeStat>;
 
+	truncate(size: number): Promise<void>;
+
 	read(
 		buffer: Readonly<BufferView>,
 		offset: number,
