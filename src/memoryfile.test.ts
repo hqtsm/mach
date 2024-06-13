@@ -146,8 +146,8 @@ void describe('memoryfile', () => {
 				for (let i = 0, l = 0; i < d.length; i += l) {
 					const md = new Uint8Array(l + 2);
 					const nd = new Uint8Array(l + 2);
-					nd[0] = md[0] = i % 256;
-					nd[l - 1] = md[l - 1] = (i + 1) % 256;
+					nd[0] = md[0] = (i + 1) % 256;
+					nd[l + 1] = md[l + 1] = (i + 2) % 256;
 
 					// eslint-disable-next-line no-await-in-loop
 					const mr = await m.read(md, 1, l, i);
