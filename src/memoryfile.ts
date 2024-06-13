@@ -1,7 +1,7 @@
 import {BufferView, FileLike} from './types';
 
-// Highest number value before approximation, 2^53.
-const INT_LIMIT = 0x20000000000000;
+// Highest number value before approximation, 2^53-1.
+const INT_LIMIT = 0x1fffffffffffff;
 
 // A very large but still compatible upper block size limit.
 const BLK_LIMIT = 0x100000000;
