@@ -58,11 +58,11 @@
 	"copyright": "Copyright (c) 2024 Alexander O'Mara",
 	"license": "MPL-2.0",
 	"devDependencies": {
-		"@babel/cli": "^7.24.7",
-		"@babel/core": "^7.24.7",
-		"@babel/preset-env": "^7.24.7",
+		"@babel/cli": "^7.24.8",
+		"@babel/core": "^7.25.2",
+		"@babel/preset-env": "^7.25.3",
 		"@babel/preset-typescript": "^7.24.7",
-		"@types/node": "^20.14.2",
+		"@types/node": "^22.1.0",
 		"@typescript-eslint/eslint-plugin": "^7.13.0",
 		"@typescript-eslint/parser": "^7.13.0",
 		"babel-plugin-esm-resolver": "^2.3.3",
@@ -70,8 +70,8 @@
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-import": "^2.29.1",
 		"eslint-plugin-jsdoc": "^48.2.9",
-		"prettier": "^3.3.1",
-		"rimraf": "^5.0.7",
+		"prettier": "^3.3.3",
+		"rimraf": "^6.0.1",
 		"source-map-support": "^0.5.21",
 		"typescript": "^5.4.5"
 	}
