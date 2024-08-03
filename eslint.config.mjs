@@ -25,11 +25,14 @@ export default [
 	prettier,
 	{
 		rules: {
+			// Possible Errors:
 			'no-await-in-loop': 'error',
 			'no-console': 'error',
 			'no-loss-of-precision': 'error',
 			'no-template-curly-in-string': 'error',
 			'no-unreachable': 'error',
+
+			// Best Practices:
 			'accessor-pairs': 'error',
 			'array-callback-return': 'error',
 			'block-scoped-var': 'error',
@@ -82,11 +85,18 @@ export default [
 			radix: 'error',
 			'wrap-iife': ['error', 'inside'],
 			yoda: 'error',
+
+			// Strict Mode:
 			strict: ['error', 'global'],
+
+			// Variables:
 			'no-label-var': 'error',
 			'no-undef-init': 'error',
 			'no-undefined': 'error',
+			// Using @typescript-eslint/no-unused-vars
 			'no-unused-vars': 'off',
+
+			// Node.js and CommonJS:
 			'callback-return': ['error', ['callback', 'cb', 'next', 'done']],
 			'global-require': 'error',
 			'handle-callback-err': 'error',
@@ -97,6 +107,8 @@ export default [
 			'no-process-env': 'error',
 			'no-process-exit': 'error',
 			'no-sync': 'error',
+
+			// Stylistic Issues:
 			'array-bracket-spacing': [
 				'error',
 				'never',
@@ -149,6 +161,8 @@ export default [
 			'one-var': ['error', 'never'],
 			'spaced-comment': ['error', 'always'],
 			'unicode-bom': ['error', 'never'],
+
+			// ECMAScript 6:
 			'arrow-body-style': ['error', 'as-needed'],
 			'no-confusing-arrow': [
 				'error',
@@ -187,6 +201,8 @@ export default [
 			'prefer-spread': 'error',
 			'prefer-template': 'error',
 			'symbol-description': 'error',
+
+			// Import plugin:
 			// 'import/no-deprecated': 'warn',
 			// 'import/no-extraneous-dependencies': [
 			// 	'error',
@@ -203,10 +219,14 @@ export default [
 			// 		'newlines-between': 'always'
 			// 	}
 			// ],
+
+			// Unicorn plugin:
 			'unicorn/no-anonymous-default-export': 'off',
 			'unicorn/prevent-abbreviations': 'off',
 			'unicorn/no-await-expression-member': 'off',
 			'unicorn/numeric-separators-style': 'off',
+
+			// Stylistic plugin:
 			'@stylistic/func-call-spacing': 'error',
 			'@stylistic/lines-around-comment': [
 				'error',
@@ -222,6 +242,8 @@ export default [
 				}
 			],
 			'@stylistic/member-delimiter-style': 'error',
+
+			// JSDoc plugin:
 			'jsdoc/check-indentation': 'warn',
 			'jsdoc/check-syntax': 'warn',
 			'jsdoc/match-description': [
@@ -265,6 +287,8 @@ export default [
 					startLines: 1
 				}
 			],
+
+			// TypeScript Simple:
 			'@typescript-eslint/array-type': 'error',
 			'@typescript-eslint/consistent-type-assertions': 'error',
 			'@typescript-eslint/consistent-type-definitions': 'error',
@@ -305,6 +329,8 @@ export default [
 			'@typescript-eslint/prefer-function-type': 'error',
 			'@typescript-eslint/unified-signatures': 'error',
 			'@typescript-eslint/no-confusing-non-null-assertion': 'error',
+
+			// TypeScript Project:
 			'@typescript-eslint/no-unnecessary-qualifier': 'error',
 			'@typescript-eslint/prefer-includes': 'error',
 			'@typescript-eslint/prefer-readonly': 'error',
