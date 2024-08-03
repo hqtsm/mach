@@ -1,6 +1,6 @@
-'use strict';
+import {readFileSync} from 'node:fs';
 
-const {engines} = require('./package.json');
+const {engines} = JSON.parse(readFileSync('./package.json'));
 
 const node = engines.node
 	.split(/[^\d.]+/)
@@ -11,24 +11,26 @@ const node = engines.node
 	.sort((a, b) => a[0] - b[0])[0]
 	.join('.');
 
-module.exports = api => {
+export default api => {
 	const env = api.env();
 	api.cache(() => env);
 	const modules = env === 'esm' ? false : 'commonjs';
 	const ext = modules ? '.js' : '.mjs';
 	const presets = [];
 	const plugins = [];
-	presets.push([
-		'@babel/preset-env',
-		{
-			modules,
-			exclude: ['proposal-dynamic-import'],
-			targets: {
-				node
+	presets.push(
+		[
+			'@babel/preset-env',
+			{
+				modules,
+				exclude: ['proposal-dynamic-import'],
+				targets: {
+					node
+				}
 			}
-		}
-	]);
-	presets.push(['@babel/preset-typescript']);
+		],
+		['@babel/preset-typescript']
+	);
 	if (modules === 'commonjs') {
 		plugins.push([
 			'@babel/plugin-transform-modules-commonjs',

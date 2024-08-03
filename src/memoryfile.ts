@@ -68,7 +68,6 @@ export class MemoryFile implements FileLike {
 	 *
 	 * @returns Stat result.
 	 */
-	// eslint-disable-next-line @typescript-eslint/require-await
 	public async stat(): Promise<FileLikeStat> {
 		return {
 			blocks: this.#blocks.length,
@@ -82,7 +81,6 @@ export class MemoryFile implements FileLike {
 	 *
 	 * @param size New size.
 	 */
-	// eslint-disable-next-line @typescript-eslint/require-await
 	public async truncate(size: number): Promise<void> {
 		size = range('size', size, 0, INT_LIMIT);
 		const blksize = this.#blksize;
@@ -114,7 +112,6 @@ export class MemoryFile implements FileLike {
 	 * @param position Byte offset into file.
 	 * @returns Object with the number of bytes read.
 	 */
-	// eslint-disable-next-line @typescript-eslint/require-await
 	public async read(
 		buffer: BufferView,
 		offset: number,
@@ -163,7 +160,6 @@ export class MemoryFile implements FileLike {
 	 * @param position Byte offset into file.
 	 * @returns Object with the number of bytes written.
 	 */
-	// eslint-disable-next-line @typescript-eslint/require-await
 	public async write(
 		buffer: Readonly<BufferView>,
 		offset: number,
