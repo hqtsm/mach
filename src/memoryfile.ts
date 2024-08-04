@@ -4,7 +4,7 @@ import {
 	FileLikeRead,
 	FileLikeStat,
 	FileLikeWritten
-} from './types';
+} from './types.ts';
 
 // Highest number value before approximation, 2^53-1.
 const INT_LIMIT = 0x1fffffffffffff;

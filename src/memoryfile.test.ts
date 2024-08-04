@@ -2,8 +2,8 @@ import {describe, it} from 'node:test';
 import {deepStrictEqual, strictEqual} from 'node:assert';
 import {open} from 'node:fs/promises';
 
-import {MemoryFile} from './memoryfile';
-import {FileLike} from './types';
+import {MemoryFile} from './memoryfile.ts';
+import {FileLike} from './types.ts';
 
 const BS = 4096;
 

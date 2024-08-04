@@ -1,2 +1,2 @@
-export * from './types';
-export * from './memoryfile';
+export * from './types.ts';
+export * from './memoryfile.ts';
