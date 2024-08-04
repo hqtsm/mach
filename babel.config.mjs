@@ -31,6 +31,12 @@ export default api => {
 		],
 		['@babel/preset-typescript']
 	);
+	plugins.push([
+		'module-replace',
+		{
+			replace: [[/^(\.\.?\/.+)\.(m|c)?tsx?$/i, `$1${ext}`]]
+		}
+	]);
 	if (modules === 'commonjs') {
 		plugins.push([
 			'@babel/plugin-transform-modules-commonjs',
@@ -39,16 +45,6 @@ export default api => {
 			}
 		]);
 	}
-	plugins.push([
-		'esm-resolver',
-		{
-			source: {
-				extensions: [
-					[['.js', '.mjs', '.jsx', '.mjsx', '.ts', '.tsx'], ext]
-				]
-			}
-		}
-	]);
 	return {
 		presets,
 		plugins
