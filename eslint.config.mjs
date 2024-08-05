@@ -222,9 +222,10 @@ export default [
 
 			// Unicorn plugin:
 			'unicorn/no-anonymous-default-export': 'off',
-			'unicorn/prevent-abbreviations': 'off',
 			'unicorn/no-await-expression-member': 'off',
+			'unicorn/no-null': 'off',
 			'unicorn/numeric-separators-style': 'off',
+			'unicorn/prevent-abbreviations': 'off',
 
 			// Stylistic plugin:
 			'@stylistic/func-call-spacing': 'error',
