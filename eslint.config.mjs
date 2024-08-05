@@ -226,6 +226,7 @@ export default [
 			'unicorn/no-null': 'off',
 			'unicorn/numeric-separators-style': 'off',
 			'unicorn/prevent-abbreviations': 'off',
+			'unicorn/switch-case-braces': 'off',
 
 			// Stylistic plugin:
 			'@stylistic/func-call-spacing': 'error',
