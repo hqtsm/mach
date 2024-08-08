@@ -68,12 +68,12 @@
 		"babel-plugin-module-replace": "^1.0.1",
 		"eslint": "^9.8.0",
 		"eslint-config-prettier": "^9.1.0",
-		"eslint-plugin-jsdoc": "^48.11.0",
+		"eslint-plugin-jsdoc": "^50.0.0",
 		"eslint-plugin-unicorn": "^55.0.0",
 		"prettier": "^3.3.3",
 		"rimraf": "^6.0.1",
 		"source-map-support": "^0.5.21",
 		"typescript": "^5.5.4",
-		"typescript-eslint": "^8.0.0"
+		"typescript-eslint": "^8.0.1"
 	}
 }
