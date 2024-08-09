@@ -125,3 +125,26 @@ export async function* zipped(file: string) {
 		await f.close();
 	}
 }
+
+export async function fixtureMacho(
+	kind: string,
+	arch: string,
+	files: string[]
+) {
+	const m = new Map(files.map((name, i) => [name, i]));
+	const datas: Uint8Array[] = [];
+	for await (const [name, read] of zipped(
+		`spec/fixtures/macho/${kind}/dist/${arch}.zip`
+	)) {
+		const i = m.get(name) ?? -1;
+		if (i < 0) {
+			continue;
+		}
+		datas[i] = await read();
+		m.delete(name);
+	}
+	if (m.size) {
+		throw new Error(`Missing files: ${[...m.keys()].join(' ')}`);
+	}
+	return datas;
+}
