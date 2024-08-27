@@ -39,14 +39,14 @@ export class CodeDirectory extends Blob {
 	/**
 	 * @inheritDoc
 	 */
-	public magic(): number {
+	public magic() {
 		return kSecCodeMagicCodeDirectory;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public length(): number {
+	public length() {
 		// TODO
 		return 0;
 	}
@@ -54,7 +54,7 @@ export class CodeDirectory extends Blob {
 	/**
 	 * @inheritDoc
 	 */
-	public write(buffer: BufferView, offset = 0): number {
+	public write(buffer: BufferView, offset = 0) {
 		const l = this.length();
 		// TODO
 		// const d = new DataView(buffer.buffer, buffer.byteOffset + offset, l);
