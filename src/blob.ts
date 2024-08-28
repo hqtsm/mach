@@ -7,12 +7,12 @@ export abstract class Blob {
 	/**
 	 * Magic number.
 	 */
-	public abstract magic(): number;
+	public abstract get magic(): number;
 
 	/**
 	 * Blob length.
 	 */
-	public abstract length(): number;
+	public abstract get length(): number;
 
 	/**
 	 * Write blob to buffer.
