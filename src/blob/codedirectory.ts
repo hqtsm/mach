@@ -1,6 +1,14 @@
 import {Blob} from '../blob.ts';
 import {BufferView} from '../types.ts';
-import {kSecCodeMagicCodeDirectory} from '../const.ts';
+import {
+	kSecCodeMagicCodeDirectory,
+	kSecCodeSignatureHashSHA1,
+	kSecCodeSignatureHashSHA256,
+	kSecCodeSignatureHashSHA256Truncated,
+	kSecCodeSignatureHashSHA384,
+	kSecCodeSignatureHashSHA512,
+	kSecCodeSignatureNoHash
+} from '../const.ts';
 
 /**
  * CodeDirectory class.
@@ -50,6 +58,61 @@ export class CodeDirectory extends Blob {
 		// TODO
 		return 0;
 	}
+
+	/**
+	 * Compatibility version.
+	 */
+	public version = 0;
+
+	/**
+	 * Setup and mode flags.
+	 */
+	public flags = 0;
+
+	/**
+	 * Get bytes of each hash digest for hashType.
+	 *
+	 * @returns Size of each hash digest (bytes).
+	 */
+	public get hashSize(): number {
+		switch (this.hashType) {
+			case kSecCodeSignatureNoHash: {
+				return 0;
+			}
+			case kSecCodeSignatureHashSHA1:
+			case kSecCodeSignatureHashSHA256Truncated: {
+				return 20;
+			}
+			case kSecCodeSignatureHashSHA256: {
+				return 32;
+			}
+			case kSecCodeSignatureHashSHA384: {
+				return 48;
+			}
+			case kSecCodeSignatureHashSHA512: {
+				return 64;
+			}
+			default: {
+				// Do nothing.
+			}
+		}
+		throw new Error(`Unknown hash type: ${this.hashType}`);
+	}
+
+	/**
+	 * Type of hash (kSecCodeSignatureHash* constants).
+	 */
+	public hashType = kSecCodeSignatureNoHash;
+
+	/**
+	 * Platform identifier, zero if not platform binary.
+	 */
+	public platform = 0;
+
+	/**
+	 * The log2(page size in bytes), 0 => infinite.
+	 */
+	public pageSize = 0;
 
 	/**
 	 * @inheritDoc

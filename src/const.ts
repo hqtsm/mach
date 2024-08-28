@@ -7,3 +7,10 @@ export const kSecCodeMagicEntitlement = 0xfade7171;
 export const kSecCodeMagicEntitlementDER = 0xfade7172;
 export const kSecCodeMagicLaunchConstraint = 0xfade8181;
 export const kSecCodeMagicByte = 0xfa;
+
+export const kSecCodeSignatureNoHash = 0;
+export const kSecCodeSignatureHashSHA1 = 1;
+export const kSecCodeSignatureHashSHA256 = 2;
+export const kSecCodeSignatureHashSHA256Truncated = 3;
+export const kSecCodeSignatureHashSHA384 = 4;
+export const kSecCodeSignatureHashSHA512 = 5;
