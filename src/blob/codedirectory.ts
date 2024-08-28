@@ -70,6 +70,11 @@ export class CodeDirectory extends Blob {
 	public flags = 0;
 
 	/**
+	 * Limit to main image signature range, 32 bits.
+	 */
+	public codeLimit = 0;
+
+	/**
 	 * Get bytes of each hash digest for hashType.
 	 *
 	 * @returns Size of each hash digest (bytes).
@@ -113,6 +118,31 @@ export class CodeDirectory extends Blob {
 	 * The log2(page size in bytes), 0 => infinite.
 	 */
 	public pageSize = 0;
+
+	/**
+	 * Limit to main image signature range, 64 bits.
+	 */
+	public codeLimit64 = 0n;
+
+	/**
+	 * Offset of executable segment (TEXT segment file offset).
+	 */
+	public execSegBase = 0n;
+
+	/**
+	 * Limit of executable segment (TEXT segment file size).
+	 */
+	public execSegLimit = 0n;
+
+	/**
+	 * The exec segment flags (kSecCodeExecSeg* constants).
+	 */
+	public execSegFlags = 0n;
+
+	/**
+	 * Runtime version encoded as an unsigned integer.
+	 */
+	public runtime = 0;
 
 	/**
 	 * @inheritDoc
