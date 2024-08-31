@@ -1,3 +1,5 @@
+/* eslint-disable max-classes-per-file */
+
 import {Blob} from '../blob.ts';
 import {BufferView} from '../types.ts';
 import {
@@ -43,6 +45,26 @@ export class CodeDirectory extends Blob {
 	 * First version to support pre-encrypt hashes and runtime version.
 	 */
 	public static readonly supportsPreEncrypt = 0x20500;
+
+	/**
+	 * Scatter structure.
+	 */
+	public static readonly Scatter = class Scatter {
+		/**
+		 * Number of pages; zero for sentinel (only).
+		 */
+		public count = 0;
+
+		/**
+		 * First page number.
+		 */
+		public base = 0;
+
+		/**
+		 * Byte offset in target.
+		 */
+		public targetOffset = 0n;
+	};
 
 	/**
 	 * @inheritDoc
@@ -120,6 +142,20 @@ export class CodeDirectory extends Blob {
 	public pageSize = 0;
 
 	/**
+	 * Offset of scatter vector.
+	 *
+	 * @returns Byte offset, or 0 for none.
+	 */
+	public get scatterOffset() {
+		const Self = this.constructor as typeof CodeDirectory;
+		const {version} = this;
+		if (version < Self.supportsScatter || !this.scatterVector.length) {
+			return 0;
+		}
+		return Self.fixedSize(version);
+	}
+
+	/**
 	 * Limit to main image signature range, 64 bits.
 	 */
 	public codeLimit64 = 0n;
@@ -143,6 +179,11 @@ export class CodeDirectory extends Blob {
 	 * Runtime version encoded as an unsigned integer.
 	 */
 	public runtime = 0;
+
+	/**
+	 * Scatter vector.
+	 */
+	public scatterVector: InstanceType<typeof CodeDirectory.Scatter>[] = [];
 
 	/**
 	 * @inheritDoc
