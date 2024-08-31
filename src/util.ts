@@ -1,3 +1,5 @@
+import {BufferView} from './type';
+
 /**
  * Get integer in range, rounded down.
  *
@@ -21,4 +23,20 @@ export function integer(i: number, l: number, h: number) {
  */
 export function stringToBytes(str: string) {
 	return new TextEncoder().encode(str);
+}
+
+/**
+ * Get DataView from BufferView.
+ *
+ * @param view BufferView.
+ * @param offset Offset into view.
+ * @param length Length of view.
+ * @returns DataView over BufferView buffer.
+ */
+export function dataView(view: BufferView, offset = 0, length = -1) {
+	const {buffer, byteOffset, byteLength} = view;
+	offset = integer(offset, 0, byteLength);
+	const limit = byteLength - offset;
+	length = length >= 0 ? integer(length, 0, limit) : limit;
+	return new DataView(buffer, byteOffset + offset, length);
 }
