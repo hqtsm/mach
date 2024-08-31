@@ -1,4 +1,4 @@
-export * from './types.ts';
+export * from './type.ts';
 export * from './const.ts';
 export * from './memoryfile.ts';
 export * from './blob.ts';

@@ -1,4 +1,4 @@
-import {BufferView} from './types.ts';
+import {BufferView} from './type.ts';
 
 /**
  * Blob class.

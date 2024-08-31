@@ -3,7 +3,7 @@ import {deepStrictEqual, strictEqual} from 'node:assert';
 import {open} from 'node:fs/promises';
 
 import {MemoryFile} from './memoryfile.ts';
-import {FileLike} from './types.ts';
+import {FileLike} from './type.ts';
 
 const BS = 4096;
 

@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 
 import {Blob} from '../blob.ts';
-import {BufferView} from '../types.ts';
+import {BufferView} from '../type.ts';
 import {
 	kSecCodeMagicCodeDirectory,
 	kSecCodeSignatureHashSHA1,
