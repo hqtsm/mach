@@ -188,10 +188,8 @@ export class CodeDirectory extends Blob {
 	 * @inheritDoc
 	 */
 	public write(buffer: BufferView, offset = 0) {
-		const l = this.length;
 		// TODO
-		// const d = new DataView(buffer.buffer, buffer.byteOffset + offset, l);
-		return l;
+		return 0;
 	}
 
 	/**
