@@ -1,3 +1,9 @@
+// Highest number value before approximation, 2^53-1.
+export const INT_LIMIT = 0x1fffffffffffff;
+
+// A very large but still compatible upper block size limit.
+export const BLK_LIMIT = 0x100000000;
+
 export const kSecCodeMagicRequirement = 0xfade0c00;
 export const kSecCodeMagicRequirementSet = 0xfade0c01;
 export const kSecCodeMagicCodeDirectory = 0xfade0c02;

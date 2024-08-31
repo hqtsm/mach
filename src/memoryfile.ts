@@ -5,28 +5,8 @@ import {
 	FileLikeStat,
 	FileLikeWritten
 } from './type.ts';
-
-// Highest number value before approximation, 2^53-1.
-const INT_LIMIT = 0x1fffffffffffff;
-
-// A very large but still compatible upper block size limit.
-const BLK_LIMIT = 0x100000000;
-
-/**
- * Assert integer in range, rounded down.
- *
- * @param name Integer name.
- * @param i Integer value.
- * @param l Lower limit.
- * @param h Higher limit.
- * @returns Integer value.
- */
-function range(name: string, i: number, l: number, h: number) {
-	if (i >= l && i <= h) {
-		return i - (i % 1);
-	}
-	throw new RangeError(`Value ${i} of ${name} out of range ${l}-${h}`);
-}
+import {INT_LIMIT, BLK_LIMIT} from './const.ts';
+import {integer} from './util.ts';
 
 /**
  * MemoryFile class.
@@ -54,8 +34,8 @@ export class MemoryFile implements FileLike {
 	 * @param blksize Block size.
 	 */
 	constructor(size = 0, blksize = 4096) {
-		size = range('size', size, 0, INT_LIMIT);
-		blksize = range('blksize', blksize, 1, BLK_LIMIT);
+		size = integer('size', size, 0, INT_LIMIT);
+		blksize = integer('blksize', blksize, 1, BLK_LIMIT);
 		this.#size = size;
 		this.#blksize = blksize;
 		for (const blocks = this.#blocks; size > 0; size -= blksize) {
@@ -82,7 +62,7 @@ export class MemoryFile implements FileLike {
 	 * @param size New size.
 	 */
 	public async truncate(size: number): Promise<void> {
-		size = range('size', size, 0, INT_LIMIT);
+		size = integer('size', size, 0, INT_LIMIT);
 		const blksize = this.#blksize;
 		const blocks = this.#blocks;
 		const s = this.#size;
@@ -119,9 +99,9 @@ export class MemoryFile implements FileLike {
 		position: number
 	): Promise<FileLikeRead> {
 		const {buffer: bd, byteOffset: bo, byteLength: bl} = buffer;
-		offset = range('offset', offset, 0, bl);
-		length = range('length', length, 0, bl - offset);
-		position = range('position', position, 0, INT_LIMIT - bl);
+		offset = integer('offset', offset, 0, bl);
+		length = integer('length', length, 0, bl - offset);
+		position = integer('position', position, 0, INT_LIMIT - bl);
 		const size = this.#size;
 		if (position + length > size) {
 			length = size - position;
@@ -167,9 +147,9 @@ export class MemoryFile implements FileLike {
 		position: number
 	): Promise<FileLikeWritten> {
 		const {buffer: bd, byteOffset: bo, byteLength: bl} = buffer;
-		offset = range('offset', offset, 0, bl);
-		length = range('length', length, 0, bl - offset);
-		position = range('position', position, 0, INT_LIMIT - bl);
+		offset = integer('offset', offset, 0, bl);
+		length = integer('length', length, 0, bl - offset);
+		position = integer('position', position, 0, INT_LIMIT - bl);
 		if (length) {
 			const blksize = this.#blksize;
 			const blocks = this.#blocks;
