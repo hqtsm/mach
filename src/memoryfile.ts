@@ -34,8 +34,8 @@ export class MemoryFile implements FileLike {
 	 * @param blksize Block size.
 	 */
 	constructor(size = 0, blksize = 4096) {
-		size = integer('size', size, 0, INT_LIMIT);
-		blksize = integer('blksize', blksize, 1, BLK_LIMIT);
+		size = integer(size, 0, INT_LIMIT);
+		blksize = integer(blksize, 1, BLK_LIMIT);
 		this.#size = size;
 		this.#blksize = blksize;
 		for (const blocks = this.#blocks; size > 0; size -= blksize) {
@@ -62,7 +62,7 @@ export class MemoryFile implements FileLike {
 	 * @param size New size.
 	 */
 	public async truncate(size: number): Promise<void> {
-		size = integer('size', size, 0, INT_LIMIT);
+		size = integer(size, 0, INT_LIMIT);
 		const blksize = this.#blksize;
 		const blocks = this.#blocks;
 		const s = this.#size;
@@ -99,9 +99,9 @@ export class MemoryFile implements FileLike {
 		position: number
 	): Promise<FileLikeRead> {
 		const {buffer: bd, byteOffset: bo, byteLength: bl} = buffer;
-		offset = integer('offset', offset, 0, bl);
-		length = integer('length', length, 0, bl - offset);
-		position = integer('position', position, 0, INT_LIMIT - bl);
+		offset = integer(offset, 0, bl);
+		length = integer(length, 0, bl - offset);
+		position = integer(position, 0, INT_LIMIT - bl);
 		const size = this.#size;
 		if (position + length > size) {
 			length = size - position;
@@ -147,9 +147,9 @@ export class MemoryFile implements FileLike {
 		position: number
 	): Promise<FileLikeWritten> {
 		const {buffer: bd, byteOffset: bo, byteLength: bl} = buffer;
-		offset = integer('offset', offset, 0, bl);
-		length = integer('length', length, 0, bl - offset);
-		position = integer('position', position, 0, INT_LIMIT - bl);
+		offset = integer(offset, 0, bl);
+		length = integer(length, 0, bl - offset);
+		position = integer(position, 0, INT_LIMIT - bl);
 		if (length) {
 			const blksize = this.#blksize;
 			const blocks = this.#blocks;
