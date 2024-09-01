@@ -104,7 +104,7 @@ export class CodeDirectory extends Blob {
 	 */
 	public get identOffset() {
 		const Self = this.constructor as typeof CodeDirectory;
-		return this.scatterData
+		return this.scatter
 			? this.scatterOffset + this.scatterSize
 			: Self.fixedSize(this.version);
 	}
@@ -175,11 +175,11 @@ export class CodeDirectory extends Blob {
 		null;
 
 	/**
-	 * Whether this code directory has scatter vector data.
+	 * If using "scatter" hashes.
 	 *
 	 * @returns True if has a scatter vector.
 	 */
-	public get scatterData() {
+	public get scatter() {
 		const Self = this.constructor as typeof CodeDirectory;
 		const {version} = this;
 		return !!(version >= Self.supportsScatter && this.scatterVector);
@@ -192,7 +192,7 @@ export class CodeDirectory extends Blob {
 	 */
 	public get scatterOffset() {
 		const Self = this.constructor as typeof CodeDirectory;
-		return this.scatterData ? Self.fixedSize(this.version) : 0;
+		return this.scatter ? Self.fixedSize(this.version) : 0;
 	}
 
 	/**
@@ -201,7 +201,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte count, or 0 for none.
 	 */
 	public get scatterSize() {
-		return this.scatterData ? (this.scatterVector!.length + 1) * 24 : 0;
+		return this.scatter ? (this.scatterVector!.length + 1) * 24 : 0;
 	}
 
 	/**
