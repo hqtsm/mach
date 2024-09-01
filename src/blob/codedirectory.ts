@@ -229,13 +229,30 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
-	 * Offset of optional teamID string.
+	 * Optional team ID string.
+	 */
+	public teamID = '';
+
+	/**
+	 * Offset of optional team ID string.
 	 *
 	 * @returns Byte offset, or 0 for none.
 	 */
 	public get teamIDOffset() {
-		// TODO
-		return 0;
+		const Self = this.constructor as typeof CodeDirectory;
+		const {version} = this;
+		return version >= Self.supportsTeamID && this.teamID
+			? this.identOffset + this.identSize
+			: 0;
+	}
+
+	/**
+	 * Size of optional team ID string, including the null byte.
+	 *
+	 * @returns Byte count, or 0 for none.
+	 */
+	public get teamIDSize() {
+		return this.teamIDOffset ? stringToBytes(this.teamID).length + 1 : 0;
 	}
 
 	/**
