@@ -15,6 +15,8 @@ export function integer(i: number, l: number, h: number) {
 	throw new RangeError(`Value ${i} out of range ${l}-${h}`);
 }
 
+let textEncoder: InstanceType<typeof TextEncoder> | undefined;
+
 /**
  * Encode string to bytes.
  *
@@ -22,7 +24,8 @@ export function integer(i: number, l: number, h: number) {
  * @returns Bytes.
  */
 export function stringToBytes(str: string) {
-	return new TextEncoder().encode(str);
+	textEncoder ??= new TextEncoder();
+	return textEncoder.encode(str);
 }
 
 /**
