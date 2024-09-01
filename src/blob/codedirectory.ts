@@ -93,6 +93,16 @@ export class CodeDirectory extends Blob {
 	public flags = 0;
 
 	/**
+	 * Offset of hash slot element at index zero.
+	 *
+	 * @returns Byte offset.
+	 */
+	public get hashOffset() {
+		// TODO
+		return 0;
+	}
+
+	/**
 	 * Signature identifier.
 	 */
 	public identifier = '';
@@ -117,6 +127,26 @@ export class CodeDirectory extends Blob {
 	 */
 	public get identSize() {
 		return stringToBytes(this.identifier).length + 1;
+	}
+
+	/**
+	 * Number of special hash slots.
+	 *
+	 * @returns Number of slots.
+	 */
+	public get nSpecialSlots() {
+		// TODO
+		return 0;
+	}
+
+	/**
+	 * Number of ordinary (code) hash slots.
+	 *
+	 * @returns Number of slots.
+	 */
+	public get nCodeSlots() {
+		// TODO
+		return 0;
 	}
 
 	/**
@@ -199,6 +229,16 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
+	 * Offset of optional teamID string.
+	 *
+	 * @returns Byte offset, or 0 for none.
+	 */
+	public get teamIDOffset() {
+		// TODO
+		return 0;
+	}
+
+	/**
 	 * Limit to main image signature range, 64 bits.
 	 */
 	public codeLimit64 = 0n;
@@ -222,6 +262,16 @@ export class CodeDirectory extends Blob {
 	 * Runtime version encoded as an unsigned integer.
 	 */
 	public runtime = 0;
+
+	/**
+	 * Offset of pre-encrypt hash slots.
+	 *
+	 * @returns Byte offset, or 0 for none.
+	 */
+	public get preEncryptOffset() {
+		// TODO
+		return 0;
+	}
 
 	/**
 	 * @inheritDoc
