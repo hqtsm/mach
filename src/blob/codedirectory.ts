@@ -11,6 +11,7 @@ import {
 	kSecCodeSignatureHashSHA512,
 	kSecCodeSignatureNoHash
 } from '../const.ts';
+import {stringToBytes} from '../util.ts';
 
 /**
  * CodeDirectory class.
@@ -90,6 +91,32 @@ export class CodeDirectory extends Blob {
 	 * Setup and mode flags.
 	 */
 	public flags = 0;
+
+	/**
+	 * Signature identifier.
+	 */
+	public identifier = '';
+
+	/**
+	 * Offset of ident string.
+	 *
+	 * @returns Byte offset.
+	 */
+	public get identOffset() {
+		const Self = this.constructor as typeof CodeDirectory;
+		return this.scatterData
+			? this.scatterOffset + this.scatterSize
+			: Self.fixedSize(this.version);
+	}
+
+	/**
+	 * Size of ident string, including the null byte.
+	 *
+	 * @returns Byte size.
+	 */
+	public get identSize() {
+		return stringToBytes(this.identifier).length + 1;
+	}
 
 	/**
 	 * Limit to main image signature range, 32 bits.
