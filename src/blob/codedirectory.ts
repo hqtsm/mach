@@ -149,7 +149,7 @@ export class CodeDirectory extends Blob {
 	public get scatterOffset() {
 		const Self = this.constructor as typeof CodeDirectory;
 		const {version} = this;
-		return version >= Self.supportsScatter && this.scatterVector.length
+		return version >= Self.supportsScatter && this.scatterVector
 			? Self.fixedSize(version)
 			: 0;
 	}
@@ -182,7 +182,8 @@ export class CodeDirectory extends Blob {
 	/**
 	 * Scatter vector.
 	 */
-	public scatterVector: InstanceType<typeof CodeDirectory.Scatter>[] = [];
+	public scatterVector: InstanceType<typeof CodeDirectory.Scatter>[] | null =
+		null;
 
 	/**
 	 * @inheritDoc
