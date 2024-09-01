@@ -196,11 +196,12 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
-	 * Number of bytes in scatter vector.
+	 * Number of bytes in scatter vector, including sentinel.
 	 *
 	 * @returns Byte count, or 0 for none.
 	 */
 	public get scatterSize() {
+		// Additional 1 for sentinel.
 		return this.scatter ? (this.scatterVector!.length + 1) * 24 : 0;
 	}
 
