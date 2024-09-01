@@ -142,16 +142,39 @@ export class CodeDirectory extends Blob {
 	public pageSize = 0;
 
 	/**
+	 * Scatter vector.
+	 */
+	public scatterVector: InstanceType<typeof CodeDirectory.Scatter>[] | null =
+		null;
+
+	/**
+	 * Whether this code directory has a scatter vector.
+	 *
+	 * @returns True if has a scatter vector.
+	 */
+	public get hasScatter() {
+		const Self = this.constructor as typeof CodeDirectory;
+		const {version} = this;
+		return !!(version >= Self.supportsScatter && this.scatterVector);
+	}
+
+	/**
 	 * Offset of scatter vector.
 	 *
 	 * @returns Byte offset, or 0 for none.
 	 */
 	public get scatterOffset() {
 		const Self = this.constructor as typeof CodeDirectory;
-		const {version} = this;
-		return version >= Self.supportsScatter && this.scatterVector
-			? Self.fixedSize(version)
-			: 0;
+		return this.hasScatter ? Self.fixedSize(this.version) : 0;
+	}
+
+	/**
+	 * Number of bytes in scatter vector.
+	 *
+	 * @returns Byte count, or 0 for none.
+	 */
+	public get scatterSize() {
+		return this.hasScatter ? (this.scatterVector!.length + 1) * 24 : 0;
 	}
 
 	/**
@@ -178,12 +201,6 @@ export class CodeDirectory extends Blob {
 	 * Runtime version encoded as an unsigned integer.
 	 */
 	public runtime = 0;
-
-	/**
-	 * Scatter vector.
-	 */
-	public scatterVector: InstanceType<typeof CodeDirectory.Scatter>[] | null =
-		null;
 
 	/**
 	 * @inheritDoc
