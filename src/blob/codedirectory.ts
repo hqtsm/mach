@@ -214,7 +214,7 @@ export class CodeDirectory extends Blob {
 		const Self = this.constructor as typeof CodeDirectory;
 		const {version} = this;
 		return version >= Self.supportsScatter && this.scatterVector
-			? Self.fixedSize(this.version)
+			? Self.fixedSize(version)
 			: 0;
 	}
 
