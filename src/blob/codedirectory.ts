@@ -104,8 +104,9 @@ export class CodeDirectory extends Blob {
 	 */
 	public get identOffset() {
 		const Self = this.constructor as typeof CodeDirectory;
-		return this.scatter
-			? this.scatterOffset + this.scatterSize
+		const {scatterOffset} = this;
+		return scatterOffset
+			? scatterOffset + this.scatterSize
 			: Self.fixedSize(this.version);
 	}
 
@@ -192,7 +193,10 @@ export class CodeDirectory extends Blob {
 	 */
 	public get scatterOffset() {
 		const Self = this.constructor as typeof CodeDirectory;
-		return this.scatter ? Self.fixedSize(this.version) : 0;
+		const {version} = this;
+		return version >= Self.supportsScatter && this.scatterVector
+			? Self.fixedSize(this.version)
+			: 0;
 	}
 
 	/**
@@ -202,7 +206,7 @@ export class CodeDirectory extends Blob {
 	 */
 	public get scatterSize() {
 		// Additional 1 for sentinel.
-		return this.scatter ? (this.scatterVector!.length + 1) * 24 : 0;
+		return this.scatterOffset ? (this.scatterVector!.length + 1) * 24 : 0;
 	}
 
 	/**
