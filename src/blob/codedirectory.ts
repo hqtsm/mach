@@ -176,17 +176,6 @@ export class CodeDirectory extends Blob {
 		null;
 
 	/**
-	 * If using "scatter" hashes.
-	 *
-	 * @returns True if has a scatter vector.
-	 */
-	public get scatter() {
-		const Self = this.constructor as typeof CodeDirectory;
-		const {version} = this;
-		return !!(version >= Self.supportsScatter && this.scatterVector);
-	}
-
-	/**
 	 * Offset of scatter vector.
 	 *
 	 * @returns Byte offset, or 0 for none.
