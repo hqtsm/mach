@@ -164,7 +164,7 @@ export class CodeDirectory extends Blob {
 	/**
 	 * The special hash slots.
 	 */
-	readonly #specialSlots: (Readonly<BufferView> | undefined)[] = [];
+	readonly #specialSlots: (Readonly<Uint8Array> | undefined)[] = [];
 
 	/**
 	 * Number of special hash slots.
@@ -187,7 +187,7 @@ export class CodeDirectory extends Blob {
 	/**
 	 * The ordinary (code) hash slots.
 	 */
-	readonly #codeSlots: (Readonly<BufferView> | undefined)[] = [];
+	readonly #codeSlots: (Readonly<Uint8Array> | undefined)[] = [];
 
 	/**
 	 * Number of ordinary (code) hash slots.
@@ -340,7 +340,7 @@ export class CodeDirectory extends Blob {
 	/**
 	 * Pre-encrypt hash slots.
 	 */
-	readonly #preEncryptSlots: (Readonly<BufferView> | undefined)[] = [];
+	readonly #preEncryptSlots: (Readonly<Uint8Array> | undefined)[] = [];
 
 	/**
 	 * Offset of pre-encrypt hash slots.
@@ -402,7 +402,7 @@ export class CodeDirectory extends Blob {
 	public setSlot(
 		slot: number,
 		preEncrypt: boolean,
-		value: Readonly<BufferView> | null
+		value: Readonly<Uint8Array> | null
 	) {
 		let a;
 		if (preEncrypt) {
