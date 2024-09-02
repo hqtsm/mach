@@ -63,7 +63,7 @@ export function subview<T>(
  * @param index Value index.
  * @param value Value assigned to index, or undefined to delete.
  */
-export function sparseSet(array: unknown[], index: number, value: unknown) {
+export function sparseSet<T>(array: T[], index: number, value: T | undefined) {
 	// eslint-disable-next-line no-undefined
 	if (value === undefined) {
 		let last = array.length - 1;
