@@ -422,7 +422,8 @@ export class CodeDirectory extends Blob {
 	 */
 	public byteWrite(buffer: BufferView, offset = 0) {
 		const Self = this.constructor as typeof CodeDirectory;
-		const {length, version, scatterOffset, identOffset} = this;
+		const {length, version, scatterOffset, identOffset, teamIDOffset} =
+			this;
 		const d = subview(DataView, buffer, offset, length);
 		let o = 0;
 		d.setUint32(o, this.magic);
@@ -454,7 +455,7 @@ export class CodeDirectory extends Blob {
 		o += 4;
 
 		if (version >= Self.supportsTeamID) {
-			d.setUint32(o, this.teamIDOffset);
+			d.setUint32(o, teamIDOffset);
 			o += 4;
 		}
 
@@ -493,6 +494,12 @@ export class CodeDirectory extends Blob {
 		subview(Uint8Array, d, identOffset).set(
 			stringToBytes(`${this.identifier}\0`)
 		);
+
+		if (teamIDOffset) {
+			subview(Uint8Array, d, teamIDOffset).set(
+				stringToBytes(`${this.teamID}\0`)
+			);
+		}
 
 		// TODO
 
