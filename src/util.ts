@@ -53,3 +53,28 @@ export function subview<T>(
 	length = length >= 0 ? integer(length, 0, limit) : limit;
 	return new Type(buffer, byteOffset + offset, length);
 }
+
+/**
+ * Assign value to sparse array with automatic garbage collecting.
+ *
+ * @param array Parse array.
+ * @param index Value index.
+ * @param value Value assigned to index, or undefined to delete.
+ */
+export function sparseSet(array: unknown[], index: number, value: unknown) {
+	// eslint-disable-next-line no-undefined
+	if (value === undefined) {
+		let last = array.length - 1;
+		if (index < last) {
+			delete array[index];
+		} else if (index === last) {
+			do {
+				last--;
+				// eslint-disable-next-line no-undefined
+			} while (last >= 0 && array[last] === undefined);
+			array.length = last + 1;
+		}
+	} else {
+		array[index] = value;
+	}
+}
