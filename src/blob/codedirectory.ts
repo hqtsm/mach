@@ -399,7 +399,7 @@ export class CodeDirectory extends Blob {
 	 */
 	public write(buffer: BufferView, offset = 0) {
 		const Self = this.constructor as typeof CodeDirectory;
-		const {length, version} = this;
+		const {length, version, scatterOffset} = this;
 		const d = subview(DataView, buffer, offset, length);
 		let o = 0;
 		d.setUint32(o, this.magic);
@@ -427,7 +427,7 @@ export class CodeDirectory extends Blob {
 		// Reserved: spare2 (must be zero).
 		d.setUint32(o, 0);
 		o += 4;
-		d.setUint32(o, this.scatterOffset);
+		d.setUint32(o, scatterOffset);
 		o += 4;
 		if (version >= Self.supportsTeamID) {
 			d.setUint32(o, this.teamIDOffset);
@@ -454,7 +454,20 @@ export class CodeDirectory extends Blob {
 			d.setUint32(o, this.preEncryptOffset);
 			o += 4;
 		}
-		subview(Uint8Array, d, o).fill(0);
+		if ((o = scatterOffset)) {
+			const sentinel = new Self.Scatter();
+			for (const scatter of [...this.scatterVector, sentinel]) {
+				d.setUint32(o, scatter.count);
+				o += 4;
+				d.setUint32(o, scatter.base);
+				o += 4;
+				d.setBigUint64(o, scatter.targetOffset);
+				o += 8;
+				// Reserved: spare (must be zero).
+				d.setBigUint64(o, 0n);
+				o += 8;
+			}
+		}
 		// TODO
 		return length;
 	}
