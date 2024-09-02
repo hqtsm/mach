@@ -78,8 +78,7 @@ export class CodeDirectory extends Blob {
 	 * @inheritDoc
 	 */
 	public get length() {
-		// TODO
-		return 0;
+		return this.hashOffset + this.codeSlotsSize;
 	}
 
 	/**
