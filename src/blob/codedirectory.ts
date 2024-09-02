@@ -527,7 +527,20 @@ export class CodeDirectory extends Blob {
 			}
 		}
 
-		// TODO
+		o = hashOffset - nSpecialSlots * hashSize;
+		for (let i = 0 - nSpecialSlots; i < nCodeSlots; i++) {
+			const v = subview(Uint8Array, d, o, hashSize);
+			const h = this.getSlot(i, false);
+			if (h) {
+				if (h.length !== hashSize) {
+					throw new Error(`Invalid hash size: ${h.length}`);
+				}
+				v.set(h);
+			} else {
+				v.fill(0);
+			}
+			o += hashSize;
+		}
 
 		return length;
 	}
