@@ -1,18 +1,16 @@
 import {BufferView} from './type';
 
 /**
- * Get integer in range, rounded down.
+ * Assert integer in range.
  *
  * @param i Integer value.
  * @param l Lower limit.
  * @param h Higher limit.
- * @returns Integer value.
  */
-export function integer(i: number, l: number, h: number) {
-	if (i >= l && i <= h) {
-		return i - (i % 1);
+export function ranged(i: number, l: number, h: number) {
+	if (!(i >= l && i <= h)) {
+		throw new RangeError(`Value ${i} out of range ${l}-${h}`);
 	}
-	throw new RangeError(`Value ${i} out of range ${l}-${h}`);
 }
 
 let textEncoder: InstanceType<typeof TextEncoder> | undefined;
@@ -48,9 +46,13 @@ export function subview<T>(
 	length = -1
 ) {
 	const {buffer, byteOffset, byteLength} = view;
-	offset = integer(offset, 0, byteLength);
+	ranged(offset, 0, byteLength);
 	const limit = byteLength - offset;
-	length = length >= 0 ? integer(length, 0, limit) : limit;
+	if (length < 0) {
+		length = limit;
+	} else {
+		ranged(length, 0, limit);
+	}
 	return new Type(buffer, byteOffset + offset, length);
 }
 
