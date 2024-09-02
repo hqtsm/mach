@@ -452,10 +452,12 @@ export class CodeDirectory extends Blob {
 		o += 4;
 		d.setUint32(o, scatterOffset);
 		o += 4;
+
 		if (version >= Self.supportsTeamID) {
 			d.setUint32(o, this.teamIDOffset);
 			o += 4;
 		}
+
 		if (version >= Self.supportsCodeLimit64) {
 			// Reserved: spare3 (must be zero).
 			d.setUint32(o, 0);
@@ -463,6 +465,7 @@ export class CodeDirectory extends Blob {
 			d.setBigUint64(o, this.codeLimit64);
 			o += 8;
 		}
+
 		if (version >= Self.supportsExecSegment) {
 			d.setBigUint64(o, this.execSegBase);
 			o += 8;
@@ -471,12 +474,14 @@ export class CodeDirectory extends Blob {
 			d.setBigUint64(o, this.execSegFlags);
 			o += 8;
 		}
+
 		if (version >= Self.supportsPreEncrypt) {
 			d.setUint32(o, this.runtime);
 			o += 4;
 			d.setUint32(o, this.preEncryptOffset);
 			o += 4;
 		}
+
 		if ((o = scatterOffset)) {
 			const sentinel = new Self.Scatter();
 			for (const scatter of this.scatterVector) {
@@ -484,7 +489,9 @@ export class CodeDirectory extends Blob {
 			}
 			sentinel.byteWrite(d, o);
 		}
+
 		// TODO
+
 		return length;
 	}
 
