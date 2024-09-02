@@ -141,7 +141,7 @@ export class CodeDirectory extends Blob {
 	/**
 	 * The special hash slots.
 	 */
-	readonly #specialSlots: (Readonly<BufferView> | undefined | null)[] = [];
+	readonly #specialSlots: (Readonly<BufferView> | undefined)[] = [];
 
 	/**
 	 * Number of special hash slots.
@@ -164,7 +164,7 @@ export class CodeDirectory extends Blob {
 	/**
 	 * The ordinary (code) hash slots.
 	 */
-	readonly #codeSlots: (Readonly<BufferView> | undefined | null)[] = [];
+	readonly #codeSlots: (Readonly<BufferView> | undefined)[] = [];
 
 	/**
 	 * Number of ordinary (code) hash slots.
@@ -317,7 +317,7 @@ export class CodeDirectory extends Blob {
 	/**
 	 * Pre-encrypt hash slots.
 	 */
-	readonly #preEncryptSlots: (Readonly<BufferView> | undefined | null)[] = [];
+	readonly #preEncryptSlots: (Readonly<BufferView> | undefined)[] = [];
 
 	/**
 	 * Offset of pre-encrypt hash slots.
