@@ -1,46 +1,111 @@
+/**
+ * Buffer view.
+ */
 export interface BufferView {
-	buffer: ArrayBuffer;
-	byteLength: number;
-	byteOffset: number;
-}
+	/**
+	 * Array buffer.
+	 */
+	readonly buffer: ArrayBuffer;
 
-export interface Length {
 	/**
 	 * Byte length.
 	 */
-	get length(): number;
+	readonly byteLength: number;
+
+	/**
+	 * Byte offset.
+	 */
+	readonly byteOffset: number;
 }
 
-export interface Write {
+/**
+ * Object has fixed length.
+ */
+export interface ByteLength {
 	/**
-	 * Write to buffer view.
+	 * Byte length.
+	 */
+	readonly byteLength: number;
+}
+
+export interface ByteWrite {
+	/**
+	 * Write bytes to a buffer view.
 	 *
 	 * @param buffer Buffer view.
 	 * @param offset Byte offset into buffer.
 	 * @returns Write length.
 	 */
-	write(buffer: BufferView, offset?: number): number;
+	byteWrite(buffer: BufferView, offset?: number): number;
 }
 
+/**
+ * File stat.
+ */
 export interface FileLikeStat {
+	/**
+	 * Number of blocks.
+	 */
 	blocks: number;
+
+	/**
+	 * Block size.
+	 */
 	blksize: number;
+
+	/**
+	 * File size.
+	 */
 	size: number;
 }
 
+/**
+ * File read status.
+ */
 export interface FileLikeRead {
+	/**
+	 * Number of bytes read.
+	 */
 	bytesRead: number;
 }
 
+/**
+ * File written status.
+ */
 export interface FileLikeWritten {
+	/**
+	 * Number of bytes written.
+	 */
 	bytesWritten: number;
 }
 
+/**
+ * File interface.
+ */
 export interface FileLike {
+	/**
+	 * Stat file.
+	 *
+	 * @returns Stat result.
+	 */
 	stat(): Promise<FileLikeStat>;
 
+	/**
+	 * Truncate file to size.
+	 *
+	 * @param size New size.
+	 */
 	truncate(size: number): Promise<void>;
 
+	/**
+	 * Read from file.
+	 *
+	 * @param buffer Buffer view.
+	 * @param offset Byte offset into buffer.
+	 * @param length Number of bytes to read.
+	 * @param position Byte offset into file.
+	 * @returns Object with the number of bytes read.
+	 */
 	read(
 		buffer: Readonly<BufferView>,
 		offset: number,
@@ -48,6 +113,15 @@ export interface FileLike {
 		position: number
 	): Promise<FileLikeRead>;
 
+	/**
+	 * Write to file.
+	 *
+	 * @param buffer Buffer view.
+	 * @param offset Byte offset into buffer.
+	 * @param length Number of bytes to write.
+	 * @param position Byte offset into file.
+	 * @returns Object with the number of bytes written.
+	 */
 	write(
 		buffer: BufferView,
 		offset: number,

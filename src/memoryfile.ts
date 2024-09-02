@@ -44,9 +44,7 @@ export class MemoryFile implements FileLike {
 	}
 
 	/**
-	 * Stat file.
-	 *
-	 * @returns Stat result.
+	 * @inheritdoc
 	 */
 	public async stat(): Promise<FileLikeStat> {
 		return {
@@ -57,9 +55,7 @@ export class MemoryFile implements FileLike {
 	}
 
 	/**
-	 * Truncate file to size.
-	 *
-	 * @param size New size.
+	 * @inheritdoc
 	 */
 	public async truncate(size: number): Promise<void> {
 		ranged(size, 0, INT_LIMIT);
@@ -84,13 +80,7 @@ export class MemoryFile implements FileLike {
 	}
 
 	/**
-	 * Read from file.
-	 *
-	 * @param buffer Buffer view.
-	 * @param offset Byte offset into buffer.
-	 * @param length Number of bytes to read.
-	 * @param position Byte offset into file.
-	 * @returns Object with the number of bytes read.
+	 * @inheritdoc
 	 */
 	public async read(
 		buffer: BufferView,
@@ -132,13 +122,7 @@ export class MemoryFile implements FileLike {
 	}
 
 	/**
-	 * Write to file.
-	 *
-	 * @param buffer Buffer view.
-	 * @param offset Byte offset into buffer.
-	 * @param length Number of bytes to write.
-	 * @param position Byte offset into file.
-	 * @returns Object with the number of bytes written.
+	 * @inheritdoc
 	 */
 	public async write(
 		buffer: Readonly<BufferView>,

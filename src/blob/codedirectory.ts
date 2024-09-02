@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 
 import {Blob} from '../blob.ts';
-import {BufferView, Length, Write} from '../type.ts';
+import {BufferView, ByteLength, ByteWrite} from '../type.ts';
 import {
 	kSecCodeMagicCodeDirectory,
 	kSecCodeSignatureHashSHA1,
@@ -50,11 +50,13 @@ export class CodeDirectory extends Blob {
 	/**
 	 * Scatter structure.
 	 */
-	public static readonly Scatter = class Scatter implements Length, Write {
+	public static readonly Scatter = class Scatter
+		implements ByteLength, ByteWrite
+	{
 		/**
-		 * @inheritDoc
+		 * @inheritdoc
 		 */
-		public get length() {
+		public get byteLength() {
 			return 24;
 		}
 
@@ -74,29 +76,29 @@ export class CodeDirectory extends Blob {
 		public targetOffset = 0n;
 
 		/**
-		 * @inheritDoc
+		 * @inheritdoc
 		 */
-		public write(buffer: BufferView, offset = 0) {
-			const {length} = this;
-			const d = subview(DataView, buffer, offset, length);
+		public byteWrite(buffer: BufferView, offset = 0) {
+			const {byteLength} = this;
+			const d = subview(DataView, buffer, offset, byteLength);
 			d.setUint32(0, this.count);
 			d.setUint32(4, this.base);
 			d.setBigUint64(8, this.targetOffset);
 			// Reserved: spare (must be zero).
 			d.setBigUint64(16, 0n);
-			return length;
+			return byteLength;
 		}
 	};
 
 	/**
-	 * @inheritDoc
+	 * @inheritdoc
 	 */
 	public get magic() {
 		return kSecCodeMagicCodeDirectory;
 	}
 
 	/**
-	 * @inheritDoc
+	 * @inheritdoc
 	 */
 	public get length() {
 		return this.hashOffset + this.codeSlotsSize;
@@ -416,9 +418,9 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
-	 * @inheritDoc
+	 * @inheritdoc
 	 */
-	public write(buffer: BufferView, offset = 0) {
+	public byteWrite(buffer: BufferView, offset = 0) {
 		const Self = this.constructor as typeof CodeDirectory;
 		const {length, version, scatterOffset} = this;
 		const d = subview(DataView, buffer, offset, length);
@@ -478,9 +480,9 @@ export class CodeDirectory extends Blob {
 		if ((o = scatterOffset)) {
 			const sentinel = new Self.Scatter();
 			for (const scatter of this.scatterVector) {
-				o += scatter.write(d, o);
+				o += scatter.byteWrite(d, o);
 			}
-			sentinel.write(d, o);
+			sentinel.byteWrite(d, o);
 		}
 		// TODO
 		return length;
