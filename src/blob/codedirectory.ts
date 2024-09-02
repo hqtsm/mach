@@ -422,7 +422,7 @@ export class CodeDirectory extends Blob {
 	 */
 	public byteWrite(buffer: BufferView, offset = 0) {
 		const Self = this.constructor as typeof CodeDirectory;
-		const {length, version, scatterOffset} = this;
+		const {length, version, scatterOffset, identOffset} = this;
 		const d = subview(DataView, buffer, offset, length);
 		let o = 0;
 		d.setUint32(o, this.magic);
@@ -435,7 +435,7 @@ export class CodeDirectory extends Blob {
 		o += 4;
 		d.setUint32(o, this.hashOffset);
 		o += 4;
-		d.setUint32(o, this.identOffset);
+		d.setUint32(o, identOffset);
 		o += 4;
 		d.setUint32(o, this.nSpecialSlots);
 		o += 4;
@@ -489,6 +489,10 @@ export class CodeDirectory extends Blob {
 			}
 			sentinel.byteWrite(d, o);
 		}
+
+		subview(Uint8Array, d, identOffset).set(
+			stringToBytes(`${this.identifier}\0`)
+		);
 
 		// TODO
 
