@@ -29,17 +29,27 @@ export function stringToBytes(str: string) {
 }
 
 /**
- * Get DataView from BufferView.
+ * Get subview from BufferView.
  *
+ * @param Type View constructor.
  * @param view BufferView.
  * @param offset Offset into view.
  * @param length Length of view.
- * @returns DataView over BufferView buffer.
+ * @returns View over BufferView buffer.
  */
-export function dataView(view: BufferView, offset = 0, length = -1) {
+export function subview<T>(
+	Type: new (
+		buffer: ArrayBuffer,
+		byteOffset: number,
+		byteLength: number
+	) => T,
+	view: BufferView,
+	offset = 0,
+	length = -1
+) {
 	const {buffer, byteOffset, byteLength} = view;
 	offset = integer(offset, 0, byteLength);
 	const limit = byteLength - offset;
 	length = length >= 0 ? integer(length, 0, limit) : limit;
-	return new DataView(buffer, byteOffset + offset, length);
+	return new Type(buffer, byteOffset + offset, length);
 }
