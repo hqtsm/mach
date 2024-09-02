@@ -11,7 +11,7 @@ import {
 	kSecCodeSignatureHashSHA512,
 	kSecCodeSignatureNoHash
 } from '../const.ts';
-import {sparseSet, stringToBytes, subview} from '../util.ts';
+import {ranged, sparseSet, stringToBytes, subview} from '../util.ts';
 
 /**
  * CodeDirectory class.
@@ -422,8 +422,18 @@ export class CodeDirectory extends Blob {
 	 */
 	public byteWrite(buffer: BufferView, offset = 0) {
 		const Self = this.constructor as typeof CodeDirectory;
-		const {length, version, scatterOffset, identOffset, teamIDOffset} =
-			this;
+		const {
+			length,
+			version,
+			scatterOffset,
+			identOffset,
+			teamIDOffset,
+			hashOffset,
+			hashSize,
+			preEncryptOffset,
+			nSpecialSlots,
+			nCodeSlots
+		} = this;
 		const d = subview(DataView, buffer, offset, length);
 		let o = 0;
 		d.setUint32(o, this.magic);
@@ -434,17 +444,17 @@ export class CodeDirectory extends Blob {
 		o += 4;
 		d.setUint32(o, this.flags);
 		o += 4;
-		d.setUint32(o, this.hashOffset);
+		d.setUint32(o, hashOffset);
 		o += 4;
 		d.setUint32(o, identOffset);
 		o += 4;
-		d.setUint32(o, this.nSpecialSlots);
+		d.setUint32(o, nSpecialSlots);
 		o += 4;
-		d.setUint32(o, this.nCodeSlots);
+		d.setUint32(o, nCodeSlots);
 		o += 4;
 		d.setUint32(o, this.codeLimit);
 		o += 4;
-		d.setUint8(o++, this.hashSize);
+		d.setUint8(o++, hashSize);
 		d.setUint8(o++, this.hashType);
 		d.setUint8(o++, this.platform);
 		d.setUint8(o++, this.pageSize);
@@ -479,7 +489,7 @@ export class CodeDirectory extends Blob {
 		if (version >= Self.supportsPreEncrypt) {
 			d.setUint32(o, this.runtime);
 			o += 4;
-			d.setUint32(o, this.preEncryptOffset);
+			d.setUint32(o, preEncryptOffset);
 			o += 4;
 		}
 
@@ -499,6 +509,22 @@ export class CodeDirectory extends Blob {
 			subview(Uint8Array, d, teamIDOffset).set(
 				stringToBytes(`${this.teamID}\0`)
 			);
+		}
+
+		if ((o = preEncryptOffset)) {
+			for (let i = 0; i < nCodeSlots; i++) {
+				const v = subview(Uint8Array, d, o, hashSize);
+				const h = this.getSlot(i, true);
+				if (h) {
+					if (h.length !== hashSize) {
+						throw new Error(`Invalid hash size: ${h.length}`);
+					}
+					v.set(h);
+				} else {
+					v.fill(0);
+				}
+				o += hashSize;
+			}
 		}
 
 		// TODO
