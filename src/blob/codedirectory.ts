@@ -98,8 +98,18 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset.
 	 */
 	public get hashOffset() {
-		// TODO
-		return 0;
+		const {preEncryptOffset} = this;
+		let o = 0;
+		if (preEncryptOffset) {
+			o = preEncryptOffset + this.preEncryptSize;
+		} else {
+			const {teamIDOffset} = this;
+			o = teamIDOffset
+				? teamIDOffset + this.teamIDSize
+				: this.identOffset + this.identSize;
+		}
+		// Special slots negative indexed from code hash slots.
+		return o + this.specialSlotsSize;
 	}
 
 	/**
