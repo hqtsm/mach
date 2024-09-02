@@ -313,6 +313,16 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
+	 * Size of pre-encrypt hash slots.
+	 *
+	 * @returns Byte offset, or 0 for none.
+	 */
+	public get preEncryptSize() {
+		const {preEncryptOffset} = this;
+		return preEncryptOffset ? this.nCodeSlots * this.hashSize : 0;
+	}
+
+	/**
 	 * @inheritDoc
 	 */
 	public write(buffer: BufferView, offset = 0) {
