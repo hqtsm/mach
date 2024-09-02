@@ -11,7 +11,7 @@ import {
 	kSecCodeSignatureHashSHA512,
 	kSecCodeSignatureNoHash
 } from '../const.ts';
-import {stringToBytes, subview} from '../util.ts';
+import {sparseSet, stringToBytes, subview} from '../util.ts';
 
 /**
  * CodeDirectory class.
@@ -141,7 +141,7 @@ export class CodeDirectory extends Blob {
 	/**
 	 * The special hash slots.
 	 */
-	readonly #specialSlots: Readonly<BufferView>[] = [];
+	readonly #specialSlots: (Readonly<BufferView> | undefined | null)[] = [];
 
 	/**
 	 * Number of special hash slots.
@@ -164,7 +164,7 @@ export class CodeDirectory extends Blob {
 	/**
 	 * The ordinary (code) hash slots.
 	 */
-	readonly #codeSlots: Readonly<BufferView>[] = [];
+	readonly #codeSlots: (Readonly<BufferView> | undefined | null)[] = [];
 
 	/**
 	 * Number of ordinary (code) hash slots.
@@ -317,7 +317,7 @@ export class CodeDirectory extends Blob {
 	/**
 	 * Pre-encrypt hash slots.
 	 */
-	readonly #preEncryptSlots: Readonly<BufferView>[] = [];
+	readonly #preEncryptSlots: (Readonly<BufferView> | undefined | null)[] = [];
 
 	/**
 	 * Offset of pre-encrypt hash slots.
@@ -347,6 +347,51 @@ export class CodeDirectory extends Blob {
 	public get preEncryptSize() {
 		const {preEncryptOffset} = this;
 		return preEncryptOffset ? this.codeSlotsSize : 0;
+	}
+
+	/**
+	 * Get hash slot value.
+	 *
+	 * @param slot Slot index.
+	 * @param preEncrypt Pre-encrypt version.
+	 * @returns Hash value, or null.
+	 */
+	public getSlot(slot: number, preEncrypt: boolean) {
+		let a;
+		if (preEncrypt) {
+			a = this.#preEncryptSlots;
+		} else if (slot < 0) {
+			a = this.#specialSlots;
+			slot = 1 - slot;
+		} else {
+			a = this.#codeSlots;
+		}
+		return a[slot] || null;
+	}
+
+	/**
+	 * Set hash slot value.
+	 *
+	 * @param slot Slot index.
+	 * @param preEncrypt Pre-encrypt version.
+	 * @param value Hash value, or null.
+	 */
+	public setSlot(
+		slot: number,
+		preEncrypt: boolean,
+		value: Readonly<BufferView> | null
+	) {
+		let a;
+		if (preEncrypt) {
+			a = this.#preEncryptSlots;
+		} else if (slot < 0) {
+			a = this.#specialSlots;
+			slot = 1 - slot;
+		} else {
+			a = this.#codeSlots;
+		}
+		// eslint-disable-next-line no-undefined
+		sparseSet(a, slot, value || undefined);
 	}
 
 	/**
