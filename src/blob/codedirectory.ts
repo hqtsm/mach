@@ -130,14 +130,23 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
+	 * The special hash slots.
+	 */
+	readonly #specialSlots: Readonly<BufferView>[] = [];
+
+	/**
 	 * Number of special hash slots.
 	 *
 	 * @returns Number of slots.
 	 */
 	public get nSpecialSlots() {
-		// TODO
-		return 0;
+		return this.#specialSlots.length;
 	}
+
+	/**
+	 * The ordinary (code) hash slots.
+	 */
+	readonly #codeSlots: Readonly<BufferView>[] = [];
 
 	/**
 	 * Number of ordinary (code) hash slots.
@@ -145,8 +154,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Number of slots.
 	 */
 	public get nCodeSlots() {
-		// TODO
-		return 0;
+		return this.#codeSlots.length;
 	}
 
 	/**
@@ -280,12 +288,27 @@ export class CodeDirectory extends Blob {
 	public runtime = 0;
 
 	/**
+	 * Pre-encrypt hash slots.
+	 */
+	readonly #preEncryptSlots: Readonly<BufferView>[] = [];
+
+	/**
 	 * Offset of pre-encrypt hash slots.
 	 *
 	 * @returns Byte offset, or 0 for none.
 	 */
 	public get preEncryptOffset() {
-		// TODO
+		const Self = this.constructor as typeof CodeDirectory;
+		const {version} = this;
+		if (
+			version >= Self.supportsPreEncrypt &&
+			this.#preEncryptSlots.length
+		) {
+			const {teamIDOffset} = this;
+			return teamIDOffset
+				? teamIDOffset + this.teamIDSize
+				: this.identOffset + this.identSize;
+		}
 		return 0;
 	}
 
