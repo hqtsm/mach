@@ -11,7 +11,7 @@ import {
 	kSecCodeSignatureHashSHA512,
 	kSecCodeSignatureNoHash
 } from '../const.ts';
-import {stringToBytes} from '../util.ts';
+import {stringToBytes, subview} from '../util.ts';
 
 /**
  * CodeDirectory class.
@@ -353,8 +353,65 @@ export class CodeDirectory extends Blob {
 	 * @inheritDoc
 	 */
 	public write(buffer: BufferView, offset = 0) {
+		const Self = this.constructor as typeof CodeDirectory;
+		const {length, version} = this;
+		const d = subview(DataView, buffer, offset, length);
+		let o = 0;
+		d.setUint32(o, this.magic);
+		o += 4;
+		d.setUint32(o, length);
+		o += 4;
+		d.setUint32(o, version);
+		o += 4;
+		d.setUint32(o, this.flags);
+		o += 4;
+		d.setUint32(o, this.hashOffset);
+		o += 4;
+		d.setUint32(o, this.identOffset);
+		o += 4;
+		d.setUint32(o, this.nSpecialSlots);
+		o += 4;
+		d.setUint32(o, this.nCodeSlots);
+		o += 4;
+		d.setUint32(o, this.codeLimit);
+		o += 4;
+		d.setUint8(o++, this.hashSize);
+		d.setUint8(o++, this.hashType);
+		d.setUint8(o++, this.platform);
+		d.setUint8(o++, this.pageSize);
+		// Reserved: spare2 (must be zero).
+		d.setUint32(o, 0);
+		o += 4;
+		d.setUint32(o, this.scatterOffset);
+		o += 4;
+		if (version >= Self.supportsTeamID) {
+			d.setUint32(o, this.teamIDOffset);
+			o += 4;
+		}
+		if (version >= Self.supportsCodeLimit64) {
+			// Reserved: spare3 (must be zero).
+			d.setUint32(o, 0);
+			o += 4;
+			d.setBigUint64(o, this.codeLimit64);
+			o += 8;
+		}
+		if (version >= Self.supportsExecSegment) {
+			d.setBigUint64(o, this.execSegBase);
+			o += 8;
+			d.setBigUint64(o, this.execSegLimit);
+			o += 8;
+			d.setBigUint64(o, this.execSegFlags);
+			o += 8;
+		}
+		if (version >= Self.supportsPreEncrypt) {
+			d.setUint32(o, this.runtime);
+			o += 4;
+			d.setUint32(o, this.preEncryptOffset);
+			o += 4;
+		}
+		subview(Uint8Array, d, o).fill(0);
 		// TODO
-		return 0;
+		return length;
 	}
 
 	/**
