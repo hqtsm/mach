@@ -202,8 +202,7 @@ export class CodeDirectory extends Blob {
 	/**
 	 * Scatter vector.
 	 */
-	public scatterVector: InstanceType<typeof CodeDirectory.Scatter>[] | null =
-		null;
+	public scatterVector: InstanceType<typeof CodeDirectory.Scatter>[] = [];
 
 	/**
 	 * Offset of scatter vector.
@@ -225,7 +224,7 @@ export class CodeDirectory extends Blob {
 	 */
 	public get scatterSize() {
 		// Additional 1 for sentinel.
-		return this.scatterOffset ? (this.scatterVector!.length + 1) * 24 : 0;
+		return this.scatterOffset ? (this.scatterVector.length + 1) * 24 : 0;
 	}
 
 	/**
