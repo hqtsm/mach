@@ -364,7 +364,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte size.
 	 */
 	public static fixedSize(version: number) {
-		let l = 40;
+		let l = 48;
 		if (version >= this.supportsTeamID) {
 			l += 4;
 		}
