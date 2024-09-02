@@ -144,6 +144,15 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
+	 * Size of special hash slots.
+	 *
+	 * @returns Byte size.
+	 */
+	public get specialSlotsSize() {
+		return this.nSpecialSlots * this.hashSize;
+	}
+
+	/**
 	 * The ordinary (code) hash slots.
 	 */
 	readonly #codeSlots: Readonly<BufferView>[] = [];
@@ -155,6 +164,15 @@ export class CodeDirectory extends Blob {
 	 */
 	public get nCodeSlots() {
 		return this.#codeSlots.length;
+	}
+
+	/**
+	 * Size of ordinary (code) hash slots.
+	 *
+	 * @returns Byte size.
+	 */
+	public get codeSlotsSize() {
+		return this.nCodeSlots * this.hashSize;
 	}
 
 	/**
@@ -319,7 +337,7 @@ export class CodeDirectory extends Blob {
 	 */
 	public get preEncryptSize() {
 		const {preEncryptOffset} = this;
-		return preEncryptOffset ? this.nCodeSlots * this.hashSize : 0;
+		return preEncryptOffset ? this.codeSlotsSize : 0;
 	}
 
 	/**
