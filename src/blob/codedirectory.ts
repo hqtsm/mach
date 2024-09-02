@@ -11,7 +11,7 @@ import {
 	kSecCodeSignatureHashSHA512,
 	kSecCodeSignatureNoHash
 } from '../const.ts';
-import {ranged, sparseSet, stringToBytes, subview} from '../util.ts';
+import {sparseSet, stringToBytes, subview} from '../util.ts';
 
 /**
  * CodeDirectory class.
