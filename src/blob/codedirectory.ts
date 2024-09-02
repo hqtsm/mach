@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 
 import {Blob} from '../blob.ts';
-import {BufferView} from '../type.ts';
+import {BufferView, Length, Write} from '../type.ts';
 import {
 	kSecCodeMagicCodeDirectory,
 	kSecCodeSignatureHashSHA1,
@@ -50,7 +50,14 @@ export class CodeDirectory extends Blob {
 	/**
 	 * Scatter structure.
 	 */
-	public static readonly Scatter = class Scatter {
+	public static readonly Scatter = class Scatter implements Length, Write {
+		/**
+		 * @inheritDoc
+		 */
+		public get length() {
+			return 24;
+		}
+
 		/**
 		 * Number of pages; zero for sentinel (only).
 		 */
@@ -65,6 +72,20 @@ export class CodeDirectory extends Blob {
 		 * Byte offset in target.
 		 */
 		public targetOffset = 0n;
+
+		/**
+		 * @inheritDoc
+		 */
+		public write(buffer: BufferView, offset = 0) {
+			const {length} = this;
+			const d = subview(DataView, buffer, offset, length);
+			d.setUint32(0, this.count);
+			d.setUint32(4, this.base);
+			d.setBigUint64(8, this.targetOffset);
+			// Reserved: spare (must be zero).
+			d.setBigUint64(16, 0n);
+			return length;
+		}
 	};
 
 	/**
@@ -456,17 +477,10 @@ export class CodeDirectory extends Blob {
 		}
 		if ((o = scatterOffset)) {
 			const sentinel = new Self.Scatter();
-			for (const scatter of [...this.scatterVector, sentinel]) {
-				d.setUint32(o, scatter.count);
-				o += 4;
-				d.setUint32(o, scatter.base);
-				o += 4;
-				d.setBigUint64(o, scatter.targetOffset);
-				o += 8;
-				// Reserved: spare (must be zero).
-				d.setBigUint64(o, 0n);
-				o += 8;
+			for (const scatter of this.scatterVector) {
+				o += scatter.write(d, o);
 			}
+			sentinel.write(d, o);
 		}
 		// TODO
 		return length;

@@ -1,25 +1,21 @@
-import {BufferView} from './type.ts';
+import {BufferView, Length, Write} from './type.ts';
 
 /**
  * Blob class.
  */
-export abstract class Blob {
+export abstract class Blob implements Length, Write {
 	/**
 	 * Magic number.
 	 */
 	public abstract get magic(): number;
 
 	/**
-	 * Blob length.
+	 * @inheritDoc
 	 */
 	public abstract get length(): number;
 
 	/**
-	 * Write blob to buffer.
-	 *
-	 * @param buffer Buffer view.
-	 * @param offset Byte offset into buffer.
-	 * @returns Blob length.
+	 * @inheritDoc
 	 */
 	public abstract write(buffer: BufferView, offset?: number): number;
 }

@@ -4,6 +4,24 @@ export interface BufferView {
 	byteOffset: number;
 }
 
+export interface Length {
+	/**
+	 * Byte length.
+	 */
+	get length(): number;
+}
+
+export interface Write {
+	/**
+	 * Write to buffer view.
+	 *
+	 * @param buffer Buffer view.
+	 * @param offset Byte offset into buffer.
+	 * @returns Write length.
+	 */
+	write(buffer: BufferView, offset?: number): number;
+}
+
 export interface FileLikeStat {
 	blocks: number;
 	blksize: number;
