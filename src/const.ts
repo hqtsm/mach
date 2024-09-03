@@ -4,6 +4,14 @@ export const INT_LIMIT = 0x1fffffffffffff;
 // A very large but still compatible upper block size limit.
 export const BLK_LIMIT = 0x100000000;
 
+export const MH_MAGIC = 0xfeedface;
+export const MH_CIGAM = 0xcefaedfe;
+export const MH_MAGIC_64 = 0xfeedfacf;
+export const MH_CIGAM_64 = 0xcffaedfe;
+
+export const FAT_MAGIC = 0xcafebabe;
+export const FAT_CIGAM = 0xbebafeca;
+
 export const kSecCodeMagicRequirement = 0xfade0c00;
 export const kSecCodeMagicRequirementSet = 0xfade0c01;
 export const kSecCodeMagicCodeDirectory = 0xfade0c02;
