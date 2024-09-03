@@ -30,3 +30,15 @@ export const kSecCodeSignatureHashSHA256 = 2;
 export const kSecCodeSignatureHashSHA256Truncated = 3;
 export const kSecCodeSignatureHashSHA384 = 4;
 export const kSecCodeSignatureHashSHA512 = 5;
+
+export const cdInfoSlot = 1;
+export const cdRequirementsSlot = 2;
+export const cdResourceDirSlot = 3;
+export const cdTopDirectorySlot = 4;
+export const cdEntitlementSlot = 5;
+export const cdRepSpecificSlot = 6;
+export const cdEntitlementDERSlot = 7;
+export const cdLaunchConstraintSelf = 8;
+export const cdLaunchConstraintParent = 9;
+export const cdLaunchConstraintResponsible = 10;
+export const cdLibraryConstraint = 11;
