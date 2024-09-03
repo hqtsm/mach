@@ -31,6 +31,17 @@ export const kSecCodeSignatureHashSHA256Truncated = 3;
 export const kSecCodeSignatureHashSHA384 = 4;
 export const kSecCodeSignatureHashSHA512 = 5;
 
+export const kSecCodeSignatureHost = 0x0001;
+export const kSecCodeSignatureAdhoc = 0x0002;
+export const kSecCodeSignatureForceHard = 0x0100;
+export const kSecCodeSignatureForceKill = 0x0200;
+export const kSecCodeSignatureForceExpiration = 0x0400;
+export const kSecCodeSignatureRestrict = 0x0800;
+export const kSecCodeSignatureEnforcement = 0x1000;
+export const kSecCodeSignatureLibraryValidation = 0x2000;
+export const kSecCodeSignatureRuntime = 0x10000;
+export const kSecCodeSignatureLinkerSigned = 0x20000;
+
 export const cdInfoSlot = 1;
 export const cdRequirementsSlot = 2;
 export const cdResourceDirSlot = 3;
