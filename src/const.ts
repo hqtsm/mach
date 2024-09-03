@@ -11,6 +11,8 @@ export const MH_CIGAM_64 = 0xcffaedfe;
 
 export const FAT_MAGIC = 0xcafebabe;
 export const FAT_CIGAM = 0xbebafeca;
+export const FAT_MAGIC_64 = 0xcafebabf;
+export const FAT_CIGAM_64 = 0xbfbafeca;
 
 export const kSecCodeMagicRequirement = 0xfade0c00;
 export const kSecCodeMagicRequirementSet = 0xfade0c01;
