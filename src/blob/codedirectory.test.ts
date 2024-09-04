@@ -42,7 +42,7 @@ void describe('blob/codedirectory', () => {
 		void describe('fixtures', () => {
 			void it('cli arm64 a', async () => {
 				const [main] = await fixtureMacho('cli', 'arm64', ['a/main']);
-				const mainArm64 = machoArch(main, CPU_TYPE_ARM64);
+				const arch = machoArch(main, CPU_TYPE_ARM64);
 
 				const cd = new CodeDirectory();
 				cd.version = CodeDirectory.supportsExecSegment;
@@ -53,19 +53,19 @@ void describe('blob/codedirectory', () => {
 				cd.execSegLimit = 0x4000n;
 				cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
 				cd.identifier = 'main';
-				await addCodeHashes(cd, mainArm64, 'SHA-256');
+				await addCodeHashes(cd, arch, 'SHA-256');
 
 				const data = Buffer.alloc(cd.byteLength);
 				cd.byteWrite(data);
 
-				ok(dataContains(mainArm64, data));
+				ok(dataContains(arch, data));
 			});
 
 			void it('cli x86_64-arm64 a', async () => {
 				const [main] = await fixtureMacho('cli', 'x86_64-arm64', [
 					'a/main'
 				]);
-				const mainArm64 = machoArch(main, CPU_TYPE_ARM64);
+				const arch = machoArch(main, CPU_TYPE_ARM64);
 
 				const cd = new CodeDirectory();
 				cd.version = CodeDirectory.supportsExecSegment;
@@ -76,12 +76,12 @@ void describe('blob/codedirectory', () => {
 				cd.execSegLimit = 0x4000n;
 				cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
 				cd.identifier = 'main-80d268.out';
-				await addCodeHashes(cd, mainArm64, 'SHA-256');
+				await addCodeHashes(cd, arch, 'SHA-256');
 
 				const data = Buffer.alloc(cd.byteLength);
 				cd.byteWrite(data);
 
-				ok(dataContains(mainArm64, data));
+				ok(dataContains(arch, data));
 			});
 		});
 	});
