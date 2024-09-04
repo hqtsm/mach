@@ -385,7 +385,7 @@ export class CodeDirectory extends Blob {
 			a = this.#preEncryptSlots;
 		} else if (slot < 0) {
 			a = this.#specialSlots;
-			slot = 1 - slot;
+			slot = -slot - 1;
 		} else {
 			a = this.#codeSlots;
 		}
@@ -409,7 +409,7 @@ export class CodeDirectory extends Blob {
 			a = this.#preEncryptSlots;
 		} else if (slot < 0) {
 			a = this.#specialSlots;
-			slot = 1 - slot;
+			slot = -slot - 1;
 		} else {
 			a = this.#codeSlots;
 		}
