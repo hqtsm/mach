@@ -1,5 +1,6 @@
 import {open} from 'node:fs/promises';
 import {inflateRaw} from 'node:zlib';
+import {subtle} from 'node:crypto';
 
 import {BufferView} from './type.ts';
 import {
@@ -40,7 +41,7 @@ export async function chunkedHashes(
 		slices.push(d.subarray(i, Math.min(i + chunk, l)));
 	}
 	return (
-		await Promise.all(slices.map(async d => crypto.subtle.digest(algo, d)))
+		await Promise.all(slices.map(async d => subtle.digest(algo, d)))
 	).map(b => new Uint8Array(b));
 }
 
