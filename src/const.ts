@@ -157,6 +157,7 @@ export const FAT_CIGAM = 0xbebafeca;
 export const FAT_MAGIC_64 = 0xcafebabf;
 export const FAT_CIGAM_64 = 0xbfbafeca;
 
+// Blob types used for code signing:
 export const kSecCodeMagicRequirement = 0xfade0c00;
 export const kSecCodeMagicRequirementSet = 0xfade0c01;
 export const kSecCodeMagicCodeDirectory = 0xfade0c02;
@@ -167,6 +168,7 @@ export const kSecCodeMagicEntitlementDER = 0xfade7172;
 export const kSecCodeMagicLaunchConstraint = 0xfade8181;
 export const kSecCodeMagicByte = 0xfa;
 
+// SecCodeExecSegFlags:
 export const kSecCodeExecSegMainBinary = 0x0001;
 export const kSecCodeExecSegAllowUnsigned = 0x0010;
 export const kSecCodeExecSegDebugger = 0x0020;
@@ -175,8 +177,10 @@ export const kSecCodeExecSegSkipLibraryVal = 0x0080;
 export const kSecCodeExecSegCanLoadCdHash = 0x0100;
 export const kSecCodeExecSegCanExecCdHash = 0x0200;
 
+// Current (fixed) cdhash size:
 export const kSecCodeCDHashLength = 20;
 
+// SecCSDigestAlgorithm:
 export const kSecCodeSignatureNoHash = 0;
 export const kSecCodeSignatureHashSHA1 = 1;
 export const kSecCodeSignatureHashSHA256 = 2;
@@ -184,6 +188,7 @@ export const kSecCodeSignatureHashSHA256Truncated = 3;
 export const kSecCodeSignatureHashSHA384 = 4;
 export const kSecCodeSignatureHashSHA512 = 5;
 
+// SecCodeSignatureFlags:
 export const kSecCodeSignatureHost = 0x0001;
 export const kSecCodeSignatureAdhoc = 0x0002;
 export const kSecCodeSignatureForceHard = 0x0100;
@@ -195,6 +200,7 @@ export const kSecCodeSignatureLibraryValidation = 0x2000;
 export const kSecCodeSignatureRuntime = 0x10000;
 export const kSecCodeSignatureLinkerSigned = 0x20000;
 
+// Special hash slot values:
 export const cdInfoSlot = 1;
 export const cdRequirementsSlot = 2;
 export const cdResourceDirSlot = 3;

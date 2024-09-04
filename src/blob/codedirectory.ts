@@ -110,7 +110,7 @@ export class CodeDirectory extends Blob {
 	public version = 0;
 
 	/**
-	 * Setup and mode flags.
+	 * Setup and mode flags (SecCodeSignatureFlags kSecCodeSignature*).
 	 */
 	public flags = 0;
 
