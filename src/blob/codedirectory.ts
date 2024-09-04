@@ -328,7 +328,7 @@ export class CodeDirectory extends Blob {
 	public execSegLimit = 0n;
 
 	/**
-	 * The exec segment flags (kSecCodeExecSeg* constants).
+	 * The exec segment flags (SecCodeExecSegFlags kSecCodeExecSeg*).
 	 */
 	public execSegFlags = 0n;
 
