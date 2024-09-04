@@ -14,6 +14,17 @@ import {
 } from './const.ts';
 import {subview} from './util.ts';
 
+export function dataContains(
+	data: Readonly<Uint8Array>,
+	search: Readonly<Uint8Array>,
+	reverse = false
+) {
+	const i = reverse
+		? Buffer.from(data).lastIndexOf(Buffer.from(search))
+		: Buffer.from(data).indexOf(Buffer.from(search));
+	return i >= 0;
+}
+
 export async function chunkedHashes(
 	algo: string,
 	data: Readonly<BufferView>,
