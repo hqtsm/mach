@@ -58,7 +58,7 @@ void describe('blob/codedirectory', () => {
 
 				const data = new Uint8Array(cd.byteLength);
 				cd.byteWrite(data);
-				ok(dataContains(arch, data));
+				ok(dataContains(arch, data, true));
 			});
 
 			void it('cli x86_64-arm64 a', async () => {
@@ -81,7 +81,7 @@ void describe('blob/codedirectory', () => {
 
 				const data = new Uint8Array(cd.byteLength);
 				cd.byteWrite(data);
-				ok(dataContains(arch, data));
+				ok(dataContains(arch, data, true));
 			});
 
 			void it('dll arm64 a', async () => {
@@ -107,7 +107,7 @@ void describe('blob/codedirectory', () => {
 					const data = Buffer.alloc(cd.byteLength);
 					cd.byteWrite(data);
 
-					ok(dataContains(arch, data));
+					ok(dataContains(arch, data, true));
 				}
 
 				{
@@ -125,7 +125,7 @@ void describe('blob/codedirectory', () => {
 
 					const data = Buffer.alloc(cd.byteLength);
 					cd.byteWrite(data);
-					ok(dataContains(arch, data));
+					ok(dataContains(arch, data, true));
 				}
 			});
 
@@ -153,7 +153,7 @@ void describe('blob/codedirectory', () => {
 					const data = Buffer.alloc(cd.byteLength);
 					cd.byteWrite(data);
 
-					ok(dataContains(arch, data));
+					ok(dataContains(arch, data, true));
 				}
 
 				{
@@ -171,7 +171,7 @@ void describe('blob/codedirectory', () => {
 
 					const data = Buffer.alloc(cd.byteLength);
 					cd.byteWrite(data);
-					ok(dataContains(arch, data));
+					ok(dataContains(arch, data, true));
 				}
 			});
 		});
