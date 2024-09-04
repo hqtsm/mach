@@ -55,44 +55,55 @@ void describe('blob/codedirectory', () => {
 			void it('cli arm64 a', async () => {
 				const [main] = await fixtureMacho('cli', 'arm64', ['a/main']);
 
-				const arch = machoArch(main, CPU_TYPE_ARM64);
+				for (const cputype of [CPU_TYPE_ARM64]) {
+					const arch = machoArch(main, cputype);
 
-				const cd = new CodeDirectory();
-				cd.version = CodeDirectory.supportsExecSegment;
-				cd.flags = flagsLinker;
-				cd.codeLimit = 0xc140;
-				cd.hashType = kSecCodeSignatureHashSHA256;
-				cd.pageSize = 0xc;
-				cd.execSegLimit = 0x4000n;
-				cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
-				cd.identifier = 'main';
-				await addCodeHashes(cd, arch, 'SHA-256');
+					const cd = new CodeDirectory();
+					cd.version = CodeDirectory.supportsExecSegment;
+					cd.flags = flagsLinker;
+					cd.codeLimit = 0xc140;
+					cd.hashType = kSecCodeSignatureHashSHA256;
+					cd.pageSize = 0xc;
+					cd.execSegLimit = 0x4000n;
+					cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
+					cd.identifier = 'main';
+					// eslint-disable-next-line no-await-in-loop
+					await addCodeHashes(cd, arch, 'SHA-256');
 
-				const data = new Uint8Array(cd.byteLength);
-				cd.byteWrite(data);
-				ok(dataContains(arch, data, true));
+					const data = new Uint8Array(cd.byteLength);
+					cd.byteWrite(data);
+					ok(dataContains(arch, data, true), `CD: ${cputype}`);
+				}
 			});
 
 			void it('cli arm64 us', async () => {
 				const [main] = await fixtureMacho('cli', 'arm64', ['us/main']);
 
-				const arch = machoArch(main, CPU_TYPE_ARM64);
+				for (const cputype of [CPU_TYPE_ARM64]) {
+					const arch = machoArch(main, cputype);
 
-				const cd = new CodeDirectory();
-				cd.version = CodeDirectory.supportsExecSegment;
-				cd.flags = kSecCodeSignatureAdhoc;
-				cd.codeLimit = 0xc140;
-				cd.hashType = kSecCodeSignatureHashSHA256;
-				cd.pageSize = 0xc;
-				cd.execSegLimit = 0x4000n;
-				cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
-				cd.identifier = 'main-55554944e804d5060a0e3eeb86e3a4c04e71e5d0';
-				cd.setSlot(-cdRequirementsSlot, false, emptyRequirementsSha256);
-				await addCodeHashes(cd, arch, 'SHA-256');
+					const cd = new CodeDirectory();
+					cd.version = CodeDirectory.supportsExecSegment;
+					cd.flags = kSecCodeSignatureAdhoc;
+					cd.codeLimit = 0xc140;
+					cd.hashType = kSecCodeSignatureHashSHA256;
+					cd.pageSize = 0xc;
+					cd.execSegLimit = 0x4000n;
+					cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
+					cd.identifier =
+						'main-55554944e804d5060a0e3eeb86e3a4c04e71e5d0';
+					cd.setSlot(
+						-cdRequirementsSlot,
+						false,
+						emptyRequirementsSha256
+					);
+					// eslint-disable-next-line no-await-in-loop
+					await addCodeHashes(cd, arch, 'SHA-256');
 
-				const data = new Uint8Array(cd.byteLength);
-				cd.byteWrite(data);
-				ok(dataContains(arch, data, true));
+					const data = new Uint8Array(cd.byteLength);
+					cd.byteWrite(data);
+					ok(dataContains(arch, data, true), `CD: ${cputype}`);
+				}
 			});
 
 			void it('cli x86_64-arm64 a', async () => {
@@ -100,22 +111,25 @@ void describe('blob/codedirectory', () => {
 					'a/main'
 				]);
 
-				const arch = machoArch(main, CPU_TYPE_ARM64);
+				for (const cputype of [CPU_TYPE_ARM64]) {
+					const arch = machoArch(main, cputype);
 
-				const cd = new CodeDirectory();
-				cd.version = CodeDirectory.supportsExecSegment;
-				cd.flags = flagsLinker;
-				cd.codeLimit = 0xc140;
-				cd.hashType = kSecCodeSignatureHashSHA256;
-				cd.pageSize = 0xc;
-				cd.execSegLimit = 0x4000n;
-				cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
-				cd.identifier = 'main-80d268.out';
-				await addCodeHashes(cd, arch, 'SHA-256');
+					const cd = new CodeDirectory();
+					cd.version = CodeDirectory.supportsExecSegment;
+					cd.flags = flagsLinker;
+					cd.codeLimit = 0xc140;
+					cd.hashType = kSecCodeSignatureHashSHA256;
+					cd.pageSize = 0xc;
+					cd.execSegLimit = 0x4000n;
+					cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
+					cd.identifier = 'main-80d268.out';
+					// eslint-disable-next-line no-await-in-loop
+					await addCodeHashes(cd, arch, 'SHA-256');
 
-				const data = new Uint8Array(cd.byteLength);
-				cd.byteWrite(data);
-				ok(dataContains(arch, data, true));
+					const data = new Uint8Array(cd.byteLength);
+					cd.byteWrite(data);
+					ok(dataContains(arch, data, true), `CD: ${cputype}`);
+				}
 			});
 
 			void it('cli x86_64-arm64 us', async () => {
@@ -123,8 +137,8 @@ void describe('blob/codedirectory', () => {
 					'us/main'
 				]);
 
-				{
-					const arch = machoArch(main, CPU_TYPE_X86_64);
+				for (const cputype of [CPU_TYPE_X86_64, CPU_TYPE_ARM64]) {
+					const arch = machoArch(main, cputype);
 
 					const cd = new CodeDirectory();
 					cd.version = CodeDirectory.supportsExecSegment;
@@ -141,36 +155,12 @@ void describe('blob/codedirectory', () => {
 						false,
 						emptyRequirementsSha256
 					);
+					// eslint-disable-next-line no-await-in-loop
 					await addCodeHashes(cd, arch, 'SHA-256');
 
 					const data = new Uint8Array(cd.byteLength);
 					cd.byteWrite(data);
-					ok(dataContains(arch, data, true));
-				}
-
-				{
-					const arch = machoArch(main, CPU_TYPE_ARM64);
-
-					const cd = new CodeDirectory();
-					cd.version = CodeDirectory.supportsExecSegment;
-					cd.flags = kSecCodeSignatureAdhoc;
-					cd.codeLimit = 0xc140;
-					cd.hashType = kSecCodeSignatureHashSHA256;
-					cd.pageSize = 0xc;
-					cd.execSegLimit = 0x4000n;
-					cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
-					cd.identifier =
-						'main-55554944886472fa430a3a73b2ae1ee2ece2c09f';
-					cd.setSlot(
-						-cdRequirementsSlot,
-						false,
-						emptyRequirementsSha256
-					);
-					await addCodeHashes(cd, arch, 'SHA-256');
-
-					const data = new Uint8Array(cd.byteLength);
-					cd.byteWrite(data);
-					ok(dataContains(arch, data, true));
+					ok(dataContains(arch, data, true), `CD: ${cputype}`);
 				}
 			});
 
@@ -180,42 +170,46 @@ void describe('blob/codedirectory', () => {
 					'a/sample.dylib'
 				]);
 
-				{
-					const arch = machoArch(main, CPU_TYPE_ARM64);
+				for (const cputype of [CPU_TYPE_ARM64]) {
+					{
+						const arch = machoArch(main, cputype);
 
-					const cd = new CodeDirectory();
-					cd.version = CodeDirectory.supportsExecSegment;
-					cd.flags = flagsLinker;
-					cd.codeLimit = 0xc170;
-					cd.hashType = kSecCodeSignatureHashSHA256;
-					cd.pageSize = 0xc;
-					cd.execSegLimit = 0x4000n;
-					cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
-					cd.identifier = 'main';
-					await addCodeHashes(cd, arch, 'SHA-256');
+						const cd = new CodeDirectory();
+						cd.version = CodeDirectory.supportsExecSegment;
+						cd.flags = flagsLinker;
+						cd.codeLimit = 0xc170;
+						cd.hashType = kSecCodeSignatureHashSHA256;
+						cd.pageSize = 0xc;
+						cd.execSegLimit = 0x4000n;
+						cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
+						cd.identifier = 'main';
+						// eslint-disable-next-line no-await-in-loop
+						await addCodeHashes(cd, arch, 'SHA-256');
 
-					const data = Buffer.alloc(cd.byteLength);
-					cd.byteWrite(data);
+						const data = Buffer.alloc(cd.byteLength);
+						cd.byteWrite(data);
 
-					ok(dataContains(arch, data, true));
-				}
+						ok(dataContains(arch, data, true), `CD: ${cputype}`);
+					}
 
-				{
-					const arch = machoArch(sample, CPU_TYPE_ARM64);
+					{
+						const arch = machoArch(sample, cputype);
 
-					const cd = new CodeDirectory();
-					cd.version = CodeDirectory.supportsExecSegment;
-					cd.flags = flagsLinker;
-					cd.codeLimit = 0x4070;
-					cd.hashType = kSecCodeSignatureHashSHA256;
-					cd.pageSize = 0xc;
-					cd.execSegLimit = 0x4000n;
-					cd.identifier = 'sample.dylib';
-					await addCodeHashes(cd, arch, 'SHA-256');
+						const cd = new CodeDirectory();
+						cd.version = CodeDirectory.supportsExecSegment;
+						cd.flags = flagsLinker;
+						cd.codeLimit = 0x4070;
+						cd.hashType = kSecCodeSignatureHashSHA256;
+						cd.pageSize = 0xc;
+						cd.execSegLimit = 0x4000n;
+						cd.identifier = 'sample.dylib';
+						// eslint-disable-next-line no-await-in-loop
+						await addCodeHashes(cd, arch, 'SHA-256');
 
-					const data = Buffer.alloc(cd.byteLength);
-					cd.byteWrite(data);
-					ok(dataContains(arch, data, true));
+						const data = Buffer.alloc(cd.byteLength);
+						cd.byteWrite(data);
+						ok(dataContains(arch, data, true), `CD: ${cputype}`);
+					}
 				}
 			});
 
@@ -225,54 +219,58 @@ void describe('blob/codedirectory', () => {
 					'us/sample.dylib'
 				]);
 
-				{
-					const arch = machoArch(main, CPU_TYPE_ARM64);
+				for (const cputype of [CPU_TYPE_ARM64]) {
+					{
+						const arch = machoArch(main, cputype);
 
-					const cd = new CodeDirectory();
-					cd.version = CodeDirectory.supportsExecSegment;
-					cd.flags = kSecCodeSignatureAdhoc;
-					cd.codeLimit = 0xc170;
-					cd.hashType = kSecCodeSignatureHashSHA256;
-					cd.pageSize = 0xc;
-					cd.execSegLimit = 0x4000n;
-					cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
-					cd.identifier =
-						'main-55554944613d9525ada83f888441f9d35582a4e5';
-					cd.setSlot(
-						-cdRequirementsSlot,
-						false,
-						emptyRequirementsSha256
-					);
-					await addCodeHashes(cd, arch, 'SHA-256');
+						const cd = new CodeDirectory();
+						cd.version = CodeDirectory.supportsExecSegment;
+						cd.flags = kSecCodeSignatureAdhoc;
+						cd.codeLimit = 0xc170;
+						cd.hashType = kSecCodeSignatureHashSHA256;
+						cd.pageSize = 0xc;
+						cd.execSegLimit = 0x4000n;
+						cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
+						cd.identifier =
+							'main-55554944613d9525ada83f888441f9d35582a4e5';
+						cd.setSlot(
+							-cdRequirementsSlot,
+							false,
+							emptyRequirementsSha256
+						);
+						// eslint-disable-next-line no-await-in-loop
+						await addCodeHashes(cd, arch, 'SHA-256');
 
-					const data = Buffer.alloc(cd.byteLength);
-					cd.byteWrite(data);
+						const data = Buffer.alloc(cd.byteLength);
+						cd.byteWrite(data);
 
-					ok(dataContains(arch, data, true));
-				}
+						ok(dataContains(arch, data, true), `CD: ${cputype}`);
+					}
 
-				{
-					const arch = machoArch(sample, CPU_TYPE_ARM64);
+					{
+						const arch = machoArch(sample, cputype);
 
-					const cd = new CodeDirectory();
-					cd.version = CodeDirectory.supportsExecSegment;
-					cd.flags = kSecCodeSignatureAdhoc;
-					cd.codeLimit = 0x4070;
-					cd.hashType = kSecCodeSignatureHashSHA256;
-					cd.pageSize = 0xc;
-					cd.execSegLimit = 0x4000n;
-					cd.identifier =
-						'sample-55554944d6b41636296c33ffae676ce19c551fc0';
-					cd.setSlot(
-						-cdRequirementsSlot,
-						false,
-						emptyRequirementsSha256
-					);
-					await addCodeHashes(cd, arch, 'SHA-256');
+						const cd = new CodeDirectory();
+						cd.version = CodeDirectory.supportsExecSegment;
+						cd.flags = kSecCodeSignatureAdhoc;
+						cd.codeLimit = 0x4070;
+						cd.hashType = kSecCodeSignatureHashSHA256;
+						cd.pageSize = 0xc;
+						cd.execSegLimit = 0x4000n;
+						cd.identifier =
+							'sample-55554944d6b41636296c33ffae676ce19c551fc0';
+						cd.setSlot(
+							-cdRequirementsSlot,
+							false,
+							emptyRequirementsSha256
+						);
+						// eslint-disable-next-line no-await-in-loop
+						await addCodeHashes(cd, arch, 'SHA-256');
 
-					const data = Buffer.alloc(cd.byteLength);
-					cd.byteWrite(data);
-					ok(dataContains(arch, data, true));
+						const data = Buffer.alloc(cd.byteLength);
+						cd.byteWrite(data);
+						ok(dataContains(arch, data, true), `CD: ${cputype}`);
+					}
 				}
 			});
 
@@ -283,42 +281,46 @@ void describe('blob/codedirectory', () => {
 					['a/main', 'a/sample.dylib']
 				);
 
-				{
-					const arch = machoArch(main, CPU_TYPE_ARM64);
+				for (const cputype of [CPU_TYPE_ARM64]) {
+					{
+						const arch = machoArch(main, cputype);
 
-					const cd = new CodeDirectory();
-					cd.version = CodeDirectory.supportsExecSegment;
-					cd.flags = flagsLinker;
-					cd.codeLimit = 0xc170;
-					cd.hashType = kSecCodeSignatureHashSHA256;
-					cd.pageSize = 0xc;
-					cd.execSegLimit = 0x4000n;
-					cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
-					cd.identifier = 'main-100ddc.out';
-					await addCodeHashes(cd, arch, 'SHA-256');
+						const cd = new CodeDirectory();
+						cd.version = CodeDirectory.supportsExecSegment;
+						cd.flags = flagsLinker;
+						cd.codeLimit = 0xc170;
+						cd.hashType = kSecCodeSignatureHashSHA256;
+						cd.pageSize = 0xc;
+						cd.execSegLimit = 0x4000n;
+						cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
+						cd.identifier = 'main-100ddc.out';
+						// eslint-disable-next-line no-await-in-loop
+						await addCodeHashes(cd, arch, 'SHA-256');
 
-					const data = Buffer.alloc(cd.byteLength);
-					cd.byteWrite(data);
+						const data = Buffer.alloc(cd.byteLength);
+						cd.byteWrite(data);
 
-					ok(dataContains(arch, data, true));
-				}
+						ok(dataContains(arch, data, true), `CD: ${cputype}`);
+					}
 
-				{
-					const arch = machoArch(sample, CPU_TYPE_ARM64);
+					{
+						const arch = machoArch(sample, cputype);
 
-					const cd = new CodeDirectory();
-					cd.version = CodeDirectory.supportsExecSegment;
-					cd.flags = flagsLinker;
-					cd.codeLimit = 0x4070;
-					cd.hashType = kSecCodeSignatureHashSHA256;
-					cd.pageSize = 0xc;
-					cd.execSegLimit = 0x4000n;
-					cd.identifier = 'sample-c9498b.out';
-					await addCodeHashes(cd, arch, 'SHA-256');
+						const cd = new CodeDirectory();
+						cd.version = CodeDirectory.supportsExecSegment;
+						cd.flags = flagsLinker;
+						cd.codeLimit = 0x4070;
+						cd.hashType = kSecCodeSignatureHashSHA256;
+						cd.pageSize = 0xc;
+						cd.execSegLimit = 0x4000n;
+						cd.identifier = 'sample-c9498b.out';
+						// eslint-disable-next-line no-await-in-loop
+						await addCodeHashes(cd, arch, 'SHA-256');
 
-					const data = Buffer.alloc(cd.byteLength);
-					cd.byteWrite(data);
-					ok(dataContains(arch, data, true));
+						const data = Buffer.alloc(cd.byteLength);
+						cd.byteWrite(data);
+						ok(dataContains(arch, data, true), `CD: ${cputype}`);
+					}
 				}
 			});
 
@@ -329,104 +331,58 @@ void describe('blob/codedirectory', () => {
 					['us/main', 'us/sample.dylib']
 				);
 
-				{
-					const arch = machoArch(main, CPU_TYPE_X86_64);
+				for (const cputype of [CPU_TYPE_X86_64, CPU_TYPE_ARM64]) {
+					{
+						const arch = machoArch(main, cputype);
 
-					const cd = new CodeDirectory();
-					cd.version = CodeDirectory.supportsExecSegment;
-					cd.flags = kSecCodeSignatureAdhoc;
-					cd.codeLimit = 0xc170;
-					cd.hashType = kSecCodeSignatureHashSHA256;
-					cd.pageSize = 0xc;
-					cd.execSegLimit = 0x4000n;
-					cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
-					cd.identifier =
-						'main-55554944cc85da74bbfc35efb8119422ef7133fe';
-					cd.setSlot(
-						-cdRequirementsSlot,
-						false,
-						emptyRequirementsSha256
-					);
-					await addCodeHashes(cd, arch, 'SHA-256');
+						const cd = new CodeDirectory();
+						cd.version = CodeDirectory.supportsExecSegment;
+						cd.flags = kSecCodeSignatureAdhoc;
+						cd.codeLimit = 0xc170;
+						cd.hashType = kSecCodeSignatureHashSHA256;
+						cd.pageSize = 0xc;
+						cd.execSegLimit = 0x4000n;
+						cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
+						cd.identifier =
+							'main-55554944cc85da74bbfc35efb8119422ef7133fe';
+						cd.setSlot(
+							-cdRequirementsSlot,
+							false,
+							emptyRequirementsSha256
+						);
+						// eslint-disable-next-line no-await-in-loop
+						await addCodeHashes(cd, arch, 'SHA-256');
 
-					const data = Buffer.alloc(cd.byteLength);
-					cd.byteWrite(data);
+						const data = Buffer.alloc(cd.byteLength);
+						cd.byteWrite(data);
 
-					ok(dataContains(arch, data, true));
-				}
+						ok(dataContains(arch, data, true), `CD: ${cputype}`);
+					}
 
-				{
-					const arch = machoArch(main, CPU_TYPE_ARM64);
+					{
+						const arch = machoArch(sample, cputype);
 
-					const cd = new CodeDirectory();
-					cd.version = CodeDirectory.supportsExecSegment;
-					cd.flags = kSecCodeSignatureAdhoc;
-					cd.codeLimit = 0xc170;
-					cd.hashType = kSecCodeSignatureHashSHA256;
-					cd.pageSize = 0xc;
-					cd.execSegLimit = 0x4000n;
-					cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
-					cd.identifier =
-						'main-55554944cc85da74bbfc35efb8119422ef7133fe';
-					cd.setSlot(
-						-cdRequirementsSlot,
-						false,
-						emptyRequirementsSha256
-					);
-					await addCodeHashes(cd, arch, 'SHA-256');
+						const cd = new CodeDirectory();
+						cd.version = CodeDirectory.supportsExecSegment;
+						cd.flags = kSecCodeSignatureAdhoc;
+						cd.codeLimit = 0x4070;
+						cd.hashType = kSecCodeSignatureHashSHA256;
+						cd.pageSize = 0xc;
+						cd.execSegLimit = 0x4000n;
+						cd.identifier =
+							'sample-5555494413b411fac8ad3aa7997063d599538081';
+						cd.setSlot(
+							-cdRequirementsSlot,
+							false,
+							emptyRequirementsSha256
+						);
+						// eslint-disable-next-line no-await-in-loop
+						await addCodeHashes(cd, arch, 'SHA-256');
 
-					const data = Buffer.alloc(cd.byteLength);
-					cd.byteWrite(data);
-
-					ok(dataContains(arch, data, true));
-				}
-
-				{
-					const arch = machoArch(sample, CPU_TYPE_X86_64);
-
-					const cd = new CodeDirectory();
-					cd.version = CodeDirectory.supportsExecSegment;
-					cd.flags = kSecCodeSignatureAdhoc;
-					cd.codeLimit = 0x4070;
-					cd.hashType = kSecCodeSignatureHashSHA256;
-					cd.pageSize = 0xc;
-					cd.execSegLimit = 0x4000n;
-					cd.identifier =
-						'sample-5555494413b411fac8ad3aa7997063d599538081';
-					cd.setSlot(
-						-cdRequirementsSlot,
-						false,
-						emptyRequirementsSha256
-					);
-					await addCodeHashes(cd, arch, 'SHA-256');
-
-					const data = Buffer.alloc(cd.byteLength);
-					cd.byteWrite(data);
-					ok(dataContains(arch, data, true));
-				}
-
-				{
-					const arch = machoArch(sample, CPU_TYPE_ARM64);
-
-					const cd = new CodeDirectory();
-					cd.version = CodeDirectory.supportsExecSegment;
-					cd.flags = kSecCodeSignatureAdhoc;
-					cd.codeLimit = 0x4070;
-					cd.hashType = kSecCodeSignatureHashSHA256;
-					cd.pageSize = 0xc;
-					cd.execSegLimit = 0x4000n;
-					cd.identifier =
-						'sample-5555494413b411fac8ad3aa7997063d599538081';
-					cd.setSlot(
-						-cdRequirementsSlot,
-						false,
-						emptyRequirementsSha256
-					);
-					await addCodeHashes(cd, arch, 'SHA-256');
-
-					const data = Buffer.alloc(cd.byteLength);
-					cd.byteWrite(data);
-					ok(dataContains(arch, data, true));
+						const data = Buffer.alloc(cd.byteLength);
+						cd.byteWrite(data);
+						ok(dataContains(arch, data, true), `CD: ${cputype}`);
+					}
 				}
 			});
 		});
