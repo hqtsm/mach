@@ -14,6 +14,25 @@ import {
 } from './const.ts';
 import {subview} from './util.ts';
 
+export async function chunkedHashes(
+	algo: string,
+	data: Readonly<BufferView>,
+	chunk: number,
+	offset = 0,
+	length = -1
+) {
+	const d = subview(Uint8Array, data, offset, length);
+	const l = d.length;
+	chunk = chunk || l;
+	const slices: Uint8Array[] = [];
+	for (let i = 0; i < l; i += chunk) {
+		slices.push(d.subarray(i, Math.min(i + chunk, l)));
+	}
+	return (
+		await Promise.all(slices.map(async d => crypto.subtle.digest(algo, d)))
+	).map(b => new Uint8Array(b));
+}
+
 async function zlibInflateRaw(data: Buffer) {
 	return new Promise<Buffer>((resolve, reject) => {
 		inflateRaw(data, (err, data) => {
