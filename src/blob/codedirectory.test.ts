@@ -42,6 +42,7 @@ void describe('blob/codedirectory', () => {
 		void describe('fixtures', () => {
 			void it('cli arm64 a', async () => {
 				const [main] = await fixtureMacho('cli', 'arm64', ['a/main']);
+
 				const arch = machoArch(main, CPU_TYPE_ARM64);
 
 				const cd = new CodeDirectory();
@@ -57,7 +58,6 @@ void describe('blob/codedirectory', () => {
 
 				const data = new Uint8Array(cd.byteLength);
 				cd.byteWrite(data);
-
 				ok(dataContains(arch, data));
 			});
 
@@ -65,6 +65,7 @@ void describe('blob/codedirectory', () => {
 				const [main] = await fixtureMacho('cli', 'x86_64-arm64', [
 					'a/main'
 				]);
+
 				const arch = machoArch(main, CPU_TYPE_ARM64);
 
 				const cd = new CodeDirectory();
@@ -80,8 +81,98 @@ void describe('blob/codedirectory', () => {
 
 				const data = new Uint8Array(cd.byteLength);
 				cd.byteWrite(data);
-
 				ok(dataContains(arch, data));
+			});
+
+			void it('dll arm64 a', async () => {
+				const [main, sample] = await fixtureMacho('dll', 'arm64', [
+					'a/main',
+					'a/sample.dylib'
+				]);
+
+				{
+					const arch = machoArch(main, CPU_TYPE_ARM64);
+
+					const cd = new CodeDirectory();
+					cd.version = CodeDirectory.supportsExecSegment;
+					cd.flags = flagsLinker;
+					cd.codeLimit = 0xc170;
+					cd.hashType = kSecCodeSignatureHashSHA256;
+					cd.pageSize = 0xc;
+					cd.execSegLimit = 0x4000n;
+					cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
+					cd.identifier = 'main';
+					await addCodeHashes(cd, arch, 'SHA-256');
+
+					const data = Buffer.alloc(cd.byteLength);
+					cd.byteWrite(data);
+
+					ok(dataContains(arch, data));
+				}
+
+				{
+					const arch = machoArch(sample, CPU_TYPE_ARM64);
+
+					const cd = new CodeDirectory();
+					cd.version = CodeDirectory.supportsExecSegment;
+					cd.flags = flagsLinker;
+					cd.codeLimit = 0x4070;
+					cd.hashType = kSecCodeSignatureHashSHA256;
+					cd.pageSize = 0xc;
+					cd.execSegLimit = 0x4000n;
+					cd.identifier = 'sample.dylib';
+					await addCodeHashes(cd, arch, 'SHA-256');
+
+					const data = Buffer.alloc(cd.byteLength);
+					cd.byteWrite(data);
+					ok(dataContains(arch, data));
+				}
+			});
+
+			void it('dll x86_64-arm64 a', async () => {
+				const [main, sample] = await fixtureMacho(
+					'dll',
+					'x86_64-arm64',
+					['a/main', 'a/sample.dylib']
+				);
+
+				{
+					const arch = machoArch(main, CPU_TYPE_ARM64);
+
+					const cd = new CodeDirectory();
+					cd.version = CodeDirectory.supportsExecSegment;
+					cd.flags = flagsLinker;
+					cd.codeLimit = 0xc170;
+					cd.hashType = kSecCodeSignatureHashSHA256;
+					cd.pageSize = 0xc;
+					cd.execSegLimit = 0x4000n;
+					cd.execSegFlags = BigInt(kSecCodeExecSegMainBinary);
+					cd.identifier = 'main-100ddc.out';
+					await addCodeHashes(cd, arch, 'SHA-256');
+
+					const data = Buffer.alloc(cd.byteLength);
+					cd.byteWrite(data);
+
+					ok(dataContains(arch, data));
+				}
+
+				{
+					const arch = machoArch(sample, CPU_TYPE_ARM64);
+
+					const cd = new CodeDirectory();
+					cd.version = CodeDirectory.supportsExecSegment;
+					cd.flags = flagsLinker;
+					cd.codeLimit = 0x4070;
+					cd.hashType = kSecCodeSignatureHashSHA256;
+					cd.pageSize = 0xc;
+					cd.execSegLimit = 0x4000n;
+					cd.identifier = 'sample-c9498b.out';
+					await addCodeHashes(cd, arch, 'SHA-256');
+
+					const data = Buffer.alloc(cd.byteLength);
+					cd.byteWrite(data);
+					ok(dataContains(arch, data));
+				}
 			});
 		});
 	});
