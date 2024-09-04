@@ -55,7 +55,7 @@ void describe('blob/codedirectory', () => {
 				cd.identifier = 'main';
 				await addCodeHashes(cd, arch, 'SHA-256');
 
-				const data = Buffer.alloc(cd.byteLength);
+				const data = new Uint8Array(cd.byteLength);
 				cd.byteWrite(data);
 
 				ok(dataContains(arch, data));
@@ -78,7 +78,7 @@ void describe('blob/codedirectory', () => {
 				cd.identifier = 'main-80d268.out';
 				await addCodeHashes(cd, arch, 'SHA-256');
 
-				const data = Buffer.alloc(cd.byteLength);
+				const data = new Uint8Array(cd.byteLength);
 				cd.byteWrite(data);
 
 				ok(dataContains(arch, data));
