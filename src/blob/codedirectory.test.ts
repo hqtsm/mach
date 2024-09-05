@@ -1,5 +1,5 @@
 import {describe, it} from 'node:test';
-import {ok} from 'node:assert';
+import {notStrictEqual} from 'node:assert';
 
 import {
 	fixtureMacho,
@@ -126,12 +126,12 @@ void describe('blob/codedirectory', () => {
 
 						const data = new Uint8Array(cd.byteLength);
 						cd.byteWrite(data);
-						ok(
-							// eslint-disable-next-line unicorn/prefer-includes
+						notStrictEqual(
 							Buffer.from(thin).indexOf(
 								Buffer.from(data),
 								info.offset
-							) >= 0,
+							),
+							-1,
 							`CD: ${arc}: hashType=${hashType}`
 						);
 					}
