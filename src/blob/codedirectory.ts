@@ -145,11 +145,11 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset.
 	 */
 	public get identOffset() {
-		const Self = this.constructor as typeof CodeDirectory;
+		const Static = this.constructor as typeof CodeDirectory;
 		const {scatterOffset} = this;
 		return scatterOffset
 			? scatterOffset + this.scatterSize
-			: Self.fixedSize(this.version);
+			: Static.fixedSize(this.version);
 	}
 
 	/**
@@ -268,10 +268,10 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset, or 0 for none.
 	 */
 	public get scatterOffset() {
-		const Self = this.constructor as typeof CodeDirectory;
+		const Static = this.constructor as typeof CodeDirectory;
 		const {version} = this;
-		return version >= Self.supportsScatter && this.scatterVector.length
-			? Self.fixedSize(version)
+		return version >= Static.supportsScatter && this.scatterVector.length
+			? Static.fixedSize(version)
 			: 0;
 	}
 
@@ -296,9 +296,9 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset, or 0 for none.
 	 */
 	public get teamIDOffset() {
-		const Self = this.constructor as typeof CodeDirectory;
+		const Static = this.constructor as typeof CodeDirectory;
 		const {version} = this;
-		return version >= Self.supportsTeamID && this.teamID
+		return version >= Static.supportsTeamID && this.teamID
 			? this.identOffset + this.identSize
 			: 0;
 	}
@@ -348,10 +348,10 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset, or 0 for none.
 	 */
 	public get preEncryptOffset() {
-		const Self = this.constructor as typeof CodeDirectory;
+		const Static = this.constructor as typeof CodeDirectory;
 		const {version} = this;
 		if (
-			version >= Self.supportsPreEncrypt &&
+			version >= Static.supportsPreEncrypt &&
 			this.#preEncryptSlots.length
 		) {
 			const {teamIDOffset} = this;
@@ -421,7 +421,7 @@ export class CodeDirectory extends Blob {
 	 * @inheritdoc
 	 */
 	public byteWrite(buffer: BufferView, offset = 0) {
-		const Self = this.constructor as typeof CodeDirectory;
+		const Static = this.constructor as typeof CodeDirectory;
 		const {
 			length,
 			version,
@@ -464,12 +464,12 @@ export class CodeDirectory extends Blob {
 		d.setUint32(o, scatterOffset);
 		o += 4;
 
-		if (version >= Self.supportsTeamID) {
+		if (version >= Static.supportsTeamID) {
 			d.setUint32(o, teamIDOffset);
 			o += 4;
 		}
 
-		if (version >= Self.supportsCodeLimit64) {
+		if (version >= Static.supportsCodeLimit64) {
 			// Reserved: spare3 (must be zero).
 			d.setUint32(o, 0);
 			o += 4;
@@ -477,7 +477,7 @@ export class CodeDirectory extends Blob {
 			o += 8;
 		}
 
-		if (version >= Self.supportsExecSegment) {
+		if (version >= Static.supportsExecSegment) {
 			d.setBigUint64(o, this.execSegBase);
 			o += 8;
 			d.setBigUint64(o, this.execSegLimit);
@@ -486,7 +486,7 @@ export class CodeDirectory extends Blob {
 			o += 8;
 		}
 
-		if (version >= Self.supportsPreEncrypt) {
+		if (version >= Static.supportsPreEncrypt) {
 			d.setUint32(o, this.runtime);
 			o += 4;
 			d.setUint32(o, preEncryptOffset);
@@ -494,7 +494,7 @@ export class CodeDirectory extends Blob {
 		}
 
 		if ((o = scatterOffset)) {
-			const sentinel = new Self.Scatter();
+			const sentinel = new Static.Scatter();
 			for (const scatter of this.scatterVector) {
 				o += scatter.byteWrite(d, o);
 			}
