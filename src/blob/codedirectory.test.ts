@@ -97,7 +97,7 @@ void describe('blob/codedirectory', () => {
 								Buffer.from(data),
 								info.offset
 							) >= 0,
-							`CD: ${arc}: hashType=${hash}`
+							`CD: ${arc}: hashType=${hashType}`
 						);
 					}
 				}
