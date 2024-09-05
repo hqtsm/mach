@@ -32,6 +32,7 @@ for d in 'macho/'*'/dist/'*'/'*'/'; do
 				teamid=''
 				page=''
 				hashes=''
+				requirements=''
 				execsegbase=''
 				execseglimit=''
 				execsegflags=''
@@ -62,6 +63,13 @@ for d in 'macho/'*'/dist/'*'/'*'/'; do
 						'Page size='*)
 							page="${line#*=}"
 							;;
+						'Internal requirements=none'*)
+							requirements=''
+							;;
+						'Internal requirements '*)
+							requirements="${line#* }"
+							requirements="${requirements#* }"
+							;;
 						'Executable Segment base='*)
 							execsegbase="${line#*=}"
 							;;
@@ -80,6 +88,7 @@ for d in 'macho/'*'/dist/'*'/'*'/'; do
 				printf '\t\t%s=%s\n' 'teamid' "${teamid}"
 				printf '\t\t%s=%s\n' 'hashes' "${hashes}"
 				printf '\t\t%s=%s\n' 'page' "${page}"
+				printf '\t\t%s=%s\n' 'requirements' "${requirements}"
 				printf '\t\t%s=%s\n' 'execsegbase' "${execsegbase}"
 				printf '\t\t%s=%s\n' 'execseglimit' "${execseglimit}"
 				printf '\t\t%s=%s\n' 'execsegflags' "${execsegflags}"
