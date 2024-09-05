@@ -34,9 +34,11 @@ void describe('blob/codedirectory', () => {
 	void describe('fixtures', async () => {
 		for (const {kind, arch, file, archs} of fixtureMachos()) {
 			if (kind === 'app') {
+				// TODO: Test app and framework.
 				continue;
 			}
 
+			// Skip binaries with no signed architectures.
 			if (![...archs.values()].filter(Boolean).length) {
 				continue;
 			}
