@@ -1,4 +1,5 @@
-import {open, readFile} from 'node:fs/promises';
+import {readFileSync} from 'node:fs';
+import {open} from 'node:fs/promises';
 import {inflateRaw} from 'node:zlib';
 import {subtle} from 'node:crypto';
 
@@ -217,7 +218,7 @@ export interface FixtureMachoSignatureInfo {
 	execsegflags: number;
 }
 
-export async function fixtureMachos() {
+function fixtureMachosRead() {
 	const hashTypes: {[key: string]: number} = {
 		sha1: kSecCodeSignatureHashSHA1,
 		sha256: kSecCodeSignatureHashSHA256,
@@ -233,9 +234,7 @@ export async function fixtureMachos() {
 		ppc970: [CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_970],
 		ppc: [CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_ALL]
 	};
-	const lines = (await readFile('spec/fixtures/macho.txt', 'utf8')).split(
-		'\n'
-	);
+	const lines = readFileSync('spec/fixtures/macho.txt', 'utf8').split('\n');
 	const all = new Map<
 		string,
 		Map<string, FixtureMachoSignatureInfo | null>
@@ -324,9 +323,23 @@ export async function fixtureMachos() {
 	const r = [];
 	for (const [g, a] of all) {
 		const [, kind, , arch, ...parts] = g.split('/');
-		r.push({kind, arch, file: parts.join('/'), archs: a});
+		r.push({
+			kind,
+			arch,
+			file: parts.join('/'),
+			archs: a as Readonly<
+				Map<string, Readonly<FixtureMachoSignatureInfo>>
+			>
+		});
 	}
 	return r;
+}
+
+let staticFixtureMachos: ReturnType<typeof fixtureMachosRead> | null = null;
+
+export function fixtureMachos() {
+	staticFixtureMachos ??= fixtureMachosRead();
+	return staticFixtureMachos;
 }
 
 export async function fixtureMacho(

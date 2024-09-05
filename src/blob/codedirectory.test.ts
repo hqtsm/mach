@@ -32,7 +32,7 @@ async function addCodeHashes(cd: CodeDirectory, macho: Readonly<Uint8Array>) {
 
 void describe('blob/codedirectory', () => {
 	void describe('fixtures', async () => {
-		for (const {kind, arch, file, archs} of await fixtureMachos()) {
+		for (const {kind, arch, file, archs} of fixtureMachos()) {
 			if (kind === 'app') {
 				continue;
 			}
