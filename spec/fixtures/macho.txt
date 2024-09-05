@@ -1,0 +1,1055 @@
+macho/app/dist/arm64/u/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	arm64:
+macho/app/dist/arm64/u/Sample.app/Contents/MacOS/Sample:
+	arm64:
+macho/app/dist/arm64/us/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	arm64:
+		offset=16496
+		version=0x20400
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x0
+macho/app/dist/arm64/us/Sample.app/Contents/MacOS/Sample:
+	arm64:
+		offset=49488
+		version=0x20400
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x1
+macho/app/dist/arm64/usr/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	arm64:
+macho/app/dist/arm64/usr/Sample.app/Contents/MacOS/Sample:
+	arm64:
+macho/app/dist/i386/u/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	i386:
+macho/app/dist/i386/u/Sample.app/Contents/MacOS/Sample:
+	i386:
+macho/app/dist/i386/us/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	i386:
+		offset=8448
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/app/dist/i386/us/Sample.app/Contents/MacOS/Sample:
+	i386:
+		offset=13312
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/app/dist/i386/usr/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	i386:
+macho/app/dist/i386/usr/Sample.app/Contents/MacOS/Sample:
+	i386:
+macho/app/dist/ppc-ppc64-ppc970-i386-x86_64/u/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	ppc:
+	ppc64:
+	ppc970:
+	i386:
+	x86_64:
+macho/app/dist/ppc-ppc64-ppc970-i386-x86_64/u/Sample.app/Contents/MacOS/Sample:
+	ppc7400:
+	ppc64:
+	ppc970:
+	i386:
+	x86_64:
+macho/app/dist/ppc-ppc64-ppc970-i386-x86_64/us/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	ppc:
+		offset=8512
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	ppc64:
+		offset=8384
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	ppc970:
+		offset=8512
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	i386:
+		offset=8448
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	x86_64:
+		offset=8336
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/app/dist/ppc-ppc64-ppc970-i386-x86_64/us/Sample.app/Contents/MacOS/Sample:
+	ppc7400:
+		offset=10224
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	ppc64:
+		offset=8816
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	ppc970:
+		offset=10224
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	i386:
+		offset=13312
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	x86_64:
+		offset=8784
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/app/dist/ppc-ppc64-ppc970-i386-x86_64/usr/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	ppc:
+	ppc64:
+	ppc970:
+	i386:
+	x86_64:
+macho/app/dist/ppc-ppc64-ppc970-i386-x86_64/usr/Sample.app/Contents/MacOS/Sample:
+	ppc7400:
+	ppc64:
+	ppc970:
+	i386:
+	x86_64:
+macho/app/dist/ppc/u/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	ppc:
+macho/app/dist/ppc/u/Sample.app/Contents/MacOS/Sample:
+	ppc7400:
+macho/app/dist/ppc/us/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	ppc:
+		offset=8512
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/app/dist/ppc/us/Sample.app/Contents/MacOS/Sample:
+	ppc7400:
+		offset=10224
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/app/dist/ppc/usr/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	ppc:
+macho/app/dist/ppc/usr/Sample.app/Contents/MacOS/Sample:
+	ppc7400:
+macho/app/dist/ppc64/u/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	ppc64:
+macho/app/dist/ppc64/u/Sample.app/Contents/MacOS/Sample:
+	ppc64:
+macho/app/dist/ppc64/us/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	ppc64:
+		offset=8384
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/app/dist/ppc64/us/Sample.app/Contents/MacOS/Sample:
+	ppc64:
+		offset=8816
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/app/dist/ppc64/usr/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	ppc64:
+macho/app/dist/ppc64/usr/Sample.app/Contents/MacOS/Sample:
+	ppc64:
+macho/app/dist/ppc970/u/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	ppc970:
+macho/app/dist/ppc970/u/Sample.app/Contents/MacOS/Sample:
+	ppc970:
+macho/app/dist/ppc970/us/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	ppc970:
+		offset=8512
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/app/dist/ppc970/us/Sample.app/Contents/MacOS/Sample:
+	ppc970:
+		offset=10224
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/app/dist/ppc970/usr/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	ppc970:
+macho/app/dist/ppc970/usr/Sample.app/Contents/MacOS/Sample:
+	ppc970:
+macho/app/dist/x86_64-arm64/u/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	x86_64:
+	arm64:
+macho/app/dist/x86_64-arm64/u/Sample.app/Contents/MacOS/Sample:
+	x86_64:
+	arm64:
+macho/app/dist/x86_64-arm64/us/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	x86_64:
+		offset=16496
+		version=0x20400
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x0
+	arm64:
+		offset=16496
+		version=0x20400
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x0
+macho/app/dist/x86_64-arm64/us/Sample.app/Contents/MacOS/Sample:
+	x86_64:
+		offset=49488
+		version=0x20400
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x1
+	arm64:
+		offset=49488
+		version=0x20400
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x1
+macho/app/dist/x86_64-arm64/usr/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	x86_64:
+	arm64:
+macho/app/dist/x86_64-arm64/usr/Sample.app/Contents/MacOS/Sample:
+	x86_64:
+	arm64:
+macho/app/dist/x86_64/u/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	x86_64:
+macho/app/dist/x86_64/u/Sample.app/Contents/MacOS/Sample:
+	x86_64:
+macho/app/dist/x86_64/us/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	x86_64:
+		offset=8336
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/app/dist/x86_64/us/Sample.app/Contents/MacOS/Sample:
+	x86_64:
+		offset=8784
+		version=0x20100
+		flags=0x2
+		identifier=com.example.Sample
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/app/dist/x86_64/usr/Sample.app/Contents/Frameworks/Sample.framework/Versions/A/Sample:
+	x86_64:
+macho/app/dist/x86_64/usr/Sample.app/Contents/MacOS/Sample:
+	x86_64:
+macho/cli/dist/arm64/a/main:
+	arm64:
+		offset=49472
+		version=0x20400
+		flags=0x20002
+		identifier=main
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x1
+macho/cli/dist/arm64/ar/main:
+	arm64:
+macho/cli/dist/arm64/u/main:
+	arm64:
+macho/cli/dist/arm64/us/main:
+	arm64:
+		offset=49472
+		version=0x20400
+		flags=0x2
+		identifier=main-55554944e804d5060a0e3eeb86e3a4c04e71e5d0
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x1
+macho/cli/dist/arm64/usr/main:
+	arm64:
+macho/cli/dist/i386/u/main:
+	i386:
+macho/cli/dist/i386/us/main:
+	i386:
+		offset=13312
+		version=0x20100
+		flags=0x2
+		identifier=main-55554944db9c9583d701c31921ba3216c3b60afc
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/cli/dist/i386/usr/main:
+	i386:
+macho/cli/dist/ppc-ppc64-ppc970-i386-x86_64/u/main:
+	ppc7400:
+	ppc64:
+	ppc970:
+	i386:
+	x86_64:
+macho/cli/dist/ppc-ppc64-ppc970-i386-x86_64/us/main:
+	ppc7400:
+		offset=10224
+		version=0x20100
+		flags=0x2
+		identifier=main-55554944cabafd0d30cdd928ec5f2b4aa0486bdb
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	ppc64:
+		offset=8816
+		version=0x20100
+		flags=0x2
+		identifier=main-55554944cabafd0d30cdd928ec5f2b4aa0486bdb
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	ppc970:
+		offset=10224
+		version=0x20100
+		flags=0x2
+		identifier=main-55554944cabafd0d30cdd928ec5f2b4aa0486bdb
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	i386:
+		offset=13312
+		version=0x20100
+		flags=0x2
+		identifier=main-55554944cabafd0d30cdd928ec5f2b4aa0486bdb
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	x86_64:
+		offset=8784
+		version=0x20100
+		flags=0x2
+		identifier=main-55554944cabafd0d30cdd928ec5f2b4aa0486bdb
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/cli/dist/ppc-ppc64-ppc970-i386-x86_64/usr/main:
+	ppc7400:
+	ppc64:
+	ppc970:
+	i386:
+	x86_64:
+macho/cli/dist/ppc/u/main:
+	ppc7400:
+macho/cli/dist/ppc/us/main:
+	ppc7400:
+		offset=10224
+		version=0x20100
+		flags=0x2
+		identifier=main-55554944be0bf2ef11d26b4a3a1bf9f28401f01a
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/cli/dist/ppc/usr/main:
+	ppc7400:
+macho/cli/dist/ppc64/u/main:
+	ppc64:
+macho/cli/dist/ppc64/us/main:
+	ppc64:
+		offset=8816
+		version=0x20100
+		flags=0x2
+		identifier=main-5555494426319798689390208af74faa6b9913f3
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/cli/dist/ppc64/usr/main:
+	ppc64:
+macho/cli/dist/ppc970/u/main:
+	ppc970:
+macho/cli/dist/ppc970/us/main:
+	ppc970:
+		offset=10224
+		version=0x20100
+		flags=0x2
+		identifier=main-5555494443b51bf8b3e837c21dab2eb3547be31b
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/cli/dist/ppc970/usr/main:
+	ppc970:
+macho/cli/dist/x86_64-arm64/a/main:
+	x86_64:
+	arm64:
+		offset=49472
+		version=0x20400
+		flags=0x20002
+		identifier=main-80d268.out
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x1
+macho/cli/dist/x86_64-arm64/ar/main:
+	x86_64:
+	arm64:
+macho/cli/dist/x86_64-arm64/u/main:
+	x86_64:
+	arm64:
+macho/cli/dist/x86_64-arm64/us/main:
+	x86_64:
+		offset=49472
+		version=0x20400
+		flags=0x2
+		identifier=main-55554944886472fa430a3a73b2ae1ee2ece2c09f
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x1
+	arm64:
+		offset=49472
+		version=0x20400
+		flags=0x2
+		identifier=main-55554944886472fa430a3a73b2ae1ee2ece2c09f
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x1
+macho/cli/dist/x86_64-arm64/usr/main:
+	x86_64:
+	arm64:
+macho/cli/dist/x86_64/u/main:
+	x86_64:
+macho/cli/dist/x86_64/us/main:
+	x86_64:
+		offset=8784
+		version=0x20100
+		flags=0x2
+		identifier=main-55554944cabafd0d30cdd928ec5f2b4aa0486bdb
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/cli/dist/x86_64/usr/main:
+	x86_64:
+macho/dll/dist/arm64/a/main:
+	arm64:
+		offset=49520
+		version=0x20400
+		flags=0x20002
+		identifier=main
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x1
+macho/dll/dist/arm64/a/sample.dylib:
+	arm64:
+		offset=16496
+		version=0x20400
+		flags=0x20002
+		identifier=sample.dylib
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x0
+macho/dll/dist/arm64/ar/main:
+	arm64:
+macho/dll/dist/arm64/ar/sample.dylib:
+	arm64:
+macho/dll/dist/arm64/u/main:
+	arm64:
+macho/dll/dist/arm64/u/sample.dylib:
+	arm64:
+macho/dll/dist/arm64/us/main:
+	arm64:
+		offset=49520
+		version=0x20400
+		flags=0x2
+		identifier=main-55554944613d9525ada83f888441f9d35582a4e5
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x1
+macho/dll/dist/arm64/us/sample.dylib:
+	arm64:
+		offset=16496
+		version=0x20400
+		flags=0x2
+		identifier=sample-55554944d6b41636296c33ffae676ce19c551fc0
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x0
+macho/dll/dist/arm64/usr/main:
+	arm64:
+macho/dll/dist/arm64/usr/sample.dylib:
+	arm64:
+macho/dll/dist/i386/u/main:
+	i386:
+macho/dll/dist/i386/u/sample.dylib:
+	i386:
+macho/dll/dist/i386/us/main:
+	i386:
+		offset=13328
+		version=0x20100
+		flags=0x2
+		identifier=main-55554944ddfd86d91511b6f74705e5978403c7d4
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/dll/dist/i386/us/sample.dylib:
+	i386:
+		offset=8448
+		version=0x20100
+		flags=0x2
+		identifier=sample-55554944d60aa6c2556c586fa0a4212e91704c9b
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/dll/dist/i386/usr/main:
+	i386:
+macho/dll/dist/i386/usr/sample.dylib:
+	i386:
+macho/dll/dist/ppc-ppc64-ppc970-i386-x86_64/u/main:
+	ppc7400:
+	ppc64:
+	ppc970:
+	i386:
+	x86_64:
+macho/dll/dist/ppc-ppc64-ppc970-i386-x86_64/u/sample.dylib:
+	ppc:
+	ppc64:
+	ppc970:
+	i386:
+	x86_64:
+macho/dll/dist/ppc-ppc64-ppc970-i386-x86_64/us/main:
+	ppc7400:
+		offset=10256
+		version=0x20100
+		flags=0x2
+		identifier=main-5555494486127693708beef0490e7ba46de42ca0
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	ppc64:
+		offset=8848
+		version=0x20100
+		flags=0x2
+		identifier=main-5555494486127693708beef0490e7ba46de42ca0
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	ppc970:
+		offset=10256
+		version=0x20100
+		flags=0x2
+		identifier=main-5555494486127693708beef0490e7ba46de42ca0
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	i386:
+		offset=13328
+		version=0x20100
+		flags=0x2
+		identifier=main-5555494486127693708beef0490e7ba46de42ca0
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	x86_64:
+		offset=8816
+		version=0x20100
+		flags=0x2
+		identifier=main-5555494486127693708beef0490e7ba46de42ca0
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/dll/dist/ppc-ppc64-ppc970-i386-x86_64/us/sample.dylib:
+	ppc:
+		offset=8512
+		version=0x20100
+		flags=0x2
+		identifier=sample-55554944a44e761345a5b87cb8471894e95c74ee
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	ppc64:
+		offset=8384
+		version=0x20100
+		flags=0x2
+		identifier=sample-55554944a44e761345a5b87cb8471894e95c74ee
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	ppc970:
+		offset=8512
+		version=0x20100
+		flags=0x2
+		identifier=sample-55554944a44e761345a5b87cb8471894e95c74ee
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	i386:
+		offset=8448
+		version=0x20100
+		flags=0x2
+		identifier=sample-55554944a44e761345a5b87cb8471894e95c74ee
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+	x86_64:
+		offset=8336
+		version=0x20100
+		flags=0x2
+		identifier=sample-55554944a44e761345a5b87cb8471894e95c74ee
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/dll/dist/ppc-ppc64-ppc970-i386-x86_64/usr/main:
+	ppc7400:
+	ppc64:
+	ppc970:
+	i386:
+	x86_64:
+macho/dll/dist/ppc-ppc64-ppc970-i386-x86_64/usr/sample.dylib:
+	ppc:
+	ppc64:
+	ppc970:
+	i386:
+	x86_64:
+macho/dll/dist/ppc/u/main:
+	ppc7400:
+macho/dll/dist/ppc/u/sample.dylib:
+	ppc:
+macho/dll/dist/ppc/us/main:
+	ppc7400:
+		offset=10256
+		version=0x20100
+		flags=0x2
+		identifier=main-5555494401a223b9ec9262cec2c03812064d7a97
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/dll/dist/ppc/us/sample.dylib:
+	ppc:
+		offset=8512
+		version=0x20100
+		flags=0x2
+		identifier=sample-555549446f2e6046a2958b8b0e4191f538087d3e
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/dll/dist/ppc/usr/main:
+	ppc7400:
+macho/dll/dist/ppc/usr/sample.dylib:
+	ppc:
+macho/dll/dist/ppc64/u/main:
+	ppc64:
+macho/dll/dist/ppc64/u/sample.dylib:
+	ppc64:
+macho/dll/dist/ppc64/us/main:
+	ppc64:
+		offset=8848
+		version=0x20100
+		flags=0x2
+		identifier=main-55554944ecd172cc2b71857ca305868efc3929c1
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/dll/dist/ppc64/us/sample.dylib:
+	ppc64:
+		offset=8384
+		version=0x20100
+		flags=0x2
+		identifier=sample-55554944d6d0eed0ff88b30a6d1d08b55f9aadbc
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/dll/dist/ppc64/usr/main:
+	ppc64:
+macho/dll/dist/ppc64/usr/sample.dylib:
+	ppc64:
+macho/dll/dist/ppc970/u/main:
+	ppc970:
+macho/dll/dist/ppc970/u/sample.dylib:
+	ppc970:
+macho/dll/dist/ppc970/us/main:
+	ppc970:
+		offset=10256
+		version=0x20100
+		flags=0x2
+		identifier=main-55554944968dab4243328431062371c3a0bbb8df
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/dll/dist/ppc970/us/sample.dylib:
+	ppc970:
+		offset=8512
+		version=0x20100
+		flags=0x2
+		identifier=sample-5555494459db18115c839ae9d405344bfe0c7923
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/dll/dist/ppc970/usr/main:
+	ppc970:
+macho/dll/dist/ppc970/usr/sample.dylib:
+	ppc970:
+macho/dll/dist/x86_64-arm64/a/main:
+	x86_64:
+	arm64:
+		offset=49520
+		version=0x20400
+		flags=0x20002
+		identifier=main-100ddc.out
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x1
+macho/dll/dist/x86_64-arm64/a/sample.dylib:
+	x86_64:
+	arm64:
+		offset=16496
+		version=0x20400
+		flags=0x20002
+		identifier=sample-c9498b.out
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x0
+macho/dll/dist/x86_64-arm64/ar/main:
+	x86_64:
+	arm64:
+macho/dll/dist/x86_64-arm64/ar/sample.dylib:
+	x86_64:
+	arm64:
+macho/dll/dist/x86_64-arm64/u/main:
+	x86_64:
+	arm64:
+macho/dll/dist/x86_64-arm64/u/sample.dylib:
+	x86_64:
+	arm64:
+macho/dll/dist/x86_64-arm64/us/main:
+	x86_64:
+		offset=49520
+		version=0x20400
+		flags=0x2
+		identifier=main-55554944cc85da74bbfc35efb8119422ef7133fe
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x1
+	arm64:
+		offset=49520
+		version=0x20400
+		flags=0x2
+		identifier=main-55554944cc85da74bbfc35efb8119422ef7133fe
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x1
+macho/dll/dist/x86_64-arm64/us/sample.dylib:
+	x86_64:
+		offset=16496
+		version=0x20400
+		flags=0x2
+		identifier=sample-5555494413b411fac8ad3aa7997063d599538081
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x0
+	arm64:
+		offset=16496
+		version=0x20400
+		flags=0x2
+		identifier=sample-5555494413b411fac8ad3aa7997063d599538081
+		teamid=
+		hashes=sha256
+		page=4096
+		execsegbase=0
+		execseglimit=16384
+		execsegflags=0x0
+macho/dll/dist/x86_64-arm64/usr/main:
+	x86_64:
+	arm64:
+macho/dll/dist/x86_64-arm64/usr/sample.dylib:
+	x86_64:
+	arm64:
+macho/dll/dist/x86_64/u/main:
+	x86_64:
+macho/dll/dist/x86_64/u/sample.dylib:
+	x86_64:
+macho/dll/dist/x86_64/us/main:
+	x86_64:
+		offset=8816
+		version=0x20100
+		flags=0x2
+		identifier=main-5555494486127693708beef0490e7ba46de42ca0
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/dll/dist/x86_64/us/sample.dylib:
+	x86_64:
+		offset=8336
+		version=0x20100
+		flags=0x2
+		identifier=sample-5555494447de38c303954302af3a4a0267c37cf5
+		teamid=
+		hashes=sha1,sha256
+		page=4096
+		execsegbase=
+		execseglimit=
+		execsegflags=
+macho/dll/dist/x86_64/usr/main:
+	x86_64:
+macho/dll/dist/x86_64/usr/sample.dylib:
+	x86_64:

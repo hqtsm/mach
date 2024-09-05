@@ -16,4 +16,5 @@ macOS 11.6.8 with Command Line Tools for Xcode 12.5.1
 ./scripts/macho-2.sh
 ./scripts/macho-3.sh
 ./scripts/macho-4.sh
+./scripts/macho-5.sh
 ```
