@@ -9,7 +9,7 @@ import {
 	fixtureMachos
 } from '../util.spec.ts';
 import {CodeDirectory} from './codedirectory.ts';
-import {cdRequirementsSlot} from '../const.ts';
+import {cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot} from '../const.ts';
 
 const emptyRequirements = Buffer.from(
 	'fa de 0c 01 00 00 00 0c 00 00 00 00'.replaceAll(' ', ''),
@@ -33,18 +33,37 @@ async function addCodeHashes(cd: CodeDirectory, macho: Readonly<Uint8Array>) {
 void describe('blob/codedirectory', () => {
 	void describe('fixtures', async () => {
 		for (const {kind, arch, file, archs} of fixtureMachos()) {
-			if (kind === 'app') {
-				// TODO: Test app and framework.
-				continue;
-			}
-
 			// Skip binaries with no signed architectures.
 			if (![...archs.values()].filter(Boolean).length) {
 				continue;
 			}
 
 			void it(`${kind}: ${arch}: ${file}`, async () => {
-				const [macho] = await fixtureMacho(kind, arch, [file]);
+				let resources: string[] | null = null;
+				const bundle = file.match(
+					/^((.*\/)?([^./]+\.(app|framework)))\/([^.]+\/)[^/]+$/
+				);
+				if (bundle) {
+					const [, path, , , ext] = bundle;
+					resources =
+						ext === 'framework'
+							? [
+									'Resources/Info.plist',
+									'_CodeSignature/CodeResources'
+								].map(s => `${path}/Versions/A/${s}`)
+							: [
+									'Info.plist',
+									'_CodeSignature/CodeResources'
+								].map(s => `${path}/Contents/${s}`);
+				}
+
+				const files = await fixtureMacho(kind, arch, [
+					file,
+					...(resources || [])
+				]);
+				const [macho] = files;
+				const infoPlist = resources ? files[1] : null;
+				const codeResources = resources ? files[2] : null;
 
 				for (const [arc, info] of archs) {
 					if (!info) {
@@ -66,6 +85,14 @@ void describe('blob/codedirectory', () => {
 						cd.execSegFlags = BigInt(info.execsegflags);
 						cd.identifier = info.identifier;
 						cd.teamID = info.teamid;
+						if (infoPlist) {
+							cd.setSlot(
+								-cdInfoSlot,
+								false,
+								// eslint-disable-next-line no-await-in-loop
+								await hash(hashType, infoPlist)
+							);
+						}
 						switch (requirements) {
 							case '': {
 								// No requirements.
@@ -85,6 +112,14 @@ void describe('blob/codedirectory', () => {
 									`Unexpected requirements: ${requirements}`
 								);
 							}
+						}
+						if (codeResources) {
+							cd.setSlot(
+								-cdResourceDirSlot,
+								false,
+								// eslint-disable-next-line no-await-in-loop
+								await hash(hashType, codeResources)
+							);
 						}
 						// eslint-disable-next-line no-await-in-loop
 						await addCodeHashes(cd, thin);
