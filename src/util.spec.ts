@@ -4,10 +4,23 @@ import {subtle} from 'node:crypto';
 
 import {BufferView} from './type.ts';
 import {
+	CPU_SUBTYPE_POWERPC_7400,
+	CPU_SUBTYPE_POWERPC_970,
+	CPU_SUBTYPE_POWERPC_ALL,
+	CPU_TYPE_ARM64,
+	CPU_TYPE_I386,
+	CPU_TYPE_POWERPC,
+	CPU_TYPE_POWERPC64,
+	CPU_TYPE_X86_64,
 	FAT_CIGAM,
 	FAT_CIGAM_64,
 	FAT_MAGIC,
 	FAT_MAGIC_64,
+	kSecCodeSignatureHashSHA1,
+	kSecCodeSignatureHashSHA256,
+	kSecCodeSignatureHashSHA256Truncated,
+	kSecCodeSignatureHashSHA384,
+	kSecCodeSignatureHashSHA512,
 	MH_CIGAM,
 	MH_CIGAM_64,
 	MH_MAGIC,
@@ -15,19 +28,40 @@ import {
 } from './const.ts';
 import {subview} from './util.ts';
 
-export function dataContains(
-	data: Readonly<Uint8Array>,
-	search: Readonly<Uint8Array>,
-	reverse = false
-) {
-	const i = reverse
-		? Buffer.from(data).lastIndexOf(Buffer.from(search))
-		: Buffer.from(data).indexOf(Buffer.from(search));
-	return i >= 0;
+export async function hash(hashType: number, data: Readonly<BufferView>) {
+	let limit = -1;
+	let algo = '';
+	switch (hashType) {
+		case kSecCodeSignatureHashSHA1: {
+			algo = 'SHA-1';
+			break;
+		}
+		case kSecCodeSignatureHashSHA256Truncated: {
+			limit = 20;
+			// Fallthrough.
+		}
+		case kSecCodeSignatureHashSHA256: {
+			algo = 'SHA-256';
+			break;
+		}
+		case kSecCodeSignatureHashSHA384: {
+			algo = 'SHA-384';
+			break;
+		}
+		case kSecCodeSignatureHashSHA512: {
+			algo = 'SHA-512';
+			break;
+		}
+		default: {
+			throw new Error(`Unknown hash type: ${hashType}`);
+		}
+	}
+	const h = await subtle.digest(algo, data);
+	return new Uint8Array(limit < 0 ? h : h.slice(0, limit));
 }
 
 export async function chunkedHashes(
-	algo: string,
+	hashType: number,
 	data: Readonly<BufferView>,
 	chunk: number,
 	offset = 0,
@@ -40,9 +74,7 @@ export async function chunkedHashes(
 	for (let i = 0; i < l; i += chunk) {
 		slices.push(d.subarray(i, Math.min(i + chunk, l)));
 	}
-	return (
-		await Promise.all(slices.map(async d => subtle.digest(algo, d)))
-	).map(b => new Uint8Array(b));
+	return Promise.all(slices.map(async d => hash(hashType, d)));
 }
 
 async function zlibInflateRaw(data: Buffer) {
@@ -171,19 +203,36 @@ export async function* zipped(file: string) {
 }
 
 export interface FixtureMachoSignatureInfo {
+	arch: [number, number | null];
 	offset: number;
 	version: number;
 	flags: number;
 	identifier: string;
 	teamid: string;
-	hashes: string[];
+	hashes: number[];
 	page: number;
+	requirements: string;
 	execsegbase: number;
 	execseglimit: number;
 	execsegflags: number;
 }
 
 export async function fixtureMachos() {
+	const hashTypes: {[key: string]: number} = {
+		sha1: kSecCodeSignatureHashSHA1,
+		sha256: kSecCodeSignatureHashSHA256,
+		sha384: kSecCodeSignatureHashSHA384,
+		sha512: kSecCodeSignatureHashSHA512
+	};
+	const cpus: {[key: string]: [number, number | null]} = {
+		arm64: [CPU_TYPE_ARM64, null],
+		x86_64: [CPU_TYPE_X86_64, null],
+		i386: [CPU_TYPE_I386, null],
+		ppc64: [CPU_TYPE_POWERPC64, null],
+		ppc7400: [CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_7400],
+		ppc970: [CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_970],
+		ppc: [CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_ALL]
+	};
 	const lines = (await readFile('spec/fixtures/macho.txt', 'utf8')).split(
 		'\n'
 	);
@@ -229,6 +278,7 @@ export async function fixtureMachos() {
 		}
 		const [, k, v] = mv;
 		const a = all.get(group)!.get(arch)! || {
+			arch: cpus[arch] ?? [0, null],
 			offset: 0,
 			version: 0,
 			flags: 0,
@@ -248,11 +298,12 @@ export async function fixtureMachos() {
 			case 'execsegbase':
 			case 'execseglimit':
 			case 'execsegflags': {
-				a[k] = +v;
+				a[k] = +v || 0;
 				break;
 			}
 			case 'identifier':
-			case 'teamid': {
+			case 'teamid':
+			case 'requirements': {
 				a[k] = v;
 				break;
 			}
@@ -260,7 +311,8 @@ export async function fixtureMachos() {
 				a[k] = v
 					.split(',')
 					.map(s => s.trim())
-					.filter(Boolean);
+					.filter(Boolean)
+					.map(s => hashTypes[s] ?? 0);
 				break;
 			}
 			default: {
@@ -300,7 +352,7 @@ export async function fixtureMacho(
 	return datas;
 }
 
-export function machoArch(
+export function machoThin(
 	data: BufferView,
 	type: number,
 	subtype: number | null = null
