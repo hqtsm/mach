@@ -1,4 +1,4 @@
-import {open} from 'node:fs/promises';
+import {open, readFile} from 'node:fs/promises';
 import {inflateRaw} from 'node:zlib';
 import {subtle} from 'node:crypto';
 
@@ -168,6 +168,113 @@ export async function* zipped(file: string) {
 	} finally {
 		await f.close();
 	}
+}
+
+export interface FixtureMachoSignatureInfo {
+	offset: number;
+	version: number;
+	flags: number;
+	identifier: string;
+	teamid: string;
+	hashes: string[];
+	page: number;
+	execsegbase: number;
+	execseglimit: number;
+	execsegflags: number;
+}
+
+export async function fixtureMachos() {
+	const lines = (await readFile('spec/fixtures/macho.txt', 'utf8')).split(
+		'\n'
+	);
+	const all = new Map<
+		string,
+		Map<string, FixtureMachoSignatureInfo | null>
+	>();
+	let group = null;
+	let arch = null;
+	while (lines.length) {
+		const line = lines.shift()!;
+		if (!line) {
+			continue;
+		}
+		const mg = line.match(/^(\t*)([^\t].*):$/);
+		if (mg) {
+			const indent = mg[1].length;
+			switch (indent) {
+				case 0: {
+					[, , group] = mg;
+					arch = null;
+					all.set(mg[2], new Map());
+					break;
+				}
+				case 1: {
+					[, , arch] = mg;
+					const a = group ? all.get(group) : null;
+					if (!a) {
+						throw new Error(`Bad line: ${line}`);
+					}
+					a.set(arch, null);
+					break;
+				}
+				default: {
+					throw new Error(`Bad line: ${line}`);
+				}
+			}
+			continue;
+		}
+		const mv = line.match(/^\t\t([^=]+)=(.*)$/);
+		if (!mv || !group || !arch) {
+			throw new Error(`Bad line: ${line}`);
+		}
+		const [, k, v] = mv;
+		const a = all.get(group)!.get(arch)! || {
+			offset: 0,
+			version: 0,
+			flags: 0,
+			identifier: '',
+			teamid: '',
+			hashes: [],
+			page: 0,
+			execsegbase: 0,
+			execseglimit: 0,
+			execsegflags: 0
+		};
+		switch (k) {
+			case 'offset':
+			case 'version':
+			case 'flags':
+			case 'page':
+			case 'execsegbase':
+			case 'execseglimit':
+			case 'execsegflags': {
+				a[k] = +v;
+				break;
+			}
+			case 'identifier':
+			case 'teamid': {
+				a[k] = v;
+				break;
+			}
+			case 'hashes': {
+				a[k] = v
+					.split(',')
+					.map(s => s.trim())
+					.filter(Boolean);
+				break;
+			}
+			default: {
+				throw new Error(`Bad line: ${line}`);
+			}
+		}
+		all.get(group)!.set(arch, a);
+	}
+	const r = [];
+	for (const [g, a] of all) {
+		const [, kind, , arch, ...parts] = g.split('/');
+		r.push({kind, arch, file: parts.join('/'), archs: a});
+	}
+	return r;
 }
 
 export async function fixtureMacho(
