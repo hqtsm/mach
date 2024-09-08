@@ -10,11 +10,11 @@ import {
 } from '../util.spec.ts';
 import {CodeDirectory} from './codedirectory.ts';
 import {cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot} from '../const.ts';
+import {RequirementSet} from './requirementset.ts';
 
-const emptyRequirements = Buffer.from(
-	'fa de 0c 01 00 00 00 0c 00 00 00 00'.replaceAll(' ', ''),
-	'hex'
-);
+const emptyRequirementSet = new RequirementSet();
+const emptyRequirements = new Uint8Array(emptyRequirementSet.length);
+emptyRequirementSet.byteWrite(emptyRequirements);
 
 async function addCodeHashes(cd: CodeDirectory, macho: Readonly<Uint8Array>) {
 	const {pageSize} = cd;
