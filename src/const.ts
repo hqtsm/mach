@@ -200,6 +200,13 @@ export const kSecCodeSignatureLibraryValidation = 0x2000;
 export const kSecCodeSignatureRuntime = 0x10000;
 export const kSecCodeSignatureLinkerSigned = 0x20000;
 
+// SecRequirementType:
+export const kSecHostRequirementType = 1;
+export const kSecGuestRequirementType = 2;
+export const kSecDesignatedRequirementType = 3;
+export const kSecLibraryRequirementType = 4;
+export const kSecPluginRequirementType = 5;
+
 // Special hash slot values:
 export const cdInfoSlot = 1;
 export const cdRequirementsSlot = 2;
