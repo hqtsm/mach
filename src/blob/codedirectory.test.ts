@@ -30,9 +30,11 @@ async function addCodeHashes(cd: CodeDirectory, macho: Readonly<Uint8Array>) {
 	}
 }
 
+const fixtures = fixtureMachos();
+
 void describe('blob/codedirectory', () => {
 	void describe('fixtures', () => {
-		for (const {kind, arch, file, archs} of fixtureMachos()) {
+		for (const {kind, arch, file, archs} of fixtures) {
 			// Skip binaries with no signed architectures.
 			if (![...archs.values()].filter(Boolean).length) {
 				continue;
