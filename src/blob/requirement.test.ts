@@ -19,19 +19,26 @@ void describe('blob/requirement', () => {
 				)
 			)
 		);
+
+		const rd = new Requirement();
+		strictEqual(rd.byteRead(d), d.byteLength);
+		deepStrictEqual(rd, r);
 	});
 
 	void it('identifier "com.apple.simple"', () => {
-		const data = Buffer.from(
-			[
-				'00 00 00 01',
-				'00 00 00 02',
-				'00 00 00 10',
-				'63 6F 6D 2E 61 70 70 6C 65 2E 73 69 6D 70 6C 65'
-			]
-				.join(' ')
-				.replaceAll(' ', ''),
-			'hex'
+		const data = subview(
+			Uint8Array,
+			Buffer.from(
+				[
+					'00 00 00 01',
+					'00 00 00 02',
+					'00 00 00 10',
+					'63 6F 6D 2E 61 70 70 6C 65 2E 73 69 6D 70 6C 65'
+				]
+					.join(' ')
+					.replaceAll(' ', ''),
+				'hex'
+			)
 		);
 		const r = new Requirement();
 		r.data = data;
@@ -41,5 +48,9 @@ void describe('blob/requirement', () => {
 		strictEqual(dv.getUint32(0), kSecCodeMagicRequirement);
 		strictEqual(dv.getUint32(4), d.byteLength);
 		deepStrictEqual(subview(Uint8Array, dv, 8), subview(Uint8Array, data));
+
+		const rd = new Requirement();
+		strictEqual(rd.byteRead(d), d.byteLength);
+		deepStrictEqual(rd, r);
 	});
 });

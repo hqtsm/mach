@@ -1,12 +1,12 @@
 import {Blob} from '../blob.ts';
-import {BufferView} from '../type.ts';
+import {BufferView, ByteRead} from '../type.ts';
 import {kSecCodeMagicRequirement} from '../const.ts';
 import {subview} from '../util.ts';
 
 /**
  * Requirement class.
  */
-export class Requirement extends Blob {
+export class Requirement extends Blob implements ByteRead {
 	/**
 	 * @inheritdoc
 	 */
@@ -25,6 +25,23 @@ export class Requirement extends Blob {
 	 * Compiled code signing requirement binary data.
 	 */
 	public data: BufferView = new Uint8Array();
+
+	/**
+	 * @inheritdoc
+	 */
+	public byteRead(buffer: BufferView, offset?: number): number {
+		const d = subview(DataView, buffer, offset);
+		const magic = d.getUint32(0);
+		if (magic !== this.magic) {
+			throw new Error(`Invalid magic: ${magic}`);
+		}
+		const length = d.getUint32(4);
+		if (length < 8) {
+			throw new Error(`Invalid length: ${length}`);
+		}
+		this.data = subview(Uint8Array, d, 8, length - 8);
+		return length;
+	}
 
 	/**
 	 * @inheritdoc
