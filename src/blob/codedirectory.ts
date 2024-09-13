@@ -11,7 +11,7 @@ import {
 	kSecCodeSignatureHashSHA512,
 	kSecCodeSignatureNoHash
 } from '../const.ts';
-import {sparseSet, stringToBytes, subview} from '../util.ts';
+import {sparseSet, subview} from '../util.ts';
 
 /**
  * CodeDirectory class.
@@ -135,9 +135,9 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
-	 * Signature identifier.
+	 * Signature identifier string bytes.
 	 */
-	public identifier = '';
+	public identifier = new Uint8Array();
 
 	/**
 	 * Offset of ident string.
@@ -158,7 +158,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte size.
 	 */
 	public get identSize() {
-		return stringToBytes(this.identifier).length + 1;
+		return this.identifier.length + 1;
 	}
 
 	/**
@@ -286,9 +286,9 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
-	 * Optional team ID string.
+	 * Optional team ID string bytes.
 	 */
-	public teamID = '';
+	public teamID = new Uint8Array();
 
 	/**
 	 * Offset of optional team ID string.
@@ -298,7 +298,7 @@ export class CodeDirectory extends Blob {
 	public get teamIDOffset() {
 		const Static = this.constructor as typeof CodeDirectory;
 		const {version} = this;
-		return version >= Static.supportsTeamID && this.teamID
+		return version >= Static.supportsTeamID && this.teamID.length
 			? this.identOffset + this.identSize
 			: 0;
 	}
@@ -309,7 +309,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte count, or 0 for none.
 	 */
 	public get teamIDSize() {
-		return this.teamIDOffset ? stringToBytes(this.teamID).length + 1 : 0;
+		return this.teamIDOffset ? this.teamID.length + 1 : 0;
 	}
 
 	/**
@@ -501,14 +501,18 @@ export class CodeDirectory extends Blob {
 			sentinel.byteWrite(d, o);
 		}
 
-		subview(Uint8Array, d, identOffset).set(
-			stringToBytes(`${this.identifier}\0`)
-		);
+		{
+			const {identifier} = this;
+			const view = subview(Uint8Array, d, identOffset);
+			view.set(identifier);
+			view[identifier.length] = 0;
+		}
 
 		if (teamIDOffset) {
-			subview(Uint8Array, d, teamIDOffset).set(
-				stringToBytes(`${this.teamID}\0`)
-			);
+			const {teamID} = this;
+			const view = subview(Uint8Array, d, teamIDOffset);
+			view.set(teamID);
+			view[teamID.length] = 0;
 		}
 
 		if ((o = preEncryptOffset)) {

@@ -11,6 +11,7 @@ import {
 import {CodeDirectory} from './codedirectory.ts';
 import {cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot} from '../const.ts';
 import {RequirementSet} from './requirementset.ts';
+import {stringToBytes} from '../util.ts';
 
 const emptyRequirementSet = new RequirementSet();
 const emptyRequirements = new Uint8Array(emptyRequirementSet.length);
@@ -85,8 +86,8 @@ void describe('blob/codedirectory', () => {
 						cd.execSegBase = BigInt(info.execsegbase);
 						cd.execSegLimit = BigInt(info.execseglimit);
 						cd.execSegFlags = BigInt(info.execsegflags);
-						cd.identifier = info.identifier;
-						cd.teamID = info.teamid;
+						cd.identifier = stringToBytes(info.identifier);
+						cd.teamID = stringToBytes(info.teamid);
 						if (infoPlist) {
 							cd.setSlot(
 								-cdInfoSlot,
