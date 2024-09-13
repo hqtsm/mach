@@ -53,6 +53,8 @@ export class CodeDirectory extends Blob {
 	public static readonly Scatter = class Scatter
 		implements ByteLength, ByteWrite
 	{
+		public declare readonly ['constructor']: typeof Scatter;
+
 		/**
 		 * @inheritdoc
 		 */
@@ -89,6 +91,8 @@ export class CodeDirectory extends Blob {
 			return byteLength;
 		}
 	};
+
+	public declare readonly ['constructor']: typeof CodeDirectory;
 
 	/**
 	 * @inheritdoc
@@ -145,7 +149,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset.
 	 */
 	public get identOffset() {
-		const Static = this.constructor as typeof CodeDirectory;
+		const Static = this.constructor;
 		const {scatterOffset} = this;
 		return scatterOffset
 			? scatterOffset + this.scatterSize
@@ -268,7 +272,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset, or 0 for none.
 	 */
 	public get scatterOffset() {
-		const Static = this.constructor as typeof CodeDirectory;
+		const Static = this.constructor;
 		const {version} = this;
 		return version >= Static.supportsScatter && this.scatterVector.length
 			? Static.fixedSize(version)
@@ -296,7 +300,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset, or 0 for none.
 	 */
 	public get teamIDOffset() {
-		const Static = this.constructor as typeof CodeDirectory;
+		const Static = this.constructor;
 		const {version} = this;
 		return version >= Static.supportsTeamID && this.teamID.length
 			? this.identOffset + this.identSize
@@ -348,7 +352,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset, or 0 for none.
 	 */
 	public get preEncryptOffset() {
-		const Static = this.constructor as typeof CodeDirectory;
+		const Static = this.constructor;
 		const {version} = this;
 		if (
 			version >= Static.supportsPreEncrypt &&
@@ -421,7 +425,7 @@ export class CodeDirectory extends Blob {
 	 * @inheritdoc
 	 */
 	public byteWrite(buffer: BufferView, offset = 0) {
-		const Static = this.constructor as typeof CodeDirectory;
+		const Static = this.constructor;
 		const {
 			length,
 			version,

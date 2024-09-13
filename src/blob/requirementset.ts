@@ -13,6 +13,8 @@ export class RequirementSet extends Blob implements ByteRead {
 	 */
 	public static readonly Requirement = Requirement;
 
+	public declare readonly ['constructor']: typeof RequirementSet;
+
 	/**
 	 * @inheritdoc
 	 */
@@ -91,7 +93,7 @@ export class RequirementSet extends Blob implements ByteRead {
 	 * @inheritdoc
 	 */
 	public byteRead(buffer: BufferView, offset?: number): number {
-		const {Requirement} = this.constructor as typeof RequirementSet;
+		const {Requirement} = this.constructor;
 		const d = subview(DataView, buffer, offset);
 		const magic = d.getUint32(0);
 		if (magic !== this.magic) {

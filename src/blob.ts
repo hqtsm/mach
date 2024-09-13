@@ -4,6 +4,8 @@ import {BufferView, ByteLength, ByteWrite} from './type.ts';
  * Blob class.
  */
 export abstract class Blob implements ByteLength, ByteWrite {
+	public declare readonly ['constructor']: typeof Blob;
+
 	/**
 	 * Magic number.
 	 */

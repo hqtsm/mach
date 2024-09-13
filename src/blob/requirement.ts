@@ -7,6 +7,8 @@ import {subview} from '../util.ts';
  * Requirement class.
  */
 export class Requirement extends Blob implements ByteRead {
+	public declare readonly ['constructor']: typeof Requirement;
+
 	/**
 	 * @inheritdoc
 	 */

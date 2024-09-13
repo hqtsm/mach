@@ -12,6 +12,8 @@ import {ranged} from './util.ts';
  * MemoryFile class.
  */
 export class MemoryFile implements FileLike {
+	public declare readonly ['constructor']: typeof MemoryFile;
+
 	/**
 	 * Data blocks.
 	 */

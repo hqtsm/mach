@@ -29,7 +29,12 @@ export default api => {
 				}
 			}
 		],
-		['@babel/preset-typescript']
+		[
+			'@babel/preset-typescript',
+			{
+				allowDeclareFields: true
+			}
+		]
 	);
 	plugins.push([
 		'module-replace',
