@@ -28,6 +28,9 @@ export interface ByteLength {
 	readonly byteLength: number;
 }
 
+/**
+ * Object can be written to a buffer view.
+ */
 export interface ByteWrite {
 	/**
 	 * Write bytes to a buffer view.
