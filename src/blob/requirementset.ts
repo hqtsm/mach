@@ -1,5 +1,5 @@
 import {Blob} from '../blob.ts';
-import {BufferView} from '../type.ts';
+import {BufferView, ByteRead} from '../type.ts';
 import {kSecCodeMagicRequirementSet} from '../const.ts';
 import {sparseSet, subview} from '../util.ts';
 import {Requirement} from './requirement.ts';
@@ -7,7 +7,12 @@ import {Requirement} from './requirement.ts';
 /**
  * RequirementSet class.
  */
-export class RequirementSet extends Blob {
+export class RequirementSet extends Blob implements ByteRead {
+	/**
+	 * Requirement reference.
+	 */
+	public static readonly Requirement = Requirement;
+
 	/**
 	 * @inheritdoc
 	 */
@@ -80,6 +85,34 @@ export class RequirementSet extends Blob {
 	public setType(type: number, requirement: Requirement | null) {
 		// eslint-disable-next-line no-undefined
 		sparseSet(this.#requirements, type, requirement || undefined);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public byteRead(buffer: BufferView, offset?: number): number {
+		const {Requirement} = this.constructor as typeof RequirementSet;
+		const d = subview(DataView, buffer, offset);
+		const magic = d.getUint32(0);
+		if (magic !== this.magic) {
+			throw new Error(`Invalid magic: ${magic}`);
+		}
+		const length = d.getUint32(4);
+		if (length < 8) {
+			throw new Error(`Invalid length: ${length}`);
+		}
+		const count = d.getUint32(8);
+		let o1 = 12;
+		for (let i = 0; i < count; i++) {
+			const type = d.getUint32(o1);
+			o1 += 4;
+			const o2 = d.getUint32(o1);
+			o1 += 4;
+			const r = new Requirement();
+			r.byteRead(buffer, o2);
+			this.setType(type, r);
+		}
+		return length;
 	}
 
 	/**

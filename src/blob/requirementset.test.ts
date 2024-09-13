@@ -1,5 +1,5 @@
 import {describe, it} from 'node:test';
-import {deepStrictEqual} from 'node:assert';
+import {deepStrictEqual, strictEqual} from 'node:assert';
 
 import {RequirementSet} from './requirementset.ts';
 import {subview} from '../util.ts';
@@ -23,6 +23,10 @@ void describe('blob/requirementset', () => {
 				)
 			)
 		);
+
+		const rd = new RequirementSet();
+		strictEqual(rd.byteRead(d), d.byteLength);
+		deepStrictEqual(rd, r);
 	});
 
 	void it('host + designated', () => {
@@ -74,5 +78,9 @@ void describe('blob/requirementset', () => {
 		const d = new Uint8Array(r.byteLength);
 		r.byteWrite(d);
 		deepStrictEqual(subview(Uint8Array, d), subview(Uint8Array, data));
+
+		const rd = new RequirementSet();
+		strictEqual(rd.byteRead(d), d.byteLength);
+		deepStrictEqual(rd, r);
 	});
 });
