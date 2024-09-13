@@ -93,6 +93,13 @@ export class RequirementSet extends Blob implements ByteRead {
 	}
 
 	/**
+	 * Clear all requirement types.
+	 */
+	public clearTypes() {
+		this.#requirements.length = 0;
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public byteRead(buffer: BufferView, offset?: number): number {
@@ -108,6 +115,7 @@ export class RequirementSet extends Blob implements ByteRead {
 		}
 		const count = d.getUint32(8);
 		let o1 = 12;
+		const types = new Map<number, StaticI<this, 'Requirement'>>();
 		for (let i = 0; i < count; i++) {
 			const type = d.getUint32(o1);
 			o1 += 4;
@@ -115,6 +123,10 @@ export class RequirementSet extends Blob implements ByteRead {
 			o1 += 4;
 			const r = new Requirement() as StaticI<this, 'Requirement'>;
 			r.byteRead(buffer, o2);
+			types.set(type, r);
+		}
+		this.clearTypes();
+		for (const [type, r] of types) {
 			this.setType(type, r);
 		}
 		return length;
