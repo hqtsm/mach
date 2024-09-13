@@ -151,7 +151,7 @@ export async function* zipped(file: string) {
 					}
 
 					if (!uSize) {
-						return new Uint8Array(0);
+						return new Uint8Array();
 					}
 
 					const header = Buffer.alloc(30);

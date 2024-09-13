@@ -24,7 +24,7 @@ export class Requirement extends Blob {
 	/**
 	 * Compiled code signing requirement binary data.
 	 */
-	public data: BufferView = new Uint8Array(0);
+	public data: BufferView = new Uint8Array();
 
 	/**
 	 * @inheritdoc
