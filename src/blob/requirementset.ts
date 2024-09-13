@@ -1,5 +1,5 @@
 import {Blob} from '../blob.ts';
-import {BufferView, ByteRead, StaticI} from '../type.ts';
+import {BufferView, StaticI} from '../type.ts';
 import {kSecCodeMagicRequirementSet} from '../const.ts';
 import {sparseSet, subview} from '../util.ts';
 import {Requirement} from './requirement.ts';
@@ -7,7 +7,7 @@ import {Requirement} from './requirement.ts';
 /**
  * RequirementSet class.
  */
-export class RequirementSet extends Blob implements ByteRead {
+export class RequirementSet extends Blob {
 	/**
 	 * Requirement reference.
 	 */

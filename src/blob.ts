@@ -1,9 +1,9 @@
-import {BufferView, ByteLength, ByteWrite} from './type.ts';
+import {BufferView, ByteLength, ByteRead, ByteWrite} from './type.ts';
 
 /**
  * Blob class.
  */
-export abstract class Blob implements ByteLength, ByteWrite {
+export abstract class Blob implements ByteLength, ByteRead, ByteWrite {
 	public declare readonly ['constructor']: typeof Blob;
 
 	/**
@@ -22,6 +22,11 @@ export abstract class Blob implements ByteLength, ByteWrite {
 	public get byteLength() {
 		return this.length;
 	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public abstract byteRead(buffer: BufferView, offset?: number): number;
 
 	/**
 	 * @inheritdoc

@@ -424,6 +424,14 @@ export class CodeDirectory extends Blob {
 	/**
 	 * @inheritdoc
 	 */
+	public byteRead(buffer: BufferView, offset = 0) {
+		// TODO
+		return 0;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public byteWrite(buffer: BufferView, offset = 0) {
 		const Static = this.constructor;
 		const {

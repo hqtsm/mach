@@ -1,12 +1,12 @@
 import {Blob} from '../blob.ts';
-import {BufferView, ByteRead} from '../type.ts';
+import {BufferView} from '../type.ts';
 import {kSecCodeMagicRequirement} from '../const.ts';
 import {subview} from '../util.ts';
 
 /**
  * Requirement class.
  */
-export class Requirement extends Blob implements ByteRead {
+export class Requirement extends Blob {
 	public declare readonly ['constructor']: typeof Requirement;
 
 	/**
