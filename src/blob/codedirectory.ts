@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 
 import {Blob} from '../blob.ts';
-import {BufferView, ByteLength, ByteWrite} from '../type.ts';
+import {BufferView, ByteLength, ByteWrite, StaticI} from '../type.ts';
 import {
 	kSecCodeMagicCodeDirectory,
 	kSecCodeSignatureHashSHA1,
@@ -264,7 +264,7 @@ export class CodeDirectory extends Blob {
 	/**
 	 * Scatter vector.
 	 */
-	public scatterVector: InstanceType<typeof CodeDirectory.Scatter>[] = [];
+	public scatterVector: StaticI<this, 'Scatter'>[] = [];
 
 	/**
 	 * Offset of scatter vector.

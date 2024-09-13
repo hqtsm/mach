@@ -1,5 +1,5 @@
 import {Blob} from '../blob.ts';
-import {BufferView, ByteRead} from '../type.ts';
+import {BufferView, ByteRead, StaticI} from '../type.ts';
 import {kSecCodeMagicRequirementSet} from '../const.ts';
 import {sparseSet, subview} from '../util.ts';
 import {Requirement} from './requirement.ts';
@@ -66,7 +66,7 @@ export class RequirementSet extends Blob implements ByteRead {
 	/**
 	 * Requirement set.
 	 */
-	readonly #requirements: (Requirement | undefined)[] = [];
+	readonly #requirements: (StaticI<this, 'Requirement'> | undefined)[] = [];
 
 	/**
 	 * Get type by SecRequirementType.
@@ -84,7 +84,10 @@ export class RequirementSet extends Blob implements ByteRead {
 	 * @param type SecRequirementType.
 	 * @param requirement Requirement or null.
 	 */
-	public setType(type: number, requirement: Requirement | null) {
+	public setType(
+		type: number,
+		requirement: StaticI<this, 'Requirement'> | null
+	) {
 		// eslint-disable-next-line no-undefined
 		sparseSet(this.#requirements, type, requirement || undefined);
 	}
@@ -110,7 +113,7 @@ export class RequirementSet extends Blob implements ByteRead {
 			o1 += 4;
 			const o2 = d.getUint32(o1);
 			o1 += 4;
-			const r = new Requirement();
+			const r = new Requirement() as StaticI<this, 'Requirement'>;
 			r.byteRead(buffer, o2);
 			this.setType(type, r);
 		}

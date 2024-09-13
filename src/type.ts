@@ -1,4 +1,34 @@
 /**
+ * Type of static property.
+ */
+export type StaticP<
+	T extends {
+		constructor: {[Key in U]: unknown};
+	},
+	U extends keyof T['constructor']
+> = T['constructor'][U];
+
+/**
+ * Return type of static function.
+ */
+export type StaticR<
+	T extends {
+		constructor: {[Key in U]: (...args: unknown[]) => unknown};
+	},
+	U extends keyof T['constructor']
+> = ReturnType<T['constructor'][U]>;
+
+/**
+ * Instance type of static class.
+ */
+export type StaticI<
+	T extends {
+		constructor: {[Key in U]: abstract new (...args: unknown[]) => unknown};
+	},
+	U extends keyof T['constructor']
+> = InstanceType<T['constructor'][U]>;
+
+/**
  * Buffer view.
  */
 export interface BufferView {
