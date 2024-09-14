@@ -13,10 +13,10 @@ import {
 } from '../const.ts';
 import {
 	sparseSet,
-	viewUint8W,
-	viewDataW,
 	viewDataR,
-	viewUint8R
+	viewDataW,
+	viewUint8R,
+	viewUint8W
 } from '../util.ts';
 
 /**
