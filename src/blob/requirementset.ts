@@ -1,7 +1,7 @@
 import {Blob} from '../blob.ts';
 import {BufferView, StaticI} from '../type.ts';
 import {kSecCodeMagicRequirementSet} from '../const.ts';
-import {sparseSet, subview} from '../util.ts';
+import {sparseSet, viewDataR, viewDataW} from '../util.ts';
 import {Requirement} from './requirement.ts';
 
 /**
@@ -102,9 +102,9 @@ export class RequirementSet extends Blob {
 	/**
 	 * @inheritdoc
 	 */
-	public byteRead(buffer: BufferView, offset?: number): number {
+	public byteRead(buffer: Readonly<BufferView>, offset = 0): number {
 		const {Requirement} = this.constructor;
-		const d = subview(DataView, buffer, offset);
+		const d = viewDataR(buffer, offset);
 		const magic = d.getUint32(0);
 		if (magic !== this.magic) {
 			throw new Error(`Invalid magic: ${magic}`);
@@ -137,7 +137,7 @@ export class RequirementSet extends Blob {
 	 */
 	public byteWrite(buffer: BufferView, offset = 0) {
 		const {length, count} = this;
-		const d = subview(DataView, buffer, offset, length);
+		const d = viewDataW(buffer, offset, length);
 		d.setUint32(0, this.magic);
 		d.setUint32(4, length);
 		d.setUint32(8, count);

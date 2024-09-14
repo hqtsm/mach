@@ -1,7 +1,7 @@
 import {Blob} from '../blob.ts';
 import {BufferView} from '../type.ts';
 import {kSecCodeMagicRequirement} from '../const.ts';
-import {subview} from '../util.ts';
+import {viewUint8R, viewUint8W, viewDataR, viewDataW} from '../util.ts';
 
 /**
  * Requirement class.
@@ -31,8 +31,8 @@ export class Requirement extends Blob {
 	/**
 	 * @inheritdoc
 	 */
-	public byteRead(buffer: BufferView, offset?: number): number {
-		const d = subview(DataView, buffer, offset);
+	public byteRead(buffer: Readonly<BufferView>, offset = 0): number {
+		const d = viewDataR(buffer, offset);
 		const magic = d.getUint32(0);
 		if (magic !== this.magic) {
 			throw new Error(`Invalid magic: ${magic}`);
@@ -41,7 +41,8 @@ export class Requirement extends Blob {
 		if (length < 8) {
 			throw new Error(`Invalid length: ${length}`);
 		}
-		this.data = subview(Uint8Array, d, 8, length - 8);
+		// eslint-disable-next-line unicorn/prefer-spread
+		this.data = viewUint8R(d, 8, length - 8).slice();
 		return length;
 	}
 
@@ -50,10 +51,10 @@ export class Requirement extends Blob {
 	 */
 	public byteWrite(buffer: BufferView, offset = 0) {
 		const {length} = this;
-		const d = subview(DataView, buffer, offset, length);
+		const d = viewDataW(buffer, offset, length);
 		d.setUint32(0, this.magic);
 		d.setUint32(4, length);
-		subview(Uint8Array, d, 8).set(subview(Uint8Array, this.data));
+		viewUint8W(d, 8).set(viewUint8R(this.data));
 		return length;
 	}
 }

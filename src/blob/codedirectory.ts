@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 
 import {Blob} from '../blob.ts';
-import {BufferView, ByteLength, ByteWrite, StaticI} from '../type.ts';
+import {BufferView, ByteLength, ByteRead, ByteWrite, StaticI} from '../type.ts';
 import {
 	kSecCodeMagicCodeDirectory,
 	kSecCodeSignatureHashSHA1,
@@ -11,7 +11,7 @@ import {
 	kSecCodeSignatureHashSHA512,
 	kSecCodeSignatureNoHash
 } from '../const.ts';
-import {sparseSet, subview} from '../util.ts';
+import {sparseSet, viewUint8W, viewDataW} from '../util.ts';
 
 /**
  * CodeDirectory class.
@@ -51,7 +51,7 @@ export class CodeDirectory extends Blob {
 	 * Scatter structure.
 	 */
 	public static readonly Scatter = class Scatter
-		implements ByteLength, ByteWrite
+		implements ByteLength, ByteRead, ByteWrite
 	{
 		public declare readonly ['constructor']: typeof Scatter;
 
@@ -80,9 +80,17 @@ export class CodeDirectory extends Blob {
 		/**
 		 * @inheritdoc
 		 */
+		public byteRead(buffer: Readonly<BufferView>, offset = 0) {
+			// TODO
+			return 0;
+		}
+
+		/**
+		 * @inheritdoc
+		 */
 		public byteWrite(buffer: BufferView, offset = 0) {
 			const {byteLength} = this;
-			const d = subview(DataView, buffer, offset, byteLength);
+			const d = viewDataW(buffer, offset, byteLength);
 			d.setUint32(0, this.count);
 			d.setUint32(4, this.base);
 			d.setBigUint64(8, this.targetOffset);
@@ -168,7 +176,7 @@ export class CodeDirectory extends Blob {
 	/**
 	 * The special hash slots.
 	 */
-	readonly #specialSlots: (Readonly<Uint8Array> | undefined)[] = [];
+	readonly #specialSlots: (Uint8Array | undefined)[] = [];
 
 	/**
 	 * Number of special hash slots.
@@ -191,7 +199,7 @@ export class CodeDirectory extends Blob {
 	/**
 	 * The ordinary (code) hash slots.
 	 */
-	readonly #codeSlots: (Readonly<Uint8Array> | undefined)[] = [];
+	readonly #codeSlots: (Uint8Array | undefined)[] = [];
 
 	/**
 	 * Number of ordinary (code) hash slots.
@@ -344,7 +352,7 @@ export class CodeDirectory extends Blob {
 	/**
 	 * Pre-encrypt hash slots.
 	 */
-	readonly #preEncryptSlots: (Readonly<Uint8Array> | undefined)[] = [];
+	readonly #preEncryptSlots: (Uint8Array | undefined)[] = [];
 
 	/**
 	 * Offset of pre-encrypt hash slots.
@@ -406,7 +414,7 @@ export class CodeDirectory extends Blob {
 	public setSlot(
 		slot: number,
 		preEncrypt: boolean,
-		value: Readonly<Uint8Array> | null
+		value: Uint8Array | null
 	) {
 		let a;
 		if (preEncrypt) {
@@ -424,7 +432,7 @@ export class CodeDirectory extends Blob {
 	/**
 	 * @inheritdoc
 	 */
-	public byteRead(buffer: BufferView, offset = 0) {
+	public byteRead(buffer: Readonly<BufferView>, offset = 0) {
 		// TODO
 		return 0;
 	}
@@ -446,7 +454,7 @@ export class CodeDirectory extends Blob {
 			nSpecialSlots,
 			nCodeSlots
 		} = this;
-		const d = subview(DataView, buffer, offset, length);
+		const d = viewDataW(buffer, offset, length);
 		let o = 0;
 		d.setUint32(o, this.magic);
 		o += 4;
@@ -515,21 +523,21 @@ export class CodeDirectory extends Blob {
 
 		{
 			const {identifier} = this;
-			const view = subview(Uint8Array, d, identOffset);
+			const view = viewUint8W(d, identOffset);
 			view.set(identifier);
 			view[identifier.length] = 0;
 		}
 
 		if (teamIDOffset) {
 			const {teamID} = this;
-			const view = subview(Uint8Array, d, teamIDOffset);
+			const view = viewUint8W(d, teamIDOffset);
 			view.set(teamID);
 			view[teamID.length] = 0;
 		}
 
 		if ((o = preEncryptOffset)) {
 			for (let i = 0; i < nCodeSlots; i++) {
-				const v = subview(Uint8Array, d, o, hashSize);
+				const v = viewUint8W(d, o, hashSize);
 				const h = this.getSlot(i, true);
 				if (h) {
 					if (h.length !== hashSize) {
@@ -545,7 +553,7 @@ export class CodeDirectory extends Blob {
 
 		o = hashOffset - nSpecialSlots * hashSize;
 		for (let i = 0 - nSpecialSlots; i < nCodeSlots; i++) {
-			const v = subview(Uint8Array, d, o, hashSize);
+			const v = viewUint8W(d, o, hashSize);
 			const h = this.getSlot(i, false);
 			if (h) {
 				if (h.length !== hashSize) {

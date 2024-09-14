@@ -2,7 +2,7 @@ import {describe, it} from 'node:test';
 import {deepStrictEqual, strictEqual} from 'node:assert';
 
 import {Requirement} from './requirement.ts';
-import {subview} from '../util.ts';
+import {viewDataR, viewUint8R} from '../util.ts';
 import {kSecCodeMagicRequirement} from '../const.ts';
 
 void describe('blob/requirement', () => {
@@ -26,8 +26,7 @@ void describe('blob/requirement', () => {
 	});
 
 	void it('identifier "com.apple.simple"', () => {
-		const data = subview(
-			Uint8Array,
+		const data = viewUint8R(
 			Buffer.from(
 				[
 					'00 00 00 01',
@@ -44,10 +43,10 @@ void describe('blob/requirement', () => {
 		r.data = data;
 		const d = new Uint8Array(r.byteLength);
 		r.byteWrite(d);
-		const dv = subview(DataView, d);
+		const dv = viewDataR(d);
 		strictEqual(dv.getUint32(0), kSecCodeMagicRequirement);
 		strictEqual(dv.getUint32(4), d.byteLength);
-		deepStrictEqual(subview(Uint8Array, dv, 8), subview(Uint8Array, data));
+		deepStrictEqual(viewUint8R(dv, 8), viewUint8R(data));
 
 		const rd = new Requirement();
 		strictEqual(rd.byteRead(d), d.byteLength);

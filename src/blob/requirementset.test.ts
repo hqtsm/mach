@@ -2,7 +2,7 @@ import {describe, it} from 'node:test';
 import {deepStrictEqual, strictEqual} from 'node:assert';
 
 import {RequirementSet} from './requirementset.ts';
-import {subview} from '../util.ts';
+import {viewUint8R} from '../util.ts';
 import {
 	kSecDesignatedRequirementType,
 	kSecHostRequirementType
@@ -77,7 +77,7 @@ void describe('blob/requirementset', () => {
 		);
 		const d = new Uint8Array(r.byteLength);
 		r.byteWrite(d);
-		deepStrictEqual(subview(Uint8Array, d), subview(Uint8Array, data));
+		deepStrictEqual(viewUint8R(d), viewUint8R(data));
 
 		const rd = new RequirementSet();
 		strictEqual(rd.byteRead(d), d.byteLength);

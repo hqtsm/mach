@@ -3,7 +3,7 @@ import {open} from 'node:fs/promises';
 import {inflateRaw} from 'node:zlib';
 import {subtle} from 'node:crypto';
 
-import {BufferView} from './type.ts';
+import {BufferView, ReadonlyUint8Array} from './type.ts';
 import {
 	CPU_SUBTYPE_POWERPC_7400,
 	CPU_SUBTYPE_POWERPC_970,
@@ -27,7 +27,7 @@ import {
 	MH_MAGIC,
 	MH_MAGIC_64
 } from './const.ts';
-import {subview} from './util.ts';
+import {viewDataR, viewUint8R} from './util.ts';
 
 export async function hash(hashType: number, data: Readonly<BufferView>) {
 	let limit = -1;
@@ -68,17 +68,17 @@ export async function chunkedHashes(
 	offset = 0,
 	length = -1
 ) {
-	const d = subview(Uint8Array, data, offset, length);
+	const d = viewUint8R(data, offset, length);
 	const l = d.length;
 	chunk = chunk || l;
-	const slices: Uint8Array[] = [];
+	const slices: ReadonlyUint8Array[] = [];
 	for (let i = 0; i < l; i += chunk) {
-		slices.push(d.subarray(i, Math.min(i + chunk, l)));
+		slices.push(viewUint8R(d, i, Math.min(i + chunk, l) - i));
 	}
 	return Promise.all(slices.map(async d => hash(hashType, d)));
 }
 
-async function zlibInflateRaw(data: Buffer) {
+async function zlibInflateRaw(data: Readonly<Buffer>) {
 	return new Promise<Buffer>((resolve, reject) => {
 		inflateRaw(data, (err, data) => {
 			if (err) {
@@ -345,7 +345,7 @@ export function fixtureMachos() {
 export async function fixtureMacho(
 	kind: string,
 	arch: string,
-	files: string[]
+	files: readonly string[]
 ) {
 	const m = new Map(files.map((name, i) => [name, i]));
 	const datas: Uint8Array[] = [];
@@ -366,11 +366,11 @@ export async function fixtureMacho(
 }
 
 export function machoThin(
-	data: BufferView,
+	data: Readonly<BufferView>,
 	type: number,
 	subtype: number | null = null
 ) {
-	const v = subview(DataView, data);
+	const v = viewDataR(data);
 	const magic = v.getUint32(0);
 	let f = false;
 	let b = false;
@@ -422,7 +422,7 @@ export function machoThin(
 		if (cputype !== type || (subtype && cpusubtype !== subtype)) {
 			throw new Error(`Wrong arch: ${cputype} ${cpusubtype}`);
 		}
-		return subview(Uint8Array, v);
+		return viewUint8R(v);
 	}
 	const count = v.getUint32(4, b);
 	const slices: [number, number][] = [];
@@ -449,5 +449,5 @@ export function machoThin(
 		throw new Error('Multiple matching archs');
 	}
 	const [[offset, size]] = slices;
-	return subview(Uint8Array, data, offset, size);
+	return viewUint8R(data, offset, size);
 }

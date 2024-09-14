@@ -29,6 +29,44 @@ export type StaticI<
 > = InstanceType<T['constructor'][U]>;
 
 /**
+ * Data view write methods.
+ */
+export type DataViewWriteMethods =
+	| 'setInt8'
+	| 'setUint8'
+	| 'setInt16'
+	| 'setUint16'
+	| 'setInt32'
+	| 'setUint32'
+	| 'setFloat32'
+	| 'setFloat64'
+	| 'setBigInt64'
+	| 'setBigUint64';
+
+/**
+ * Readonly DataView.
+ */
+export type ReadonlyDataView = Readonly<Omit<DataView, DataViewWriteMethods>>;
+
+/**
+ * Typed array write methods.
+ */
+export type TypedArrayWriteMethods =
+	| 'copyWithin'
+	| 'fill'
+	| 'reverse'
+	| 'set'
+	| 'sort'
+	| 'subarray';
+
+/**
+ * Readonly Uint8Array.
+ */
+export type ReadonlyUint8Array = Readonly<
+	Omit<Uint8Array, TypedArrayWriteMethods>
+>;
+
+/**
  * Buffer view.
  */
 export interface BufferView {
@@ -69,7 +107,7 @@ export interface ByteRead {
 	 * @param offset Byte offset into buffer.
 	 * @returns Read length.
 	 */
-	byteRead(buffer: BufferView, offset?: number): number;
+	byteRead(buffer: Readonly<BufferView>, offset?: number): number;
 }
 
 /**

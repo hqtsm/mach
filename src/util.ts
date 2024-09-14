@@ -1,4 +1,4 @@
-import {BufferView} from './type';
+import {BufferView, ReadonlyDataView, ReadonlyUint8Array} from './type';
 
 /**
  * Assert integer in range.
@@ -35,7 +35,7 @@ export function stringToBytes(str: string) {
  * @param length Length of view.
  * @returns View over BufferView buffer.
  */
-export function subview<T>(
+function subview<T>(
 	Type: new (
 		buffer: ArrayBuffer,
 		byteOffset: number,
@@ -54,6 +54,58 @@ export function subview<T>(
 		ranged(length, 0, limit);
 	}
 	return new Type(buffer, byteOffset + offset, length);
+}
+
+/**
+ * Get readonly DataView from BufferView.
+ *
+ * @param view BufferView.
+ * @param offset Offset into view.
+ * @param length Length of view.
+ * @returns Readonly DataView.
+ */
+export function viewDataR(view: Readonly<BufferView>, offset = 0, length = -1) {
+	return subview(DataView, view, offset, length) as ReadonlyDataView;
+}
+
+/**
+ * Get writable DataView from BufferView.
+ *
+ * @param view BufferView.
+ * @param offset Offset into view.
+ * @param length Length of view.
+ * @returns Writable DataView.
+ */
+export function viewDataW(view: BufferView, offset = 0, length = -1) {
+	return subview(DataView, view, offset, length);
+}
+
+/**
+ * Get readonly Uint8Array from BufferView.
+ *
+ * @param view BufferView.
+ * @param offset Offset into view.
+ * @param length Length of view.
+ * @returns Readonly Uint8Array.
+ */
+export function viewUint8R(
+	view: Readonly<BufferView>,
+	offset = 0,
+	length = -1
+) {
+	return subview(Uint8Array, view, offset, length) as ReadonlyUint8Array;
+}
+
+/**
+ * Get writable Uint8Array from BufferView.
+ *
+ * @param view BufferView.
+ * @param offset Offset into view.
+ * @param length Length of view.
+ * @returns Writable Uint8Array.
+ */
+export function viewUint8W(view: BufferView, offset = 0, length = -1) {
+	return subview(Uint8Array, view, offset, length);
 }
 
 /**

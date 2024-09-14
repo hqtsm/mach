@@ -26,7 +26,10 @@ export abstract class Blob implements ByteLength, ByteRead, ByteWrite {
 	/**
 	 * @inheritdoc
 	 */
-	public abstract byteRead(buffer: BufferView, offset?: number): number;
+	public abstract byteRead(
+		buffer: Readonly<BufferView>,
+		offset?: number
+	): number;
 
 	/**
 	 * @inheritdoc
