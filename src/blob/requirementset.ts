@@ -104,7 +104,7 @@ export class RequirementSet extends Blob {
 	 */
 	public byteRead(buffer: Readonly<BufferView>, offset = 0): number {
 		const {Requirement} = this.constructor;
-		const d = viewDataR(buffer, offset);
+		let d = viewDataR(buffer, offset);
 		const magic = d.getUint32(0);
 		if (magic !== this.magic) {
 			throw new Error(`Invalid magic: ${magic}`);
@@ -113,6 +113,7 @@ export class RequirementSet extends Blob {
 		if (length < 8) {
 			throw new Error(`Invalid length: ${length}`);
 		}
+		d = viewDataR(d, 0, length);
 		const count = d.getUint32(8);
 		let o1 = 12;
 		const types = new Map<number, StaticI<this, 'Requirement'>>();
