@@ -1,5 +1,5 @@
 import {describe, it} from 'node:test';
-import {deepStrictEqual, notStrictEqual} from 'node:assert';
+import {deepStrictEqual, notStrictEqual, strictEqual} from 'node:assert';
 
 import {
 	fixtureMacho,
@@ -143,6 +143,7 @@ void describe('blob/codedirectory', () => {
 						cd2.byteRead(data);
 						deepStrictEqual(cd, cd2);
 
+						strictEqual(cd2.nSpecialSlots, cd.nSpecialSlots);
 						for (let i = 0; i < cd2.nSpecialSlots; i++) {
 							const nulled = new Uint8Array(cd.hashSize);
 							deepStrictEqual(
@@ -151,6 +152,7 @@ void describe('blob/codedirectory', () => {
 							);
 						}
 
+						strictEqual(cd2.nCodeSlots, cd.nCodeSlots);
 						for (let i = 0; i < cd2.nCodeSlots; i++) {
 							deepStrictEqual(
 								cd2.getSlot(i, false),
