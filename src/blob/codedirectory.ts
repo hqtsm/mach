@@ -11,7 +11,7 @@ import {
 	kSecCodeSignatureHashSHA512,
 	kSecCodeSignatureNoHash
 } from '../const.ts';
-import {sparseSet, viewUint8W, viewDataW} from '../util.ts';
+import {sparseSet, viewUint8W, viewDataW, viewDataR} from '../util.ts';
 
 /**
  * CodeDirectory class.
@@ -81,8 +81,19 @@ export class CodeDirectory extends Blob {
 		 * @inheritdoc
 		 */
 		public byteRead(buffer: Readonly<BufferView>, offset = 0) {
-			// TODO
-			return 0;
+			const {byteLength} = this;
+			const d = viewDataR(buffer, offset, byteLength);
+			const count = d.getUint32(0);
+			const base = d.getUint32(4);
+			const targetOffset = d.getBigUint64(8);
+			const reserved = d.getBigUint64(16);
+			if (reserved !== 0n) {
+				throw new Error(`Invalid reserved: ${reserved}`);
+			}
+			this.count = count;
+			this.base = base;
+			this.targetOffset = targetOffset;
+			return byteLength;
 		}
 
 		/**
