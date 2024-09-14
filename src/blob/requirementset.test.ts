@@ -59,5 +59,9 @@ void describe('blob/requirementset', () => {
 		const r2 = new RequirementSet();
 		strictEqual(r2.byteRead(d), d.byteLength);
 		deepStrictEqual(r2, r);
+
+		for (const type of r.types()) {
+			deepStrictEqual(r.getType(type), r2.getType(type));
+		}
 	});
 });

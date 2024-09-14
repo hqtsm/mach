@@ -142,6 +142,25 @@ void describe('blob/codedirectory', () => {
 						const cd2 = new CodeDirectory();
 						cd2.byteRead(data);
 						deepStrictEqual(cd, cd2);
+
+						for (let i = 0; i < cd2.nSpecialSlots; i++) {
+							const nulled = new Uint8Array(cd.hashSize);
+							deepStrictEqual(
+								cd2.getSlot(-1 - i, false),
+								cd.getSlot(-1 - i, false) || nulled
+							);
+						}
+
+						for (let i = 0; i < cd2.nCodeSlots; i++) {
+							deepStrictEqual(
+								cd2.getSlot(i, false),
+								cd.getSlot(i, false)
+							);
+							deepStrictEqual(
+								cd2.getSlot(i, true),
+								cd.getSlot(i, true)
+							);
+						}
 					}
 				}
 			});
