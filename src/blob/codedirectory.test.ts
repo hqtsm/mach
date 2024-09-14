@@ -78,6 +78,7 @@ void describe('blob/codedirectory', () => {
 
 					const {requirements} = info;
 					for (const hashType of info.hashes) {
+						const message = `CD: ${arc}: hashType=${hashType}`;
 						const cd = new CodeDirectory();
 						cd.version = info.version;
 						cd.flags = info.flags;
@@ -136,31 +137,38 @@ void describe('blob/codedirectory', () => {
 								info.offset
 							),
 							-1,
-							`CD: ${arc}: hashType=${hashType}`
+							message
 						);
 
 						const cd2 = new CodeDirectory();
 						cd2.byteRead(data);
-						deepStrictEqual(cd, cd2);
+						deepStrictEqual(cd, cd2, message);
 
-						strictEqual(cd2.nSpecialSlots, cd.nSpecialSlots);
+						strictEqual(
+							cd2.nSpecialSlots,
+							cd.nSpecialSlots,
+							message
+						);
 						for (let i = 0; i < cd2.nSpecialSlots; i++) {
 							const nulled = new Uint8Array(cd.hashSize);
 							deepStrictEqual(
 								cd2.getSlot(-1 - i, false),
-								cd.getSlot(-1 - i, false) || nulled
+								cd.getSlot(-1 - i, false) || nulled,
+								message
 							);
 						}
 
-						strictEqual(cd2.nCodeSlots, cd.nCodeSlots);
+						strictEqual(cd2.nCodeSlots, cd.nCodeSlots, message);
 						for (let i = 0; i < cd2.nCodeSlots; i++) {
 							deepStrictEqual(
 								cd2.getSlot(i, false),
-								cd.getSlot(i, false)
+								cd.getSlot(i, false),
+								message
 							);
 							deepStrictEqual(
 								cd2.getSlot(i, true),
-								cd.getSlot(i, true)
+								cd.getSlot(i, true),
+								message
 							);
 						}
 					}
