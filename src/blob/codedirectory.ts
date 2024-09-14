@@ -441,6 +441,15 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
+	 * Clear all hash slots.
+	 */
+	public clearSlots() {
+		this.#specialSlots.length = 0;
+		this.#codeSlots.length = 0;
+		this.#preEncryptSlots.length = 0;
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public byteRead(buffer: Readonly<BufferView>, offset = 0) {
