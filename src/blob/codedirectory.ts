@@ -608,7 +608,7 @@ export class CodeDirectory extends Blob {
 			this.setSlot(i, false, hash);
 		}
 
-		return 0;
+		return length;
 	}
 
 	/**

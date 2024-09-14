@@ -27,7 +27,11 @@ import {
 	MH_MAGIC,
 	MH_MAGIC_64
 } from './const.ts';
-import {viewDataR, viewUint8R} from './util.ts';
+import {viewDataR, viewUint8R, viewUint8W} from './util.ts';
+
+export function unhex(...hex: string[]) {
+	return viewUint8W(Buffer.from(hex.join('').replace(/\s+/g, ''), 'hex'));
+}
 
 export async function hash(hashType: number, data: Readonly<BufferView>) {
 	let limit = -1;
