@@ -40,28 +40,28 @@ void describe('blob/requirementset', () => {
 			'FA DE 0C 00 00 00 00 28',
 			Buffer.from(designatedData).toString('hex')
 		);
-		const r = new RequirementSet();
+		const rs = new RequirementSet();
 		const designated = new Requirement();
 		designated.data = designatedData;
-		r.setType(kSecDesignatedRequirementType, designated);
-		deepStrictEqual([...r.types()], [kSecDesignatedRequirementType]);
+		rs.setType(kSecDesignatedRequirementType, designated);
+		deepStrictEqual([...rs.types()], [kSecDesignatedRequirementType]);
 		const host = new Requirement();
 		host.data = hostData;
-		r.setType(kSecHostRequirementType, host);
+		rs.setType(kSecHostRequirementType, host);
 		deepStrictEqual(
-			[...r.types()],
+			[...rs.types()],
 			[kSecHostRequirementType, kSecDesignatedRequirementType]
 		);
-		const d = new Uint8Array(r.byteLength);
-		r.byteWrite(d);
+		const d = new Uint8Array(rs.byteLength);
+		rs.byteWrite(d);
 		deepStrictEqual(d, data);
 
-		const r2 = new RequirementSet();
-		strictEqual(r2.byteRead(d), d.byteLength);
-		deepStrictEqual(r2, r);
+		const rs2 = new RequirementSet();
+		strictEqual(rs2.byteRead(d), d.byteLength);
+		deepStrictEqual(rs2, rs);
 
-		for (const type of r.types()) {
-			deepStrictEqual(r.getType(type), r2.getType(type));
+		for (const type of rs.types()) {
+			deepStrictEqual(rs.getType(type), rs2.getType(type));
 		}
 	});
 });
