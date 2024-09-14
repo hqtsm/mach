@@ -12,12 +12,13 @@ import {CodeDirectory} from './codedirectory.ts';
 import {cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot} from '../const.ts';
 import {RequirementSet} from './requirementset.ts';
 import {stringToBytes} from '../util.ts';
+import {ReadonlyUint8Array} from '../type.ts';
 
 const emptyRequirementSet = new RequirementSet();
 const emptyRequirements = new Uint8Array(emptyRequirementSet.length);
 emptyRequirementSet.byteWrite(emptyRequirements);
 
-async function addCodeHashes(cd: CodeDirectory, macho: Readonly<Uint8Array>) {
+async function addCodeHashes(cd: CodeDirectory, macho: ReadonlyUint8Array) {
 	const {pageSize} = cd;
 	const hashes = await chunkedHashes(
 		cd.hashType,
