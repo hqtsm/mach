@@ -1,5 +1,5 @@
 import {describe, it} from 'node:test';
-import {notStrictEqual} from 'node:assert';
+import {deepStrictEqual, notStrictEqual} from 'node:assert';
 
 import {
 	fixtureMacho,
@@ -138,6 +138,10 @@ void describe('blob/codedirectory', () => {
 							-1,
 							`CD: ${arc}: hashType=${hashType}`
 						);
+
+						const cd2 = new CodeDirectory();
+						cd2.byteRead(data);
+						deepStrictEqual(cd, cd2);
 					}
 				}
 			});

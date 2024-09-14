@@ -11,7 +11,13 @@ import {
 	kSecCodeSignatureHashSHA512,
 	kSecCodeSignatureNoHash
 } from '../const.ts';
-import {sparseSet, viewUint8W, viewDataW, viewDataR} from '../util.ts';
+import {
+	sparseSet,
+	viewUint8W,
+	viewDataW,
+	viewDataR,
+	viewUint8R
+} from '../util.ts';
 
 /**
  * CodeDirectory class.
@@ -453,7 +459,155 @@ export class CodeDirectory extends Blob {
 	 * @inheritdoc
 	 */
 	public byteRead(buffer: Readonly<BufferView>, offset = 0) {
-		// TODO
+		const Static = this.constructor;
+		let d = viewDataR(buffer, offset);
+		let o = 0;
+		const magic = d.getUint32(o);
+		o += 4;
+		if (magic !== this.magic) {
+			throw new Error(`Invalid magic: ${magic}`);
+		}
+		const length = d.getUint32(o);
+		o += 4;
+		if (length < 8) {
+			throw new Error(`Invalid length: ${length}`);
+		}
+		d = viewDataR(d, 0, length);
+		const version = d.getUint32(o);
+		o += 4;
+		const flags = d.getUint32(o);
+		o += 4;
+		const hashOffset = d.getUint32(o);
+		o += 4;
+		const identOffset = d.getUint32(o);
+		o += 4;
+		const nSpecialSlots = d.getUint32(o);
+		o += 4;
+		const nCodeSlots = d.getUint32(o);
+		o += 4;
+		const codeLimit = d.getUint32(o);
+		o += 4;
+		const hashSize = d.getUint8(o++);
+		const hashType = d.getUint8(o++);
+		const platform = d.getUint8(o++);
+		const pageSize = d.getUint8(o++);
+		const space2 = d.getUint32(o);
+		o += 4;
+		if (space2 !== 0) {
+			throw new Error(`Invalid space2: ${space2}`);
+		}
+		const scatterOffset = d.getUint32(o);
+		o += 4;
+
+		let teamIDOffset = 0;
+		if (version >= Static.supportsTeamID) {
+			teamIDOffset = d.getUint32(o);
+			o += 4;
+		}
+
+		let codeLimit64 = 0n;
+		if (version >= Static.supportsCodeLimit64) {
+			const spare3 = d.getUint32(o);
+			o += 4;
+			if (spare3 !== 0) {
+				throw new Error(`Invalid spare3: ${spare3}`);
+			}
+			codeLimit64 = d.getBigUint64(o);
+			o += 8;
+		}
+
+		let execSegBase = 0n;
+		let execSegLimit = 0n;
+		let execSegFlags = 0n;
+		if (version >= Static.supportsExecSegment) {
+			execSegBase = d.getBigUint64(o);
+			o += 8;
+			execSegLimit = d.getBigUint64(o);
+			o += 8;
+			execSegFlags = d.getBigUint64(o);
+			o += 8;
+		}
+
+		let runtime = 0;
+		let preEncryptOffset = 0;
+		if (version >= Static.supportsPreEncrypt) {
+			runtime = d.getUint32(o);
+			o += 4;
+			preEncryptOffset = d.getUint32(o);
+			o += 4;
+		}
+
+		const scatterVector: StaticI<this, 'Scatter'>[] = [];
+		if ((o = scatterOffset)) {
+			const {Scatter} = Static;
+			for (;;) {
+				const scatter = new Scatter() as StaticI<this, 'Scatter'>;
+				o += scatter.byteRead(buffer, o);
+				if (!scatter.count) {
+					break;
+				}
+				scatterVector.push(scatter);
+			}
+		}
+
+		let identifier;
+		{
+			let e = identOffset;
+			for (; d.getUint8(e); e++);
+			// eslint-disable-next-line unicorn/prefer-spread
+			identifier = viewUint8R(d, identOffset, e - identOffset).slice();
+		}
+
+		let teamID;
+		if ((o = teamIDOffset)) {
+			let e = o;
+			for (; d.getUint8(e); e++);
+			// eslint-disable-next-line unicorn/prefer-spread
+			teamID = viewUint8R(d, o, e - o).slice();
+		} else {
+			teamID = new Uint8Array();
+		}
+
+		const preEncryptSlots = new Map<number, Uint8Array>();
+		if ((o = preEncryptOffset)) {
+			for (let i = 0; i < nCodeSlots; i++) {
+				// eslint-disable-next-line unicorn/prefer-spread
+				preEncryptSlots.set(i, viewUint8R(d, o, hashSize).slice());
+				o += hashSize;
+			}
+		}
+
+		const slots = new Map<number, Uint8Array>();
+		o = hashOffset - nSpecialSlots * hashSize;
+		for (let i = 0 - nSpecialSlots; i < nCodeSlots; i++) {
+			// eslint-disable-next-line unicorn/prefer-spread
+			slots.set(i, viewUint8R(d, o, hashSize).slice());
+			o += hashSize;
+		}
+
+		this.clearSlots();
+		this.version = version;
+		this.flags = flags;
+		this.codeLimit = codeLimit;
+		this.hashType = hashType;
+		this.platform = platform;
+		this.pageSize = pageSize;
+		this.codeLimit64 = codeLimit64;
+		this.execSegBase = execSegBase;
+		this.execSegLimit = execSegLimit;
+		this.execSegFlags = execSegFlags;
+		this.runtime = runtime;
+		this.scatterVector = scatterVector;
+		this.identifier = identifier;
+		this.teamID = teamID;
+
+		for (const [i, hash] of preEncryptSlots) {
+			this.setSlot(i, true, hash);
+		}
+		for (const [i, hash] of slots) {
+			this.setSlot(i, false, hash);
+		}
+
 		return 0;
 	}
 
