@@ -157,6 +157,16 @@ export const FAT_CIGAM = 0xbebafeca;
 export const FAT_MAGIC_64 = 0xcafebabf;
 export const FAT_CIGAM_64 = 0xbfbafeca;
 
+// Magic numbers used by code signing:
+export const CSMAGIC_REQUIREMENT = 0xfade0c00;
+export const CSMAGIC_REQUIREMENTS = 0xfade0c01;
+export const CSMAGIC_CODEDIRECTORY = 0xfade0c02;
+export const CSMAGIC_EMBEDDED_SIGNATURE = 0xfade0cc0;
+export const CSMAGIC_EMBEDDED_SIGNATURE_OLD = 0xfade0b02;
+export const CSMAGIC_EMBEDDED_ENTITLEMENTS = 0xfade7171;
+export const CSMAGIC_DETACHED_SIGNATURE = 0xfade0cc1;
+export const CSMAGIC_BLOBWRAPPER = 0xfade0b01;
+
 // Blob types used for code signing:
 export const kSecCodeMagicRequirement = 0xfade0c00;
 export const kSecCodeMagicRequirementSet = 0xfade0c01;
