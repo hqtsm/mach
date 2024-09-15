@@ -4,7 +4,7 @@ import {kSecCodeMagicRequirement} from '../const.ts';
 import {viewUint8R, viewUint8W, viewDataR, viewDataW} from '../util.ts';
 
 /**
- * Requirement class.
+ * Requirement Blob.
  */
 export class Requirement extends Blob {
 	public declare readonly ['constructor']: typeof Requirement;

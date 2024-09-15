@@ -5,7 +5,7 @@ import {sparseSet, viewDataR, viewDataW} from '../util.ts';
 import {Requirement} from './requirement.ts';
 
 /**
- * RequirementSet class.
+ * RequirementSet Blob.
  */
 export class RequirementSet extends Blob {
 	/**

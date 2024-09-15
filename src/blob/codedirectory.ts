@@ -20,7 +20,7 @@ import {
 } from '../util.ts';
 
 /**
- * CodeDirectory class.
+ * CodeDirectory Blob.
  */
 export class CodeDirectory extends Blob {
 	/**
