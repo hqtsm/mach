@@ -3,7 +3,7 @@
  */
 export type StaticValue<
 	T extends {
-		constructor: {[Key in U]: unknown};
+		constructor: {[K in U]: unknown};
 	},
 	U extends keyof T['constructor']
 > = T['constructor'][U];
@@ -13,7 +13,7 @@ export type StaticValue<
  */
 export type StaticReturn<
 	T extends {
-		constructor: {[Key in U]: (...args: unknown[]) => unknown};
+		constructor: {[K in U]: (...args: unknown[]) => unknown};
 	},
 	U extends keyof T['constructor']
 > = ReturnType<T['constructor'][U]>;
@@ -23,7 +23,7 @@ export type StaticReturn<
  */
 export type StaticNew<
 	T extends {
-		constructor: {[Key in U]: {prototype: unknown}};
+		constructor: {[K in U]: {prototype: unknown}};
 	},
 	U extends keyof T['constructor']
 > = T['constructor'][U]['prototype'];
