@@ -24,7 +24,7 @@ export class EntitlementBlob extends Blob {
 	}
 
 	/**
-	 * Arbitrary (flat) binary data.
+	 * Binary data.
 	 */
 	public data: BufferView = new Uint8Array();
 
