@@ -1,5 +1,5 @@
 import {Blob} from '../blob.ts';
-import {BufferView, StaticI} from '../type.ts';
+import {BufferView, StaticNew} from '../type.ts';
 import {kSecCodeMagicRequirementSet} from '../const.ts';
 import {sparseSet, viewDataR, viewDataW} from '../util.ts';
 import {Requirement} from './requirement.ts';
@@ -66,7 +66,7 @@ export class RequirementSet extends Blob {
 	/**
 	 * Requirement set.
 	 */
-	readonly #requirements: (StaticI<this, 'Requirement'> | undefined)[] = [];
+	readonly #requirements: (StaticNew<this, 'Requirement'> | undefined)[] = [];
 
 	/**
 	 * Get type by SecRequirementType.
@@ -86,7 +86,7 @@ export class RequirementSet extends Blob {
 	 */
 	public setType(
 		type: number,
-		requirement: StaticI<this, 'Requirement'> | null
+		requirement: StaticNew<this, 'Requirement'> | null
 	) {
 		// eslint-disable-next-line no-undefined
 		sparseSet(this.#requirements, type, requirement || undefined);
@@ -118,7 +118,7 @@ export class RequirementSet extends Blob {
 		d = viewDataR(d, 0, length);
 		const count = d.getUint32(8);
 		let o1 = 12;
-		const types = new Map<number, StaticI<this, 'Requirement'>>();
+		const types = new Map<number, StaticNew<this, 'Requirement'>>();
 		for (let i = 0; i < count; i++) {
 			const type = d.getUint32(o1);
 			o1 += 4;

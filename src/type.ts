@@ -1,7 +1,7 @@
 /**
  * Type of static property.
  */
-export type StaticP<
+export type StaticValue<
 	T extends {
 		constructor: {[Key in U]: unknown};
 	},
@@ -11,7 +11,7 @@ export type StaticP<
 /**
  * Return type of static function.
  */
-export type StaticR<
+export type StaticReturn<
 	T extends {
 		constructor: {[Key in U]: (...args: unknown[]) => unknown};
 	},
@@ -21,7 +21,7 @@ export type StaticR<
 /**
  * Instance type of static class.
  */
-export type StaticI<
+export type StaticNew<
 	T extends {
 		constructor: {[Key in U]: {prototype: unknown}};
 	},
