@@ -3,10 +3,10 @@ import {BufferView} from '../type.ts';
 import {viewUint8R, viewUint8W, viewDataR, viewDataW} from '../util.ts';
 
 /**
- * Unknown Blob.
+ * UnknownBlob Blob.
  */
-export class Unknown extends Blob {
-	public declare readonly ['constructor']: typeof Unknown;
+export class UnknownBlob extends Blob {
+	public declare readonly ['constructor']: typeof UnknownBlob;
 
 	/**
 	 * Magic number.

@@ -11,14 +11,14 @@ import {unhex} from '../util.spec.ts';
 
 void describe('blob/requirementset', () => {
 	void it('empty', () => {
-		const r = new RequirementSet();
-		const d = new Uint8Array(r.byteLength);
-		r.byteWrite(d);
+		const rs = new RequirementSet();
+		const d = new Uint8Array(rs.byteLength);
+		rs.byteWrite(d);
 		deepStrictEqual(d, unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00'));
 
-		const rd = new RequirementSet();
-		strictEqual(rd.byteRead(d), d.byteLength);
-		deepStrictEqual(rd, r);
+		const rs2 = new RequirementSet();
+		strictEqual(rs2.byteRead(d), d.byteLength);
+		deepStrictEqual(rs2, rs);
 	});
 
 	void it('host + designated', () => {
