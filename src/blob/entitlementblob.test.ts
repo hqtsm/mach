@@ -14,7 +14,8 @@ const examplePlist = [
 	'    <key>com.apple.security.cs.disable-library-validation</key>',
 	'    <true/>',
 	'  </dict>',
-	'</plist>'
+	'</plist>',
+	''
 ].join('\n');
 
 void describe('blob/entitlementblob', () => {
