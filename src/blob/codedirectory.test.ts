@@ -10,11 +10,11 @@ import {
 } from '../util.spec.ts';
 import {CodeDirectory} from './codedirectory.ts';
 import {cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot} from '../const.ts';
-import {RequirementSet} from './requirementset.ts';
+import {Requirements} from './requirements.ts';
 import {stringToBytes} from '../util.ts';
 import {ReadonlyUint8Array} from '../type.ts';
 
-const emptyRequirementSet = new RequirementSet();
+const emptyRequirementSet = new Requirements();
 const emptyRequirements = new Uint8Array(emptyRequirementSet.length);
 emptyRequirementSet.byteWrite(emptyRequirements);
 

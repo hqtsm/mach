@@ -1,7 +1,7 @@
 import {describe, it} from 'node:test';
 import {deepStrictEqual, strictEqual} from 'node:assert';
 
-import {RequirementSet} from './requirementset.ts';
+import {Requirements} from './requirements.ts';
 import {
 	kSecDesignatedRequirementType,
 	kSecHostRequirementType
@@ -9,14 +9,14 @@ import {
 import {Requirement} from './requirement.ts';
 import {unhex} from '../util.spec.ts';
 
-void describe('blob/requirementset', () => {
+void describe('blob/requirements', () => {
 	void it('empty', () => {
-		const rs = new RequirementSet();
+		const rs = new Requirements();
 		const d = new Uint8Array(rs.byteLength);
 		rs.byteWrite(d);
 		deepStrictEqual(d, unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00'));
 
-		const rs2 = new RequirementSet();
+		const rs2 = new Requirements();
 		strictEqual(rs2.byteRead(d), d.byteLength);
 		deepStrictEqual(rs2, rs);
 	});
@@ -40,7 +40,7 @@ void describe('blob/requirementset', () => {
 			'FA DE 0C 00 00 00 00 28',
 			Buffer.from(designatedData).toString('hex')
 		);
-		const rs = new RequirementSet();
+		const rs = new Requirements();
 		const designated = new Requirement();
 		designated.data = designatedData;
 		rs.setType(kSecDesignatedRequirementType, designated);
@@ -56,7 +56,7 @@ void describe('blob/requirementset', () => {
 		rs.byteWrite(d);
 		deepStrictEqual(d, data);
 
-		const rs2 = new RequirementSet();
+		const rs2 = new Requirements();
 		strictEqual(rs2.byteRead(d), d.byteLength);
 		deepStrictEqual(rs2, rs);
 

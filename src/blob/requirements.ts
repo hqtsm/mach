@@ -5,15 +5,15 @@ import {sparseSet, viewDataR, viewDataW} from '../util.ts';
 import {Requirement} from './requirement.ts';
 
 /**
- * RequirementSet Blob.
+ * Requirements Blob.
  */
-export class RequirementSet extends Blob {
+export class Requirements extends Blob {
 	/**
 	 * Requirement reference.
 	 */
 	public static readonly Requirement = Requirement;
 
-	public declare readonly ['constructor']: typeof RequirementSet;
+	public declare readonly ['constructor']: typeof Requirements;
 
 	/**
 	 * @inheritdoc
