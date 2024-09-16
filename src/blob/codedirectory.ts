@@ -537,7 +537,7 @@ export class CodeDirectory extends Blob {
 		if ((o = scatterOffset)) {
 			const {Scatter} = Static;
 			for (;;) {
-				const scatter = new Scatter() as StaticI<this, 'Scatter'>;
+				const scatter = new Scatter();
 				o += scatter.byteRead(buffer, o);
 				if (!scatter.count) {
 					break;

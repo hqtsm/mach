@@ -124,7 +124,7 @@ export class RequirementSet extends Blob {
 			o1 += 4;
 			const o2 = d.getUint32(o1);
 			o1 += 4;
-			const r = new Requirement() as StaticI<this, 'Requirement'>;
+			const r = new Requirement();
 			r.byteRead(buffer, o2);
 			types.set(type, r);
 		}

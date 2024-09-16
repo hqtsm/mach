@@ -23,10 +23,10 @@ export type StaticR<
  */
 export type StaticI<
 	T extends {
-		constructor: {[Key in U]: abstract new (...args: unknown[]) => unknown};
+		constructor: {[Key in U]: {prototype: unknown}};
 	},
 	U extends keyof T['constructor']
-> = InstanceType<T['constructor'][U]>;
+> = T['constructor'][U]['prototype'];
 
 /**
  * Data view write methods.
