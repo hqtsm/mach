@@ -174,8 +174,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset.
 	 */
 	public get identOffset() {
-		const Static = this.constructor;
-		const {scatterOffset} = this;
+		const {constructor: Static, scatterOffset} = this;
 		return scatterOffset
 			? scatterOffset + this.scatterSize
 			: Static.fixedSize(this.version);
@@ -297,8 +296,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset, or 0 for none.
 	 */
 	public get scatterOffset() {
-		const Static = this.constructor;
-		const {version} = this;
+		const {constructor: Static, version} = this;
 		return version >= Static.supportsScatter && this.scatterVector.length
 			? Static.fixedSize(version)
 			: 0;
@@ -325,8 +323,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset, or 0 for none.
 	 */
 	public get teamIDOffset() {
-		const Static = this.constructor;
-		const {version} = this;
+		const {constructor: Static, version} = this;
 		return version >= Static.supportsTeamID && this.teamID.length
 			? this.identOffset + this.identSize
 			: 0;
@@ -377,8 +374,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset, or 0 for none.
 	 */
 	public get preEncryptOffset() {
-		const Static = this.constructor;
-		const {version} = this;
+		const {constructor: Static, version} = this;
 		if (
 			version >= Static.supportsPreEncrypt &&
 			this.#preEncryptSlots.length
@@ -459,7 +455,7 @@ export class CodeDirectory extends Blob {
 	 * @inheritdoc
 	 */
 	public byteRead(buffer: Readonly<BufferView>, offset = 0) {
-		const Static = this.constructor;
+		const {constructor: Static} = this;
 		let d = viewDataR(buffer, offset);
 		let o = 0;
 		const magic = d.getUint32(o);
@@ -615,8 +611,8 @@ export class CodeDirectory extends Blob {
 	 * @inheritdoc
 	 */
 	public byteWrite(buffer: BufferView, offset = 0) {
-		const Static = this.constructor;
 		const {
+			constructor: Static,
 			length,
 			version,
 			scatterOffset,

@@ -103,7 +103,7 @@ export class RequirementSet extends Blob {
 	 * @inheritdoc
 	 */
 	public byteRead(buffer: Readonly<BufferView>, offset = 0): number {
-		const {Requirement} = this.constructor;
+		const {constructor: Requirement} = this;
 		let d = viewDataR(buffer, offset);
 		const magic = d.getUint32(0);
 		if (magic !== this.magic) {
