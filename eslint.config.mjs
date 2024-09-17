@@ -314,15 +314,15 @@ export default [
 				'error',
 				{
 					default: [
-						'public-static-field',
-						'private-static-field',
 						'public-instance-field',
 						'private-instance-field',
 						'public-constructor',
 						'private-constructor',
 						'public-instance-method',
 						'protected-instance-method',
-						'private-instance-method'
+						'private-instance-method',
+						'public-static-field',
+						'private-static-field'
 					]
 				}
 			],

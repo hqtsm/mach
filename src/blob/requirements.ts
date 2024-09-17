@@ -8,11 +8,6 @@ import {Requirement} from './requirement.ts';
  * Requirements Blob.
  */
 export class Requirements extends Blob {
-	/**
-	 * Requirement reference.
-	 */
-	public static readonly Requirement = Requirement;
-
 	public declare readonly ['constructor']: typeof Requirements;
 
 	/**
@@ -156,4 +151,9 @@ export class Requirements extends Blob {
 		}
 		return length;
 	}
+
+	/**
+	 * Requirement reference.
+	 */
+	public static readonly Requirement = Requirement;
 }

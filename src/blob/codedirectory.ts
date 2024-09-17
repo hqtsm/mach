@@ -29,100 +29,6 @@ import {
  * CodeDirectory Blob.
  */
 export class CodeDirectory extends Blob {
-	/**
-	 * Earliest supported version.
-	 */
-	public static readonly earliestVersion = 0x20001;
-
-	/**
-	 * First version to support scatter.
-	 */
-	public static readonly supportsScatter = 0x20100;
-
-	/**
-	 * First version to support team ID.
-	 */
-	public static readonly supportsTeamID = 0x20200;
-
-	/**
-	 * First version to support codeLimit64.
-	 */
-	public static readonly supportsCodeLimit64 = 0x20300;
-
-	/**
-	 * First version to support exec base and limit.
-	 */
-	public static readonly supportsExecSegment = 0x20400;
-
-	/**
-	 * First version to support pre-encrypt hashes and runtime version.
-	 */
-	public static readonly supportsPreEncrypt = 0x20500;
-
-	/**
-	 * Scatter structure.
-	 */
-	public static readonly Scatter = class Scatter
-		implements ByteLength, ByteRead, ByteWrite
-	{
-		public declare readonly ['constructor']: typeof Scatter;
-
-		/**
-		 * @inheritdoc
-		 */
-		public get byteLength() {
-			return 24;
-		}
-
-		/**
-		 * Number of pages; zero for sentinel (only).
-		 */
-		public count = 0;
-
-		/**
-		 * First page number.
-		 */
-		public base = 0;
-
-		/**
-		 * Byte offset in target.
-		 */
-		public targetOffset = 0n;
-
-		/**
-		 * @inheritdoc
-		 */
-		public byteRead(buffer: Readonly<BufferView>, offset = 0) {
-			const {byteLength} = this;
-			const d = viewDataR(buffer, offset, byteLength);
-			const count = d.getUint32(0);
-			const base = d.getUint32(4);
-			const targetOffset = d.getBigUint64(8);
-			const reserved = d.getBigUint64(16);
-			if (reserved !== 0n) {
-				throw new Error(`Invalid reserved: ${reserved}`);
-			}
-			this.count = count;
-			this.base = base;
-			this.targetOffset = targetOffset;
-			return byteLength;
-		}
-
-		/**
-		 * @inheritdoc
-		 */
-		public byteWrite(buffer: BufferView, offset = 0) {
-			const {byteLength} = this;
-			const d = viewDataW(buffer, offset, byteLength);
-			d.setUint32(0, this.count);
-			d.setUint32(4, this.base);
-			d.setBigUint64(8, this.targetOffset);
-			// Reserved: spare (must be zero).
-			d.setBigUint64(16, 0n);
-			return byteLength;
-		}
-	};
-
 	public declare readonly ['constructor']: typeof CodeDirectory;
 
 	/**
@@ -767,4 +673,98 @@ export class CodeDirectory extends Blob {
 		}
 		return l;
 	}
+
+	/**
+	 * Earliest supported version.
+	 */
+	public static readonly earliestVersion = 0x20001;
+
+	/**
+	 * First version to support scatter.
+	 */
+	public static readonly supportsScatter = 0x20100;
+
+	/**
+	 * First version to support team ID.
+	 */
+	public static readonly supportsTeamID = 0x20200;
+
+	/**
+	 * First version to support codeLimit64.
+	 */
+	public static readonly supportsCodeLimit64 = 0x20300;
+
+	/**
+	 * First version to support exec base and limit.
+	 */
+	public static readonly supportsExecSegment = 0x20400;
+
+	/**
+	 * First version to support pre-encrypt hashes and runtime version.
+	 */
+	public static readonly supportsPreEncrypt = 0x20500;
+
+	/**
+	 * Scatter structure.
+	 */
+	public static readonly Scatter = class Scatter
+		implements ByteLength, ByteRead, ByteWrite
+	{
+		public declare readonly ['constructor']: typeof Scatter;
+
+		/**
+		 * @inheritdoc
+		 */
+		public get byteLength() {
+			return 24;
+		}
+
+		/**
+		 * Number of pages; zero for sentinel (only).
+		 */
+		public count = 0;
+
+		/**
+		 * First page number.
+		 */
+		public base = 0;
+
+		/**
+		 * Byte offset in target.
+		 */
+		public targetOffset = 0n;
+
+		/**
+		 * @inheritdoc
+		 */
+		public byteRead(buffer: Readonly<BufferView>, offset = 0) {
+			const {byteLength} = this;
+			const d = viewDataR(buffer, offset, byteLength);
+			const count = d.getUint32(0);
+			const base = d.getUint32(4);
+			const targetOffset = d.getBigUint64(8);
+			const reserved = d.getBigUint64(16);
+			if (reserved !== 0n) {
+				throw new Error(`Invalid reserved: ${reserved}`);
+			}
+			this.count = count;
+			this.base = base;
+			this.targetOffset = targetOffset;
+			return byteLength;
+		}
+
+		/**
+		 * @inheritdoc
+		 */
+		public byteWrite(buffer: BufferView, offset = 0) {
+			const {byteLength} = this;
+			const d = viewDataW(buffer, offset, byteLength);
+			d.setUint32(0, this.count);
+			d.setUint32(4, this.base);
+			d.setBigUint64(8, this.targetOffset);
+			// Reserved: spare (must be zero).
+			d.setBigUint64(16, 0n);
+			return byteLength;
+		}
+	};
 }
