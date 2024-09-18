@@ -392,14 +392,14 @@ export default [
 					selector: 'memberLike',
 					modifiers: ['protected'],
 					format: ['camelCase', 'PascalCase'],
-					leadingUnderscore: 'require'
+					leadingUnderscore: 'allow'
 				},
 				{
 					selector: 'memberLike',
 					modifiers: ['private'],
 					format: ['camelCase', 'PascalCase'],
-					leadingUnderscore: 'require',
-					trailingUnderscore: 'require'
+					leadingUnderscore: 'allow',
+					trailingUnderscore: 'allow'
 				},
 				{
 					selector: 'memberLike',
@@ -410,14 +410,14 @@ export default [
 					selector: 'memberLike',
 					modifiers: ['protected', 'readonly', 'static'],
 					format: ['UPPER_CASE'],
-					leadingUnderscore: 'require'
+					leadingUnderscore: 'allow'
 				},
 				{
 					selector: 'memberLike',
 					modifiers: ['private', 'readonly', 'static'],
 					format: ['UPPER_CASE'],
-					leadingUnderscore: 'require',
-					trailingUnderscore: 'require'
+					leadingUnderscore: 'allow',
+					trailingUnderscore: 'allow'
 				},
 				{
 					selector: 'accessor',
@@ -438,7 +438,7 @@ export default [
 						'snake_case',
 						'UPPER_CASE'
 					],
-					leadingUnderscore: 'require'
+					leadingUnderscore: 'allow'
 				},
 				{
 					selector: 'accessor',
@@ -449,8 +449,8 @@ export default [
 						'snake_case',
 						'UPPER_CASE'
 					],
-					leadingUnderscore: 'require',
-					trailingUnderscore: 'require'
+					leadingUnderscore: 'allow',
+					trailingUnderscore: 'allow'
 				},
 				{
 					selector: 'accessor',
@@ -471,7 +471,7 @@ export default [
 						'snake_case',
 						'UPPER_CASE'
 					],
-					leadingUnderscore: 'require'
+					leadingUnderscore: 'allow'
 				},
 				{
 					selector: 'accessor',
@@ -482,8 +482,8 @@ export default [
 						'snake_case',
 						'UPPER_CASE'
 					],
-					leadingUnderscore: 'require',
-					trailingUnderscore: 'require'
+					leadingUnderscore: 'allow',
+					trailingUnderscore: 'allow'
 				},
 				{
 					selector: 'property',
