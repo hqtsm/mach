@@ -231,6 +231,7 @@ export default [
 			'unicorn/no-null': 'off',
 			'unicorn/no-unreadable-array-destructuring': 'off',
 			'unicorn/numeric-separators-style': 'off',
+			'unicorn/prefer-spread': 'off',
 			'unicorn/prefer-string-replace-all': 'off',
 			'unicorn/prefer-top-level-await': 'off',
 			'unicorn/prevent-abbreviations': 'off',

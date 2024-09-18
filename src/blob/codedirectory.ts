@@ -462,7 +462,6 @@ export class CodeDirectory extends Blob {
 		{
 			let e = identOffset;
 			for (; d.getUint8(e); e++);
-			// eslint-disable-next-line unicorn/prefer-spread
 			identifier = viewUint8R(d, identOffset, e - identOffset).slice();
 		}
 
@@ -470,7 +469,6 @@ export class CodeDirectory extends Blob {
 		if ((o = teamIDOffset)) {
 			let e = o;
 			for (; d.getUint8(e); e++);
-			// eslint-disable-next-line unicorn/prefer-spread
 			teamID = viewUint8R(d, o, e - o).slice();
 		} else {
 			teamID = new Uint8Array();
@@ -479,7 +477,6 @@ export class CodeDirectory extends Blob {
 		const preEncryptSlots = new Map<number, Uint8Array>();
 		if ((o = preEncryptOffset)) {
 			for (let i = 0; i < nCodeSlots; i++) {
-				// eslint-disable-next-line unicorn/prefer-spread
 				preEncryptSlots.set(i, viewUint8R(d, o, hashSize).slice());
 				o += hashSize;
 			}
@@ -488,7 +485,6 @@ export class CodeDirectory extends Blob {
 		const slots = new Map<number, Uint8Array>();
 		o = hashOffset - nSpecialSlots * hashSize;
 		for (let i = 0 - nSpecialSlots; i < nCodeSlots; i++) {
-			// eslint-disable-next-line unicorn/prefer-spread
 			slots.set(i, viewUint8R(d, o, hashSize).slice());
 			o += hashSize;
 		}

@@ -49,7 +49,6 @@ export class UnknownBlob extends Blob {
 		if (length < 8) {
 			throw new Error(`Invalid length: ${length}`);
 		}
-		// eslint-disable-next-line unicorn/prefer-spread
 		const data = viewUint8R(d, 8, length - 8).slice();
 		this.#magic = magic;
 		this.data = data;

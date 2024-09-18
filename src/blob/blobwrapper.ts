@@ -41,7 +41,6 @@ export class BlobWrapper extends Blob {
 		if (length < 8) {
 			throw new Error(`Invalid length: ${length}`);
 		}
-		// eslint-disable-next-line unicorn/prefer-spread
 		this.data = viewUint8R(d, 8, length - 8).slice();
 		return length;
 	}
