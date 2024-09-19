@@ -5,5 +5,6 @@ export * from './memoryfile.ts';
 export * from './blob.ts';
 export * from './entitlementblob.ts';
 export * from './entitlementderblob.ts';
+export * from './launchconstraintblob.ts';
 export * from './requirement.ts';
 export * from './requirementmaker.ts';
