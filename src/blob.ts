@@ -140,10 +140,10 @@ export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
 	public static readonly typeMagic: number = 0;
 
 	/**
-	 * Wrap data into a blob.
+	 * Wrap data into a new blob.
 	 *
 	 * @param content Data to wrap.
-	 * @returns Blob data.
+	 * @returns Blob.
 	 */
 	public static blobify(content: Readonly<BufferView>) {
 		const view = viewUint8R(content);
@@ -152,6 +152,6 @@ export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
 		const blob = new this(size);
 		blob.initialize(size);
 		data.subarray(8).set(view);
-		return data;
+		return blob;
 	}
 }
