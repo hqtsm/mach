@@ -150,7 +150,7 @@ export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
 		const {byteLength} = view;
 		const size = 8 + byteLength;
 		const data = new Uint8Array(size);
-		const blob = new Blob(size);
+		const blob = new this(size);
 		blob.initialize(size);
 		data.subarray(8).set(view);
 		return data;
