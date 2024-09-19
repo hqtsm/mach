@@ -21,10 +21,7 @@ void describe('entitlementderblob', () => {
 
 	void it('data', () => {
 		const data = unhex('01 02 03 04 05 06 07 08 F0 F1 F2 F3 F4 F5 F6 F7');
-		const size = EntitlementDERBlob.sizeof + data.byteLength;
-		const edb = new EntitlementDERBlob(size);
-		edb.initialize(size);
-		edb.der.set(data);
+		const edb = EntitlementDERBlob.blobify(data);
 		const d = new Uint8Array(edb.byteLength);
 		edb.byteWrite(d);
 		const dv = viewDataR(d);

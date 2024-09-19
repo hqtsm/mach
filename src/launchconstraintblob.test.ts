@@ -48,10 +48,7 @@ void describe('launchconstraintblob', () => {
 	});
 
 	void it('data', () => {
-		const size = LaunchConstraintBlob.sizeof + sampleDer.byteLength;
-		const edb = new LaunchConstraintBlob(size);
-		edb.initialize(size);
-		edb.der.set(sampleDer);
+		const edb = LaunchConstraintBlob.blobify(sampleDer);
 		const d = new Uint8Array(edb.byteLength);
 		edb.byteWrite(d);
 		const dv = viewDataR(d);

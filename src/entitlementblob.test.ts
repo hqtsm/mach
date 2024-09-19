@@ -33,9 +33,7 @@ void describe('entitlementblob', () => {
 
 	void it('data', () => {
 		const data = stringToBytes(examplePlist);
-		const size = data.byteLength + EntitlementBlob.sizeof;
-		const eb = new EntitlementBlob(size);
-		eb.initialize(size);
+		const eb = EntitlementBlob.blobify(data);
 		eb.body.set(data);
 		const d = new Uint8Array(eb.byteLength);
 		eb.byteWrite(d);
