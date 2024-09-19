@@ -60,8 +60,6 @@ export class BlobWrapper extends Blob {
 		const w = new Uint8Array(wrapLength);
 		const blob = new this(w);
 		blob.initialize(wrapLength, magic);
-		blob.magic = magic;
-		blob.length = wrapLength;
 		if (view) {
 			w.subarray(8).set(view);
 		}
