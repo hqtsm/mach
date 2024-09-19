@@ -1,12 +1,9 @@
-void 0;
-
-/*
 import {describe, it} from 'node:test';
 import {deepStrictEqual, strictEqual} from 'node:assert';
 
-import {stringToBytes, viewDataR, viewUint8R} from '../util.ts';
-import {unhex} from '../util.spec.ts';
-import {kSecCodeMagicEntitlement} from '../const.ts';
+import {stringToBytes, viewDataR, viewUint8R} from './util.ts';
+import {unhex} from './util.spec.ts';
+import {kSecCodeMagicEntitlement} from './const.ts';
 import {EntitlementBlob} from './entitlementblob.ts';
 
 const examplePlist = [
@@ -21,9 +18,10 @@ const examplePlist = [
 	''
 ].join('\n');
 
-void describe('blob/entitlementblob', () => {
+void describe('entitlementblob', () => {
 	void it('empty (invalid?)', () => {
 		const eb = new EntitlementBlob();
+		eb.initialize(EntitlementBlob.sizeof);
 		const d = new Uint8Array(eb.byteLength);
 		eb.byteWrite(d);
 		deepStrictEqual(d, unhex('FA DE 71 71 00 00 00 08'));
@@ -35,8 +33,10 @@ void describe('blob/entitlementblob', () => {
 
 	void it('data', () => {
 		const data = stringToBytes(examplePlist);
-		const eb = new EntitlementBlob();
-		eb.data = data;
+		const size = data.byteLength + EntitlementBlob.sizeof;
+		const eb = new EntitlementBlob(size);
+		eb.initialize(size);
+		eb.body.set(data);
 		const d = new Uint8Array(eb.byteLength);
 		eb.byteWrite(d);
 		const dv = viewDataR(d);
@@ -49,4 +49,3 @@ void describe('blob/entitlementblob', () => {
 		deepStrictEqual(eb2, eb);
 	});
 });
-*/
