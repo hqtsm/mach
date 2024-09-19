@@ -3,6 +3,7 @@ export * from './const.ts';
 export * from './util.ts';
 export * from './memoryfile.ts';
 export * from './blob.ts';
+export * from './blobwrapper.ts';
 export * from './entitlementblob.ts';
 export * from './entitlementderblob.ts';
 export * from './launchconstraintblob.ts';
