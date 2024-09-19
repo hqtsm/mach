@@ -1,14 +1,10 @@
-void 0;
-
-/*
 import {describe, it} from 'node:test';
 import {deepStrictEqual, strictEqual} from 'node:assert';
 
-import {viewDataR, viewUint8R} from '../util.ts';
-import {unhex} from '../util.spec.ts';
-import {kSecCodeMagicLaunchConstraint} from '../const.ts';
+import {viewDataR, viewUint8R} from './util.ts';
+import {unhex} from './util.spec.ts';
+import {kSecCodeMagicLaunchConstraint} from './const.ts';
 import {LaunchConstraintBlob} from './launchconstraintblob.ts';
-*/
 
 /* eslint-disable max-len */
 /*
@@ -24,7 +20,6 @@ import {LaunchConstraintBlob} from './launchconstraintblob.ts';
 </plist>
 */
 /* eslint-enable max-len */
-/*
 const sampleDer = unhex(
 	'70 81 AD 02 01 01 B0 81 A7 30 09 0C 04 63 63 61',
 	'74 02 01 00 30 09 0C 04 63 6F 6D 70 02 01 01 30',
@@ -39,9 +34,10 @@ const sampleDer = unhex(
 	'43 4D 32 37 38 30 09 0C 04 76 65 72 73 02 01 01'
 );
 
-void describe('blob/launchconstraintblob', () => {
+void describe('launchconstraintblob', () => {
 	void it('empty (invalid?)', () => {
 		const edb = new LaunchConstraintBlob();
+		edb.initialize(LaunchConstraintBlob.sizeof);
 		const d = new Uint8Array(edb.byteLength);
 		edb.byteWrite(d);
 		deepStrictEqual(d, unhex('FA DE 81 81 00 00 00 08'));
@@ -52,8 +48,10 @@ void describe('blob/launchconstraintblob', () => {
 	});
 
 	void it('data', () => {
-		const edb = new LaunchConstraintBlob();
-		edb.data = sampleDer;
+		const size = LaunchConstraintBlob.sizeof + sampleDer.byteLength;
+		const edb = new LaunchConstraintBlob(size);
+		edb.initialize(size);
+		edb.der.set(sampleDer);
 		const d = new Uint8Array(edb.byteLength);
 		edb.byteWrite(d);
 		const dv = viewDataR(d);
@@ -66,4 +64,3 @@ void describe('blob/launchconstraintblob', () => {
 		deepStrictEqual(edb2, edb);
 	});
 });
-*/
