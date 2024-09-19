@@ -1,17 +1,15 @@
-void 0;
-
-/*
 import {describe, it} from 'node:test';
 import {deepStrictEqual, strictEqual} from 'node:assert';
 
-import {viewDataR, viewUint8R} from '../util.ts';
-import {unhex} from '../util.spec.ts';
-import {kSecCodeMagicEntitlementDER} from '../const.ts';
+import {viewDataR, viewUint8R} from './util.ts';
+import {unhex} from './util.spec.ts';
+import {kSecCodeMagicEntitlementDER} from './const.ts';
 import {EntitlementDERBlob} from './entitlementderblob.ts';
 
-void describe('blob/entitlementderblob', () => {
+void describe('entitlementderblob', () => {
 	void it('empty (invalid?)', () => {
 		const edb = new EntitlementDERBlob();
+		edb.initialize(EntitlementDERBlob.sizeof);
 		const d = new Uint8Array(edb.byteLength);
 		edb.byteWrite(d);
 		deepStrictEqual(d, unhex('FA DE 71 72 00 00 00 08'));
@@ -23,8 +21,10 @@ void describe('blob/entitlementderblob', () => {
 
 	void it('data', () => {
 		const data = unhex('01 02 03 04 05 06 07 08 F0 F1 F2 F3 F4 F5 F6 F7');
-		const edb = new EntitlementDERBlob();
-		edb.data = data;
+		const size = EntitlementDERBlob.sizeof + data.byteLength;
+		const edb = new EntitlementDERBlob(size);
+		edb.initialize(size);
+		edb.der.set(data);
 		const d = new Uint8Array(edb.byteLength);
 		edb.byteWrite(d);
 		const dv = viewDataR(d);
@@ -37,4 +37,3 @@ void describe('blob/entitlementderblob', () => {
 		deepStrictEqual(edb2, edb);
 	});
 });
-*/
