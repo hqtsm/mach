@@ -138,4 +138,21 @@ export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
 	 * Type magic number for new instance.
 	 */
 	public static readonly typeMagic: number = 0;
+
+	/**
+	 * Wrap data into a blob.
+	 *
+	 * @param content Data to wrap.
+	 * @returns Blob data.
+	 */
+	public static blobify(content: Readonly<BufferView>) {
+		const view = viewUint8R(content);
+		const {byteLength} = view;
+		const size = 8 + byteLength;
+		const data = new Uint8Array(size);
+		const blob = new Blob(size);
+		blob.initialize(size);
+		viewUint8W(blob.data, 8, byteLength).set(view);
+		return data;
+	}
 }
