@@ -145,7 +145,10 @@ export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
 	 * @param content Data to wrap.
 	 * @returns Blob.
 	 */
-	public static blobify(content: Readonly<BufferView>) {
+	public static blobify<T extends typeof Blob>(
+		this: T,
+		content: Readonly<BufferView>
+	): T['prototype'] {
 		const view = viewUint8R(content);
 		const size = 8 + view.byteLength;
 		const data = new Uint8Array(size);
