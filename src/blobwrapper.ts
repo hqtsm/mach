@@ -1,6 +1,7 @@
 import {Blob} from './blob.ts';
 import {CSMAGIC_BLOBWRAPPER} from './const.ts';
-import {viewDataW} from './util.ts';
+import {BufferView} from './type.ts';
+import {viewDataW, viewUint8R} from './util.ts';
 
 /**
  * Generic Blob.
@@ -41,4 +42,29 @@ export class BlobWrapper extends Blob {
 	 * @inheritdoc
 	 */
 	public static readonly typeMagic: number = CSMAGIC_BLOBWRAPPER;
+
+	/**
+	 * Wrap data into a new blob.
+	 *
+	 * @param data Data to wrap.
+	 * @param magic Magic number.
+	 * @returns Blob.
+	 */
+	public static alloc<T extends typeof BlobWrapper>(
+		this: T,
+		data: Readonly<BufferView> | number,
+		magic = this.typeMagic
+	): T['prototype'] {
+		const view = typeof data === 'number' ? null : viewUint8R(data);
+		const wrapLength = 8 + (view ? view.byteLength : (data as number));
+		const w = new Uint8Array(wrapLength);
+		const blob = new this(w);
+		blob.initialize(wrapLength, magic);
+		blob.magic = magic;
+		blob.length = wrapLength;
+		if (view) {
+			w.subarray(8).set(view);
+		}
+		return blob;
+	}
 }

@@ -99,9 +99,10 @@ export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
 	 * Initialize blob with type and length.
 	 *
 	 * @param size Length.
+	 * @param magic Magic number.
 	 */
-	public initialize(size = 0) {
-		this.magic = this.constructor.typeMagic;
+	public initialize(size = 0, magic = this.constructor.typeMagic) {
+		this.magic = magic;
 		this.length = size;
 	}
 
