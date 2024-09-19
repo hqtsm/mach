@@ -3,6 +3,5 @@ export * from './codedirectory.ts';
 export * from './entitlementblob.ts';
 export * from './entitlementderblob.ts';
 export * from './launchconstraintblob.ts';
-export * from './requirement.ts';
 export * from './requirements.ts';
 export * from './unknownblob.ts';
