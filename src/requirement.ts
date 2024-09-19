@@ -39,4 +39,19 @@ export class Requirement extends Blob {
 	 * Common alignment rule for all requirement forms.
 	 */
 	public static readonly baseAlignment: number = 4;
+
+	/**
+	 * Different forms of requirements.
+	 */
+	public static readonly Kind = {
+		/**
+		 * Prefix expr form.
+		 */
+		exprForm: 1,
+
+		/**
+		 * DER encoded lightweight code requirement form.
+		 */
+		lwcrForm: 2
+	};
 }

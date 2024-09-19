@@ -20,7 +20,7 @@ void describe('requirement', () => {
 	void it('empty kind 1 (invalid?)', () => {
 		const r = new Requirement();
 		r.initialize(Requirement.sizeof);
-		r.kind = 1;
+		r.kind = Requirement.Kind.exprForm;
 		const d = new Uint8Array(r.byteLength);
 		r.byteWrite(d);
 		deepStrictEqual(d, unhex('FA DE 0C 00 00 00 00 0C 00 00 00 01'));
@@ -33,7 +33,7 @@ void describe('requirement', () => {
 	void it('empty kind 2 (invalid?)', () => {
 		const r = new Requirement();
 		r.initialize(Requirement.sizeof);
-		r.kind = 2;
+		r.kind = Requirement.Kind.lwcrForm;
 		const d = new Uint8Array(r.byteLength);
 		r.byteWrite(d);
 		deepStrictEqual(d, unhex('FA DE 0C 00 00 00 00 0C 00 00 00 02'));
