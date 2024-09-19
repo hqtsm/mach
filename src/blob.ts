@@ -15,18 +15,12 @@ export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
 	/**
 	 * Blob constructor.
 	 *
-	 * @param data Blob data view or null to create new.
+	 * @param data Blob data view or size of new blob.
 	 */
-	constructor(data: BufferView | number | null = null) {
-		let d;
-		if (typeof data === 'number') {
-			d = viewDataW(new Uint8Array(data));
-		} else if (data) {
-			d = viewDataW(data);
-		} else {
-			d = viewDataW(new Uint8Array(this.constructor.sizeof));
-		}
-		this.#data = d;
+	constructor(data: BufferView | number = this.constructor.sizeof) {
+		this.#data = viewDataW(
+			typeof data === 'number' ? new Uint8Array(data) : data
+		);
 	}
 
 	/**
@@ -101,7 +95,7 @@ export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
 	 * @param size Length.
 	 * @param magic Magic number.
 	 */
-	public initialize(size = 0, magic = this.constructor.typeMagic) {
+	public initialize(size = 0, magic: number = this.constructor.typeMagic) {
 		this.magic = magic;
 		this.length = size;
 	}
@@ -148,14 +142,16 @@ export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
 	 */
 	public static blobify<T extends typeof Blob>(
 		this: T,
-		content: Readonly<BufferView>
+		content: Readonly<BufferView> | number = this.sizeof
 	): T['prototype'] {
-		const view = viewUint8R(content);
-		const size = 8 + view.byteLength;
+		const view = typeof content === 'number' ? null : viewUint8R(content);
+		const size = 8 + (view ? view.byteLength : (content as number));
 		const data = new Uint8Array(size);
 		const blob = new this(data);
 		blob.initialize(size);
-		data.subarray(8).set(view);
+		if (view) {
+			data.subarray(8).set(view);
+		}
 		return blob;
 	}
 }
