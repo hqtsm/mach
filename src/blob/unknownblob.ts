@@ -31,13 +31,13 @@ export class UnknownBlob extends Blob {
 	 * @inheritdoc
 	 */
 	public get length() {
-		return 8 + this.data.byteLength;
+		return 8 + this.body.byteLength;
 	}
 
 	/**
 	 * Compiled code signing requirement binary data.
 	 */
-	public data: BufferView = new Uint8Array();
+	public body: BufferView = new Uint8Array();
 
 	/**
 	 * @inheritdoc
@@ -51,7 +51,7 @@ export class UnknownBlob extends Blob {
 		}
 		const data = viewUint8R(d, 8, length - 8).slice();
 		this.#magic = magic;
-		this.data = data;
+		this.body = data;
 		return length;
 	}
 
@@ -63,7 +63,7 @@ export class UnknownBlob extends Blob {
 		const d = viewDataW(buffer, offset, length);
 		d.setUint32(0, this.magic);
 		d.setUint32(4, length);
-		viewUint8W(d, 8).set(viewUint8R(this.data));
+		viewUint8W(d, 8).set(viewUint8R(this.body));
 		return length;
 	}
 }

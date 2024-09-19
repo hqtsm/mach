@@ -20,13 +20,13 @@ export class EntitlementDERBlob extends Blob {
 	 * @inheritdoc
 	 */
 	public get length() {
-		return 8 + this.data.byteLength;
+		return 8 + this.body.byteLength;
 	}
 
 	/**
 	 * Binary data.
 	 */
-	public data: BufferView = new Uint8Array();
+	public body: BufferView = new Uint8Array();
 
 	/**
 	 * @inheritdoc
@@ -41,7 +41,7 @@ export class EntitlementDERBlob extends Blob {
 		if (length < 8) {
 			throw new Error(`Invalid length: ${length}`);
 		}
-		this.data = viewUint8R(d, 8, length - 8).slice();
+		this.body = viewUint8R(d, 8, length - 8).slice();
 		return length;
 	}
 
@@ -53,7 +53,7 @@ export class EntitlementDERBlob extends Blob {
 		const d = viewDataW(buffer, offset, length);
 		d.setUint32(0, this.magic);
 		d.setUint32(4, length);
-		viewUint8W(d, 8).set(viewUint8R(this.data));
+		viewUint8W(d, 8).set(viewUint8R(this.body));
 		return length;
 	}
 }

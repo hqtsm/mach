@@ -2,7 +2,7 @@ import {Blob} from '../blob.ts';
 import {BufferView, StaticNew} from '../type.ts';
 import {kSecCodeMagicRequirementSet} from '../const.ts';
 import {sparseSet, viewDataR, viewDataW} from '../util.ts';
-import {Requirement} from './requirement.ts';
+import {Requirement} from '../requirement.ts';
 
 /**
  * Requirements Blob.
