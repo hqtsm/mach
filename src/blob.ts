@@ -43,6 +43,7 @@ export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
 
 	/**
 	 * Blob length.
+	 * By default includes magic and length, but child classes may change this.
 	 *
 	 * @returns Blob length.
 	 */
@@ -52,6 +53,7 @@ export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
 
 	/**
 	 * Blob length.
+	 * By default includes magic and length, but child classes may change this.
 	 *
 	 * @param value Blob length.
 	 */
@@ -82,6 +84,7 @@ export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
 
 	/**
 	 * Get the blob data.
+	 * By default includes magic and length, but child classes may change this.
 	 *
 	 * @returns View of blob data.
 	 */

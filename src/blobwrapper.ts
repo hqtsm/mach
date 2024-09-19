@@ -10,31 +10,32 @@ export class BlobWrapper extends Blob {
 	public declare readonly ['constructor']: typeof BlobWrapper;
 
 	/**
-	 * Overridden to point to payload (only).
-	 * Apple weirdness.
+	 * Data of payload (only).
 	 *
 	 * @inheritdoc
 	 */
 	public get data() {
+		// Overridden to point to payload (only).
 		return viewDataW(this, 8, this.length);
 	}
 
 	/**
-	 * Overridden to point to payload (only).
-	 * Apple weirdness.
+	 * Get length of payload (only), set length for full blob.
 	 *
 	 * @inheritdoc
 	 */
 	public get length() {
+		// Overridden to get length of payload (only).
 		return super.length - 8;
 	}
 
 	/**
-	 * Unchanged from parent setter.
+	 * Get length of payload (only), set length for full blob.
 	 *
 	 * @inheritdoc
 	 */
 	public set length(value: number) {
+		// No change, needed to keep setter.
 		super.length = value;
 	}
 
