@@ -28,7 +28,7 @@ export class Requirement extends Blob {
 	/**
 	 * @inheritdoc
 	 */
-	public static readonly sizeof = 12;
+	public static readonly sizeof: number = 12;
 
 	/**
 	 * @inheritdoc
