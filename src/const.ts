@@ -9,6 +9,8 @@ export const INT_LIMIT = 0x1fffffffffffff;
 // A very large but still compatible upper block size limit.
 export const BLK_LIMIT = 0x100000000;
 
+export const UINT32_MAX = 0xffffffff;
+
 export const CPU_ARCH_MASK = 0xff000000;
 export const CPU_ARCH_ABI64 = 0x01000000;
 export const CPU_ARCH_ABI64_32 = 0x02000000;
