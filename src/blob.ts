@@ -108,23 +108,23 @@ export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
 	 */
 	public byteRead(buffer: Readonly<BufferView>, offset = 0) {
 		const v = viewDataR(buffer, offset);
-		const length = v.getUint32(4);
-		if (length < 8) {
-			throw new Error(`Invalid length: ${length}`);
+		const byteLength = v.getUint32(4);
+		if (byteLength < 8) {
+			throw new Error(`Invalid length: ${byteLength}`);
 		}
-		this.#data = viewDataW(viewUint8R(v, 0, length).slice());
-		return length;
+		this.#data = viewDataW(viewUint8R(v, 0, byteLength).slice());
+		return byteLength;
 	}
 
 	/**
 	 * @inheritdoc
 	 */
 	public byteWrite(buffer: BufferView, offset = 0) {
-		const length = this.#data.getUint32(4);
-		viewUint8W(buffer, offset, length).set(
-			viewUint8R(this.#data, 0, length)
+		const {byteLength} = this;
+		viewUint8W(buffer, offset, byteLength).set(
+			viewUint8R(this.#data, 0, byteLength)
 		);
-		return length;
+		return byteLength;
 	}
 
 	/**
