@@ -47,22 +47,28 @@ export class BlobWrapper extends Blob {
 	/**
 	 * Wrap data into a new blob.
 	 *
-	 * @param data Data to wrap, or number of bytes.
+	 * @param content Data to wrap, or number of bytes.
 	 * @param magic Magic number, or null for default.
 	 * @returns Blob.
 	 */
 	public static alloc<T extends typeof BlobWrapper>(
 		this: T,
-		data: Readonly<BufferView> | number = 0,
+		content: Readonly<BufferView> | number = 0,
 		magic: number | null = null
 	): T['prototype'] {
-		const view = typeof data === 'number' ? null : viewUint8R(data);
-		const wrapLength = 8 + (view ? view.byteLength : (data as number));
-		const w = new Uint8Array(wrapLength);
-		const blob = new this(w);
-		blob.initialize(wrapLength, magic);
+		let view;
+		let size = 8;
+		if (typeof content === 'number') {
+			size += content;
+		} else {
+			view = viewUint8R(content);
+			size += view.byteLength;
+		}
+		const data = new Uint8Array(size);
+		const blob = new this(data);
+		blob.initialize(size, magic);
 		if (view) {
-			w.subarray(8).set(view);
+			data.subarray(8).set(view);
 		}
 		return blob;
 	}

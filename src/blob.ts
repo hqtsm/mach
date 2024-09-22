@@ -136,8 +136,14 @@ export class Blob extends Struct {
 		this: T,
 		content: Readonly<BufferView> | number = 0
 	): T['prototype'] {
-		const view = typeof content === 'number' ? null : viewUint8R(content);
-		const size = 8 + (view ? view.byteLength : (content as number));
+		let view;
+		let size = 8;
+		if (typeof content === 'number') {
+			size += content;
+		} else {
+			view = viewUint8R(content);
+			size += view.byteLength;
+		}
 		const data = new Uint8Array(size);
 		const blob = new this(data);
 		blob.initialize(size);
