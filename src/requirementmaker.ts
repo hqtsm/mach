@@ -23,9 +23,7 @@ export class RequirementMaker {
 	 * @param kind Kind.
 	 */
 	constructor(kind: number) {
-		const {
-			constructor: {Requirement}
-		} = this;
+		const {Requirement} = this.constructor;
 		const data = new Uint8Array(1024);
 		const r = new Requirement(data);
 		r.magic = Requirement.typeMagic;
@@ -41,9 +39,7 @@ export class RequirementMaker {
 	 * @returns View of allocated bytes (size rounded up to baseAlignment).
 	 */
 	public alloc(size: number) {
-		const {
-			constructor: {Requirement}
-		} = this;
+		const {Requirement} = this.constructor;
 		const data = this.#data;
 		const usedSize = alignUp(size, Requirement.baseAlignment);
 		this.require(usedSize);
@@ -59,9 +55,7 @@ export class RequirementMaker {
 	 * @returns Requirement instance.
 	 */
 	public make() {
-		const {
-			constructor: {Requirement}
-		} = this;
+		const {Requirement} = this.constructor;
 		const data = this.#data;
 		const pc = this.#pc;
 		const r = new Requirement(data);
