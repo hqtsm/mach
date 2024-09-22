@@ -85,10 +85,10 @@ export class Blob extends Struct {
 	 * Initialize blob with type and length.
 	 *
 	 * @param size Length.
-	 * @param magic Magic number.
+	 * @param magic Magic number, or null for default.
 	 */
-	public initialize(size = 0, magic: number = this.constructor.typeMagic) {
-		this.magic = magic;
+	public initialize(size = 0, magic: number | null = null) {
+		this.magic = magic ?? this.constructor.typeMagic;
 		this.length = size;
 	}
 
