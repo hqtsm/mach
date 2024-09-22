@@ -134,16 +134,14 @@ export class Blob extends Struct {
 	 */
 	public static blobify<T extends typeof Blob>(
 		this: T,
-		content: Readonly<BufferView> | number = this.sizeof
+		content: Readonly<BufferView>
 	): T['prototype'] {
-		const view = typeof content === 'number' ? null : viewUint8R(content);
-		const size = 8 + (view ? view.byteLength : (content as number));
+		const view = viewUint8R(content);
+		const size = 8 + view.byteLength;
 		const data = new Uint8Array(size);
 		const blob = new this(data);
 		blob.initialize(size);
-		if (view) {
-			data.subarray(8).set(view);
-		}
+		data.subarray(8).set(view);
 		return blob;
 	}
 }
