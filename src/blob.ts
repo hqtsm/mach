@@ -129,19 +129,21 @@ export class Blob extends Struct {
 	/**
 	 * Wrap data into a new blob.
 	 *
-	 * @param content Data to wrap.
+	 * @param content Data to wrap, or number of bytes.
 	 * @returns Blob.
 	 */
 	public static blobify<T extends typeof Blob>(
 		this: T,
-		content: Readonly<BufferView>
+		content: Readonly<BufferView> | number = 0
 	): T['prototype'] {
-		const view = viewUint8R(content);
-		const size = 8 + view.byteLength;
+		const view = typeof content === 'number' ? null : viewUint8R(content);
+		const size = 8 + (view ? view.byteLength : (content as number));
 		const data = new Uint8Array(size);
 		const blob = new this(data);
 		blob.initialize(size);
-		data.subarray(8).set(view);
+		if (view) {
+			data.subarray(8).set(view);
+		}
 		return blob;
 	}
 }
