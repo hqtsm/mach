@@ -1,6 +1,3 @@
-void 0;
-
-/*
 import {describe, it} from 'node:test';
 import {deepStrictEqual, notStrictEqual, strictEqual} from 'node:assert';
 
@@ -9,29 +6,31 @@ import {
 	hash,
 	chunkedHashes,
 	machoThin,
-	fixtureMachos
-} from '../util.spec.ts';
+	fixtureMachos,
+	unhex
+} from './util.spec.ts';
 import {CodeDirectory} from './codedirectory.ts';
-import {cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot} from '../const.ts';
-import {Requirements} from './requirements.ts';
-import {stringToBytes} from '../util.ts';
-import {ReadonlyUint8Array} from '../type.ts';
+import {cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot} from './const.ts';
+import {stringToBytes} from './util.ts';
+import {ReadonlyUint8Array} from './type.ts';
+import {CodeDirectoryBuilder} from './codedirectorybuilder.ts';
 
-const emptyRequirementSet = new Requirements();
-const emptyRequirements = new Uint8Array(emptyRequirementSet.length);
-emptyRequirementSet.byteWrite(emptyRequirements);
+const emptyRequirements = unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00');
 
-async function addCodeHashes(cd: CodeDirectory, macho: ReadonlyUint8Array) {
+async function addCodeHashes(
+	cd: CodeDirectoryBuilder,
+	macho: ReadonlyUint8Array
+) {
 	const {pageSize} = cd;
 	const hashes = await chunkedHashes(
 		cd.hashType,
 		macho,
 		pageSize ? Math.pow(2, pageSize) : 0,
 		0,
-		cd.codeLimit
+		cd.execLength
 	);
 	for (let i = hashes.length; i--; ) {
-		cd.setSlot(i, false, hashes[i]);
+		cd.setCodeSlot(i, hashes[i]);
 	}
 }
 
@@ -82,21 +81,18 @@ void describe('blob/codedirectory', () => {
 					const {requirements} = info;
 					for (const hashType of info.hashes) {
 						const message = `CD: ${arc}: hashType=${hashType}`;
-						const cd = new CodeDirectory();
-						cd.version = info.version;
-						cd.flags = info.flags;
-						cd.codeLimit = info.offset;
-						cd.hashType = hashType;
-						cd.pageSize = Math.log2(info.page);
-						cd.execSegBase = BigInt(info.execsegbase);
-						cd.execSegLimit = BigInt(info.execseglimit);
-						cd.execSegFlags = BigInt(info.execsegflags);
-						cd.identifier = stringToBytes(info.identifier);
-						cd.teamID = stringToBytes(info.teamid);
+						const builder = new CodeDirectoryBuilder(hashType);
+						builder.flags = info.flags;
+						builder.execLength = info.offset;
+						builder.pageSize = info.page;
+						builder.execSegOffset = BigInt(info.execsegbase);
+						builder.execSegLimit = BigInt(info.execseglimit);
+						builder.execSegFlags = BigInt(info.execsegflags);
+						builder.identifier = stringToBytes(info.identifier);
+						builder.teamID = stringToBytes(info.teamid);
 						if (infoPlist) {
-							cd.setSlot(
-								-cdInfoSlot,
-								false,
+							builder.setSpecialSlot(
+								cdInfoSlot,
 								// eslint-disable-next-line no-await-in-loop
 								await hash(hashType, infoPlist)
 							);
@@ -107,9 +103,8 @@ void describe('blob/codedirectory', () => {
 								break;
 							}
 							case 'count=0 size=12': {
-								cd.setSlot(
-									-cdRequirementsSlot,
-									false,
+								builder.setSpecialSlot(
+									cdRequirementsSlot,
 									// eslint-disable-next-line no-await-in-loop
 									await hash(hashType, emptyRequirements)
 								);
@@ -122,20 +117,20 @@ void describe('blob/codedirectory', () => {
 							}
 						}
 						if (codeResources) {
-							cd.setSlot(
-								-cdResourceDirSlot,
-								false,
+							builder.setSpecialSlot(
+								cdResourceDirSlot,
 								// eslint-disable-next-line no-await-in-loop
 								await hash(hashType, codeResources)
 							);
 						}
 						// eslint-disable-next-line no-await-in-loop
-						await addCodeHashes(cd, thin);
+						await addCodeHashes(builder, thin);
 
+						const cd = builder.build(info.version);
 						const data = new Uint8Array(cd.byteLength);
 						cd.byteWrite(data);
 						notStrictEqual(
-							Buffer.from(thin).indexOf(
+							Buffer.from(thin).compare(
 								Buffer.from(data),
 								info.offset
 							),
@@ -180,4 +175,3 @@ void describe('blob/codedirectory', () => {
 		}
 	});
 });
-*/
