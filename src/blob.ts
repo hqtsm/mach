@@ -1,10 +1,11 @@
-import {BufferView, ByteLength, ByteRead, ByteWrite} from './type.ts';
-import {viewDataR, viewDataW, viewUint8R, viewUint8W} from './util.ts';
+import {Struct} from './struct.ts';
+import {BufferView} from './type.ts';
+import {viewUint8R} from './util.ts';
 
 /**
  * Blob class.
  */
-export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
+export class Blob extends Struct {
 	public declare readonly ['constructor']: typeof Blob;
 
 	/**
@@ -17,10 +18,9 @@ export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
 	 *
 	 * @param data Blob data view or size of new blob.
 	 */
-	constructor(data: BufferView | number = this.constructor.sizeof) {
-		this.#data = viewDataW(
-			typeof data === 'number' ? new Uint8Array(data) : data
-		);
+	constructor(data: BufferView | number | null = null) {
+		super(data);
+		this.#data = new DataView(this.buffer, this.byteOffset);
 	}
 
 	/**
@@ -43,7 +43,8 @@ export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
 
 	/**
 	 * Blob length.
-	 * By default includes magic and length, but child classes may change this.
+	 * By default includes magic and length.
+	 * Child classes may redefine this to be a smaller subview.
 	 *
 	 * @returns Blob length.
 	 */
@@ -53,7 +54,8 @@ export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
 
 	/**
 	 * Blob length.
-	 * By default includes magic and length, but child classes may change this.
+	 * By default includes magic and length.
+	 * Child classes may redefine this to be a smaller subview.
 	 *
 	 * @param value Blob length.
 	 */
@@ -64,27 +66,14 @@ export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
 	/**
 	 * @inheritdoc
 	 */
-	public get buffer() {
-		return this.#data.buffer;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
 	public get byteLength() {
 		return this.#data.getUint32(4);
 	}
 
 	/**
-	 * @inheritdoc
-	 */
-	public get byteOffset() {
-		return this.#data.byteOffset;
-	}
-
-	/**
-	 * Get the blob data.
-	 * By default includes magic and length, but child classes may change this.
+	 * Data view of blob array buffer, potentially extending beyond end.
+	 * By default includes magic and length.
+	 * Child classes may redefine this to be a smaller subview.
 	 *
 	 * @returns View of blob data.
 	 */
@@ -107,28 +96,28 @@ export class Blob implements ByteLength, ByteRead, ByteWrite, BufferView {
 	 * @inheritdoc
 	 */
 	public byteRead(buffer: Readonly<BufferView>, offset = 0) {
-		const v = viewDataR(buffer, offset);
-		const byteLength = v.getUint32(4);
-		if (byteLength < 8) {
-			throw new Error(`Invalid length: ${byteLength}`);
-		}
-		this.#data = viewDataW(viewUint8R(v, 0, byteLength).slice());
+		const byteLength = super.byteRead(buffer, offset);
+		this.#data = new DataView(this.buffer, this.byteOffset);
 		return byteLength;
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public byteWrite(buffer: BufferView, offset = 0) {
-		const {byteLength} = this;
-		viewUint8W(buffer, offset, byteLength).set(
-			viewUint8R(this.#data, 0, byteLength)
-		);
+	public static byteLength(buffer: Readonly<BufferView>, offset = 0) {
+		const byteLength = new DataView(
+			buffer.buffer,
+			buffer.byteOffset + offset,
+			8
+		).getUint32(4);
+		if (byteLength < 8) {
+			throw new Error(`Invalid length: ${byteLength}`);
+		}
 		return byteLength;
 	}
 
 	/**
-	 * Size of new instance.
+	 * @inheritdoc
 	 */
 	public static readonly sizeof: number = 8;
 
