@@ -126,6 +126,15 @@ void describe('blob/codedirectory', () => {
 						// eslint-disable-next-line no-await-in-loop
 						await addCodeHashes(builder, thin);
 
+						// Offical library always minimum supports scatter.
+						strictEqual(
+							Math.max(
+								builder.version,
+								CodeDirectory.supportsScatter
+							),
+							info.version
+						);
+
 						const cd = builder.build(info.version);
 						const data = new Uint8Array(cd.byteLength);
 						cd.byteWrite(data);
