@@ -8,7 +8,7 @@ import {
 	UINT32_MAX
 } from './const.ts';
 import type {BufferView} from './type.ts';
-import {sparseSet, viewUint8R} from './util.ts';
+import {viewUint8R} from './util.ts';
 
 /**
  * CodeDirectoryBuilder class.
@@ -19,7 +19,12 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Special slots.
 	 */
-	readonly #special: (Uint8Array | undefined)[] = [];
+	readonly #special = new Map<number, Uint8Array>();
+
+	/**
+	 * Highest special slot index.
+	 */
+	#specialSlots = 0;
 
 	/**
 	 * Executable length.
@@ -133,7 +138,7 @@ export class CodeDirectoryBuilder {
 	 * @returns Total used.
 	 */
 	public get specialSlots() {
-		return this.#special.length;
+		return this.#specialSlots;
 	}
 
 	/**
@@ -185,29 +190,28 @@ export class CodeDirectoryBuilder {
 	 * @returns Hash data, or null.
 	 */
 	public getSpecialSlot(slot: number) {
-		return this.#special[slot - 1] || null;
+		return this.#special.get(slot) || null;
 	}
 
 	/**
 	 * Set special slot.
 	 *
 	 * @param slot Slot index, 1 indexed.
-	 * @param hash Hash data, or null.
+	 * @param hash Hash data.
 	 */
-	public setSpecialSlot(slot: number, hash: Readonly<BufferView> | null) {
-		const i = slot - 1;
+	public setSpecialSlot(slot: number, hash: Readonly<BufferView>) {
 		const slots = this.#special;
-		let digest;
-		if (hash) {
-			const {digestLength} = this;
-			digest = slots[i] || new Uint8Array(digestLength);
-			const view = viewUint8R(hash);
-			if (view.byteLength !== digestLength) {
-				throw new Error(`Invalid hash size: ${view.byteLength}`);
-			}
-			digest.set(view);
+		const {digestLength} = this;
+		const digest = slots.get(slot) || new Uint8Array(digestLength);
+		const view = viewUint8R(hash);
+		if (view.byteLength !== digestLength) {
+			throw new Error(`Invalid hash size: ${view.byteLength}`);
 		}
-		sparseSet(slots, i, digest);
+		digest.set(view);
+		slots.set(slot, digest);
+		if (slot >= this.#specialSlots) {
+			this.#specialSlots = slot;
+		}
 	}
 
 	/**
