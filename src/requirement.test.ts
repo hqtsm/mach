@@ -15,6 +15,7 @@ void describe('requirement', () => {
 		const rd = new Requirement();
 		strictEqual(rd.byteRead(d), d.byteLength);
 		deepStrictEqual(rd, r);
+		strictEqual(rd.kind, 0);
 	});
 
 	void it('empty kind 1 (invalid?)', () => {
@@ -28,6 +29,7 @@ void describe('requirement', () => {
 		const rd = new Requirement();
 		strictEqual(rd.byteRead(d), d.byteLength);
 		deepStrictEqual(rd, r);
+		strictEqual(rd.kind, Requirement.Kind.exprForm);
 	});
 
 	void it('empty kind 2 (invalid?)', () => {
@@ -41,5 +43,6 @@ void describe('requirement', () => {
 		const rd = new Requirement();
 		strictEqual(rd.byteRead(d), d.byteLength);
 		deepStrictEqual(rd, r);
+		strictEqual(rd.kind, Requirement.Kind.lwcrForm);
 	});
 });
