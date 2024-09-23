@@ -500,7 +500,7 @@ export default [
 		}
 	},
 	{
-		files: ['**/*.js', '**/*.jsx', '**/*.mjs', '**/*.mjsx'],
+		files: ['**/*.js', '**/*.jsx'],
 		rules: {
 			'@typescript-eslint/no-unsafe-assignment': 'off',
 			'@typescript-eslint/no-unsafe-member-access': 'off',
@@ -518,14 +518,10 @@ export default [
 		files: [
 			'**/*.test.js',
 			'**/*.test.jsx',
-			'**/*.test.mjs',
-			'**/*.test.mjsx',
 			'**/*.test.ts',
 			'**/*.test.tsx',
 			'**/*.spec.js',
 			'**/*.spec.jsx',
-			'**/*.spec.mjs',
-			'**/*.spec.mjsx',
 			'**/*.spec.ts',
 			'**/*.spec.tsx'
 		],
@@ -541,7 +537,7 @@ export default [
 		}
 	},
 	{
-		files: ['babel.config.mjs', 'eslint.config.mjs'],
+		files: ['babel.config.js', 'eslint.config.js'],
 		rules: {
 			'jsdoc/require-jsdoc': 'off',
 			'@typescript-eslint/naming-convention': 'off'

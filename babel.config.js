@@ -15,7 +15,7 @@ export default api => {
 	const env = api.env();
 	api.cache(() => env);
 	const modules = env === 'esm' ? false : 'commonjs';
-	const ext = modules ? '.js' : '.mjs';
+	const ext = modules === 'commonjs' ? '.cjs' : '.js';
 	const presets = [];
 	const plugins = [];
 	presets.push(

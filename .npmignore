@@ -28,21 +28,21 @@ yarn.lock
 /.editorconfig
 /.prettierrc.yaml
 /.prettierignore
-/babel.config.mjs
-/eslint.config.mjs
+/babel.config.js
+/eslint.config.js
 /tsconfig.json
 /tsconfig.eslint.json
 /spec
 /src
 
 /dts/**/*.test.d.ts
-/esm/**/*.test.mjs
-/esm/**/*.test.mjs.map
-/cjs/**/*.test.js
-/cjs/**/*.test.js.map
+/esm/**/*.test.js
+/esm/**/*.test.js.map
+/cjs/**/*.test.cjs
+/cjs/**/*.test.cjs.map
 
 /dts/**/*.spec.d.ts
-/esm/**/*.spec.mjs
-/esm/**/*.spec.mjs.map
-/cjs/**/*.spec.js
-/cjs/**/*.spec.js.map
+/esm/**/*.spec.js
+/esm/**/*.spec.js.map
+/cjs/**/*.spec.cjs
+/cjs/**/*.spec.cjs.map
