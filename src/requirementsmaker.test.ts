@@ -1,6 +1,3 @@
-void 0;
-
-/*
 import {describe, it} from 'node:test';
 import {deepStrictEqual, strictEqual} from 'node:assert';
 
@@ -8,13 +5,15 @@ import {Requirements} from './requirements.ts';
 import {
 	kSecDesignatedRequirementType,
 	kSecHostRequirementType
-} from '../const.ts';
+} from './const.ts';
 import {Requirement} from './requirement.ts';
-import {unhex} from '../util.spec.ts';
+import {unhex} from './util.spec.ts';
+import {RequirementsMaker} from './requirementsmaker.ts';
+import {viewDataR} from './util.ts';
 
-void describe('blob/requirements', () => {
+void describe('requirementsmaker', () => {
 	void it('empty', () => {
-		const rs = new Requirements();
+		const rs = new RequirementsMaker().make();
 		const d = new Uint8Array(rs.byteLength);
 		rs.byteWrite(d);
 		deepStrictEqual(d, unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00'));
@@ -43,18 +42,13 @@ void describe('blob/requirements', () => {
 			'FA DE 0C 00 00 00 00 28',
 			Buffer.from(designatedData).toString('hex')
 		);
-		const rs = new Requirements();
-		const designated = new Requirement();
-		designated.data = designatedData;
-		rs.setType(kSecDesignatedRequirementType, designated);
-		deepStrictEqual([...rs.types()], [kSecDesignatedRequirementType]);
-		const host = new Requirement();
-		host.data = hostData;
-		rs.setType(kSecHostRequirementType, host);
-		deepStrictEqual(
-			[...rs.types()],
-			[kSecHostRequirementType, kSecDesignatedRequirementType]
+		const rsm = new RequirementsMaker();
+		rsm.add(kSecHostRequirementType, Requirement.blobify(hostData));
+		rsm.add(
+			kSecDesignatedRequirementType,
+			Requirement.blobify(designatedData)
 		);
+		const rs = rsm.make();
 		const d = new Uint8Array(rs.byteLength);
 		rs.byteWrite(d);
 		deepStrictEqual(d, data);
@@ -63,9 +57,18 @@ void describe('blob/requirements', () => {
 		strictEqual(rs2.byteRead(d), d.byteLength);
 		deepStrictEqual(rs2, rs);
 
-		for (const type of rs.types()) {
-			deepStrictEqual(rs.getType(type), rs2.getType(type));
+		for (const type of [
+			kSecDesignatedRequirementType,
+			kSecHostRequirementType,
+			0
+		]) {
+			const a = rs.find(type);
+			const b = rs2.find(type);
+			if (!a || !b) {
+				deepStrictEqual(a, b, `type: ${type}`);
+				continue;
+			}
+			deepStrictEqual(viewDataR(a), viewDataR(b), `type: ${type}`);
 		}
 	});
 });
-*/
