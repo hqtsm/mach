@@ -25,19 +25,6 @@ export function ranged(i: number, l: number, h: number) {
 	}
 }
 
-let textEncoder: InstanceType<typeof TextEncoder> | undefined;
-
-/**
- * Encode string to bytes.
- *
- * @param str String.
- * @returns Bytes.
- */
-export function stringToBytes(str: string) {
-	textEncoder ??= new TextEncoder();
-	return textEncoder.encode(str);
-}
-
 /**
  * Get subview from BufferView.
  *

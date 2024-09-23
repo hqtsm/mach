@@ -1,7 +1,7 @@
 import {describe, it} from 'node:test';
 import {deepStrictEqual, strictEqual} from 'node:assert';
 
-import {stringToBytes, viewDataR, viewUint8R} from './util.ts';
+import {viewDataR, viewUint8R} from './util.ts';
 import {unhex} from './util.spec.ts';
 import {kSecCodeMagicEntitlement} from './const.ts';
 import {EntitlementBlob} from './entitlementblob.ts';
@@ -32,7 +32,7 @@ void describe('entitlementblob', () => {
 	});
 
 	void it('data', () => {
-		const data = stringToBytes(examplePlist);
+		const data = new TextEncoder().encode(examplePlist);
 		const eb = EntitlementBlob.blobify(data);
 		eb.body.set(data);
 		const d = new Uint8Array(eb.byteLength);

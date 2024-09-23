@@ -11,7 +11,6 @@ import {
 } from './util.spec.ts';
 import {CodeDirectory} from './codedirectory.ts';
 import {cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot} from './const.ts';
-import {stringToBytes} from './util.ts';
 import type {ReadonlyUint8Array} from './type.ts';
 import {CodeDirectoryBuilder} from './codedirectorybuilder.ts';
 
@@ -88,8 +87,10 @@ void describe('blob/codedirectory', () => {
 						builder.execSegOffset = BigInt(info.execsegbase);
 						builder.execSegLimit = BigInt(info.execseglimit);
 						builder.execSegFlags = BigInt(info.execsegflags);
-						builder.identifier = stringToBytes(info.identifier);
-						builder.teamID = stringToBytes(info.teamid);
+						builder.identifier = new TextEncoder().encode(
+							info.identifier
+						);
+						builder.teamID = new TextEncoder().encode(info.teamid);
 						if (infoPlist) {
 							builder.setSpecialSlot(
 								cdInfoSlot,
