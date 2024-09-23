@@ -7,7 +7,7 @@ import {
 	kSecCodeSignatureHashSHA512,
 	UINT32_MAX
 } from './const.ts';
-import {BufferView} from './type.ts';
+import type {BufferView} from './type.ts';
 import {sparseSet, viewUint8R} from './util.ts';
 
 /**

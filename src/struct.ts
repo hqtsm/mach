@@ -1,4 +1,4 @@
-import {BufferView, ByteRead, ByteWrite, ByteLength} from './type.ts';
+import type {BufferView, ByteRead, ByteWrite, ByteLength} from './type.ts';
 
 /**
  * Struct class.

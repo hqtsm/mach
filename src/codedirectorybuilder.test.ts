@@ -12,7 +12,7 @@ import {
 import {CodeDirectory} from './codedirectory.ts';
 import {cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot} from './const.ts';
 import {stringToBytes} from './util.ts';
-import {ReadonlyUint8Array} from './type.ts';
+import type {ReadonlyUint8Array} from './type.ts';
 import {CodeDirectoryBuilder} from './codedirectorybuilder.ts';
 
 const emptyRequirements = unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00');

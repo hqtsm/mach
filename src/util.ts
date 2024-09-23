@@ -1,4 +1,4 @@
-import {BufferView, ReadonlyDataView, ReadonlyUint8Array} from './type.ts';
+import type {BufferView, ReadonlyDataView, ReadonlyUint8Array} from './type.ts';
 
 /**
  * Align a number up.

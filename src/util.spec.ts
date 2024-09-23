@@ -3,7 +3,7 @@ import {open} from 'node:fs/promises';
 import {inflateRaw} from 'node:zlib';
 import {subtle} from 'node:crypto';
 
-import {BufferView, ReadonlyUint8Array} from './type.ts';
+import type {BufferView, ReadonlyUint8Array} from './type.ts';
 import {
 	CPU_SUBTYPE_POWERPC_7400,
 	CPU_SUBTYPE_POWERPC_970,

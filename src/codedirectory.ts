@@ -1,7 +1,7 @@
 import {Blob} from './blob.ts';
 import {CodeDirectoryScatter} from './codedirectoryscatter.ts';
 import {kSecCodeMagicCodeDirectory} from './const.ts';
-import {ReadonlyUint8Array} from './type.ts';
+import type {ReadonlyUint8Array} from './type.ts';
 import {viewUint8W} from './util.ts';
 
 /**

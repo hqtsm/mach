@@ -1,6 +1,6 @@
 import {Blob} from './blob.ts';
 import {CSMAGIC_BLOBWRAPPER} from './const.ts';
-import {BufferView} from './type.ts';
+import type {BufferView} from './type.ts';
 import {viewDataW, viewUint8R} from './util.ts';
 
 /**

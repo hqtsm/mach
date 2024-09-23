@@ -1,5 +1,5 @@
 import {Struct} from './struct.ts';
-import {BufferView} from './type.ts';
+import type {BufferView} from './type.ts';
 
 /**
  * CodeDirectoryScatter class.

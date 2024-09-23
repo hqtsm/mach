@@ -2,10 +2,11 @@
 	"compileOnSave": false,
 	"compilerOptions": {
 		"target": "ESNext",
-		"module": "commonjs",
-		"moduleResolution": "Node",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
 		"allowSyntheticDefaultImports": true,
 		"allowImportingTsExtensions": true,
+		"verbatimModuleSyntax": true,
 		"lib": ["ESNext"],
 		"newLine": "lf",
 
