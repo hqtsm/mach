@@ -1,34 +1,4 @@
 /**
- * Type of static property.
- */
-export type StaticValue<
-	T extends {
-		constructor: {[K in U]: unknown};
-	},
-	U extends keyof T['constructor']
-> = T['constructor'][U];
-
-/**
- * Return type of static function.
- */
-export type StaticReturn<
-	T extends {
-		constructor: {[K in U]: (...args: unknown[]) => unknown};
-	},
-	U extends keyof T['constructor']
-> = ReturnType<T['constructor'][U]>;
-
-/**
- * Instance type of static class.
- */
-export type StaticNew<
-	T extends {
-		constructor: {[K in U]: {prototype: unknown}};
-	},
-	U extends keyof T['constructor']
-> = T['constructor'][U]['prototype'];
-
-/**
  * Data view write methods.
  */
 export type DataViewWriteMethods =
