@@ -230,25 +230,22 @@ export class CodeDirectoryBuilder {
 	 * Set code slot.
 	 *
 	 * @param slot Slot index, 0 indexed.
-	 * @param hash Hash data, or null.
+	 * @param hash Hash data.
 	 */
-	public setCodeSlot(slot: number, hash: Readonly<BufferView> | null) {
+	public setCodeSlot(slot: number, hash: Readonly<BufferView>) {
 		const slots = this.#code;
 		const {codeSlots} = this;
 		if (!(slot < codeSlots)) {
 			throw new Error(`Invalid slot: ${slot}`);
 		}
 		slots.length = codeSlots;
-		let digest;
-		if (hash) {
-			const {digestLength} = this;
-			digest = slots[slot] || new Uint8Array(digestLength);
-			const view = viewUint8R(hash);
-			if (view.byteLength !== digestLength) {
-				throw new Error(`Invalid hash size: ${view.byteLength}`);
-			}
-			digest.set(view);
+		const {digestLength} = this;
+		const digest = slots[slot] || new Uint8Array(digestLength);
+		const view = viewUint8R(hash);
+		if (view.byteLength !== digestLength) {
+			throw new Error(`Invalid hash size: ${view.byteLength}`);
 		}
+		digest.set(view);
 		slots[slot] = digest;
 	}
 
