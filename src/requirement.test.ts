@@ -12,10 +12,10 @@ void describe('requirement', () => {
 		r.byteWrite(d);
 		deepStrictEqual(d, unhex('FA DE 0C 00 00 00 00 0C 00 00 00 00'));
 
-		const rd = new Requirement();
-		strictEqual(rd.byteRead(d), d.byteLength);
-		deepStrictEqual(rd, r);
-		strictEqual(rd.kind, 0);
+		const r2 = new Requirement();
+		strictEqual(r2.byteRead(d), d.byteLength);
+		deepStrictEqual(r2, r);
+		strictEqual(r2.kind, 0);
 	});
 
 	void it('empty kind 1 (invalid?)', () => {
@@ -26,10 +26,10 @@ void describe('requirement', () => {
 		r.byteWrite(d);
 		deepStrictEqual(d, unhex('FA DE 0C 00 00 00 00 0C 00 00 00 01'));
 
-		const rd = new Requirement();
-		strictEqual(rd.byteRead(d), d.byteLength);
-		deepStrictEqual(rd, r);
-		strictEqual(rd.kind, Requirement.Kind.exprForm);
+		const r2 = new Requirement();
+		strictEqual(r2.byteRead(d), d.byteLength);
+		deepStrictEqual(r2, r);
+		strictEqual(r2.kind, Requirement.Kind.exprForm);
 	});
 
 	void it('empty kind 2 (invalid?)', () => {
@@ -40,9 +40,9 @@ void describe('requirement', () => {
 		r.byteWrite(d);
 		deepStrictEqual(d, unhex('FA DE 0C 00 00 00 00 0C 00 00 00 02'));
 
-		const rd = new Requirement();
-		strictEqual(rd.byteRead(d), d.byteLength);
-		deepStrictEqual(rd, r);
-		strictEqual(rd.kind, Requirement.Kind.lwcrForm);
+		const r2 = new Requirement();
+		strictEqual(r2.byteRead(d), d.byteLength);
+		deepStrictEqual(r2, r);
+		strictEqual(r2.kind, Requirement.Kind.lwcrForm);
 	});
 });
