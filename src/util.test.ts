@@ -1,10 +1,7 @@
 import {describe, it} from 'node:test';
-import {deepStrictEqual, strictEqual, throws} from 'node:assert';
+import {strictEqual, throws} from 'node:assert';
 
-import {sparseSet, viewDataW} from './util.ts';
-
-// eslint-disable-next-line no-undefined
-const undef = undefined;
+import {viewDataW} from './util.ts';
 
 void describe('util', () => {
 	void describe('viewDataW', () => {
@@ -113,102 +110,6 @@ void describe('util', () => {
 			strictEqual(dv.byteOffset, 2);
 			strictEqual(dv.byteLength, 1);
 			strictEqual(dv.getUint8(0), 0x63);
-		});
-	});
-
-	void describe('sparseSet', () => {
-		void it('set', () => {
-			const a = [1, 2, 3];
-			sparseSet(a, 1, 42);
-			deepStrictEqual(a, [1, 42, 3]);
-		});
-
-		void it('set empty 0', () => {
-			const a: number[] = [];
-			sparseSet(a, 0, 42);
-			deepStrictEqual(a, [42]);
-		});
-
-		void it('set empty 1', () => {
-			const a: number[] = [];
-			sparseSet(a, 1, 42);
-			const e = [];
-			e[1] = 42;
-			deepStrictEqual(a, e);
-		});
-
-		void it('add', () => {
-			const a = [1, 2, 3];
-			sparseSet(a, 3, 4);
-			deepStrictEqual(a, [1, 2, 3, 4]);
-		});
-
-		void it('sparse', () => {
-			const a = [1, 2, 3];
-			sparseSet(a, 4, 5);
-			const e = [1, 2, 3];
-			e[4] = 5;
-			deepStrictEqual(a, e);
-		});
-
-		void it('noext', () => {
-			const a = [1, 2, 3];
-			sparseSet(a, 3, undef);
-			deepStrictEqual(a, [1, 2, 3]);
-		});
-
-		void it('delete', () => {
-			const a = [1, 2, 3];
-			sparseSet(a, 1, undef);
-			const e = [1];
-			e[2] = 3;
-			deepStrictEqual(a, e);
-		});
-
-		void it('delete empty 0', () => {
-			const a: number[] = [];
-			sparseSet(a, 0, undef);
-			deepStrictEqual(a, []);
-		});
-
-		void it('delete empty 1', () => {
-			const a: number[] = [];
-			sparseSet(a, 1, undef);
-			deepStrictEqual(a, []);
-		});
-
-		void it('contract', () => {
-			const a = [1, 2, 3];
-			sparseSet(a, 2, undef);
-			deepStrictEqual(a, [1, 2]);
-		});
-
-		void it('contract 2', () => {
-			const a = [1, 2, 3];
-			const e = [1, 2, 3];
-
-			sparseSet(a, 1, undef);
-			delete e[1];
-			deepStrictEqual(a, e);
-
-			sparseSet(a, 2, undef);
-			deepStrictEqual(a, [1]);
-		});
-
-		void it('contract 3', () => {
-			const a = [1, 2, 3];
-			const e = [1, 2, 3];
-
-			sparseSet(a, 1, undef);
-			delete e[1];
-			deepStrictEqual(a, e);
-
-			sparseSet(a, 0, undef);
-			delete e[0];
-			deepStrictEqual(a, e);
-
-			sparseSet(a, 2, undef);
-			deepStrictEqual(a, []);
 		});
 	});
 });
