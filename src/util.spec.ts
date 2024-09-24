@@ -438,11 +438,8 @@ export function machoThin(
 			slices.push([offset, size]);
 		}
 	}
-	if (slices.length < 1) {
-		throw new Error('No matching arch');
-	}
-	if (slices.length > 1) {
-		throw new Error('Multiple matching archs');
+	if (slices.length !== 1) {
+		throw new Error(`Matching archs: ${slices.length}`);
 	}
 	const [[offset, size]] = slices;
 	return viewUint8R(data, offset, size);
