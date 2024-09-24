@@ -7,8 +7,8 @@ import {
 	kSecCodeSignatureHashSHA512,
 	UINT32_MAX
 } from './const.ts';
-import type {BufferView} from './type.ts';
-import {viewUint8R} from './util.ts';
+import type {BufferView, ReadonlyUint8Array} from './type.ts';
+import {viewUint8} from './util.ts';
 
 /**
  * CodeDirectoryBuilder class.
@@ -203,7 +203,7 @@ export class CodeDirectoryBuilder {
 		const slots = this.#special;
 		const {digestLength} = this;
 		const digest = slots.get(slot) || new Uint8Array(digestLength);
-		const view = viewUint8R(hash);
+		const view: ReadonlyUint8Array = viewUint8(hash);
 		if (view.byteLength !== digestLength) {
 			throw new Error(`Invalid hash size: ${view.byteLength}`);
 		}
@@ -241,7 +241,7 @@ export class CodeDirectoryBuilder {
 		slots.length = codeSlots;
 		const {digestLength} = this;
 		const digest = slots[slot] || new Uint8Array(digestLength);
-		const view = viewUint8R(hash);
+		const view: ReadonlyUint8Array = viewUint8(hash);
 		if (view.byteLength !== digestLength) {
 			throw new Error(`Invalid hash size: ${view.byteLength}`);
 		}
@@ -396,7 +396,7 @@ export class CodeDirectoryBuilder {
 		let offset = Static.fixedSize(version);
 		if (scatter && !(version < CodeDirectory.supportsScatter)) {
 			for (const s of scatter) {
-				const d = viewUint8R(s);
+				const d: ReadonlyUint8Array = viewUint8(s);
 				data.set(d, offset);
 				offset += s.byteLength;
 			}

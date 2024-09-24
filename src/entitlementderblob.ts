@@ -1,6 +1,6 @@
 import {Blob} from './blob.ts';
 import {kSecCodeMagicEntitlementDER} from './const.ts';
-import {viewUint8W} from './util.ts';
+import {viewUint8} from './util.ts';
 
 /**
  * Entitlement DER Blob.
@@ -14,7 +14,7 @@ export class EntitlementDERBlob extends Blob {
 	 * @returns View of DER data.
 	 */
 	public get der() {
-		return viewUint8W(this.dataView, 8, Math.max(this.derLength, 0));
+		return viewUint8(this.dataView, 8, Math.max(this.derLength, 0));
 	}
 
 	/**

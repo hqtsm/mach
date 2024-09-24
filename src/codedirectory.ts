@@ -2,7 +2,7 @@ import {Blob} from './blob.ts';
 import {CodeDirectoryScatter} from './codedirectoryscatter.ts';
 import {kSecCodeMagicCodeDirectory} from './const.ts';
 import type {ReadonlyUint8Array} from './type.ts';
-import {viewUint8W} from './util.ts';
+import {viewUint8} from './util.ts';
 
 /**
  * CodeDirectory Blob.
@@ -388,7 +388,7 @@ export class CodeDirectory extends Blob {
 			offset = this.hashOffset;
 		}
 		const {hashSize} = this;
-		return viewUint8W(this, offset + hashSize * slot, hashSize);
+		return viewUint8(this, offset + hashSize * slot, hashSize);
 	}
 
 	/**

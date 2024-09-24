@@ -1,4 +1,4 @@
-import type {BufferView, ReadonlyDataView, ReadonlyUint8Array} from './type.ts';
+import type {BufferView} from './type.ts';
 
 /**
  * Align a number up.
@@ -56,18 +56,6 @@ function subview<T>(
 }
 
 /**
- * Get readonly DataView from BufferView.
- *
- * @param view BufferView.
- * @param offset Offset into view.
- * @param length Length of view.
- * @returns Readonly DataView.
- */
-export function viewDataR(view: Readonly<BufferView>, offset = 0, length = -1) {
-	return subview(DataView, view, offset, length) as ReadonlyDataView;
-}
-
-/**
  * Get writable DataView from BufferView.
  *
  * @param view BufferView.
@@ -75,24 +63,8 @@ export function viewDataR(view: Readonly<BufferView>, offset = 0, length = -1) {
  * @param length Length of view.
  * @returns Writable DataView.
  */
-export function viewDataW(view: BufferView, offset = 0, length = -1) {
+export function viewData(view: BufferView, offset = 0, length = -1) {
 	return subview(DataView, view, offset, length);
-}
-
-/**
- * Get readonly Uint8Array from BufferView.
- *
- * @param view BufferView.
- * @param offset Offset into view.
- * @param length Length of view.
- * @returns Readonly Uint8Array.
- */
-export function viewUint8R(
-	view: Readonly<BufferView>,
-	offset = 0,
-	length = -1
-) {
-	return subview(Uint8Array, view, offset, length) as ReadonlyUint8Array;
 }
 
 /**
@@ -103,6 +75,6 @@ export function viewUint8R(
  * @param length Length of view.
  * @returns Writable Uint8Array.
  */
-export function viewUint8W(view: BufferView, offset = 0, length = -1) {
+export function viewUint8(view: BufferView, offset = 0, length = -1) {
 	return subview(Uint8Array, view, offset, length);
 }
