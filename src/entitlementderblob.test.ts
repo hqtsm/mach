@@ -10,27 +10,15 @@ void describe('entitlementderblob', () => {
 	void it('empty (invalid?)', () => {
 		const edb = new EntitlementDERBlob();
 		edb.initialize(EntitlementDERBlob.sizeof);
-		const d = new Uint8Array(edb.byteLength);
-		edb.byteWrite(d);
-		deepStrictEqual(d, unhex('FA DE 71 72 00 00 00 08'));
-
-		const edb2 = new EntitlementDERBlob();
-		strictEqual(edb2.byteRead(d), d.byteLength);
-		deepStrictEqual(edb2, edb);
+		deepStrictEqual(viewUint8R(edb), unhex('FA DE 71 72 00 00 00 08'));
 	});
 
 	void it('data', () => {
 		const data = unhex('01 02 03 04 05 06 07 08 F0 F1 F2 F3 F4 F5 F6 F7');
 		const edb = EntitlementDERBlob.blobify(data);
-		const d = new Uint8Array(edb.byteLength);
-		edb.byteWrite(d);
-		const dv = viewDataR(d);
+		const dv = viewDataR(edb);
 		strictEqual(dv.getUint32(0), kSecCodeMagicEntitlementDER);
-		strictEqual(dv.getUint32(4), d.byteLength);
+		strictEqual(dv.getUint32(4), edb.byteLength);
 		deepStrictEqual(viewUint8R(dv, 8), data);
-
-		const edb2 = new EntitlementDERBlob();
-		strictEqual(edb2.byteRead(d), d.byteLength);
-		deepStrictEqual(edb2, edb);
 	});
 });

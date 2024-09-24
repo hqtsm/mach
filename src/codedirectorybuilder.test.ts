@@ -1,5 +1,5 @@
 import {describe, it} from 'node:test';
-import {deepStrictEqual, notStrictEqual, strictEqual} from 'node:assert';
+import {notStrictEqual, strictEqual} from 'node:assert';
 
 import {
 	fixtureMacho,
@@ -13,6 +13,7 @@ import {CodeDirectory} from './codedirectory.ts';
 import {cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot} from './const.ts';
 import type {ReadonlyUint8Array} from './type.ts';
 import {CodeDirectoryBuilder} from './codedirectorybuilder.ts';
+import {viewUint8R} from './util.ts';
 
 const emptyRequirements = unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00');
 
@@ -137,48 +138,14 @@ void describe('blob/codedirectory', () => {
 						);
 
 						const cd = builder.build(info.version);
-						const data = new Uint8Array(cd.byteLength);
-						cd.byteWrite(data);
 						notStrictEqual(
 							Buffer.from(thin).compare(
-								Buffer.from(data),
+								Buffer.from(viewUint8R(cd)),
 								info.offset
 							),
 							-1,
 							message
 						);
-
-						const cd2 = new CodeDirectory();
-						cd2.byteRead(data);
-						deepStrictEqual(cd, cd2, message);
-
-						strictEqual(
-							cd2.nSpecialSlots,
-							cd.nSpecialSlots,
-							message
-						);
-						for (let i = 0; i < cd2.nSpecialSlots; i++) {
-							const nulled = new Uint8Array(cd.hashSize);
-							deepStrictEqual(
-								cd2.getSlot(-1 - i, false),
-								cd.getSlot(-1 - i, false) || nulled,
-								message
-							);
-						}
-
-						strictEqual(cd2.nCodeSlots, cd.nCodeSlots, message);
-						for (let i = 0; i < cd2.nCodeSlots; i++) {
-							deepStrictEqual(
-								cd2.getSlot(i, false),
-								cd.getSlot(i, false),
-								message
-							);
-							deepStrictEqual(
-								cd2.getSlot(i, true),
-								cd.getSlot(i, true),
-								message
-							);
-						}
 					}
 				}
 			});

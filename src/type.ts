@@ -67,34 +67,6 @@ export interface ByteLength {
 }
 
 /**
- * Object can be read from a buffer view.
- */
-export interface ByteRead {
-	/**
-	 * Read bytes from a buffer view.
-	 *
-	 * @param buffer Buffer view.
-	 * @param offset Byte offset into buffer.
-	 * @returns Read length.
-	 */
-	byteRead(buffer: Readonly<BufferView>, offset?: number): number;
-}
-
-/**
- * Object can be written to a buffer view.
- */
-export interface ByteWrite {
-	/**
-	 * Write bytes to a buffer view.
-	 *
-	 * @param buffer Buffer view.
-	 * @param offset Byte offset into buffer.
-	 * @returns Write length.
-	 */
-	byteWrite(buffer: BufferView, offset?: number): number;
-}
-
-/**
  * File stat.
  */
 export interface FileLikeStat {

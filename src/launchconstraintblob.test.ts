@@ -38,26 +38,14 @@ void describe('launchconstraintblob', () => {
 	void it('empty (invalid?)', () => {
 		const edb = new LaunchConstraintBlob();
 		edb.initialize(LaunchConstraintBlob.sizeof);
-		const d = new Uint8Array(edb.byteLength);
-		edb.byteWrite(d);
-		deepStrictEqual(d, unhex('FA DE 81 81 00 00 00 08'));
-
-		const edb2 = new LaunchConstraintBlob();
-		strictEqual(edb2.byteRead(d), d.byteLength);
-		deepStrictEqual(edb2, edb);
+		deepStrictEqual(viewUint8R(edb), unhex('FA DE 81 81 00 00 00 08'));
 	});
 
 	void it('data', () => {
 		const edb = LaunchConstraintBlob.blobify(sampleDer);
-		const d = new Uint8Array(edb.byteLength);
-		edb.byteWrite(d);
-		const dv = viewDataR(d);
+		const dv = viewDataR(edb);
 		strictEqual(dv.getUint32(0), kSecCodeMagicLaunchConstraint);
-		strictEqual(dv.getUint32(4), d.byteLength);
+		strictEqual(dv.getUint32(4), edb.byteLength);
 		deepStrictEqual(viewUint8R(dv, 8), sampleDer);
-
-		const edb2 = new LaunchConstraintBlob();
-		strictEqual(edb2.byteRead(d), d.byteLength);
-		deepStrictEqual(edb2, edb);
 	});
 });

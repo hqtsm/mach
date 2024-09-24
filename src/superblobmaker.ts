@@ -1,4 +1,5 @@
 import {SuperBlob} from './superblob.ts';
+import {viewDataW, viewUint8R} from './util.ts';
 
 /**
  * SuperBlobMaker class.
@@ -70,18 +71,21 @@ export class SuperBlobMaker {
 		const pieces = this.#pieces;
 		const count = pieces.size;
 		const size = this.size();
-		const data = new DataView(new ArrayBuffer(size));
-		const sb = new SuperBlob(data);
+		const data = new Uint8Array(size);
+		const view = viewDataW(data);
+		const sb = new SuperBlob(view);
 		sb.initialize(size);
-		data.setUint32(8, count);
+		view.setUint32(8, count);
 		let o1 = 12;
 		let o2 = o1 + count * 8;
 		for (const [type, blob] of pieces) {
-			data.setUint32(o1, type);
+			view.setUint32(o1, type);
 			o1 += 4;
-			data.setUint32(o1, o2);
+			view.setUint32(o1, o2);
 			o1 += 4;
-			o2 += blob.byteWrite(data, o2);
+			const d = viewUint8R(blob);
+			data.set(d, o2);
+			o2 += d.byteLength;
 		}
 		return sb;
 	}

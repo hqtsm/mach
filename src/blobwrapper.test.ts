@@ -10,43 +10,25 @@ void describe('blobwrapper', () => {
 	void it('empty', () => {
 		const bw = new BlobWrapper();
 		bw.initialize(BlobWrapper.sizeof);
-		const d = new Uint8Array(bw.byteLength);
-		bw.byteWrite(d);
-		deepStrictEqual(d, unhex('FA DE 0B 01 00 00 00 08'));
-
-		const bw2 = new BlobWrapper();
-		strictEqual(bw2.byteRead(d), d.byteLength);
-		deepStrictEqual(bw2, bw);
+		deepStrictEqual(viewUint8R(bw), unhex('FA DE 0B 01 00 00 00 08'));
 	});
 
 	void it('data', () => {
 		const data = unhex('09 AB CD EF 01 02 03 04 05 06 07 08 09 0A 0B 0C');
 		const bw = BlobWrapper.blobify(data);
-		const d = new Uint8Array(bw.byteLength);
-		bw.byteWrite(d);
-		const dv = viewDataR(d);
+		const dv = viewDataR(bw);
 		strictEqual(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
-		strictEqual(dv.getUint32(4), d.byteLength);
+		strictEqual(dv.getUint32(4), bw.byteLength);
 		deepStrictEqual(viewUint8R(dv, 8), data);
-
-		const bw2 = new BlobWrapper();
-		strictEqual(bw2.byteRead(d), d.byteLength);
-		deepStrictEqual(bw2, bw);
 	});
 
 	void it('data', () => {
 		const data = unhex('09 AB CD EF 01 02 03 04 05 06 07 08 09 0A 0B 0C');
 		const bw = BlobWrapper.alloc(data.length);
 		viewUint8W(bw.data).set(data);
-		const d = new Uint8Array(bw.byteLength);
-		bw.byteWrite(d);
-		const dv = viewDataR(d);
+		const dv = viewDataR(bw);
 		strictEqual(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
-		strictEqual(dv.getUint32(4), d.byteLength);
+		strictEqual(dv.getUint32(4), bw.byteLength);
 		deepStrictEqual(viewUint8R(dv, 8), data);
-
-		const bw2 = new BlobWrapper();
-		strictEqual(bw2.byteRead(d), d.byteLength);
-		deepStrictEqual(bw2, bw);
 	});
 });

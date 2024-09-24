@@ -396,7 +396,9 @@ export class CodeDirectoryBuilder {
 		let offset = Static.fixedSize(version);
 		if (scatter && !(version < CodeDirectory.supportsScatter)) {
 			for (const s of scatter) {
-				offset += s.byteWrite(data, offset);
+				const d = viewUint8R(s);
+				data.set(d, offset);
+				offset += s.byteLength;
 			}
 		}
 		dir.identOffset = offset;

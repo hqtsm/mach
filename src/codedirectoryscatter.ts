@@ -10,7 +10,7 @@ export class CodeDirectoryScatter extends Struct {
 	/**
 	 * Blob data.
 	 */
-	#data: DataView;
+	readonly #data: DataView;
 
 	/**
 	 * @inheritdoc
@@ -72,14 +72,5 @@ export class CodeDirectoryScatter extends Struct {
 	 */
 	public set targetOffset(value: bigint) {
 		this.#data.setBigUint64(8, value);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public byteRead(buffer: Readonly<BufferView>, offset = 0) {
-		const byteLength = super.byteRead(buffer, offset);
-		this.#data = new DataView(this.buffer, this.byteOffset);
-		return byteLength;
 	}
 }

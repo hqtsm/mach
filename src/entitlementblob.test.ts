@@ -22,28 +22,16 @@ void describe('entitlementblob', () => {
 	void it('empty (invalid?)', () => {
 		const eb = new EntitlementBlob();
 		eb.initialize(EntitlementBlob.sizeof);
-		const d = new Uint8Array(eb.byteLength);
-		eb.byteWrite(d);
-		deepStrictEqual(d, unhex('FA DE 71 71 00 00 00 08'));
-
-		const eb2 = new EntitlementBlob();
-		strictEqual(eb2.byteRead(d), d.byteLength);
-		deepStrictEqual(eb2, eb);
+		deepStrictEqual(viewUint8R(eb), unhex('FA DE 71 71 00 00 00 08'));
 	});
 
 	void it('data', () => {
 		const data = new TextEncoder().encode(examplePlist);
 		const eb = EntitlementBlob.blobify(data);
 		eb.body.set(data);
-		const d = new Uint8Array(eb.byteLength);
-		eb.byteWrite(d);
-		const dv = viewDataR(d);
+		const dv = viewDataR(eb);
 		strictEqual(dv.getUint32(0), kSecCodeMagicEntitlement);
-		strictEqual(dv.getUint32(4), d.byteLength);
+		strictEqual(dv.getUint32(4), eb.byteLength);
 		deepStrictEqual(viewUint8R(dv, 8), data);
-
-		const eb2 = new EntitlementBlob();
-		strictEqual(eb2.byteRead(d), d.byteLength);
-		deepStrictEqual(eb2, eb);
 	});
 });

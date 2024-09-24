@@ -18,16 +18,10 @@ void describe('requirementmaker', () => {
 		const add = rm.alloc(data.byteLength);
 		add.set(data);
 		const r = rm.make();
-		const d = new Uint8Array(r.byteLength);
-		r.byteWrite(d);
-		const dv = viewDataR(d);
+		const dv = viewDataR(r);
 		strictEqual(dv.getUint32(0), kSecCodeMagicRequirement);
-		strictEqual(dv.getUint32(4), d.byteLength);
+		strictEqual(dv.getUint32(4), r.byteLength);
 		strictEqual(dv.getUint32(8), Requirement.Kind.exprForm);
 		deepStrictEqual(viewUint8R(dv, 12), data);
-
-		const r2 = new Requirement();
-		strictEqual(r2.byteRead(d), d.byteLength);
-		deepStrictEqual(r2, r);
 	});
 });

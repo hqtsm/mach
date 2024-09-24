@@ -1,20 +1,20 @@
-import type {BufferView, ByteRead, ByteWrite, ByteLength} from './type.ts';
+import type {BufferView, ByteLength} from './type.ts';
 
 /**
  * Struct class.
  */
-export class Struct implements BufferView, ByteRead, ByteWrite, ByteLength {
+export class Struct implements BufferView, ByteLength {
 	public declare readonly ['constructor']: typeof Struct;
 
 	/**
 	 * Byte data.
 	 */
-	#buffer: ArrayBuffer;
+	readonly #buffer: ArrayBuffer;
 
 	/**
 	 * Byte offset.
 	 */
-	#byteOffset: number;
+	readonly #byteOffset: number;
 
 	/**
 	 * Blob constructor.
@@ -53,37 +53,6 @@ export class Struct implements BufferView, ByteRead, ByteWrite, ByteLength {
 	 */
 	public get byteOffset() {
 		return this.#byteOffset;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public byteRead(buffer: Readonly<BufferView>, offset = 0) {
-		const byteLength = this.constructor.byteLength(buffer, offset);
-		const b = new ArrayBuffer(byteLength);
-		new Uint8Array(b, 0, byteLength).set(
-			new Uint8Array(
-				buffer.buffer,
-				buffer.byteOffset + offset,
-				byteLength
-			)
-		);
-		this.#buffer = b;
-		this.#byteOffset = 0;
-		return byteLength;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public byteWrite(buffer: BufferView, offset = 0) {
-		const {byteLength} = this;
-		new Uint8Array(
-			buffer.buffer,
-			buffer.byteOffset + offset,
-			byteLength
-		).set(new Uint8Array(this.buffer, this.byteOffset, byteLength));
-		return byteLength;
 	}
 
 	/**
