@@ -61,22 +61,23 @@ export class MemoryFile implements FileLike {
 	 */
 	public async truncate(size: number): Promise<void> {
 		ranged(size, 0, INT_LIMIT);
+		const s = this.#size;
+		if (s === size) {
+			return;
+		}
 		const blksize = this.#blksize;
 		const blocks = this.#blocks;
-		const s = this.#size;
-		if (size < s) {
-			const o = size % blksize;
-			const b = (size - o) / blksize;
-			if (o) {
-				blocks.length = b + 1;
-				blocks[b].fill(0, o);
-			} else {
-				blocks.length = b;
-			}
-		} else if (size > s) {
-			for (let i = size / blksize - blocks.length; i-- > 0; ) {
+		const o = size % blksize;
+		const b = (size - o) / blksize;
+		if (size > s) {
+			for (let i = b + (o ? 1 : 0) - blocks.length; i--; ) {
 				blocks.push(new Uint8Array(blksize));
 			}
+		} else if (o) {
+			blocks.length = b + 1;
+			blocks[b].fill(0, o);
+		} else {
+			blocks.length = b;
 		}
 		this.#size = size;
 	}
@@ -139,15 +140,16 @@ export class MemoryFile implements FileLike {
 		if (length) {
 			const blksize = this.#blksize;
 			const blocks = this.#blocks;
+			const bl = blocks.length;
 			const end = position + length;
-			for (let i = end / blksize - blocks.length; i-- > 0; ) {
-				blocks.push(new Uint8Array(blksize));
-			}
 			let o = position % blksize;
 			let b = (position - o) / blksize;
 			for (let i = bo, l = length, s = blksize - o; ; b++) {
 				if (l < s) {
 					s = l;
+				}
+				if (b >= bl) {
+					blocks.push(new Uint8Array(blksize));
 				}
 				blocks[b].set(new Uint8Array(bd, i, s), o);
 				l -= s;
