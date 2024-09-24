@@ -14,7 +14,7 @@ export class SuperBlob extends Blob {
 	 * @returns Type.
 	 */
 	public type(index: number) {
-		return this.data.getUint32(12 + 8 * index);
+		return this.dataView.getUint32(12 + 8 * index);
 	}
 
 	/**
@@ -24,7 +24,7 @@ export class SuperBlob extends Blob {
 	 * @returns Blob or null if no offset in index.
 	 */
 	public blob(index: number) {
-		const offset = this.data.getUint32(16 + 8 * index);
+		const offset = this.dataView.getUint32(16 + 8 * index);
 		return offset
 			? new this.constructor.Blob(viewDataW(this, offset))
 			: null;
@@ -52,7 +52,7 @@ export class SuperBlob extends Blob {
 	 * @returns Blobs count.
 	 */
 	public get count() {
-		return this.data.getUint32(8);
+		return this.dataView.getUint32(8);
 	}
 
 	/**

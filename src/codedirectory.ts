@@ -16,7 +16,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Version.
 	 */
 	public get version() {
-		return this.data.getUint32(8);
+		return this.dataView.getUint32(8);
 	}
 
 	/**
@@ -25,7 +25,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Version.
 	 */
 	public set version(value: number) {
-		this.data.setUint32(8, value);
+		this.dataView.setUint32(8, value);
 	}
 
 	/**
@@ -34,7 +34,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Flags.
 	 */
 	public get flags() {
-		return this.data.getUint32(12);
+		return this.dataView.getUint32(12);
 	}
 
 	/**
@@ -43,7 +43,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Flags.
 	 */
 	public set flags(value: number) {
-		this.data.setUint32(12, value);
+		this.dataView.setUint32(12, value);
 	}
 
 	/**
@@ -52,7 +52,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset.
 	 */
 	public get hashOffset() {
-		return this.data.getUint32(16);
+		return this.dataView.getUint32(16);
 	}
 
 	/**
@@ -61,7 +61,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Byte offset.
 	 */
 	public set hashOffset(value: number) {
-		this.data.setUint32(16, value);
+		this.dataView.setUint32(16, value);
 	}
 
 	/**
@@ -70,7 +70,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset.
 	 */
 	public get identOffset() {
-		return this.data.getUint32(20);
+		return this.dataView.getUint32(20);
 	}
 
 	/**
@@ -79,7 +79,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Byte offset.
 	 */
 	public set identOffset(value: number) {
-		this.data.setUint32(20, value);
+		this.dataView.setUint32(20, value);
 	}
 
 	/**
@@ -88,7 +88,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Number of slots.
 	 */
 	public get nSpecialSlots() {
-		return this.data.getUint32(24);
+		return this.dataView.getUint32(24);
 	}
 
 	/**
@@ -97,7 +97,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Number of slots.
 	 */
 	public set nSpecialSlots(value: number) {
-		this.data.setUint32(24, value);
+		this.dataView.setUint32(24, value);
 	}
 
 	/**
@@ -106,7 +106,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Number of slots.
 	 */
 	public get nCodeSlots() {
-		return this.data.getUint32(28);
+		return this.dataView.getUint32(28);
 	}
 
 	/**
@@ -115,7 +115,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Number of slots.
 	 */
 	public set nCodeSlots(value: number) {
-		this.data.setUint32(28, value);
+		this.dataView.setUint32(28, value);
 	}
 
 	/**
@@ -124,7 +124,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Limit.
 	 */
 	public get codeLimit() {
-		return this.data.getUint32(32);
+		return this.dataView.getUint32(32);
 	}
 
 	/**
@@ -133,7 +133,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Limit.
 	 */
 	public set codeLimit(value: number) {
-		this.data.setUint32(32, value);
+		this.dataView.setUint32(32, value);
 	}
 
 	/**
@@ -142,7 +142,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte length.
 	 */
 	public get hashSize() {
-		return this.data.getUint8(36);
+		return this.dataView.getUint8(36);
 	}
 
 	/**
@@ -151,7 +151,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Byte length.
 	 */
 	public set hashSize(value: number) {
-		this.data.setUint8(36, value);
+		this.dataView.setUint8(36, value);
 	}
 
 	/**
@@ -160,7 +160,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Hash type.
 	 */
 	public get hashType() {
-		return this.data.getUint8(37);
+		return this.dataView.getUint8(37);
 	}
 
 	/**
@@ -169,7 +169,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Hash type.
 	 */
 	public set hashType(value: number) {
-		this.data.setUint8(37, value);
+		this.dataView.setUint8(37, value);
 	}
 
 	/**
@@ -178,7 +178,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Platform identifier.
 	 */
 	public get platform() {
-		return this.data.getUint8(38);
+		return this.dataView.getUint8(38);
 	}
 
 	/**
@@ -187,7 +187,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Platform identifier.
 	 */
 	public set platform(value: number) {
-		this.data.setUint8(38, value);
+		this.dataView.setUint8(38, value);
 	}
 
 	/**
@@ -196,7 +196,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Page size.
 	 */
 	public get pageSize() {
-		return this.data.getUint8(39);
+		return this.dataView.getUint8(39);
 	}
 
 	/**
@@ -205,7 +205,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Page size.
 	 */
 	public set pageSize(value: number) {
-		this.data.setUint8(39, value);
+		this.dataView.setUint8(39, value);
 	}
 
 	/**
@@ -215,7 +215,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset, or 0 for none.
 	 */
 	public get scatterOffset() {
-		return this.data.getUint32(44);
+		return this.dataView.getUint32(44);
 	}
 
 	/**
@@ -225,7 +225,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Byte offset, or 0 for none.
 	 */
 	public set scatterOffset(value: number) {
-		this.data.setUint32(44, value);
+		this.dataView.setUint32(44, value);
 	}
 
 	/**
@@ -235,7 +235,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset, or 0 for none.
 	 */
 	public get teamIDOffset() {
-		return this.data.getUint32(48);
+		return this.dataView.getUint32(48);
 	}
 
 	/**
@@ -245,7 +245,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Byte offset, or 0 for none.
 	 */
 	public set teamIDOffset(value: number) {
-		this.data.setUint32(48, value);
+		this.dataView.setUint32(48, value);
 	}
 
 	/**
@@ -255,7 +255,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte length.
 	 */
 	public get codeLimit64() {
-		return this.data.getBigUint64(56);
+		return this.dataView.getBigUint64(56);
 	}
 
 	/**
@@ -265,7 +265,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Byte length.
 	 */
 	public set codeLimit64(value: bigint) {
-		this.data.setBigUint64(56, value);
+		this.dataView.setBigUint64(56, value);
 	}
 
 	/**
@@ -275,7 +275,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset.
 	 */
 	public get execSegBase() {
-		return this.data.getBigUint64(64);
+		return this.dataView.getBigUint64(64);
 	}
 
 	/**
@@ -285,7 +285,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Byte offset.
 	 */
 	public set execSegBase(value: bigint) {
-		this.data.setBigUint64(64, value);
+		this.dataView.setBigUint64(64, value);
 	}
 
 	/**
@@ -295,7 +295,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte length.
 	 */
 	public get execSegLimit() {
-		return this.data.getBigUint64(72);
+		return this.dataView.getBigUint64(72);
 	}
 
 	/**
@@ -305,7 +305,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Byte length.
 	 */
 	public set execSegLimit(value: bigint) {
-		this.data.setBigUint64(72, value);
+		this.dataView.setBigUint64(72, value);
 	}
 
 	/**
@@ -315,7 +315,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Flags.
 	 */
 	public get execSegFlags() {
-		return this.data.getBigUint64(80);
+		return this.dataView.getBigUint64(80);
 	}
 
 	/**
@@ -325,7 +325,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Flags.
 	 */
 	public set execSegFlags(value: bigint) {
-		this.data.setBigUint64(80, value);
+		this.dataView.setBigUint64(80, value);
 	}
 
 	/**
@@ -335,7 +335,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Version.
 	 */
 	public get runtime() {
-		return this.data.getUint32(88);
+		return this.dataView.getUint32(88);
 	}
 
 	/**
@@ -345,7 +345,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Version.
 	 */
 	public set runtime(value: number) {
-		this.data.setUint32(88, value);
+		this.dataView.setUint32(88, value);
 	}
 
 	/**
@@ -355,7 +355,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset, or 0 for none.
 	 */
 	public get preEncryptOffset() {
-		return this.data.getUint32(92);
+		return this.dataView.getUint32(92);
 	}
 
 	/**
@@ -365,7 +365,7 @@ export class CodeDirectory extends Blob {
 	 * @param value Byte offset.
 	 */
 	public set preEncryptOffset(value: number) {
-		this.data.setUint32(92, value);
+		this.dataView.setUint32(92, value);
 	}
 
 	/**

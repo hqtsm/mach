@@ -14,7 +14,7 @@ export class EntitlementBlob extends Blob {
 	 * @returns View of entitlements data.
 	 */
 	public get body() {
-		return viewUint8W(this.data, 8, Math.max(this.bodyLength, 0));
+		return viewUint8W(this.dataView, 8, Math.max(this.bodyLength, 0));
 	}
 
 	/**

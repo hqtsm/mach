@@ -1,6 +1,6 @@
 import {Struct} from './struct.ts';
 import type {BufferView} from './type.ts';
-import {viewUint8R} from './util.ts';
+import {viewDataW, viewUint8R} from './util.ts';
 
 /**
  * Blob class.
@@ -9,27 +9,12 @@ export class Blob extends Struct {
 	public declare readonly ['constructor']: typeof Blob;
 
 	/**
-	 * Blob data.
-	 */
-	readonly #data: DataView;
-
-	/**
-	 * Blob constructor.
-	 *
-	 * @param data Blob data view or size of new blob.
-	 */
-	constructor(data: BufferView | number | null = null) {
-		super(data);
-		this.#data = new DataView(this.buffer, this.byteOffset);
-	}
-
-	/**
 	 * Magic number.
 	 *
 	 * @returns Magic number.
 	 */
 	public get magic() {
-		return this.#data.getUint32(0);
+		return this.dataView.getUint32(0);
 	}
 
 	/**
@@ -38,7 +23,7 @@ export class Blob extends Struct {
 	 * @param value Magic number.
 	 */
 	public set magic(value: number) {
-		this.#data.setUint32(0, value);
+		this.dataView.setUint32(0, value);
 	}
 
 	/**
@@ -49,7 +34,7 @@ export class Blob extends Struct {
 	 * @returns Blob length.
 	 */
 	public get length() {
-		return this.#data.getUint32(4);
+		return this.dataView.getUint32(4);
 	}
 
 	/**
@@ -60,25 +45,25 @@ export class Blob extends Struct {
 	 * @param value Blob length.
 	 */
 	public set length(value) {
-		this.#data.setUint32(4, value);
+		this.dataView.setUint32(4, value);
 	}
 
 	/**
 	 * @inheritdoc
 	 */
 	public get byteLength() {
-		return this.#data.getUint32(4);
+		return this.dataView.getUint32(4);
 	}
 
 	/**
-	 * Data view of blob array buffer, potentially extending beyond end.
+	 * Data view of blob array buffer, limited to blob length.
 	 * By default includes magic and length.
 	 * Child classes may redefine this to be a smaller subview.
 	 *
 	 * @returns View of blob data.
 	 */
 	public get data() {
-		return this.#data;
+		return viewDataW(this, 0, this.length);
 	}
 
 	/**

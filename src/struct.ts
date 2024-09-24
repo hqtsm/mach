@@ -7,14 +7,9 @@ export class Struct implements BufferView, ByteLength {
 	public declare readonly ['constructor']: typeof Struct;
 
 	/**
-	 * Byte data.
+	 * Data view of buffer.
 	 */
-	readonly #buffer: ArrayBuffer;
-
-	/**
-	 * Byte offset.
-	 */
-	readonly #byteOffset: number;
+	readonly #data: DataView;
 
 	/**
 	 * Blob constructor.
@@ -22,23 +17,24 @@ export class Struct implements BufferView, ByteLength {
 	 * @param data Blob data view, size of new blob, or null.
 	 */
 	constructor(data: BufferView | number | null = null) {
+		let b;
+		let o = 0;
 		if (data === null) {
-			this.#buffer = new ArrayBuffer(this.constructor.sizeof);
-			this.#byteOffset = 0;
+			b = new ArrayBuffer(this.constructor.sizeof);
 		} else if (typeof data === 'number') {
-			this.#buffer = new ArrayBuffer(data);
-			this.#byteOffset = 0;
+			b = new ArrayBuffer(data);
 		} else {
-			this.#buffer = data.buffer;
-			this.#byteOffset = data.byteOffset;
+			b = data.buffer;
+			o = data.byteOffset;
 		}
+		this.#data = new DataView(b, o);
 	}
 
 	/**
 	 * @inheritdoc
 	 */
 	public get buffer() {
-		return this.#buffer;
+		return this.#data.buffer;
 	}
 
 	/**
@@ -52,7 +48,16 @@ export class Struct implements BufferView, ByteLength {
 	 * @inheritdoc
 	 */
 	public get byteOffset() {
-		return this.#byteOffset;
+		return this.#data.byteOffset;
+	}
+
+	/**
+	 * Data view.
+	 *
+	 * @returns Data view of buffer.
+	 */
+	public get dataView() {
+		return this.#data;
 	}
 
 	/**

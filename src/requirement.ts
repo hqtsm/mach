@@ -13,7 +13,7 @@ export class Requirement extends Blob {
 	 * @returns Requirement kind.
 	 */
 	public get kind() {
-		return this.data.getUint32(8);
+		return this.dataView.getUint32(8);
 	}
 
 	/**
@@ -22,7 +22,7 @@ export class Requirement extends Blob {
 	 * @param k Requirement kind.
 	 */
 	public set kind(k: number) {
-		this.data.setUint32(8, k);
+		this.dataView.setUint32(8, k);
 	}
 
 	/**

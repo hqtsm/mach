@@ -14,7 +14,7 @@ export class LaunchConstraintBlob extends Blob {
 	 * @returns View of DER data.
 	 */
 	public get der() {
-		return viewUint8W(this.data, 8, Math.max(this.derLength, 0));
+		return viewUint8W(this.dataView, 8, Math.max(this.derLength, 0));
 	}
 
 	/**
