@@ -180,11 +180,7 @@ export async function* zipped(file: string) {
 					const cData = Buffer.alloc(cSize);
 					await f.read(cData, 0, cSize, headerOffset + i);
 					if (!inflater) {
-						return new Uint8Array(
-							cData.buffer,
-							cData.byteOffset,
-							cData.byteLength
-						);
+						return viewUint8W(cData);
 					}
 
 					const uData = await inflater(cData);
@@ -194,11 +190,7 @@ export async function* zipped(file: string) {
 							`Bad decompressed size: ${length} != ${uSize}`
 						);
 					}
-					return new Uint8Array(
-						uData.buffer,
-						uData.byteOffset,
-						uData.byteLength
-					);
+					return viewUint8W(uData);
 				}
 			] as const;
 		}
