@@ -56,17 +56,6 @@ export class Struct implements BufferView, ByteLength {
 	}
 
 	/**
-	 * Get the size of new instance for a given buffer.
-	 *
-	 * @param buffer Buffer view.
-	 * @param offset Byte offset into buffer.
-	 * @returns Byte length.
-	 */
-	public static byteLength(buffer: Readonly<BufferView>, offset = 0) {
-		return this.sizeof;
-	}
-
-	/**
 	 * Size of new instance.
 	 */
 	public static readonly sizeof: number = 0;

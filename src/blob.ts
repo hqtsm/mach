@@ -95,21 +95,6 @@ export class Blob extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static byteLength(buffer: Readonly<BufferView>, offset = 0) {
-		const byteLength = new DataView(
-			buffer.buffer,
-			buffer.byteOffset + offset,
-			8
-		).getUint32(4);
-		if (byteLength < 8) {
-			throw new Error(`Invalid length: ${byteLength}`);
-		}
-		return byteLength;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
 	public static readonly sizeof: number = 8;
 
 	/**
