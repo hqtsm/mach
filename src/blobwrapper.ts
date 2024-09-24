@@ -1,7 +1,7 @@
 import {Blob} from './blob.ts';
 import {CSMAGIC_BLOBWRAPPER} from './const.ts';
 import type {BufferView, ReadonlyUint8Array} from './type.ts';
-import {viewData, viewUint8} from './util.ts';
+import {subview} from './util.ts';
 
 /**
  * Generic Blob.
@@ -16,7 +16,7 @@ export class BlobWrapper extends Blob {
 	 */
 	public get data() {
 		// Overridden to point to payload (only).
-		return viewData(this, 8, this.length);
+		return subview(DataView, this, 8, this.length);
 	}
 
 	/**
@@ -61,7 +61,7 @@ export class BlobWrapper extends Blob {
 		if (typeof content === 'number') {
 			size += content;
 		} else {
-			view = viewUint8(content);
+			view = subview(Uint8Array, content);
 			size += view.byteLength;
 		}
 		const data = new Uint8Array(size);

@@ -1,5 +1,5 @@
 import type {BufferView, ByteLength} from './type.ts';
-import {viewData} from './util.ts';
+import {subview} from './util.ts';
 
 /**
  * Struct class.
@@ -23,7 +23,7 @@ export class Struct implements BufferView, ByteLength {
 		} else if (typeof data === 'number') {
 			this.#data = new DataView(new ArrayBuffer(data));
 		} else {
-			this.#data = viewData(data);
+			this.#data = subview(DataView, data);
 		}
 	}
 

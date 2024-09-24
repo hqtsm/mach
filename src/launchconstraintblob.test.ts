@@ -1,7 +1,7 @@
 import {describe, it} from 'node:test';
 import {deepStrictEqual, strictEqual} from 'node:assert';
 
-import {viewData, viewUint8} from './util.ts';
+import {subview} from './util.ts';
 import {unhex} from './util.spec.ts';
 import {kSecCodeMagicLaunchConstraint} from './const.ts';
 import {LaunchConstraintBlob} from './launchconstraintblob.ts';
@@ -38,14 +38,17 @@ void describe('launchconstraintblob', () => {
 	void it('empty (invalid?)', () => {
 		const edb = new LaunchConstraintBlob();
 		edb.initialize(LaunchConstraintBlob.sizeof);
-		deepStrictEqual(viewUint8(edb), unhex('FA DE 81 81 00 00 00 08'));
+		deepStrictEqual(
+			subview(Uint8Array, edb),
+			unhex('FA DE 81 81 00 00 00 08')
+		);
 	});
 
 	void it('data', () => {
 		const edb = LaunchConstraintBlob.blobify(sampleDer);
-		const dv = viewData(edb);
+		const dv = subview(DataView, edb);
 		strictEqual(dv.getUint32(0), kSecCodeMagicLaunchConstraint);
 		strictEqual(dv.getUint32(4), edb.byteLength);
-		deepStrictEqual(viewUint8(dv, 8), sampleDer);
+		deepStrictEqual(subview(Uint8Array, dv, 8), sampleDer);
 	});
 });

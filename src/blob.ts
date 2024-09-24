@@ -1,6 +1,6 @@
 import {Struct} from './struct.ts';
 import type {BufferView, ReadonlyUint8Array} from './type.ts';
-import {viewData, viewUint8} from './util.ts';
+import {subview} from './util.ts';
 
 /**
  * Blob class.
@@ -63,7 +63,7 @@ export class Blob extends Struct {
 	 * @returns View of blob data.
 	 */
 	public get data() {
-		return viewData(this, 0, this.length);
+		return subview(DataView, this, 0, this.length);
 	}
 
 	/**
@@ -102,7 +102,7 @@ export class Blob extends Struct {
 		if (typeof content === 'number') {
 			size += content;
 		} else {
-			view = viewUint8(content);
+			view = subview(Uint8Array, content);
 			size += view.byteLength;
 		}
 		const data = new Uint8Array(size);

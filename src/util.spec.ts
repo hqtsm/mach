@@ -27,10 +27,13 @@ import {
 	MH_MAGIC,
 	MH_MAGIC_64
 } from './const.ts';
-import {viewData, viewUint8} from './util.ts';
+import {subview} from './util.ts';
 
 export function unhex(...hex: string[]) {
-	return viewUint8(Buffer.from(hex.join('').replace(/\s+/g, ''), 'hex'));
+	return subview(
+		Uint8Array,
+		Buffer.from(hex.join('').replace(/\s+/g, ''), 'hex')
+	);
 }
 
 export async function hash(hashType: number, data: Readonly<BufferView>) {
@@ -72,12 +75,12 @@ export async function chunkedHashes(
 	offset = 0,
 	length = -1
 ) {
-	const d = viewUint8(data, offset, length);
+	const d = subview(Uint8Array, data, offset, length);
 	const l = d.length;
 	chunk = chunk || l;
 	const slices: ReadonlyUint8Array[] = [];
 	for (let i = 0; i < l; i += chunk) {
-		slices.push(viewUint8(d, i, Math.min(i + chunk, l) - i));
+		slices.push(subview(Uint8Array, d, i, Math.min(i + chunk, l) - i));
 	}
 	return Promise.all(slices.map(async d => hash(hashType, d)));
 }
@@ -180,7 +183,7 @@ export async function* zipped(file: string) {
 					const cData = Buffer.alloc(cSize);
 					await f.read(cData, 0, cSize, headerOffset + i);
 					if (!inflater) {
-						return viewUint8(cData);
+						return subview(Uint8Array, cData);
 					}
 
 					const uData = await inflater(cData);
@@ -190,7 +193,7 @@ export async function* zipped(file: string) {
 							`Bad decompressed size: ${length} != ${uSize}`
 						);
 					}
-					return viewUint8(uData);
+					return subview(Uint8Array, uData);
 				}
 			] as const;
 		}
@@ -366,7 +369,7 @@ export function machoThin(
 	type: number,
 	subtype: number | null = null
 ) {
-	const v = viewData(data);
+	const v = subview(DataView, data);
 	const magic = v.getUint32(0);
 	let f = false;
 	let b = false;
@@ -418,7 +421,7 @@ export function machoThin(
 		if (cputype !== type || (subtype && cpusubtype !== subtype)) {
 			throw new Error(`Wrong arch: ${cputype} ${cpusubtype}`);
 		}
-		return viewUint8(v);
+		return subview(Uint8Array, v);
 	}
 	const count = v.getUint32(4, b);
 	const slices: [number, number][] = [];
@@ -442,5 +445,5 @@ export function machoThin(
 		throw new Error(`Matching archs: ${slices.length}`);
 	}
 	const [[offset, size]] = slices;
-	return viewUint8(data, offset, size);
+	return subview(Uint8Array, data, offset, size);
 }

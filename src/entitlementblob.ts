@@ -1,6 +1,6 @@
 import {Blob} from './blob.ts';
 import {kSecCodeMagicEntitlement} from './const.ts';
-import {viewUint8} from './util.ts';
+import {subview} from './util.ts';
 
 /**
  * Entitlement Blob.
@@ -14,7 +14,12 @@ export class EntitlementBlob extends Blob {
 	 * @returns View of entitlements data.
 	 */
 	public get body() {
-		return viewUint8(this.dataView, 8, Math.max(this.bodyLength, 0));
+		return subview(
+			Uint8Array,
+			this.dataView,
+			8,
+			Math.max(this.bodyLength, 0)
+		);
 	}
 
 	/**

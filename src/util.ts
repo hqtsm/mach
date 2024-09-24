@@ -34,7 +34,7 @@ export function ranged(i: number, l: number, h: number) {
  * @param length Length of view.
  * @returns View over BufferView buffer.
  */
-function subview<T>(
+export function subview<T>(
 	Type: new (
 		buffer: ArrayBuffer,
 		byteOffset: number,
@@ -53,28 +53,4 @@ function subview<T>(
 		ranged(length, 0, limit);
 	}
 	return new Type(buffer, byteOffset + offset, length);
-}
-
-/**
- * Get writable DataView from BufferView.
- *
- * @param view BufferView.
- * @param offset Offset into view.
- * @param length Length of view.
- * @returns Writable DataView.
- */
-export function viewData(view: BufferView, offset = 0, length = -1) {
-	return subview(DataView, view, offset, length);
-}
-
-/**
- * Get writable Uint8Array from BufferView.
- *
- * @param view BufferView.
- * @param offset Offset into view.
- * @param length Length of view.
- * @returns Writable Uint8Array.
- */
-export function viewUint8(view: BufferView, offset = 0, length = -1) {
-	return subview(Uint8Array, view, offset, length);
 }

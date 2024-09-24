@@ -13,7 +13,7 @@ import {CodeDirectory} from './codedirectory.ts';
 import {cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot} from './const.ts';
 import type {ReadonlyUint8Array} from './type.ts';
 import {CodeDirectoryBuilder} from './codedirectorybuilder.ts';
-import {viewUint8} from './util.ts';
+import {subview} from './util.ts';
 
 const emptyRequirements = unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00');
 
@@ -140,7 +140,7 @@ void describe('blob/codedirectory', () => {
 						const cd = builder.build(info.version);
 						notStrictEqual(
 							Buffer.from(thin).compare(
-								Buffer.from(viewUint8(cd)),
+								Buffer.from(subview(Uint8Array, cd)),
 								info.offset
 							),
 							-1,

@@ -1,13 +1,13 @@
 import {describe, it} from 'node:test';
 import {strictEqual, throws} from 'node:assert';
 
-import {viewData} from './util.ts';
+import {subview} from './util.ts';
 
 void describe('util', () => {
 	void describe('viewDataW', () => {
 		void it('all', () => {
 			const b = new Uint8Array([0x61, 0x62, 0x63]);
-			const dv = viewData(b);
+			const dv = subview(DataView, b);
 			strictEqual(dv.byteOffset, 0);
 			strictEqual(dv.byteLength, 3);
 			strictEqual(dv.getUint8(0), 0x61);
@@ -17,7 +17,7 @@ void describe('util', () => {
 
 		void it('offset', () => {
 			const b = new Uint8Array([0x61, 0x62, 0x63]);
-			const dv = viewData(b, 1);
+			const dv = subview(DataView, b, 1);
 			strictEqual(dv.byteOffset, 1);
 			strictEqual(dv.byteLength, 2);
 			strictEqual(dv.getUint8(0), 0x62);
@@ -26,7 +26,7 @@ void describe('util', () => {
 
 		void it('offset: end', () => {
 			const b = new Uint8Array([0x61, 0x62, 0x63]);
-			const dv = viewData(b, 3);
+			const dv = subview(DataView, b, 3);
 			strictEqual(dv.byteOffset, 3);
 			strictEqual(dv.byteLength, 0);
 		});
@@ -34,20 +34,20 @@ void describe('util', () => {
 		void it('offset: over', () => {
 			const b = new Uint8Array([0x61, 0x62, 0x63]);
 			throws(() => {
-				viewData(b, 4);
+				subview(DataView, b, 4);
 			});
 		});
 
 		void it('offset: under', () => {
 			const b = new Uint8Array([0x61, 0x62, 0x63]);
 			throws(() => {
-				viewData(b, -1);
+				subview(DataView, b, -1);
 			});
 		});
 
 		void it('length', () => {
 			const b = new Uint8Array([0x61, 0x62, 0x63]);
-			const dv = viewData(b, 0, 1);
+			const dv = subview(DataView, b, 0, 1);
 			strictEqual(dv.byteOffset, 0);
 			strictEqual(dv.byteLength, 1);
 			strictEqual(dv.getUint8(0), 0x61);
@@ -55,7 +55,7 @@ void describe('util', () => {
 
 		void it('length: end', () => {
 			const b = new Uint8Array([0x61, 0x62, 0x63]);
-			const dv = viewData(b, 0, 3);
+			const dv = subview(DataView, b, 0, 3);
 			strictEqual(dv.byteOffset, 0);
 			strictEqual(dv.byteLength, 3);
 			strictEqual(dv.getUint8(0), 0x61);
@@ -66,13 +66,13 @@ void describe('util', () => {
 		void it('length: over', () => {
 			const b = new Uint8Array([0x61, 0x62, 0x63]);
 			throws(() => {
-				viewData(b, 0, 4);
+				subview(DataView, b, 0, 4);
 			});
 		});
 
 		void it('length: negative', () => {
 			const b = new Uint8Array([0x61, 0x62, 0x63]);
-			const dv = viewData(b, 0, -1);
+			const dv = subview(DataView, b, 0, -1);
 			strictEqual(dv.byteOffset, 0);
 			strictEqual(dv.byteLength, 3);
 			strictEqual(dv.getUint8(0), 0x61);
@@ -82,7 +82,7 @@ void describe('util', () => {
 
 		void it('offset + length', () => {
 			const b = new Uint8Array([0x61, 0x62, 0x63]);
-			const dv = viewData(b, 1, 1);
+			const dv = subview(DataView, b, 1, 1);
 			strictEqual(dv.byteOffset, 1);
 			strictEqual(dv.byteLength, 1);
 			strictEqual(dv.getUint8(0), 0x62);
@@ -90,7 +90,7 @@ void describe('util', () => {
 
 		void it('offset + length: end', () => {
 			const b = new Uint8Array([0x61, 0x62, 0x63]);
-			const dv = viewData(b, 1, 2);
+			const dv = subview(DataView, b, 1, 2);
 			strictEqual(dv.byteOffset, 1);
 			strictEqual(dv.byteLength, 2);
 			strictEqual(dv.getUint8(0), 0x62);
@@ -100,13 +100,13 @@ void describe('util', () => {
 		void it('offset + length: over', () => {
 			const b = new Uint8Array([0x61, 0x62, 0x63]);
 			throws(() => {
-				viewData(b, 2, 2);
+				subview(DataView, b, 2, 2);
 			});
 		});
 
 		void it('offset + length: negattive', () => {
 			const b = new Uint8Array([0x61, 0x62, 0x63]);
-			const dv = viewData(b, 2, -1);
+			const dv = subview(DataView, b, 2, -1);
 			strictEqual(dv.byteOffset, 2);
 			strictEqual(dv.byteLength, 1);
 			strictEqual(dv.getUint8(0), 0x63);

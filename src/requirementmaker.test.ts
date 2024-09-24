@@ -2,7 +2,7 @@ import {describe, it} from 'node:test';
 import {deepStrictEqual, strictEqual} from 'node:assert';
 
 import {Requirement} from './requirement.ts';
-import {viewData, viewUint8} from './util.ts';
+import {subview} from './util.ts';
 import {kSecCodeMagicRequirement} from './const.ts';
 import {unhex} from './util.spec.ts';
 import {RequirementMaker} from './requirementmaker.ts';
@@ -18,10 +18,10 @@ void describe('requirementmaker', () => {
 		const add = rm.alloc(data.byteLength);
 		add.set(data);
 		const r = rm.make();
-		const dv = viewData(r);
+		const dv = subview(DataView, r);
 		strictEqual(dv.getUint32(0), kSecCodeMagicRequirement);
 		strictEqual(dv.getUint32(4), r.byteLength);
 		strictEqual(dv.getUint32(8), Requirement.Kind.exprForm);
-		deepStrictEqual(viewUint8(dv, 12), data);
+		deepStrictEqual(subview(Uint8Array, dv, 12), data);
 	});
 });

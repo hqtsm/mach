@@ -1,6 +1,6 @@
 import {Blob} from './blob.ts';
 import {kSecCodeMagicLaunchConstraint} from './const.ts';
-import {viewUint8} from './util.ts';
+import {subview} from './util.ts';
 
 /**
  * Launch Constraint Blob.
@@ -14,7 +14,12 @@ export class LaunchConstraintBlob extends Blob {
 	 * @returns View of DER data.
 	 */
 	public get der() {
-		return viewUint8(this.dataView, 8, Math.max(this.derLength, 0));
+		return subview(
+			Uint8Array,
+			this.dataView,
+			8,
+			Math.max(this.derLength, 0)
+		);
 	}
 
 	/**

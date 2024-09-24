@@ -8,7 +8,7 @@ import {
 	UINT32_MAX
 } from './const.ts';
 import type {BufferView, ReadonlyUint8Array} from './type.ts';
-import {viewUint8} from './util.ts';
+import {subview} from './util.ts';
 
 /**
  * CodeDirectoryBuilder class.
@@ -203,7 +203,7 @@ export class CodeDirectoryBuilder {
 		const slots = this.#special;
 		const {digestLength} = this;
 		const digest = slots.get(slot) || new Uint8Array(digestLength);
-		const view: ReadonlyUint8Array = viewUint8(hash);
+		const view: ReadonlyUint8Array = subview(Uint8Array, hash);
 		if (view.byteLength !== digestLength) {
 			throw new Error(`Invalid hash size: ${view.byteLength}`);
 		}
@@ -241,7 +241,7 @@ export class CodeDirectoryBuilder {
 		slots.length = codeSlots;
 		const {digestLength} = this;
 		const digest = slots[slot] || new Uint8Array(digestLength);
-		const view: ReadonlyUint8Array = viewUint8(hash);
+		const view: ReadonlyUint8Array = subview(Uint8Array, hash);
 		if (view.byteLength !== digestLength) {
 			throw new Error(`Invalid hash size: ${view.byteLength}`);
 		}
@@ -396,7 +396,7 @@ export class CodeDirectoryBuilder {
 		let offset = Static.fixedSize(version);
 		if (scatter && !(version < CodeDirectory.supportsScatter)) {
 			for (const s of scatter) {
-				const d: ReadonlyUint8Array = viewUint8(s);
+				const d: ReadonlyUint8Array = subview(Uint8Array, s);
 				data.set(d, offset);
 				offset += s.byteLength;
 			}
