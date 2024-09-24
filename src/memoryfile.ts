@@ -148,11 +148,12 @@ export class MemoryFile implements FileLike {
 				if (l < s) {
 					s = l;
 				}
+				const v = new Uint8Array(bd, i, s);
 				if (b < bl) {
-					blocks[b].set(new Uint8Array(bd, i, s), o);
+					blocks[b].set(v, o);
 				} else {
 					const a = new Uint8Array(blksize);
-					a.set(new Uint8Array(bd, i, s), o);
+					a.set(v, o);
 					blocks[b] = a;
 				}
 				l -= s;
