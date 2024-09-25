@@ -27,7 +27,6 @@ import {
 	MH_MAGIC,
 	MH_MAGIC_64
 } from './const.ts';
-import {subview} from './util.ts';
 
 export function unhex(...hex: string[]) {
 	const b = Buffer.from(hex.join('').replace(/\s+/g, ''), 'hex');
@@ -73,12 +72,12 @@ export async function chunkedHashes(
 	offset = 0,
 	length = -1
 ) {
-	const d = subview(Uint8Array, data, offset, length);
+	const d = new Uint8Array(data.buffer, data.byteOffset + offset, length);
 	const l = d.length;
 	chunk = chunk || l;
 	const slices = [];
 	for (let i = 0; i < l; i += chunk) {
-		slices.push(subview(Uint8Array, d, i, Math.min(i + chunk, l) - i));
+		slices.push(d.subarray(i, Math.min(i + chunk, l)));
 	}
 	return Promise.all(slices.map(async d => hash(hashType, d)));
 }
@@ -448,5 +447,5 @@ export function machoThin(
 		throw new Error(`Matching archs: ${slices.length}`);
 	}
 	const [[offset, size]] = slices;
-	return subview(Uint8Array, data, offset, size);
+	return new Uint8Array(data.buffer, data.byteOffset + offset, size);
 }
