@@ -10,7 +10,7 @@ export class RequirementMaker {
 	/**
 	 * Buffer of allocated bytes.
 	 */
-	#data: Uint8Array;
+	#data: ArrayBuffer;
 
 	/**
 	 * Current position in buffer.
@@ -28,7 +28,7 @@ export class RequirementMaker {
 		const r = new Requirement(buffer);
 		r.magic = Requirement.typeMagic;
 		r.kind = kind;
-		this.#data = new Uint8Array(buffer);
+		this.#data = buffer;
 		this.#pc = Requirement.sizeof;
 	}
 
@@ -36,14 +36,13 @@ export class RequirementMaker {
 	 * Allocate bytes at end of buffer and return a view of that.
 	 *
 	 * @param size Size in bytes.
-	 * @returns View of allocated bytes (size rounded up to baseAlignment).
+	 * @returns View of allocated bytes.
 	 */
 	public alloc(size: number) {
 		const {Requirement} = this.constructor;
 		const usedSize = alignUp(size, Requirement.baseAlignment);
 		this.require(usedSize);
-		const pc = this.#pc;
-		const a = this.#data.subarray(pc, pc + usedSize);
+		const a = new Uint8Array(this.#data, this.#pc, size);
 		this.#pc += usedSize;
 		return a;
 	}
@@ -54,9 +53,7 @@ export class RequirementMaker {
 	 * @returns Requirement instance.
 	 */
 	public make() {
-		const {Requirement} = this.constructor;
-		const data = this.#data;
-		const r = new Requirement(data.buffer, data.byteOffset);
+		const r = new this.constructor.Requirement(this.#data);
 		r.length = this.#pc;
 		return r;
 	}
@@ -75,8 +72,8 @@ export class RequirementMaker {
 			if (pc + size > total) {
 				total = pc + size;
 			}
-			const d = new Uint8Array(total);
-			d.set(data);
+			const d = new ArrayBuffer(total);
+			new Uint8Array(d).set(new Uint8Array(data));
 			this.#data = d;
 		}
 	}
