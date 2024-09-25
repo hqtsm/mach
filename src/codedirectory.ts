@@ -2,7 +2,6 @@ import {Blob} from './blob.ts';
 import {CodeDirectoryScatter} from './codedirectoryscatter.ts';
 import {kSecCodeMagicCodeDirectory} from './const.ts';
 import type {ReadonlyUint8Array} from './type.ts';
-import {subview} from './util.ts';
 
 /**
  * CodeDirectory Blob.
@@ -388,7 +387,11 @@ export class CodeDirectory extends Blob {
 			offset = this.hashOffset;
 		}
 		const {hashSize} = this;
-		return subview(Uint8Array, this, offset + hashSize * slot, hashSize);
+		return new Uint8Array(
+			this.buffer,
+			this.byteOffset + offset + hashSize * slot,
+			hashSize
+		);
 	}
 
 	/**
