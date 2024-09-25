@@ -39,8 +39,10 @@ export class RequirementMaker {
 	 * @returns View of allocated bytes.
 	 */
 	public alloc(size: number) {
-		const {Requirement} = this.constructor;
-		const usedSize = alignUp(size, Requirement.baseAlignment);
+		const usedSize = alignUp(
+			size,
+			this.constructor.Requirement.baseAlignment
+		);
 		this.require(usedSize);
 		const a = new Uint8Array(this.#data, this.#pc, size);
 		this.#pc += usedSize;

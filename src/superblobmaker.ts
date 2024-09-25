@@ -66,14 +66,13 @@ export class SuperBlobMaker {
 	 * @returns SuperBlob.
 	 */
 	public make() {
-		const {SuperBlob} = this.constructor;
 		const pieces = this.#pieces;
 		const count = pieces.size;
 		const size = this.size();
 		const buffer = new ArrayBuffer(size);
 		const data = new Uint8Array(buffer);
 		const view = new DataView(buffer);
-		const sb = new SuperBlob(buffer);
+		const sb = new this.constructor.SuperBlob(buffer);
 		sb.initialize(size);
 		view.setUint32(8, count);
 		let o1 = 12;
