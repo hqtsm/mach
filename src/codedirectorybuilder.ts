@@ -7,8 +7,7 @@ import {
 	kSecCodeSignatureHashSHA512,
 	UINT32_MAX
 } from './const.ts';
-import type {BufferView, ReadonlyUint8Array} from './type.ts';
-import {subview} from './util.ts';
+import type {BufferView} from './type.ts';
 
 /**
  * CodeDirectoryBuilder class.
@@ -203,11 +202,11 @@ export class CodeDirectoryBuilder {
 		const slots = this.#special;
 		const {digestLength} = this;
 		const digest = slots.get(slot) || new Uint8Array(digestLength);
-		const view: ReadonlyUint8Array = subview(Uint8Array, hash);
-		if (view.byteLength !== digestLength) {
-			throw new Error(`Invalid hash size: ${view.byteLength}`);
+		const {byteLength} = hash;
+		if (byteLength !== digestLength) {
+			throw new Error(`Invalid hash size: ${byteLength}`);
 		}
-		digest.set(view);
+		digest.set(new Uint8Array(hash.buffer, hash.byteOffset, byteLength));
 		slots.set(slot, digest);
 		if (slot >= this.#specialSlots) {
 			this.#specialSlots = slot;
@@ -241,11 +240,11 @@ export class CodeDirectoryBuilder {
 		slots.length = codeSlots;
 		const {digestLength} = this;
 		const digest = slots[slot] || new Uint8Array(digestLength);
-		const view: ReadonlyUint8Array = subview(Uint8Array, hash);
-		if (view.byteLength !== digestLength) {
-			throw new Error(`Invalid hash size: ${view.byteLength}`);
+		const {byteLength} = hash;
+		if (byteLength !== digestLength) {
+			throw new Error(`Invalid hash size: ${byteLength}`);
 		}
-		digest.set(view);
+		digest.set(new Uint8Array(hash.buffer, hash.byteOffset, byteLength));
 		slots[slot] = digest;
 	}
 
@@ -398,9 +397,12 @@ export class CodeDirectoryBuilder {
 		let offset = Static.fixedSize(version);
 		if (scatter && !(version < CodeDirectory.supportsScatter)) {
 			for (const s of scatter) {
-				const d: ReadonlyUint8Array = subview(Uint8Array, s);
-				data.set(d, offset);
-				offset += s.byteLength;
+				const {byteLength} = s;
+				data.set(
+					new Uint8Array(s.buffer, s.byteOffset, byteLength),
+					offset
+				);
+				offset += byteLength;
 			}
 		}
 		dir.identOffset = offset;

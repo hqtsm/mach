@@ -102,7 +102,11 @@ export class Blob extends Struct {
 		if (typeof content === 'number') {
 			size += content;
 		} else {
-			view = subview(Uint8Array, content);
+			view = new Uint8Array(
+				content.buffer,
+				content.byteOffset,
+				content.byteLength
+			);
 			size += view.byteLength;
 		}
 		const buffer = new ArrayBuffer(size);

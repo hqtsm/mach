@@ -8,13 +8,12 @@ import {
 import {Requirement} from './requirement.ts';
 import {unhex} from './util.spec.ts';
 import {RequirementsMaker} from './requirementsmaker.ts';
-import {subview} from './util.ts';
 
 void describe('requirementsmaker', () => {
 	void it('empty', () => {
 		const rs = new RequirementsMaker().make();
 		deepStrictEqual(
-			subview(Uint8Array, rs),
+			new Uint8Array(rs.buffer, rs.byteOffset, rs.byteLength),
 			unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00')
 		);
 	});
@@ -45,6 +44,9 @@ void describe('requirementsmaker', () => {
 			Requirement.blobify(designatedData)
 		);
 		const rs = rsm.make();
-		deepStrictEqual(subview(Uint8Array, rs), data);
+		deepStrictEqual(
+			new Uint8Array(rs.buffer, rs.byteOffset, rs.byteLength),
+			data
+		);
 	});
 });

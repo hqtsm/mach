@@ -1,7 +1,6 @@
 import {describe, it} from 'node:test';
 import {deepStrictEqual, strictEqual} from 'node:assert';
 
-import {subview} from './util.ts';
 import {unhex} from './util.spec.ts';
 import {kSecCodeMagicEntitlement} from './const.ts';
 import {EntitlementBlob} from './entitlementblob.ts';
@@ -21,10 +20,11 @@ const examplePlist = [
 void describe('entitlementblob', () => {
 	void it('empty (invalid?)', () => {
 		const {sizeof} = EntitlementBlob;
-		const eb = new EntitlementBlob(new ArrayBuffer(sizeof));
+		const buffer = new ArrayBuffer(sizeof);
+		const eb = new EntitlementBlob(buffer);
 		eb.initialize(sizeof);
 		deepStrictEqual(
-			subview(Uint8Array, eb),
+			new Uint8Array(buffer),
 			unhex('FA DE 71 71 00 00 00 08')
 		);
 	});
@@ -33,9 +33,12 @@ void describe('entitlementblob', () => {
 		const data = new TextEncoder().encode(examplePlist);
 		const eb = EntitlementBlob.blobify(data);
 		eb.body.set(data);
-		const dv = subview(DataView, eb);
+		const dv = new DataView(eb.buffer, eb.byteOffset, eb.byteLength);
 		strictEqual(dv.getUint32(0), kSecCodeMagicEntitlement);
 		strictEqual(dv.getUint32(4), eb.byteLength);
-		deepStrictEqual(subview(Uint8Array, dv, 8), data);
+		deepStrictEqual(
+			new Uint8Array(eb.buffer, eb.byteOffset + 8, eb.byteLength - 8),
+			data
+		);
 	});
 });

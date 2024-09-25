@@ -30,10 +30,8 @@ import {
 import {subview} from './util.ts';
 
 export function unhex(...hex: string[]) {
-	return subview(
-		Uint8Array,
-		Buffer.from(hex.join('').replace(/\s+/g, ''), 'hex')
-	);
+	const b = Buffer.from(hex.join('').replace(/\s+/g, ''), 'hex');
+	return new Uint8Array(b.buffer, b.byteOffset, b.byteLength);
 }
 
 export async function hash(hashType: number, data: Readonly<BufferView>) {
@@ -180,20 +178,25 @@ export async function* zipped(file: string) {
 					i += fileNameSize;
 					i += extraSize;
 
-					const cData = Buffer.alloc(cSize);
+					const buffer = new ArrayBuffer(cSize);
+					const cData = Buffer.from(buffer);
 					await f.read(cData, 0, cSize, headerOffset + i);
 					if (!inflater) {
-						return subview(Uint8Array, cData);
+						return new Uint8Array(buffer);
 					}
 
 					const uData = await inflater(cData);
-					const {length} = uData;
-					if (length !== uSize) {
+					const {byteLength} = uData;
+					if (byteLength !== uSize) {
 						throw new Error(
-							`Bad decompressed size: ${length} != ${uSize}`
+							`Bad decompressed size: ${byteLength} != ${uSize}`
 						);
 					}
-					return subview(Uint8Array, uData);
+					return new Uint8Array(
+						uData.buffer,
+						uData.byteOffset,
+						byteLength
+					);
 				}
 			] as const;
 		}
@@ -369,7 +372,7 @@ export function machoThin(
 	type: number,
 	subtype: number | null = null
 ) {
-	const v = subview(DataView, data);
+	const v = new DataView(data.buffer, data.byteOffset, data.byteLength);
 	const magic = v.getUint32(0);
 	let f = false;
 	let b = false;
@@ -421,7 +424,7 @@ export function machoThin(
 		if (cputype !== type || (subtype && cpusubtype !== subtype)) {
 			throw new Error(`Wrong arch: ${cputype} ${cpusubtype}`);
 		}
-		return subview(Uint8Array, v);
+		return new Uint8Array(v.buffer, v.byteOffset, v.byteLength);
 	}
 	const count = v.getUint32(4, b);
 	const slices: [number, number][] = [];

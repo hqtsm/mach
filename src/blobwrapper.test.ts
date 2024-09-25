@@ -1,7 +1,6 @@
 import {describe, it} from 'node:test';
 import {deepStrictEqual, strictEqual} from 'node:assert';
 
-import {subview} from './util.ts';
 import {unhex} from './util.spec.ts';
 import {CSMAGIC_BLOBWRAPPER} from './const.ts';
 import {BlobWrapper} from './blobwrapper.ts';
@@ -9,10 +8,11 @@ import {BlobWrapper} from './blobwrapper.ts';
 void describe('blobwrapper', () => {
 	void it('empty', () => {
 		const {sizeof} = BlobWrapper;
-		const bw = new BlobWrapper(new ArrayBuffer(sizeof));
+		const buffer = new ArrayBuffer(sizeof);
+		const bw = new BlobWrapper(buffer);
 		bw.initialize(sizeof);
 		deepStrictEqual(
-			subview(Uint8Array, bw),
+			new Uint8Array(buffer),
 			unhex('FA DE 0B 01 00 00 00 08')
 		);
 	});
@@ -20,19 +20,29 @@ void describe('blobwrapper', () => {
 	void it('data', () => {
 		const data = unhex('09 AB CD EF 01 02 03 04 05 06 07 08 09 0A 0B 0C');
 		const bw = BlobWrapper.blobify(data);
-		const dv = subview(DataView, bw);
+		const dv = new DataView(bw.buffer, bw.byteOffset, bw.byteLength);
 		strictEqual(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
 		strictEqual(dv.getUint32(4), bw.byteLength);
-		deepStrictEqual(subview(Uint8Array, dv, 8), data);
+		deepStrictEqual(
+			new Uint8Array(bw.buffer, bw.byteOffset + 8, bw.byteLength - 8),
+			data
+		);
 	});
 
 	void it('data', () => {
 		const data = unhex('09 AB CD EF 01 02 03 04 05 06 07 08 09 0A 0B 0C');
 		const bw = BlobWrapper.alloc(data.length);
-		subview(Uint8Array, bw.data).set(data);
-		const dv = subview(DataView, bw);
+		new Uint8Array(
+			bw.data.buffer,
+			bw.data.byteOffset,
+			bw.data.byteLength
+		).set(data);
+		const dv = new DataView(bw.buffer, bw.byteOffset, bw.byteLength);
 		strictEqual(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
 		strictEqual(dv.getUint32(4), bw.byteLength);
-		deepStrictEqual(subview(Uint8Array, dv, 8), data);
+		deepStrictEqual(
+			new Uint8Array(bw.buffer, bw.byteOffset + 8, bw.byteLength - 8),
+			data
+		);
 	});
 });

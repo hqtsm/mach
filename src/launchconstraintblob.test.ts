@@ -1,7 +1,6 @@
 import {describe, it} from 'node:test';
 import {deepStrictEqual, strictEqual} from 'node:assert';
 
-import {subview} from './util.ts';
 import {unhex} from './util.spec.ts';
 import {kSecCodeMagicLaunchConstraint} from './const.ts';
 import {LaunchConstraintBlob} from './launchconstraintblob.ts';
@@ -37,19 +36,23 @@ const sampleDer = unhex(
 void describe('launchconstraintblob', () => {
 	void it('empty (invalid?)', () => {
 		const {sizeof} = LaunchConstraintBlob;
-		const edb = new LaunchConstraintBlob(new ArrayBuffer(sizeof));
+		const buffer = new ArrayBuffer(sizeof);
+		const edb = new LaunchConstraintBlob(buffer);
 		edb.initialize(sizeof);
 		deepStrictEqual(
-			subview(Uint8Array, edb),
+			new Uint8Array(buffer),
 			unhex('FA DE 81 81 00 00 00 08')
 		);
 	});
 
 	void it('data', () => {
 		const edb = LaunchConstraintBlob.blobify(sampleDer);
-		const dv = subview(DataView, edb);
+		const dv = new DataView(edb.buffer, edb.byteOffset, edb.byteLength);
 		strictEqual(dv.getUint32(0), kSecCodeMagicLaunchConstraint);
 		strictEqual(dv.getUint32(4), edb.byteLength);
-		deepStrictEqual(subview(Uint8Array, dv, 8), sampleDer);
+		deepStrictEqual(
+			new Uint8Array(edb.buffer, edb.byteOffset + 8, edb.byteLength - 8),
+			sampleDer
+		);
 	});
 });

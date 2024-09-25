@@ -2,7 +2,6 @@ import {describe, it} from 'node:test';
 import {deepStrictEqual, strictEqual} from 'node:assert';
 
 import {Requirement} from './requirement.ts';
-import {subview} from './util.ts';
 import {kSecCodeMagicRequirement} from './const.ts';
 import {unhex} from './util.spec.ts';
 import {RequirementMaker} from './requirementmaker.ts';
@@ -27,11 +26,14 @@ void describe('requirementmaker', () => {
 		const add = rm.alloc(data.byteLength);
 		add.set(data);
 		const r = rm.make();
-		const dv = subview(DataView, r);
+		const dv = new DataView(r.buffer, r.byteOffset, r.byteLength);
 		strictEqual(dv.getUint32(0), kSecCodeMagicRequirement);
 		strictEqual(dv.getUint32(4), r.byteLength);
 		strictEqual(dv.getUint32(8), Requirement.Kind.exprForm);
-		deepStrictEqual(subview(Uint8Array, dv, 12), data);
+		deepStrictEqual(
+			new Uint8Array(r.buffer, r.byteOffset + 12, r.byteLength - 12),
+			data
+		);
 	});
 
 	void it('grow fibonacci', () => {
@@ -42,7 +44,7 @@ void describe('requirementmaker', () => {
 			rm.alloc(size).set(d);
 		}
 		const r = rm.make();
-		const dv = subview(DataView, r);
+		const dv = new DataView(r.buffer, r.byteOffset, r.byteLength);
 		strictEqual(dv.getUint32(0), kSecCodeMagicRequirement);
 		strictEqual(dv.getUint32(4), r.byteLength);
 		strictEqual(dv.getUint32(8), Requirement.Kind.lwcrForm);
@@ -56,7 +58,7 @@ void describe('requirementmaker', () => {
 			rm.alloc(size).set(d);
 		}
 		const r = rm.make();
-		const dv = subview(DataView, r);
+		const dv = new DataView(r.buffer, r.byteOffset, r.byteLength);
 		strictEqual(dv.getUint32(0), kSecCodeMagicRequirement);
 		strictEqual(dv.getUint32(4), r.byteLength);
 		strictEqual(dv.getUint32(8), Requirement.Kind.lwcrForm);
