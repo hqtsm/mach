@@ -36,6 +36,9 @@ void describe('entitlementblob', () => {
 		const dv = new DataView(eb.buffer, eb.byteOffset, eb.byteLength);
 		strictEqual(dv.getUint32(0), kSecCodeMagicEntitlement);
 		strictEqual(dv.getUint32(4), eb.byteLength);
-		deepStrictEqual(eb.body.subarray(0, eb.bodyLength), data);
+		deepStrictEqual(
+			new Uint8Array(eb.body.buffer, eb.body.byteOffset, eb.bodyLength),
+			data
+		);
 	});
 });

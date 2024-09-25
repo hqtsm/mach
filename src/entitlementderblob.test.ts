@@ -23,6 +23,9 @@ void describe('entitlementderblob', () => {
 		const dv = new DataView(edb.buffer, edb.byteOffset, edb.byteLength);
 		strictEqual(dv.getUint32(0), kSecCodeMagicEntitlementDER);
 		strictEqual(dv.getUint32(4), edb.byteLength);
-		deepStrictEqual(edb.der.subarray(0, edb.derLength), data);
+		deepStrictEqual(
+			new Uint8Array(edb.der.buffer, edb.der.byteOffset, edb.derLength),
+			data
+		);
 	});
 });
