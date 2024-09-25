@@ -57,16 +57,6 @@ export interface BufferView {
 }
 
 /**
- * Object has fixed length.
- */
-export interface ByteLength {
-	/**
-	 * Byte length.
-	 */
-	readonly byteLength: number;
-}
-
-/**
  * File stat.
  */
 export interface FileLikeStat {

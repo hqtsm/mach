@@ -1,9 +1,9 @@
-import type {BufferView, ByteLength} from './type.ts';
+import type {BufferView} from './type.ts';
 
 /**
  * Struct class.
  */
-export class Struct implements BufferView, ByteLength {
+export class Struct implements BufferView {
 	public declare readonly ['constructor']: typeof Struct;
 
 	/**
