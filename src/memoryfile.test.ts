@@ -74,6 +74,26 @@ void describe('memoryfile', () => {
 			strictEqual((await m.stat()).size, BS * 2 + 1);
 		});
 
+		void it('sparse', async () => {
+			let r;
+			const d = new Uint8Array(1);
+			const m = new MemoryFile();
+
+			r = await m.write(d, 0, 1, 10000);
+			strictEqual(r.bytesWritten, 1);
+			strictEqual((await m.stat()).size, 10001);
+
+			d[0] = 123;
+			r = await m.read(d, 0, 1, 0);
+			strictEqual(r.bytesRead, 1);
+			strictEqual((await m.stat()).size, 10001);
+			strictEqual(d[0], 0);
+
+			r = await m.write(d, 0, 1, 0);
+			strictEqual(r.bytesWritten, 1);
+			strictEqual((await m.stat()).size, 10001);
+		});
+
 		void it('write many pieces overlapping', async () => {
 			const m = new MemoryFile();
 			let offset = 0;

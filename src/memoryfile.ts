@@ -17,7 +17,7 @@ export class MemoryFile implements FileLike {
 	/**
 	 * Data blocks.
 	 */
-	readonly #blocks: Uint8Array[] = [];
+	readonly #blocks: (Uint8Array | undefined)[] = [];
 
 	/**
 	 * Block size.
@@ -75,7 +75,7 @@ export class MemoryFile implements FileLike {
 			}
 		} else if (o) {
 			blocks.length = b + 1;
-			blocks[b].fill(0, o);
+			blocks[b]?.fill(0, o);
 		} else {
 			blocks.length = b;
 		}
@@ -100,7 +100,7 @@ export class MemoryFile implements FileLike {
 			length = size - position;
 		}
 		if (length) {
-			const d = new Uint8Array(bd, bo + offset, length);
+			const r = new Uint8Array(bd, bo + offset, length);
 			const blksize = this.#blksize;
 			const blocks = this.#blocks;
 			let o = position % blksize;
@@ -109,7 +109,12 @@ export class MemoryFile implements FileLike {
 				if (l < s) {
 					s = l;
 				}
-				d.set(blocks[b].subarray(o, o + s), i);
+				const d = blocks[b];
+				if (d) {
+					r.set(d.subarray(o, o + s), i);
+				} else {
+					r.fill(0, i, i + s);
+				}
 				l -= s;
 				if (l <= 0) {
 					break;
@@ -141,7 +146,6 @@ export class MemoryFile implements FileLike {
 			const blksize = this.#blksize;
 			const blocks = this.#blocks;
 			const size = this.#size;
-			const bl = blocks.length;
 			let p = position;
 			let o = p % blksize;
 			let b = (p - o) / blksize;
@@ -149,14 +153,12 @@ export class MemoryFile implements FileLike {
 				if (l < s) {
 					s = l;
 				}
-				const v = new Uint8Array(bd, i, s);
-				if (b < bl) {
-					blocks[b].set(v, o);
-				} else {
-					const a = new Uint8Array(blksize);
-					a.set(v, o);
-					blocks[b] = a;
+				const w = new Uint8Array(bd, i, s);
+				let d = blocks[b];
+				if (!d) {
+					blocks[b] = d = new Uint8Array(blksize);
 				}
+				d.set(w, o);
 				p += s;
 				if (p > size) {
 					this.#size = p;
