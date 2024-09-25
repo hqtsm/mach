@@ -40,11 +40,10 @@ export class RequirementMaker {
 	 */
 	public alloc(size: number) {
 		const {Requirement} = this.constructor;
-		const data = this.#data;
 		const usedSize = alignUp(size, Requirement.baseAlignment);
 		this.require(usedSize);
 		const pc = this.#pc;
-		const a = data.subarray(pc, pc + usedSize);
+		const a = this.#data.subarray(pc, pc + usedSize);
 		this.#pc += usedSize;
 		return a;
 	}
