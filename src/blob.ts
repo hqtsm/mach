@@ -1,5 +1,5 @@
 import {Struct} from './struct.ts';
-import type {BufferView, ReadonlyUint8Array} from './type.ts';
+import type {BufferView} from './type.ts';
 import {subview} from './util.ts';
 
 /**
@@ -97,7 +97,7 @@ export class Blob extends Struct {
 		this: T,
 		content: Readonly<BufferView> | number = 0
 	): T['prototype'] {
-		let view: ReadonlyUint8Array | undefined;
+		let view;
 		let size = 8;
 		if (typeof content === 'number') {
 			size += content;
@@ -113,7 +113,7 @@ export class Blob extends Struct {
 		const blob = new this(buffer);
 		blob.initialize(size);
 		if (view) {
-			new Uint8Array(buffer).subarray(8).set(view);
+			new Uint8Array(buffer, 8).set(view);
 		}
 		return blob;
 	}

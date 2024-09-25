@@ -1,5 +1,4 @@
 import {SuperBlob} from './superblob.ts';
-import type {ReadonlyUint8Array} from './type.ts';
 
 /**
  * SuperBlobMaker class.
@@ -85,12 +84,7 @@ export class SuperBlobMaker {
 			view.setUint32(o1, o2);
 			o1 += 4;
 			const {buffer, byteOffset, byteLength} = blob;
-			const d: ReadonlyUint8Array = new Uint8Array(
-				buffer,
-				byteOffset,
-				byteLength
-			);
-			data.set(d, o2);
+			data.set(new Uint8Array(buffer, byteOffset, byteLength), o2);
 			o2 += byteLength;
 		}
 		return sb;

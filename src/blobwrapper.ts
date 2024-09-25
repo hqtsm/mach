@@ -1,6 +1,6 @@
 import {Blob} from './blob.ts';
 import {CSMAGIC_BLOBWRAPPER} from './const.ts';
-import type {BufferView, ReadonlyUint8Array} from './type.ts';
+import type {BufferView} from './type.ts';
 import {subview} from './util.ts';
 
 /**
@@ -56,7 +56,7 @@ export class BlobWrapper extends Blob {
 		content: Readonly<BufferView> | number = 0,
 		magic: number | null = null
 	): T['prototype'] {
-		let view: ReadonlyUint8Array | undefined;
+		let view;
 		let size = 8;
 		if (typeof content === 'number') {
 			size += content;
@@ -72,7 +72,7 @@ export class BlobWrapper extends Blob {
 		const blob = new this(buffer);
 		blob.initialize(size, magic);
 		if (view) {
-			new Uint8Array(buffer).subarray(8).set(view);
+			new Uint8Array(buffer, 8).set(view);
 		}
 		return blob;
 	}
