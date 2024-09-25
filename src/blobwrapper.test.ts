@@ -24,7 +24,7 @@ void describe('blobwrapper', () => {
 		strictEqual(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
 		strictEqual(dv.getUint32(4), bw.byteLength);
 		deepStrictEqual(
-			new Uint8Array(bw.buffer, bw.byteOffset + 8, bw.byteLength - 8),
+			new Uint8Array(bw.data.buffer, bw.data.byteOffset, bw.length),
 			data
 		);
 	});
@@ -41,7 +41,7 @@ void describe('blobwrapper', () => {
 		strictEqual(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
 		strictEqual(dv.getUint32(4), bw.byteLength);
 		deepStrictEqual(
-			new Uint8Array(bw.buffer, bw.byteOffset + 8, bw.byteLength - 8),
+			new Uint8Array(bw.data.buffer, bw.data.byteOffset, bw.length),
 			data
 		);
 	});

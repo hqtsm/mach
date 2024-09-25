@@ -50,9 +50,6 @@ void describe('launchconstraintblob', () => {
 		const dv = new DataView(edb.buffer, edb.byteOffset, edb.byteLength);
 		strictEqual(dv.getUint32(0), kSecCodeMagicLaunchConstraint);
 		strictEqual(dv.getUint32(4), edb.byteLength);
-		deepStrictEqual(
-			new Uint8Array(edb.buffer, edb.byteOffset + 8, edb.byteLength - 8),
-			sampleDer
-		);
+		deepStrictEqual(edb.der.subarray(0, edb.derLength), sampleDer);
 	});
 });

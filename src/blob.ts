@@ -1,6 +1,5 @@
 import {Struct} from './struct.ts';
 import type {BufferView} from './type.ts';
-import {subview} from './util.ts';
 
 /**
  * Blob class.
@@ -29,7 +28,7 @@ export class Blob extends Struct {
 	/**
 	 * Blob length.
 	 * By default includes magic and length.
-	 * Child classes may redefine this to be a smaller subview.
+	 * Child classes may redefine this to be a smaller area.
 	 *
 	 * @returns Blob length.
 	 */
@@ -40,7 +39,7 @@ export class Blob extends Struct {
 	/**
 	 * Blob length.
 	 * By default includes magic and length.
-	 * Child classes may redefine this to be a smaller subview.
+	 * Child classes may redefine this to be a smaller area.
 	 *
 	 * @param value Blob length.
 	 */
@@ -56,14 +55,14 @@ export class Blob extends Struct {
 	}
 
 	/**
-	 * Data view of blob array buffer, limited to blob length.
+	 * Blob data.
 	 * By default includes magic and length.
-	 * Child classes may redefine this to be a smaller subview.
+	 * Child classes may redefine this to be a smaller area.
 	 *
-	 * @returns View of blob data.
+	 * @returns View starting from blob data start.
 	 */
 	public get data() {
-		return subview(DataView, this, 0, this.length);
+		return new DataView(this.buffer, this.byteOffset);
 	}
 
 	/**

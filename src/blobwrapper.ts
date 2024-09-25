@@ -1,7 +1,6 @@
 import {Blob} from './blob.ts';
 import {CSMAGIC_BLOBWRAPPER} from './const.ts';
 import type {BufferView} from './type.ts';
-import {subview} from './util.ts';
 
 /**
  * Generic Blob.
@@ -16,7 +15,7 @@ export class BlobWrapper extends Blob {
 	 */
 	public get data() {
 		// Overridden to point to payload (only).
-		return subview(DataView, this, 8, this.length);
+		return new DataView(this.buffer, this.byteOffset + 8);
 	}
 
 	/**
