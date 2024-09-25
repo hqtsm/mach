@@ -8,8 +8,9 @@ import {EntitlementDERBlob} from './entitlementderblob.ts';
 
 void describe('entitlementderblob', () => {
 	void it('empty (invalid?)', () => {
-		const edb = new EntitlementDERBlob();
-		edb.initialize(EntitlementDERBlob.sizeof);
+		const {sizeof} = EntitlementDERBlob;
+		const edb = new EntitlementDERBlob(new ArrayBuffer(sizeof));
+		edb.initialize(sizeof);
 		deepStrictEqual(
 			subview(Uint8Array, edb),
 			unhex('FA DE 71 72 00 00 00 08')

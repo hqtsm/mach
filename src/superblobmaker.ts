@@ -72,9 +72,10 @@ export class SuperBlobMaker {
 		const pieces = this.#pieces;
 		const count = pieces.size;
 		const size = this.size();
-		const data = new Uint8Array(size);
-		const view = subview(DataView, data);
-		const sb = new SuperBlob(view);
+		const buffer = new ArrayBuffer(size);
+		const data = new Uint8Array(buffer);
+		const view = new DataView(buffer);
+		const sb = new SuperBlob(buffer);
 		sb.initialize(size);
 		view.setUint32(8, count);
 		let o1 = 12;

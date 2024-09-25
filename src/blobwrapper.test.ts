@@ -8,8 +8,9 @@ import {BlobWrapper} from './blobwrapper.ts';
 
 void describe('blobwrapper', () => {
 	void it('empty', () => {
-		const bw = new BlobWrapper();
-		bw.initialize(BlobWrapper.sizeof);
+		const {sizeof} = BlobWrapper;
+		const bw = new BlobWrapper(new ArrayBuffer(sizeof));
+		bw.initialize(sizeof);
 		deepStrictEqual(
 			subview(Uint8Array, bw),
 			unhex('FA DE 0B 01 00 00 00 08')

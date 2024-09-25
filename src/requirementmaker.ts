@@ -24,11 +24,11 @@ export class RequirementMaker {
 	 */
 	constructor(kind: number) {
 		const {Requirement} = this.constructor;
-		const data = new Uint8Array(1024);
-		const r = new Requirement(data);
+		const buffer = new ArrayBuffer(1024);
+		const r = new Requirement(buffer);
 		r.magic = Requirement.typeMagic;
 		r.kind = kind;
-		this.#data = data;
+		this.#data = new Uint8Array(buffer);
 		this.#pc = Requirement.sizeof;
 	}
 
@@ -57,9 +57,8 @@ export class RequirementMaker {
 	public make() {
 		const {Requirement} = this.constructor;
 		const data = this.#data;
-		const pc = this.#pc;
-		const r = new Requirement(data);
-		r.length = pc;
+		const r = new Requirement(data.buffer, data.byteOffset);
+		r.length = this.#pc;
 		return r;
 	}
 

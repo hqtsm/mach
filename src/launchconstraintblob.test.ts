@@ -36,8 +36,9 @@ const sampleDer = unhex(
 
 void describe('launchconstraintblob', () => {
 	void it('empty (invalid?)', () => {
-		const edb = new LaunchConstraintBlob();
-		edb.initialize(LaunchConstraintBlob.sizeof);
+		const {sizeof} = LaunchConstraintBlob;
+		const edb = new LaunchConstraintBlob(new ArrayBuffer(sizeof));
+		edb.initialize(sizeof);
 		deepStrictEqual(
 			subview(Uint8Array, edb),
 			unhex('FA DE 81 81 00 00 00 08')

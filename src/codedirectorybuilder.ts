@@ -257,10 +257,11 @@ export class CodeDirectoryBuilder {
 	 */
 	public createScatter(count: number) {
 		const {Scatter} = this.constructor.CodeDirectory;
+		const {sizeof} = Scatter;
 		const vector: typeof this.scatter = [];
 		const total = count + 1;
 		for (let i = 0; i < total; i++) {
-			vector.push(new Scatter());
+			vector.push(new Scatter(new ArrayBuffer(sizeof)));
 		}
 		this.scatter = vector;
 		return vector;
@@ -365,8 +366,9 @@ export class CodeDirectoryBuilder {
 		} = this;
 		const {CodeDirectory} = Static;
 		const size = this.size(version);
-		const data = new Uint8Array(size);
-		const dir = new CodeDirectory(data);
+		const buffer = new ArrayBuffer(size);
+		const data = new Uint8Array(buffer);
+		const dir = new CodeDirectory(buffer);
 		dir.initialize(size);
 		dir.version = version;
 		dir.flags = this.flags;

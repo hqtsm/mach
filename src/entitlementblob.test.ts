@@ -20,8 +20,9 @@ const examplePlist = [
 
 void describe('entitlementblob', () => {
 	void it('empty (invalid?)', () => {
-		const eb = new EntitlementBlob();
-		eb.initialize(EntitlementBlob.sizeof);
+		const {sizeof} = EntitlementBlob;
+		const eb = new EntitlementBlob(new ArrayBuffer(sizeof));
+		eb.initialize(sizeof);
 		deepStrictEqual(
 			subview(Uint8Array, eb),
 			unhex('FA DE 71 71 00 00 00 08')

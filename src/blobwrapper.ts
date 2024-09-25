@@ -64,11 +64,11 @@ export class BlobWrapper extends Blob {
 			view = subview(Uint8Array, content);
 			size += view.byteLength;
 		}
-		const data = new Uint8Array(size);
-		const blob = new this(data);
+		const buffer = new ArrayBuffer(size);
+		const blob = new this(buffer);
 		blob.initialize(size, magic);
 		if (view) {
-			data.subarray(8).set(view);
+			new Uint8Array(buffer).subarray(8).set(view);
 		}
 		return blob;
 	}

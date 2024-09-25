@@ -1,5 +1,4 @@
 import {Blob} from './blob.ts';
-import {subview} from './util.ts';
 
 /**
  * SuperBlob class.
@@ -26,7 +25,7 @@ export class SuperBlob extends Blob {
 	public blob(index: number) {
 		const offset = this.dataView.getUint32(16 + 8 * index);
 		return offset
-			? new this.constructor.Blob(subview(DataView, this, offset))
+			? new this.constructor.Blob(this.buffer, this.byteOffset + offset)
 			: null;
 	}
 

@@ -7,8 +7,9 @@ import {subview} from './util.ts';
 
 void describe('requirements', () => {
 	void it('empty', () => {
-		const rs = new Requirements();
-		rs.initialize(Requirements.sizeof);
+		const {sizeof} = Requirements;
+		const rs = new Requirements(new ArrayBuffer(sizeof));
+		rs.initialize(sizeof);
 		deepStrictEqual(
 			subview(Uint8Array, rs),
 			unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00')

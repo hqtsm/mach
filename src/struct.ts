@@ -1,5 +1,4 @@
 import type {BufferView, ByteLength} from './type.ts';
-import {subview} from './util.ts';
 
 /**
  * Struct class.
@@ -15,16 +14,14 @@ export class Struct implements BufferView, ByteLength {
 	/**
 	 * Blob constructor.
 	 *
-	 * @param data Blob data view, size of new blob, or null.
+	 * @param buffer Buffer data.
+	 * @param byteOffset Byte offset into buffer.
 	 */
-	constructor(data: BufferView | number | null = null) {
-		if (data === null) {
-			this.#data = new DataView(new ArrayBuffer(this.constructor.sizeof));
-		} else if (typeof data === 'number') {
-			this.#data = new DataView(new ArrayBuffer(data));
-		} else {
-			this.#data = subview(DataView, data);
-		}
+	constructor(
+		buffer: ConstructorParameters<typeof DataView>[0],
+		byteOffset = 0
+	) {
+		this.#data = new DataView(buffer, byteOffset);
 	}
 
 	/**
