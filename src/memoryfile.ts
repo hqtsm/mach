@@ -140,10 +140,11 @@ export class MemoryFile implements FileLike {
 		if (length) {
 			const blksize = this.#blksize;
 			const blocks = this.#blocks;
+			const size = this.#size;
 			const bl = blocks.length;
-			const end = position + length;
-			let o = position % blksize;
-			let b = (position - o) / blksize;
+			let p = position;
+			let o = p % blksize;
+			let b = (p - o) / blksize;
 			for (let i = bo, l = length, s = blksize - o; ; b++) {
 				if (l < s) {
 					s = l;
@@ -156,6 +157,10 @@ export class MemoryFile implements FileLike {
 					a.set(v, o);
 					blocks[b] = a;
 				}
+				p += s;
+				if (p > size) {
+					this.#size = p;
+				}
 				l -= s;
 				if (l <= 0) {
 					break;
@@ -163,9 +168,6 @@ export class MemoryFile implements FileLike {
 				i += s;
 				o = 0;
 				s = blksize;
-			}
-			if (end > this.#size) {
-				this.#size = end;
 			}
 		}
 		return {
