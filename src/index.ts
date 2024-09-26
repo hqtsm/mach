@@ -21,3 +21,5 @@ export * from './detachedsignatureblob.ts';
 export * from './detachedsignatureblobmaker.ts';
 export * from './librarydependencyblob.ts';
 export * from './librarydependencyblobmaker.ts';
+export * from './embeddedsignatureblob.ts';
+export * from './embeddedsignatureblobmaker.ts';
