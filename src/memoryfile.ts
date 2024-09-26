@@ -40,9 +40,8 @@ export class MemoryFile implements FileLike {
 		ranged(blksize, 1, BLK_LIMIT);
 		this.#size = size;
 		this.#blksize = blksize;
-		for (const blocks = this.#blocks; size > 0; size -= blksize) {
-			blocks.push(new Uint8Array(blksize));
-		}
+		const o = size % blksize;
+		this.#blocks.length = (size - o) / blksize + (o ? 1 : 0);
 	}
 
 	/**
@@ -70,9 +69,7 @@ export class MemoryFile implements FileLike {
 		const o = size % blksize;
 		const b = (size - o) / blksize;
 		if (size > s) {
-			for (let i = b + (o ? 1 : 0) - blocks.length; i--; ) {
-				blocks.push(new Uint8Array(blksize));
-			}
+			blocks.length = b + (o ? 1 : 0);
 		} else if (o) {
 			blocks.length = b + 1;
 			blocks[b]?.fill(0, o);
