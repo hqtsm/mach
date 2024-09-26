@@ -39,16 +39,6 @@ function getImport(): (name: string) => Promise<Exports> {
 	return async (name: string) => import(name);
 }
 
-function assertExported(subset: Exports, superset: Exports, what: string) {
-	for (const key of Object.keys(subset).sort()) {
-		strictEqual(
-			key === 'default' ? superset : superset[key],
-			subset[key],
-			`${what}: export[${key}]`
-		);
-	}
-}
-
 async function* findModules(dir: string) {
 	for (const q = ['.']; q.length; ) {
 		const path = q.shift()!;
@@ -74,6 +64,16 @@ async function* findModules(dir: string) {
 			}
 			yield `${path}/${name}`;
 		}
+	}
+}
+
+function assertExported(subset: Exports, superset: Exports, what: string) {
+	for (const key of Object.keys(subset).sort()) {
+		strictEqual(
+			key === 'default' ? superset : superset[key],
+			subset[key],
+			`${what}: export[${key}]`
+		);
 	}
 }
 
