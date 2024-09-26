@@ -20,7 +20,7 @@ async function addCodeHashes(cd: CodeDirectoryBuilder, macho: Uint8Array) {
 	const hashes = await chunkedHashes(
 		cd.hashType,
 		macho,
-		pageSize ? Math.pow(2, pageSize) : 0,
+		pageSize,
 		0,
 		cd.execLength
 	);
