@@ -4,7 +4,7 @@ import {kSecCodeMagicCodeDirectory} from './const.ts';
 import type {ReadonlyUint8Array} from './type.ts';
 
 /**
- * CodeDirectory Blob.
+ * Describes secured pieces of a program.
  */
 export class CodeDirectory extends Blob {
 	public declare readonly ['constructor']: typeof CodeDirectory;

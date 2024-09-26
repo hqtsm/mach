@@ -2,7 +2,7 @@ import {Requirements} from './requirements.ts';
 import {SuperBlobMaker} from './superblobmaker.ts';
 
 /**
- * RequirementsMaker class.
+ * SuperBlob maker for Requirements.
  */
 export class RequirementsMaker extends SuperBlobMaker {
 	public declare readonly ['constructor']: typeof RequirementsMaker;

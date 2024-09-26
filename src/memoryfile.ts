@@ -9,7 +9,7 @@ import {INT_LIMIT, BLK_LIMIT} from './const.ts';
 import {ranged} from './util.ts';
 
 /**
- * MemoryFile class.
+ * In-memory file-like object.
  */
 export class MemoryFile implements FileLike {
 	public declare readonly ['constructor']: typeof MemoryFile;
@@ -30,7 +30,7 @@ export class MemoryFile implements FileLike {
 	#size: number;
 
 	/**
-	 * MemoryFile constructor.
+	 * Create file with optional initial size and custom block size.
 	 *
 	 * @param size File size.
 	 * @param blksize Block size.

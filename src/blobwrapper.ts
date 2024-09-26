@@ -3,7 +3,7 @@ import {CSMAGIC_BLOBWRAPPER} from './const.ts';
 import type {BufferView} from './type.ts';
 
 /**
- * Generic Blob.
+ * Generic blob wrapping arbitrary binary data.
  */
 export class BlobWrapper extends Blob {
 	public declare readonly ['constructor']: typeof BlobWrapper;

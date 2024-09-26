@@ -2,7 +2,7 @@ import {Blob} from './blob.ts';
 import {kSecCodeMagicEntitlement} from './const.ts';
 
 /**
- * Entitlement Blob.
+ * For embedding entitlement configuration data.
  */
 export class EntitlementBlob extends Blob {
 	public declare readonly ['constructor']: typeof EntitlementBlob;

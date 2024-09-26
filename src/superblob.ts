@@ -1,7 +1,7 @@
 import {Blob} from './blob.ts';
 
 /**
- * SuperBlob class.
+ * Multiple Blobs wrapped in a single indexed blob.
  */
 export class SuperBlob extends Blob {
 	public declare readonly ['constructor']: typeof SuperBlob;

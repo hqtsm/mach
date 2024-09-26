@@ -1,7 +1,7 @@
 import type {BufferView} from './type.ts';
 
 /**
- * Struct class.
+ * Binary structure buffer view.
  */
 export class Struct implements BufferView {
 	public declare readonly ['constructor']: typeof Struct;

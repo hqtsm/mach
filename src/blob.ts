@@ -2,7 +2,7 @@ import {Struct} from './struct.ts';
 import type {BufferView} from './type.ts';
 
 /**
- * Blob class.
+ * Polymorphic memory blobs with magics numbers.
  */
 export class Blob extends Struct {
 	public declare readonly ['constructor']: typeof Blob;

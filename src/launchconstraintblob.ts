@@ -2,7 +2,7 @@ import {Blob} from './blob.ts';
 import {kSecCodeMagicLaunchConstraint} from './const.ts';
 
 /**
- * Launch Constraint Blob.
+ * Launch constraint in DER format.
  */
 export class LaunchConstraintBlob extends Blob {
 	public declare readonly ['constructor']: typeof LaunchConstraintBlob;

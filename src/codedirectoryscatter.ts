@@ -1,7 +1,7 @@
 import {Struct} from './struct.ts';
 
 /**
- * CodeDirectoryScatter class.
+ * CodeDirectory scatter vector element.
  */
 export class CodeDirectoryScatter extends Struct {
 	public declare readonly ['constructor']: typeof CodeDirectoryScatter;

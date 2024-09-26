@@ -2,7 +2,7 @@ import {Blob} from './blob.ts';
 import {kSecCodeMagicEntitlementDER} from './const.ts';
 
 /**
- * Entitlement DER Blob.
+ * For embedding entitlement configuration data, in DER format.
  */
 export class EntitlementDERBlob extends Blob {
 	public declare readonly ['constructor']: typeof EntitlementDERBlob;

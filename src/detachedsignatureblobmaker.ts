@@ -2,7 +2,7 @@ import {DetachedSignatureBlob} from './detachedsignatureblob.ts';
 import {SuperBlobMaker} from './superblobmaker.ts';
 
 /**
- * DetachedSignatureBlobMaker class.
+ * SuperBlob maker for DetachedSignatureBlob.
  */
 export class DetachedSignatureBlobMaker extends SuperBlobMaker {
 	public declare readonly ['constructor']: typeof DetachedSignatureBlobMaker;

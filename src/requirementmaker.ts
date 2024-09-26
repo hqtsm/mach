@@ -2,7 +2,7 @@ import {Requirement} from './requirement.ts';
 import {alignUp} from './util.ts';
 
 /**
- * RequirementMaker class.
+ * For creating a new Requirement blob.
  */
 export class RequirementMaker {
 	public declare readonly ['constructor']: typeof RequirementMaker;
@@ -81,7 +81,7 @@ export class RequirementMaker {
 	}
 
 	/**
-	 * Requirement class.
+	 * Requirement reference.
 	 */
 	public static readonly Requirement = Requirement;
 }

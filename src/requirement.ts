@@ -2,7 +2,7 @@ import {Blob} from './blob.ts';
 import {kSecCodeMagicRequirement} from './const.ts';
 
 /**
- * Requirement Blob.
+ * Single requirement.
  */
 export class Requirement extends Blob {
 	public declare readonly ['constructor']: typeof Requirement;

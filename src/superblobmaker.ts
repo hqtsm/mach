@@ -1,7 +1,7 @@
 import {SuperBlob} from './superblob.ts';
 
 /**
- * SuperBlobMaker class.
+ * SuperBlob maker.
  */
 export class SuperBlobMaker {
 	public declare readonly ['constructor']: typeof SuperBlobMaker;

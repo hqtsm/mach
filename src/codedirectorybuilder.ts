@@ -10,7 +10,7 @@ import {
 import type {BufferView} from './type.ts';
 
 /**
- * CodeDirectoryBuilder class.
+ * Builder for building CodeDirectories from pieces.
  */
 export class CodeDirectoryBuilder {
 	public declare readonly ['constructor']: typeof CodeDirectoryBuilder;
@@ -496,7 +496,7 @@ export class CodeDirectoryBuilder {
 	}
 
 	/**
-	 * CodeDirectory class.
+	 * CodeDirectory reference.
 	 */
 	public static readonly CodeDirectory = CodeDirectory;
 }
