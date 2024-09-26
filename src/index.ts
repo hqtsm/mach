@@ -18,4 +18,6 @@ export * from './superblobmaker.ts';
 export * from './requirements.ts';
 export * from './requirementsmaker.ts';
 export * from './detachedsignatureblob.ts';
+export * from './detachedsignatureblobmaker.ts';
 export * from './librarydependencyblob.ts';
+export * from './librarydependencyblobmaker.ts';
