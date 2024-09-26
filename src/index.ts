@@ -17,3 +17,4 @@ export * from './superblob.ts';
 export * from './superblobmaker.ts';
 export * from './requirements.ts';
 export * from './requirementsmaker.ts';
+export * from './detachedsignatureblob.ts';
