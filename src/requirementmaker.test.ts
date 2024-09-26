@@ -22,14 +22,14 @@ void describe('requirementmaker', () => {
 			'00 00 00 10',
 			'63 6F 6D 2E 61 70 70 6C 65 2E 73 69 6D 70 6C 65'
 		);
-		const rm = new RequirementMaker(Requirement.Kind.exprForm);
+		const rm = new RequirementMaker(Requirement.exprForm);
 		const add = rm.alloc(data.byteLength);
 		add.set(data);
 		const r = rm.make();
 		const dv = new DataView(r.buffer, r.byteOffset, r.byteLength);
 		strictEqual(dv.getUint32(0), kSecCodeMagicRequirement);
 		strictEqual(dv.getUint32(4), r.byteLength);
-		strictEqual(dv.getUint32(8), Requirement.Kind.exprForm);
+		strictEqual(dv.getUint32(8), Requirement.exprForm);
 		deepStrictEqual(
 			new Uint8Array(r.buffer, r.byteOffset + 12, r.byteLength - 12),
 			data
@@ -37,7 +37,7 @@ void describe('requirementmaker', () => {
 	});
 
 	void it('grow fibonacci', () => {
-		const rm = new RequirementMaker(Requirement.Kind.lwcrForm);
+		const rm = new RequirementMaker(Requirement.lwcrForm);
 		for (const size of fibinacci(25)) {
 			const d = new Uint8Array(size);
 			d.fill((size % 255) + 1);
@@ -47,11 +47,11 @@ void describe('requirementmaker', () => {
 		const dv = new DataView(r.buffer, r.byteOffset, r.byteLength);
 		strictEqual(dv.getUint32(0), kSecCodeMagicRequirement);
 		strictEqual(dv.getUint32(4), r.byteLength);
-		strictEqual(dv.getUint32(8), Requirement.Kind.lwcrForm);
+		strictEqual(dv.getUint32(8), Requirement.lwcrForm);
 	});
 
 	void it('grow fast', () => {
-		const rm = new RequirementMaker(Requirement.Kind.lwcrForm);
+		const rm = new RequirementMaker(Requirement.lwcrForm);
 		for (const size of [0xff, 0xfff, 0xffff, 0xfffff, 0xffffff]) {
 			const d = new Uint8Array(size);
 			d.fill((size % 255) + 1);
@@ -61,6 +61,6 @@ void describe('requirementmaker', () => {
 		const dv = new DataView(r.buffer, r.byteOffset, r.byteLength);
 		strictEqual(dv.getUint32(0), kSecCodeMagicRequirement);
 		strictEqual(dv.getUint32(4), r.byteLength);
-		strictEqual(dv.getUint32(8), Requirement.Kind.lwcrForm);
+		strictEqual(dv.getUint32(8), Requirement.lwcrForm);
 	});
 });

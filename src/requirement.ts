@@ -41,17 +41,12 @@ export class Requirement extends Blob {
 	public static readonly baseAlignment: number = 4;
 
 	/**
-	 * Different forms of requirements.
+	 * Kind: Prefix expr form.
 	 */
-	public static readonly Kind = {
-		/**
-		 * Prefix expr form.
-		 */
-		exprForm: 1,
+	public static readonly exprForm: number = 1;
 
-		/**
-		 * DER encoded lightweight code requirement form.
-		 */
-		lwcrForm: 2
-	};
+	/**
+	 * Kind: DER encoded lightweight code requirement form.
+	 */
+	public static readonly lwcrForm: number = 2;
 }

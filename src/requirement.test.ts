@@ -21,7 +21,7 @@ void describe('requirement', () => {
 		const buffer = new ArrayBuffer(sizeof);
 		const r = new Requirement(buffer);
 		r.initialize(sizeof);
-		r.kind = Requirement.Kind.exprForm;
+		r.kind = Requirement.exprForm;
 		deepStrictEqual(
 			new Uint8Array(buffer),
 			unhex('FA DE 0C 00 00 00 00 0C 00 00 00 01')
@@ -33,7 +33,7 @@ void describe('requirement', () => {
 		const buffer = new ArrayBuffer(sizeof);
 		const r = new Requirement(buffer);
 		r.initialize(sizeof);
-		r.kind = Requirement.Kind.lwcrForm;
+		r.kind = Requirement.lwcrForm;
 		deepStrictEqual(
 			new Uint8Array(buffer),
 			unhex('FA DE 0C 00 00 00 00 0C 00 00 00 02')
