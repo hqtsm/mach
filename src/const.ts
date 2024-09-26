@@ -178,6 +178,7 @@ export const kSecCodeMagicDetachedSignature = 0xfade0cc1;
 export const kSecCodeMagicEntitlement = 0xfade7171;
 export const kSecCodeMagicEntitlementDER = 0xfade7172;
 export const kSecCodeMagicLaunchConstraint = 0xfade8181;
+export const kSecCodeMagicDRList = 0xfade0c05;
 export const kSecCodeMagicByte = 0xfa;
 
 // SecCodeExecSegFlags:
