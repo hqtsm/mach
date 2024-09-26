@@ -92,7 +92,7 @@ void describe('index', () => {
 
 	void it('imports', async () => {
 		for await (const file of findModules(dir)) {
-			const m = await impire(resolve(dir, file));
+			const m = await impire(`./${file}`);
 			assertExported(m, index, file);
 		}
 	});
