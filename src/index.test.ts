@@ -39,10 +39,6 @@ function getImport(): (name: string) => Promise<Exports> {
 	return async (name: string) => import(name);
 }
 
-const file = getFilename();
-const dir = dirname(file);
-const impire = getImport();
-
 function assertExported(subset: Exports, superset: Exports, what: string) {
 	for (const key of Object.keys(subset).sort()) {
 		strictEqual(
@@ -54,7 +50,7 @@ function assertExported(subset: Exports, superset: Exports, what: string) {
 }
 
 async function* findModules(dir: string) {
-	for (const q = ['']; q.length; ) {
+	for (const q = ['.']; q.length; ) {
 		const path = q.shift()!;
 		// eslint-disable-next-line no-await-in-loop
 		const list = await readdir(path ? resolve(dir, path) : dir, {
@@ -67,7 +63,7 @@ async function* findModules(dir: string) {
 				continue;
 			}
 			if (e.isDirectory()) {
-				q.push(path ? `${path}/${name}` : name);
+				q.push(`${path}/${name}`);
 				continue;
 			}
 			if (
@@ -76,10 +72,14 @@ async function* findModules(dir: string) {
 			) {
 				continue;
 			}
-			yield path ? `${path}/${name}` : name;
+			yield `${path}/${name}`;
 		}
 	}
 }
+
+const file = getFilename();
+const dir = dirname(file);
+const impire = getImport();
 
 void describe('index', () => {
 	void it('exports', async () => {
@@ -87,13 +87,13 @@ void describe('index', () => {
 			await readFile(resolve(dir, '../package.json'), 'utf8')
 		);
 		const m = await impire(name);
-		assertExported(m, index, 'exports');
+		assertExported(m, index, name);
 	});
 
-	void it('imports', async () => {
-		for await (const file of findModules(dir)) {
-			const m = await impire(`./${file}`);
-			assertExported(m, index, file);
+	void it('public', async () => {
+		for await (const uri of findModules(dir)) {
+			const m = await impire(uri);
+			assertExported(m, index, uri);
 		}
 	});
 });
