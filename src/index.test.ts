@@ -86,8 +86,8 @@ void describe('index', () => {
 		const {name} = JSON.parse(
 			await readFile(resolve(dir, '../package.json'), 'utf8')
 		);
-		const iIndex = await impire(name);
-		assertExported(iIndex, index, 'exports');
+		const m = await impire(name);
+		assertExported(m, index, 'exports');
 	});
 
 	void it('imports', async () => {
