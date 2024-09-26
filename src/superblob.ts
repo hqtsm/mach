@@ -55,6 +55,11 @@ export class SuperBlob extends Blob {
 	}
 
 	/**
+	 * @inheritdoc
+	 */
+	public static readonly sizeof: number = 12;
+
+	/**
 	 * Blob reference.
 	 */
 	public static readonly Blob = Blob;
