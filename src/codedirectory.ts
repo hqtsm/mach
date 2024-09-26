@@ -1,7 +1,6 @@
 import {Blob} from './blob.ts';
 import {CodeDirectoryScatter} from './codedirectoryscatter.ts';
 import {kSecCodeMagicCodeDirectory} from './const.ts';
-import type {ReadonlyUint8Array} from './type.ts';
 
 /**
  * Describes secured pieces of a program.
@@ -368,13 +367,13 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
-	 * Get slot for writing.
+	 * Get slot data view.
 	 *
 	 * @param slot Slot index.
 	 * @param preEncrypt Pre-encrypt version.
 	 * @returns Hash value, or null.
 	 */
-	public getSlotMutable(slot: number, preEncrypt: boolean) {
+	public getSlot(slot: number, preEncrypt: boolean) {
 		let offset;
 		if (preEncrypt) {
 			if (
@@ -392,20 +391,6 @@ export class CodeDirectory extends Blob {
 			this.byteOffset + offset + hashSize * slot,
 			hashSize
 		);
-	}
-
-	/**
-	 * Get slot for reading.
-	 *
-	 * @param slot Slot index.
-	 * @param preEncrypt Pre-encrypt version.
-	 * @returns Hash value, or null.
-	 */
-	public getSlot(slot: number, preEncrypt: boolean) {
-		return this.getSlotMutable(
-			slot,
-			preEncrypt
-		) satisfies ReadonlyUint8Array | null;
 	}
 
 	/**

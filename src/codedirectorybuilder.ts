@@ -422,15 +422,15 @@ export class CodeDirectoryBuilder {
 		for (let i = 1; i <= specialSlots; i++) {
 			const hash = this.getSpecialSlot(i);
 			if (hash) {
-				dir.getSlotMutable(-i, false)!.set(hash);
+				dir.getSlot(-i, false)!.set(hash);
 			}
 		}
 		for (let i = 0; i < codeSlots; i++) {
 			const hash = this.getCodeSlot(i);
 			if (hash) {
-				dir.getSlotMutable(i, false)!.set(hash);
+				dir.getSlot(i, false)!.set(hash);
 				if (gpec) {
-					dir.getSlotMutable(i, true)!.set(hash);
+					dir.getSlot(i, true)!.set(hash);
 				}
 			}
 		}
