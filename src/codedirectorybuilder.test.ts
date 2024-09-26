@@ -11,15 +11,11 @@ import {
 } from './util.spec.ts';
 import {CodeDirectory} from './codedirectory.ts';
 import {cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot} from './const.ts';
-import type {ReadonlyUint8Array} from './type.ts';
 import {CodeDirectoryBuilder} from './codedirectorybuilder.ts';
 
 const emptyRequirements = unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00');
 
-async function addCodeHashes(
-	cd: CodeDirectoryBuilder,
-	macho: ReadonlyUint8Array
-) {
+async function addCodeHashes(cd: CodeDirectoryBuilder, macho: Uint8Array) {
 	const {pageSize} = cd;
 	const hashes = await chunkedHashes(
 		cd.hashType,
