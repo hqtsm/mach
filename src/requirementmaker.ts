@@ -209,6 +209,24 @@ export class RequirementMaker {
 	}
 
 	/**
+	 * Set kind.
+	 *
+	 * @param kind Requirement kind.
+	 */
+	public kind(kind: number) {
+		new this.constructor.Requirement(this.#buffer).kind = kind;
+	}
+
+	/**
+	 * Get length of Requirement currently defined.
+	 *
+	 * @returns Byte length.
+	 */
+	public length() {
+		return this.#pc;
+	}
+
+	/**
 	 * Make requirement.
 	 *
 	 * @returns Requirement instance.
