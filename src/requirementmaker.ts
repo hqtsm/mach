@@ -1,4 +1,16 @@
+import {
+	opAnchorHash,
+	opAppleAnchor,
+	opAppleGenericAnchor,
+	opCDHash,
+	opIdent,
+	opInfoKeyValue,
+	opPlatform,
+	opTrustedCert,
+	opTrustedCerts
+} from './const.ts';
 import {Requirement} from './requirement.ts';
+import type {BufferView} from './type.ts';
 import {alignUp} from './util.ts';
 
 /**
@@ -47,6 +59,155 @@ export class RequirementMaker {
 		const a = new Uint8Array(this.#data, this.#pc, size);
 		this.#pc += usedSize;
 		return a;
+	}
+
+	/**
+	 * Put data without length.
+	 *
+	 * @param data Buffer view, or uint32.
+	 */
+	public put(data: Readonly<BufferView> | number) {
+		if (typeof data === 'number') {
+			const a = this.alloc(4);
+			new DataView(a.buffer, a.byteOffset, 4).setUint32(0, data);
+		} else {
+			const d = new Uint8Array(
+				data.buffer,
+				data.byteOffset,
+				data.byteLength
+			);
+			this.alloc(d.byteLength).set(d);
+		}
+	}
+
+	/**
+	 * Put data with length.
+	 *
+	 * @param data Buffer view.
+	 * @param length Length in bytes, null for view byte length.
+	 */
+	public putData(data: Readonly<BufferView>, length: number | null = null) {
+		const a = new Uint8Array(
+			data.buffer,
+			data.byteOffset,
+			length ?? data.byteLength
+		);
+		this.put(a.byteLength);
+		this.put(data);
+	}
+
+	/**
+	 * Anchor Apple.
+	 */
+	public anchor() {
+		this.put(opAppleAnchor);
+	}
+
+	/**
+	 * Anchor Apple generic.
+	 */
+	public anchorGeneric() {
+		this.put(opAppleGenericAnchor);
+	}
+
+	/**
+	 * Anchor hash.
+	 *
+	 * @param slot Slot index.
+	 * @param digest SHA1 digest.
+	 */
+	public anchorDigest(slot: number, digest: Readonly<BufferView>) {
+		this.put(opAnchorHash);
+		this.put(slot);
+		// SHA1 digest length:
+		this.putData(digest, 20);
+	}
+
+	/**
+	 * Trusted anchor.
+	 *
+	 * @param slot Slot index or null.
+	 */
+	public trustedAnchor(slot: number | null = null) {
+		if (slot === null) {
+			this.put(opTrustedCerts);
+		} else {
+			this.put(opTrustedCert);
+			this.put(slot);
+		}
+	}
+
+	/**
+	 * Put info key value.
+	 *
+	 * @param key Key string.
+	 * @param value Value string.
+	 */
+	public infoKey(key: Readonly<Uint8Array>, value: Readonly<Uint8Array>) {
+		this.put(opInfoKeyValue);
+		this.putData(key);
+		this.putData(value);
+	}
+
+	/**
+	 * Put identifier.
+	 *
+	 * @param identifier Identifier string.
+	 */
+	public ident(identifier: Readonly<Uint8Array>) {
+		this.put(opIdent);
+		this.putData(identifier);
+	}
+
+	/**
+	 * Put code directory hash.
+	 *
+	 * @param digest Hash digest.
+	 */
+	public cdhash(digest: Readonly<BufferView>) {
+		this.put(opCDHash);
+		this.putData(digest);
+	}
+
+	/**
+	 * Put platform identifier.
+	 *
+	 * @param platformIdentifier Platform identifier.
+	 */
+	public platform(platformIdentifier: number) {
+		this.put(opPlatform);
+		this.put(platformIdentifier);
+	}
+
+	/**
+	 * Copy data.
+	 *
+	 * @param data Buffer view.
+	 * @param length Length in bytes, null for view byte length.
+	 */
+	public copy(data: Readonly<BufferView>, length: number | null = null) {
+		const d = new Uint8Array(
+			data.buffer,
+			data.byteOffset,
+			length ?? data.byteLength
+		);
+		this.alloc(d.byteLength).set(d);
+	}
+
+	/**
+	 * Copy requirement (embed).
+	 *
+	 * @param req Requirement.
+	 */
+	public copyRequirement(
+		req: this['constructor']['Requirement']['prototype']
+	) {
+		const {constructor: Requirement, kind} = req;
+		if (kind !== Requirement.exprForm) {
+			throw new Error(`Unsupported requirement kind: ${kind}`);
+		}
+		const {sizeof} = Requirement;
+		this.copy(req.at(sizeof), req.length - sizeof);
 	}
 
 	/**
