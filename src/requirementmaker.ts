@@ -199,9 +199,7 @@ export class RequirementMaker {
 	 *
 	 * @param req Requirement.
 	 */
-	public copyRequirement(
-		req: this['constructor']['Requirement']['prototype']
-	) {
+	public copyRequirement(req: Requirement) {
 		const {constructor: Requirement, kind} = req;
 		if (kind !== Requirement.exprForm) {
 			throw new Error(`Unsupported requirement kind: ${kind}`);
