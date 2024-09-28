@@ -22,7 +22,7 @@ export class RequirementMaker {
 	/**
 	 * Buffer of allocated bytes.
 	 */
-	#data: ArrayBuffer;
+	#buffer: ArrayBuffer;
 
 	/**
 	 * Current position in buffer.
@@ -40,7 +40,7 @@ export class RequirementMaker {
 		const r = new Requirement(buffer);
 		r.magic = Requirement.typeMagic;
 		r.kind = kind;
-		this.#data = buffer;
+		this.#buffer = buffer;
 		this.#pc = Requirement.sizeof;
 	}
 
@@ -56,7 +56,7 @@ export class RequirementMaker {
 			this.constructor.Requirement.baseAlignment
 		);
 		this.require(usedSize);
-		const a = new Uint8Array(this.#data, this.#pc, size);
+		const a = new Uint8Array(this.#buffer, this.#pc, size);
 		this.#pc += usedSize;
 		return a;
 	}
@@ -216,7 +216,7 @@ export class RequirementMaker {
 	 * @returns Requirement instance.
 	 */
 	public make() {
-		const r = new this.constructor.Requirement(this.#data);
+		const r = new this.constructor.Requirement(this.#buffer);
 		r.length = this.#pc;
 		return r;
 	}
@@ -227,7 +227,7 @@ export class RequirementMaker {
 	 * @param size Number of bytes required.
 	 */
 	protected require(size: number) {
-		const data = this.#data;
+		const data = this.#buffer;
 		const pc = this.#pc;
 		let total = data.byteLength;
 		if (pc + size > total) {
@@ -237,7 +237,7 @@ export class RequirementMaker {
 			}
 			const d = new ArrayBuffer(total);
 			new Uint8Array(d).set(new Uint8Array(data));
-			this.#data = d;
+			this.#buffer = d;
 		}
 	}
 
