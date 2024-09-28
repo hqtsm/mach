@@ -77,6 +77,16 @@ export class Blob extends Struct {
 	}
 
 	/**
+	 * Get view of data at offset.
+	 *
+	 * @param offset Byte offset.
+	 * @returns Data view.
+	 */
+	public at(offset: number) {
+		return new DataView(this.buffer, this.byteOffset + offset);
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public static readonly sizeof: number = 8;
