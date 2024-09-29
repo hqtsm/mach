@@ -16,7 +16,8 @@ function fibinacci(n: number) {
 }
 
 void describe('requirementmaker', () => {
-	void it('identifier "com.apple.simple"', () => {
+	void it('alloc', () => {
+		// identifier "com.apple.simple"
 		const data = unhex(
 			'00 00 00 02',
 			'00 00 00 10',
@@ -36,7 +37,7 @@ void describe('requirementmaker', () => {
 		);
 	});
 
-	void it('grow fibonacci', () => {
+	void it('alloc grow fibonacci', () => {
 		const rm = new RequirementMaker(Requirement.lwcrForm);
 		for (const size of fibinacci(25)) {
 			const d = new Uint8Array(size);
@@ -50,7 +51,7 @@ void describe('requirementmaker', () => {
 		strictEqual(dv.getUint32(8), Requirement.lwcrForm);
 	});
 
-	void it('grow fast', () => {
+	void it('alloc grow fast', () => {
 		const rm = new RequirementMaker(Requirement.lwcrForm);
 		for (const size of [0xff, 0xfff, 0xffff, 0xfffff, 0xffffff]) {
 			const d = new Uint8Array(size);
