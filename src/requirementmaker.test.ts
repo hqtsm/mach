@@ -93,10 +93,7 @@ void describe('requirementmaker', () => {
 		);
 		const maker = new RequirementMaker(Requirement.exprForm);
 
-		const and = RequirementMakerChain.new().RequirementMakerChain(
-			maker,
-			opAnd
-		);
+		const and = new RequirementMakerChain(maker, opAnd);
 		maker.anchor();
 		and.add();
 		maker.ident(new TextEncoder().encode('com.apple.simple'));
@@ -120,10 +117,7 @@ void describe('requirementmaker', () => {
 		);
 		const maker = new RequirementMaker(Requirement.exprForm);
 
-		const or = RequirementMakerChain.new().RequirementMakerChain(
-			maker,
-			opOr
-		);
+		const or = new RequirementMakerChain(maker, opOr);
 		maker.ident(new TextEncoder().encode('com.apple.simple'));
 		or.add();
 		maker.anchorGeneric();
@@ -155,13 +149,10 @@ void describe('requirementmaker', () => {
 		);
 		const maker = new RequirementMaker(Requirement.exprForm);
 
-		const or = RequirementMakerChain.new().RequirementMakerChain(
-			maker,
-			opOr
-		);
+		const or = new RequirementMakerChain(maker, opOr);
 		let and;
 
-		and = RequirementMakerChain.new().RequirementMakerChain(maker, opAnd);
+		and = new RequirementMakerChain(maker, opAnd);
 		maker.ident(new TextEncoder().encode('com.apple.app'));
 		and.add();
 		maker.anchor();
@@ -169,7 +160,7 @@ void describe('requirementmaker', () => {
 
 		or.add();
 
-		and = RequirementMakerChain.new().RequirementMakerChain(maker, opAnd);
+		and = new RequirementMakerChain(maker, opAnd);
 		maker.ident(new TextEncoder().encode('com.apple.gen'));
 		and.add();
 		maker.anchorGeneric();
@@ -203,13 +194,10 @@ void describe('requirementmaker', () => {
 		);
 		const maker = new RequirementMaker(Requirement.exprForm);
 
-		const and = RequirementMakerChain.new().RequirementMakerChain(
-			maker,
-			opAnd
-		);
+		const and = new RequirementMakerChain(maker, opAnd);
 		let or;
 
-		or = RequirementMakerChain.new().RequirementMakerChain(maker, opOr);
+		or = new RequirementMakerChain(maker, opOr);
 		maker.ident(new TextEncoder().encode('com.apple.app'));
 		or.add();
 		maker.anchor();
@@ -217,7 +205,7 @@ void describe('requirementmaker', () => {
 
 		and.add();
 
-		or = RequirementMakerChain.new().RequirementMakerChain(maker, opOr);
+		or = new RequirementMakerChain(maker, opOr);
 		maker.ident(new TextEncoder().encode('com.apple.gen'));
 		or.add();
 		maker.anchorGeneric();

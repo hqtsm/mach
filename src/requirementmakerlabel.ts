@@ -1,43 +1,25 @@
 import type {RequirementMaker} from './requirementmaker.ts';
-import {Struct} from './struct.ts';
 
 /**
  * RequirementMaker label.
  */
-export class RequirementMakerLabel extends Struct {
-	public declare readonly ['constructor']: typeof RequirementMakerLabel;
+export class RequirementMakerLabel {
+	public declare readonly ['constructor']: Omit<
+		typeof RequirementMakerLabel,
+		'new'
+	>;
 
 	/**
-	 * Get position.
-	 *
-	 * @returns Byte offset.
+	 * Label position.
 	 */
-	public get pos() {
-		return this.dataView.getUint32(0);
-	}
+	public pos: number;
 
 	/**
-	 * Set position.
+	 * Label constructor.
 	 *
-	 * @param value Byte offset.
+	 * @param maker Maker reference.
 	 */
-	public set pos(value: number) {
-		this.dataView.setUint32(0, value);
-	}
-
-	/**
-	 * RequirementMakerLabel constructor.
-	 *
-	 * @param maker RequirementMaker instance.
-	 * @returns This.
-	 */
-	public RequirementMakerLabel(maker: Readonly<RequirementMaker>) {
+	constructor(maker: Readonly<RequirementMaker>) {
 		this.pos = maker.length;
-		return this;
 	}
-
-	/**
-	 * Size of new instance.
-	 */
-	public static readonly sizeof: number = 4;
 }
