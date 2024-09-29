@@ -2,7 +2,7 @@ import type {RequirementMaker} from './requirementmaker.ts';
 import {Struct} from './struct.ts';
 
 /**
- * RequirementMakerLabel Label.
+ * RequirementMaker label.
  */
 export class RequirementMakerLabel extends Struct {
 	public declare readonly ['constructor']: typeof RequirementMakerLabel;
