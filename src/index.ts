@@ -14,6 +14,7 @@ export * from './launchconstraintblob.ts';
 export * from './requirement.ts';
 export * from './requirementmaker.ts';
 export * from './requirementmakerlabel.ts';
+export * from './requirementmakerchain.ts';
 export * from './superblob.ts';
 export * from './superblobmaker.ts';
 export * from './requirements.ts';
