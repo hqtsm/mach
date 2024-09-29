@@ -19,10 +19,12 @@ void describe('requirementsmaker', () => {
 	});
 
 	void it('host + designated', () => {
+		// anchor apple and identifier com.apple.host
 		const hostData = unhex(
 			'00 00 00 01 00 00 00 02 00 00 00 0E',
 			'63 6F 6D 2E 61 70 70 6C 65 2E 68 6F 73 74 00 00'
 		);
+		// anchor apple and identifier com.apple.designated
 		const designatedData = unhex(
 			'00 00 00 01 00 00 00 02 00 00 00 14',
 			'63 6F 6D 2E 61 70 70 6C 65 2E 64 65 73 69 67 6E 61 74 65 64'
