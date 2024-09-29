@@ -222,7 +222,7 @@ export class RequirementMaker {
 	 *
 	 * @returns Byte length.
 	 */
-	public length() {
+	public get length() {
 		return this.#pc;
 	}
 
