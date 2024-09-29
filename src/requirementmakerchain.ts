@@ -65,7 +65,6 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	 * @returns This.
 	 */
 	public RequirementMakerChain(maker: RequirementMaker, op: number) {
-		// eslint-disable-next-line new-cap
 		this.RequirementMakerLabel(maker);
 		this.#maker = maker;
 		this.#joiner = op;

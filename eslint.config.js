@@ -145,7 +145,7 @@ export default [
 			],
 			'max-nested-callbacks': ['error', 4],
 			'max-params': ['error', 8],
-			'new-cap': 'error',
+			'new-cap': 'off',
 			'no-bitwise': 'error',
 			'no-inline-comments': 'error',
 			'no-lonely-if': 'error',

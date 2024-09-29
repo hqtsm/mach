@@ -1,4 +1,3 @@
-/* eslint-disable new-cap */
 /* eslint-disable no-bitwise */
 /* eslint-disable jsdoc/require-jsdoc */
 /* eslint-disable @typescript-eslint/naming-convention */
