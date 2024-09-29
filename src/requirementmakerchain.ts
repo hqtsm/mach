@@ -94,18 +94,4 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	 * Size of new instance.
 	 */
 	public static readonly sizeof: number = 24;
-
-	/**
-	 * RequirementMakerChain constructor.
-	 *
-	 * @param maker RequirementMaker instance.
-	 * @param op ExprOp code.
-	 * @returns New instance.
-	 */
-	public static newRequirementMakerChain(
-		maker: RequirementMaker,
-		op: number
-	) {
-		return this.new().RequirementMakerChain(maker, op);
-	}
 }

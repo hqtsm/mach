@@ -40,14 +40,4 @@ export class RequirementMakerLabel extends Struct {
 	 * Size of new instance.
 	 */
 	public static readonly sizeof: number = 4;
-
-	/**
-	 * RequirementMakerLabel constructor.
-	 *
-	 * @param maker RequirementMaker instance.
-	 * @returns This.
-	 */
-	public static newRequirementMakerLabel(maker: Readonly<RequirementMaker>) {
-		return this.new().RequirementMakerLabel(maker);
-	}
 }
