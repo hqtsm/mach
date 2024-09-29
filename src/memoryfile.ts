@@ -12,7 +12,7 @@ import {ranged} from './util.ts';
  * In-memory file-like object.
  */
 export class MemoryFile implements FileLike {
-	public declare readonly ['constructor']: typeof MemoryFile;
+	public declare readonly ['constructor']: Omit<typeof MemoryFile, 'new'>;
 
 	/**
 	 * Data blocks.
