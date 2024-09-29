@@ -19,6 +19,40 @@ export interface BufferView {
 }
 
 /**
+ * Buffer pointer.
+ */
+export interface BufferPointer {
+	/**
+	 * Array buffer.
+	 */
+	readonly buffer: ArrayBuffer;
+
+	/**
+	 * Byte offset.
+	 */
+	readonly byteOffset: number;
+}
+
+/**
+ * New type sized constructor.
+ */
+export interface Newt<T> {
+	new (buffer: ArrayBuffer): T;
+
+	readonly sizeof: number;
+}
+
+/**
+ * Cast type sized constructor.
+ */
+export interface Cast<T> {
+	/**
+	 * Cast new instance from existing memory.
+	 */
+	new (buffer: ArrayBuffer, byteOffset?: number): T;
+}
+
+/**
  * File stat.
  */
 export interface FileLikeStat {

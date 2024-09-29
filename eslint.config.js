@@ -337,7 +337,7 @@ export default [
 			],
 			'@typescript-eslint/no-use-before-define': ['error', 'nofunc'],
 			'@typescript-eslint/prefer-for-of': 'error',
-			'@typescript-eslint/prefer-function-type': 'error',
+			'@typescript-eslint/prefer-function-type': 'off',
 			'@typescript-eslint/unified-signatures': 'error',
 			'@typescript-eslint/no-confusing-non-null-assertion': 'error',
 

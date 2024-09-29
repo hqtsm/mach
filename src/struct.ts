@@ -58,28 +58,4 @@ export class Struct implements BufferView {
 	 * Size of new instance.
 	 */
 	public static readonly sizeof: number = 0;
-
-	/**
-	 * Create new instance from new memory.
-	 *
-	 * @param this This.
-	 * @returns New instance.
-	 */
-	public static new<T extends typeof Struct>(this: T): T['prototype'] {
-		return new this(new ArrayBuffer(this.sizeof));
-	}
-
-	/**
-	 * Create new instance from existing memory.
-	 *
-	 * @param this This.
-	 * @param data Data view.
-	 * @returns New instance.
-	 */
-	public static cast<T extends typeof Struct>(
-		this: T,
-		data: BufferView
-	): T['prototype'] {
-		return new this(data.buffer, data.byteOffset);
-	}
 }
