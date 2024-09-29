@@ -26,7 +26,7 @@ export function ranged(i: number, l: number, h: number) {
 }
 
 /**
- * Create new instance of a sized type with new memory.
+ * Create new instance of a sized type with clean memory.
  *
  * @param Constructor Constructor with sizeof property.
  * @returns New instance.
