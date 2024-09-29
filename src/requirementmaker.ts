@@ -10,6 +10,7 @@ import {
 	opTrustedCerts
 } from './const.ts';
 import {Requirement} from './requirement.ts';
+import type {RequirementMakerLabel} from './requirementmakerlabel.ts';
 import type {BufferView} from './type.ts';
 import {alignUp} from './util.ts';
 
@@ -206,6 +207,27 @@ export class RequirementMaker {
 		}
 		const {sizeof} = Requirement;
 		this.copy(req.at(sizeof), req.length - sizeof);
+	}
+
+	/**
+	 * Insert data.
+	 *
+	 * @param label Label instance.
+	 * @param length Byte length.
+	 * @returns View of source data.
+	 */
+	public insert(label: Readonly<RequirementMakerLabel>, length = 4) {
+		const {pos} = label;
+		const req = new this.constructor.Requirement(this.#buffer);
+		this.require(length);
+		const len = this.#pc - pos;
+		const reqDest = req.at(pos + length);
+		const reqSrc = req.at(pos);
+		new Uint8Array(reqDest.buffer, reqDest.byteOffset, len).set(
+			new Uint8Array(reqSrc.buffer, reqSrc.byteOffset, len)
+		);
+		this.#pc += length;
+		return reqSrc;
 	}
 
 	/**
