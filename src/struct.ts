@@ -76,7 +76,7 @@ export class Struct implements BufferView {
 	 * @param data Data view.
 	 * @returns New instance.
 	 */
-	public static from<T extends typeof Struct>(
+	public static cast<T extends typeof Struct>(
 		this: T,
 		data: BufferView
 	): T['prototype'] {
