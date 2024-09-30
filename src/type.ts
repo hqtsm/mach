@@ -1,11 +1,16 @@
 /**
+ * Array buffer type, excluding similar incompatible types like typed arrays.
+ */
+export type ArrayBufferReal = ArrayBufferLike & {BYTES_PER_ELEMENT?: never};
+
+/**
  * Buffer view.
  */
 export interface BufferView {
 	/**
 	 * Array buffer.
 	 */
-	readonly buffer: ArrayBufferLike;
+	readonly buffer: ArrayBufferReal;
 
 	/**
 	 * Byte length.
@@ -25,7 +30,7 @@ export interface BufferPointer {
 	/**
 	 * Array buffer.
 	 */
-	readonly buffer: ArrayBufferLike;
+	readonly buffer: ArrayBufferReal;
 
 	/**
 	 * Byte offset.
@@ -37,8 +42,14 @@ export interface BufferPointer {
  * New type sized constructor.
  */
 export interface Newt<T> {
-	new (buffer: ArrayBufferLike): T;
+	/**
+	 * Create new instance from existing memory.
+	 */
+	new (buffer: ArrayBufferReal, byteOffset?: number): T;
 
+	/**
+	 * Byte size of type.
+	 */
 	readonly sizeof: number;
 }
 
@@ -49,7 +60,7 @@ export interface Cast<T> {
 	/**
 	 * Cast new instance from existing memory.
 	 */
-	new (buffer: ArrayBufferLike, byteOffset?: number): T;
+	new (buffer: ArrayBufferReal, byteOffset?: number): T;
 }
 
 /**

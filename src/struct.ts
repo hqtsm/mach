@@ -1,4 +1,4 @@
-import type {BufferView} from './type.ts';
+import type {BufferView, ArrayBufferReal} from './type.ts';
 
 /**
  * Binary structure buffer view.
@@ -17,10 +17,7 @@ export class Struct implements BufferView {
 	 * @param buffer Buffer data.
 	 * @param byteOffset Byte offset into buffer.
 	 */
-	constructor(
-		buffer: ConstructorParameters<typeof DataView>[0],
-		byteOffset = 0
-	) {
+	constructor(buffer: ArrayBufferReal, byteOffset = 0) {
 		this.#data = new DataView(buffer, byteOffset);
 	}
 
