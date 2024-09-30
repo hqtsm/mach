@@ -9,6 +9,8 @@ import {
 } from './const.ts';
 import type {BufferView} from './type.ts';
 
+type TypeofCodeDirectory = typeof CodeDirectory;
+
 /**
  * Builder for building CodeDirectories from pieces.
  */
@@ -446,10 +448,11 @@ export class CodeDirectoryBuilder {
 	 * @param version Compatibility version.
 	 * @returns Byte size.
 	 */
-	public static fixedSize<T extends Omit<typeof CodeDirectoryBuilder, 'new'>>(
-		this: T,
-		version: number
-	) {
+	public static fixedSize<
+		T extends {
+			CodeDirectory: TypeofCodeDirectory;
+		}
+	>(this: T, version: number) {
 		const {CodeDirectory} = this;
 		let size = CodeDirectory.sizeof;
 		if (version < CodeDirectory.supportsPreEncrypt) {
