@@ -9,8 +9,6 @@ import {
 } from './const.ts';
 import type {BufferView} from './type.ts';
 
-type TypeofCodeDirectory = typeof CodeDirectory;
-
 /**
  * Builder for building CodeDirectories from pieces.
  */
@@ -449,9 +447,7 @@ export class CodeDirectoryBuilder {
 	 * @returns Byte size.
 	 */
 	public static fixedSize<
-		T extends {
-			CodeDirectory: TypeofCodeDirectory;
-		}
+		T extends Pick<typeof CodeDirectoryBuilder, 'CodeDirectory'>
 	>(this: T, version: number) {
 		const {CodeDirectory} = this;
 		let size = CodeDirectory.sizeof;
