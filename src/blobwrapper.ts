@@ -1,11 +1,12 @@
 import {Blob} from './blob.ts';
+import {BlobCore} from './blobcore.ts';
 import {CSMAGIC_BLOBWRAPPER} from './const.ts';
 import type {BufferView} from './type.ts';
 
 /**
  * Generic blob wrapping arbitrary binary data.
  */
-export class BlobWrapper extends Blob {
+export class BlobWrapper extends Blob(CSMAGIC_BLOBWRAPPER) {
 	public declare readonly ['constructor']: typeof BlobWrapper;
 
 	/**
@@ -39,21 +40,16 @@ export class BlobWrapper extends Blob {
 	}
 
 	/**
-	 * @inheritdoc
-	 */
-	public static readonly typeMagic: number = CSMAGIC_BLOBWRAPPER;
-
-	/**
 	 * Wrap data into a new blob.
 	 *
 	 * @param content Data to wrap, or number of bytes.
-	 * @param magic Magic number, or null for default.
+	 * @param magic Magic number.
 	 * @returns Blob.
 	 */
 	public static alloc<T extends typeof BlobWrapper>(
 		this: T,
 		content: Readonly<BufferView> | number = 0,
-		magic: number | null = null
+		magic: number = BlobWrapper.typeMagic
 	): T['prototype'] {
 		let view;
 		let size = 8;
@@ -69,7 +65,7 @@ export class BlobWrapper extends Blob {
 		}
 		const buffer = new ArrayBuffer(size);
 		const blob = new this(buffer);
-		blob.initialize(size, magic);
+		BlobCore.prototype.initialize.call(blob, magic, size);
 		if (view) {
 			new Uint8Array(buffer, 8).set(view);
 		}

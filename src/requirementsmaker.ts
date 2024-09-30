@@ -4,14 +4,9 @@ import {SuperBlobMaker} from './superblobmaker.ts';
 /**
  * SuperBlob maker for Requirements.
  */
-export class RequirementsMaker extends SuperBlobMaker {
+export class RequirementsMaker extends SuperBlobMaker(Requirements) {
 	public declare readonly ['constructor']: Omit<
 		typeof RequirementsMaker,
 		'new'
 	>;
-
-	/**
-	 * SuperBlob reference.
-	 */
-	public static readonly SuperBlob = Requirements;
 }

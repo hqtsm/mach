@@ -4,7 +4,7 @@ import {kSecCodeMagicEntitlementDER} from './const.ts';
 /**
  * For embedding entitlement configuration data, in DER format.
  */
-export class EntitlementDERBlob extends Blob {
+export class EntitlementDERBlob extends Blob(kSecCodeMagicEntitlementDER) {
 	public declare readonly ['constructor']: typeof EntitlementDERBlob;
 
 	/**
@@ -24,9 +24,4 @@ export class EntitlementDERBlob extends Blob {
 	public get derLength() {
 		return this.length - 8;
 	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public static readonly typeMagic: number = kSecCodeMagicEntitlementDER;
 }

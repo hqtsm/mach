@@ -1,66 +1,78 @@
 import {Blob} from './blob.ts';
+import {BlobCore} from './blobcore.ts';
 
 /**
- * Multiple Blobs wrapped in a single indexed blob.
+ * SuperBlob class template.
+ *
+ * @param _magic Type magic number.
+ * @returns SuperBlob class.
  */
-export class SuperBlob extends Blob {
-	public declare readonly ['constructor']: typeof SuperBlob;
-
+export const SuperBlob = (_magic: number) =>
+	//
 	/**
-	 * Get type of index.
-	 *
-	 * @param index Index.
-	 * @returns Type.
+	 * Multiple Blobs wrapped in a single indexed blob.
 	 */
-	public type(index: number) {
-		return this.dataView.getUint32(12 + 8 * index);
-	}
+	class SuperBlob extends Blob(_magic) {
+		public declare readonly ['constructor']: typeof SuperBlob;
 
-	/**
-	 * Get blob at index.
-	 *
-	 * @param index Index.
-	 * @returns Blob or null if no offset in index.
-	 */
-	public blob(index: number) {
-		const offset = this.dataView.getUint32(16 + 8 * index);
-		return offset
-			? new this.constructor.Blob(this.buffer, this.byteOffset + offset)
-			: null;
-	}
-
-	/**
-	 * Find blob by type.
-	 *
-	 * @param type Index type.
-	 * @returns First match or null.
-	 */
-	public find(type: number) {
-		const {count} = this;
-		for (let i = 0; i < count; i++) {
-			if (this.type(i) === type) {
-				return this.blob(i);
-			}
+		/**
+		 * Get type of index.
+		 *
+		 * @param index Index.
+		 * @returns Type.
+		 */
+		public type(index: number) {
+			return this.dataView.getUint32(12 + 8 * index);
 		}
-		return null;
-	}
 
-	/**
-	 * Number of blobs in super blob.
-	 *
-	 * @returns Blobs count.
-	 */
-	public get count() {
-		return this.dataView.getUint32(8);
-	}
+		/**
+		 * Get blob at index.
+		 *
+		 * @param index Index.
+		 * @returns Blob or null if no offset in index.
+		 */
+		public blob(index: number) {
+			const offset = this.dataView.getUint32(16 + 8 * index);
+			return offset
+				? new this.constructor.BlobCore(
+						this.buffer,
+						this.byteOffset + offset
+					)
+				: null;
+		}
 
-	/**
-	 * @inheritdoc
-	 */
-	public static readonly sizeof: number = 12;
+		/**
+		 * Find blob by type.
+		 *
+		 * @param type Index type.
+		 * @returns First match or null.
+		 */
+		public find(type: number) {
+			const {count} = this;
+			for (let i = 0; i < count; i++) {
+				if (this.type(i) === type) {
+					return this.blob(i);
+				}
+			}
+			return null;
+		}
 
-	/**
-	 * Blob reference.
-	 */
-	public static readonly Blob = Blob;
-}
+		/**
+		 * Number of blobs in super blob.
+		 *
+		 * @returns Blobs count.
+		 */
+		public get count() {
+			return this.dataView.getUint32(8);
+		}
+
+		/**
+		 * @inheritdoc
+		 */
+		public static readonly sizeof: number = 12;
+
+		/**
+		 * BlobCore reference.
+		 */
+		public static readonly BlobCore = BlobCore;
+	};

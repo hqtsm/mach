@@ -5,11 +5,8 @@ import {SuperBlob} from './superblob.ts';
  * Multiple architecture EmbeddedSignatureBlobs for Mach-O detached signatures.
  * Indexed by main architecture.
  */
-export class DetachedSignatureBlob extends SuperBlob {
+export class DetachedSignatureBlob extends SuperBlob(
+	kSecCodeMagicDetachedSignature
+) {
 	public declare readonly ['constructor']: typeof DetachedSignatureBlob;
-
-	/**
-	 * Type magic number for new instance.
-	 */
-	public static readonly typeMagic: number = kSecCodeMagicDetachedSignature;
 }

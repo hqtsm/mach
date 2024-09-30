@@ -4,11 +4,6 @@ import {SuperBlob} from './superblob.ts';
 /**
  * Requirement groups indexed by SecRequirementType.
  */
-export class Requirements extends SuperBlob {
+export class Requirements extends SuperBlob(kSecCodeMagicRequirementSet) {
 	public declare readonly ['constructor']: typeof Requirements;
-
-	/**
-	 * Type magic number for new instance.
-	 */
-	public static readonly typeMagic: number = kSecCodeMagicRequirementSet;
 }

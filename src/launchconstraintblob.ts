@@ -4,7 +4,7 @@ import {kSecCodeMagicLaunchConstraint} from './const.ts';
 /**
  * Launch constraint in DER format.
  */
-export class LaunchConstraintBlob extends Blob {
+export class LaunchConstraintBlob extends Blob(kSecCodeMagicLaunchConstraint) {
 	public declare readonly ['constructor']: typeof LaunchConstraintBlob;
 
 	/**
@@ -24,9 +24,4 @@ export class LaunchConstraintBlob extends Blob {
 	public get derLength() {
 		return this.length - 8;
 	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public static readonly typeMagic: number = kSecCodeMagicLaunchConstraint;
 }

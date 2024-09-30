@@ -4,14 +4,11 @@ import {SuperBlobMaker} from './superblobmaker.ts';
 /**
  * SuperBlob maker for EmbeddedSignatureBlob.
  */
-export class EmbeddedSignatureBlobMaker extends SuperBlobMaker {
+export class EmbeddedSignatureBlobMaker extends SuperBlobMaker(
+	EmbeddedSignatureBlob
+) {
 	public declare readonly ['constructor']: Omit<
 		typeof EmbeddedSignatureBlobMaker,
 		'new'
 	>;
-
-	/**
-	 * SuperBlob reference.
-	 */
-	public static readonly SuperBlob = EmbeddedSignatureBlob;
 }
