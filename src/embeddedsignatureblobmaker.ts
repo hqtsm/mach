@@ -5,7 +5,10 @@ import {SuperBlobMaker} from './superblobmaker.ts';
  * SuperBlob maker for EmbeddedSignatureBlob.
  */
 export class EmbeddedSignatureBlobMaker extends SuperBlobMaker {
-	public declare readonly ['constructor']: typeof EmbeddedSignatureBlobMaker;
+	public declare readonly ['constructor']: Omit<
+		typeof EmbeddedSignatureBlobMaker,
+		'new'
+	>;
 
 	/**
 	 * SuperBlob reference.

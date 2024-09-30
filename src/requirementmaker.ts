@@ -18,7 +18,10 @@ import {alignUp} from './util.ts';
  * For creating a new Requirement blob.
  */
 export class RequirementMaker {
-	public declare readonly ['constructor']: typeof RequirementMaker;
+	public declare readonly ['constructor']: Omit<
+		typeof RequirementMaker,
+		'new'
+	>;
 
 	/**
 	 * Buffer of allocated bytes.

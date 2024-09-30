@@ -5,7 +5,10 @@ import {SuperBlobMaker} from './superblobmaker.ts';
  * SuperBlob maker for LibraryDependencyBlob.
  */
 export class LibraryDependencyBlobMaker extends SuperBlobMaker {
-	public declare readonly ['constructor']: typeof LibraryDependencyBlobMaker;
+	public declare readonly ['constructor']: Omit<
+		typeof LibraryDependencyBlobMaker,
+		'new'
+	>;
 
 	/**
 	 * SuperBlob reference.

@@ -4,7 +4,7 @@ import {SuperBlob} from './superblob.ts';
  * SuperBlob maker.
  */
 export class SuperBlobMaker {
-	public declare readonly ['constructor']: typeof SuperBlobMaker;
+	public declare readonly ['constructor']: Omit<typeof SuperBlobMaker, 'new'>;
 
 	/**
 	 * Blobs in super blob.

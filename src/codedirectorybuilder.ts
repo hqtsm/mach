@@ -13,7 +13,10 @@ import type {BufferView} from './type.ts';
  * Builder for building CodeDirectories from pieces.
  */
 export class CodeDirectoryBuilder {
-	public declare readonly ['constructor']: typeof CodeDirectoryBuilder;
+	public declare readonly ['constructor']: Omit<
+		typeof CodeDirectoryBuilder,
+		'new'
+	>;
 
 	/**
 	 * Special slots.
@@ -443,7 +446,7 @@ export class CodeDirectoryBuilder {
 	 * @param version Compatibility version.
 	 * @returns Byte size.
 	 */
-	public static fixedSize<T extends typeof CodeDirectoryBuilder>(
+	public static fixedSize<T extends Omit<typeof CodeDirectoryBuilder, 'new'>>(
 		this: T,
 		version: number
 	) {
