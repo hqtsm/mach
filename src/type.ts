@@ -5,7 +5,7 @@ export interface BufferView {
 	/**
 	 * Array buffer.
 	 */
-	readonly buffer: ArrayBuffer;
+	readonly buffer: ArrayBufferLike;
 
 	/**
 	 * Byte length.
@@ -25,7 +25,7 @@ export interface BufferPointer {
 	/**
 	 * Array buffer.
 	 */
-	readonly buffer: ArrayBuffer;
+	readonly buffer: ArrayBufferLike;
 
 	/**
 	 * Byte offset.
@@ -37,7 +37,7 @@ export interface BufferPointer {
  * New type sized constructor.
  */
 export interface Newt<T> {
-	new (buffer: ArrayBuffer): T;
+	new (buffer: ArrayBufferLike): T;
 
 	readonly sizeof: number;
 }
@@ -49,7 +49,7 @@ export interface Cast<T> {
 	/**
 	 * Cast new instance from existing memory.
 	 */
-	new (buffer: ArrayBuffer, byteOffset?: number): T;
+	new (buffer: ArrayBufferLike, byteOffset?: number): T;
 }
 
 /**
