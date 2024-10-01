@@ -4,6 +4,7 @@ import {deepStrictEqual, strictEqual} from 'node:assert';
 import {unhex} from './util.spec.ts';
 import {kSecCodeMagicEntitlementDER} from './const.ts';
 import {EntitlementDERBlob} from './entitlementderblob.ts';
+import {cast} from './util.ts';
 
 void describe('entitlementderblob', () => {
 	void it('empty (invalid?)', () => {
@@ -19,7 +20,7 @@ void describe('entitlementderblob', () => {
 
 	void it('data', () => {
 		const data = unhex('01 02 03 04 05 06 07 08 F0 F1 F2 F3 F4 F5 F6 F7');
-		const edb = EntitlementDERBlob.blobify(data);
+		const edb = cast(EntitlementDERBlob, EntitlementDERBlob.blobify(data));
 		const dv = new DataView(edb.buffer, edb.byteOffset, edb.byteLength);
 		strictEqual(dv.getUint32(0), kSecCodeMagicEntitlementDER);
 		strictEqual(dv.getUint32(4), edb.byteLength);

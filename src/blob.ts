@@ -21,7 +21,7 @@ export const Blob = (_magic: number) =>
 		 * @param size Length.
 		 */
 		public initialize2(size = 0) {
-			this.initialize(this.constructor.typeMagic, size);
+			this.initialize(_magic, size);
 		}
 
 		/**
@@ -37,10 +37,7 @@ export const Blob = (_magic: number) =>
 		 * @param content Data to wrap, or number of bytes.
 		 * @returns Blob.
 		 */
-		public static blobify<T extends typeof Blob>(
-			this: T,
-			content: Readonly<BufferView> | number = 0
-		): T['prototype'] {
+		public static blobify(content: Readonly<BufferView> | number = 0) {
 			let view;
 			let size = 8;
 			if (typeof content === 'number') {
@@ -54,11 +51,10 @@ export const Blob = (_magic: number) =>
 				size += view.byteLength;
 			}
 			const buffer = new ArrayBuffer(size);
-			const blob = new this(buffer);
-			blob.initialize2(size);
+			new Blob(buffer).initialize2(size);
 			if (view) {
 				new Uint8Array(buffer, 8).set(view);
 			}
-			return blob;
+			return new DataView(buffer);
 		}
 	};

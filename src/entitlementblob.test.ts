@@ -4,6 +4,7 @@ import {deepStrictEqual, strictEqual} from 'node:assert';
 import {unhex} from './util.spec.ts';
 import {kSecCodeMagicEntitlement} from './const.ts';
 import {EntitlementBlob} from './entitlementblob.ts';
+import {cast} from './util.ts';
 
 const examplePlist = [
 	'<?xml version="1.0" encoding="UTF-8"?>',
@@ -31,7 +32,7 @@ void describe('entitlementblob', () => {
 
 	void it('data', () => {
 		const data = new TextEncoder().encode(examplePlist);
-		const eb = EntitlementBlob.blobify(data);
+		const eb = cast(EntitlementBlob, EntitlementBlob.blobify(data));
 		eb.body.set(data);
 		const dv = new DataView(eb.buffer, eb.byteOffset, eb.byteLength);
 		strictEqual(dv.getUint32(0), kSecCodeMagicEntitlement);

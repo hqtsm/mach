@@ -45,11 +45,10 @@ export class BlobWrapper extends Blob(CSMAGIC_BLOBWRAPPER) {
 	 * @param magic Magic number.
 	 * @returns Blob.
 	 */
-	public static alloc<T extends typeof BlobWrapper>(
-		this: T,
+	public static alloc(
 		content: Readonly<BufferView> | number = 0,
-		magic: number = this.typeMagic
-	): T['prototype'] {
+		magic = BlobWrapper.typeMagic
+	) {
 		let view;
 		let size = 8;
 		if (typeof content === 'number') {
@@ -63,7 +62,7 @@ export class BlobWrapper extends Blob(CSMAGIC_BLOBWRAPPER) {
 			size += view.byteLength;
 		}
 		const buffer = new ArrayBuffer(size);
-		const blob = new this(buffer);
+		const blob = new BlobWrapper(buffer);
 		blob.initialize(magic, size);
 		if (view) {
 			new Uint8Array(buffer, 8).set(view);
