@@ -42,7 +42,7 @@ export class RequirementMaker {
 		const {Requirement} = this.constructor;
 		const buffer = new ArrayBuffer(1024);
 		const r = new Requirement(buffer);
-		r.magic = Requirement.typeMagic;
+		r.initialize2();
 		r.kind = kind;
 		this.#buffer = buffer;
 		this.#pc = Requirement.sizeof;

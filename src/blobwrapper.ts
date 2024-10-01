@@ -48,7 +48,7 @@ export class BlobWrapper extends Blob(CSMAGIC_BLOBWRAPPER) {
 	public static alloc<T extends typeof BlobWrapper>(
 		this: T,
 		content: Readonly<BufferView> | number = 0,
-		magic: number = BlobWrapper.typeMagic
+		magic: number = this.typeMagic
 	): T['prototype'] {
 		let view;
 		let size = 8;

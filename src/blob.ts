@@ -25,9 +25,13 @@ export const Blob = (_magic: number) =>
 		}
 
 		/**
-		 * Type magic number for new instance.
+		 * Type magic number for this blob.
+		 *
+		 * @returns Type magic number.
 		 */
-		public static readonly typeMagic = _magic;
+		public static get typeMagic() {
+			return _magic;
+		}
 
 		/**
 		 * Wrap data into a new blob.
