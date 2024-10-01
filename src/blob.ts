@@ -29,9 +29,7 @@ export const Blob = (_magic: number) =>
 		 *
 		 * @returns Type magic number.
 		 */
-		public static get typeMagic() {
-			return _magic;
-		}
+		public static readonly typeMagic = _magic;
 
 		/**
 		 * Wrap data into a new blob.
