@@ -1,3 +1,4 @@
+import type {BlobCore} from './blobcore.ts';
 import {SuperBlob} from './superblob.ts';
 
 /**
@@ -20,10 +21,7 @@ export const SuperBlobMaker = (_SuperBlob: ReturnType<typeof SuperBlob>) =>
 		/**
 		 * Blobs in super blob.
 		 */
-		readonly #pieces = new Map<
-			number,
-			this['constructor']['SuperBlob']['BlobCore']['prototype']
-		>();
+		readonly #pieces = new Map<number, BlobCore>();
 
 		/**
 		 * Add blob to super blob.
@@ -31,10 +29,7 @@ export const SuperBlobMaker = (_SuperBlob: ReturnType<typeof SuperBlob>) =>
 		 * @param type Index type.
 		 * @param blob Blob.
 		 */
-		public add(
-			type: number,
-			blob: this['constructor']['SuperBlob']['BlobCore']['prototype']
-		) {
+		public add(type: number, blob: BlobCore) {
 			this.#pieces.set(type, blob);
 		}
 
@@ -83,7 +78,7 @@ export const SuperBlobMaker = (_SuperBlob: ReturnType<typeof SuperBlob>) =>
 			const buffer = new ArrayBuffer(size);
 			const data = new Uint8Array(buffer);
 			const view = new DataView(buffer);
-			const sb = new this.constructor.SuperBlob(buffer);
+			const sb = new _SuperBlob(buffer);
 			sb.initialize2(size);
 			view.setUint32(8, count);
 			let o1 = 12;
@@ -99,9 +94,4 @@ export const SuperBlobMaker = (_SuperBlob: ReturnType<typeof SuperBlob>) =>
 			}
 			return sb;
 		}
-
-		/**
-		 * SuperBlob reference.
-		 */
-		public static readonly SuperBlob = _SuperBlob;
 	};

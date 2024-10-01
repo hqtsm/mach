@@ -1,4 +1,5 @@
 import {CodeDirectory} from './codedirectory.ts';
+import {CodeDirectoryScatter} from './codedirectoryscatter.ts';
 import {
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
@@ -76,9 +77,7 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Scatter vector.
 	 */
-	public scatter:
-		| this['constructor']['CodeDirectory']['Scatter']['prototype'][]
-		| null = null;
+	public scatter: CodeDirectoryScatter[] | null = null;
 
 	/**
 	 * Exec segment offset.
@@ -258,12 +257,11 @@ export class CodeDirectoryBuilder {
 	 * @returns Scatter vector.
 	 */
 	public createScatter(count: number) {
-		const {Scatter} = this.constructor.CodeDirectory;
-		const {sizeof} = Scatter;
+		const {sizeof} = CodeDirectoryScatter;
 		const vector: typeof this.scatter = [];
 		const total = count + 1;
 		for (let i = 0; i < total; i++) {
-			vector.push(new Scatter(new ArrayBuffer(sizeof)));
+			vector.push(new CodeDirectoryScatter(new ArrayBuffer(sizeof)));
 		}
 		this.scatter = vector;
 		return vector;
@@ -291,7 +289,6 @@ export class CodeDirectoryBuilder {
 	 * @returns Compatibility version.
 	 */
 	public get version() {
-		const {CodeDirectory} = this.constructor;
 		if (this.generatePreEncryptHashes || this.runtimeVersion) {
 			return CodeDirectory.supportsPreEncrypt;
 		}
@@ -327,7 +324,6 @@ export class CodeDirectoryBuilder {
 			digestLength,
 			generatePreEncryptHashes
 		} = this;
-		const {CodeDirectory} = Static;
 		let size = Static.fixedSize(version);
 		if (!(version < CodeDirectory.supportsScatter)) {
 			size += this.scatterSize;
@@ -366,7 +362,6 @@ export class CodeDirectoryBuilder {
 			teamID,
 			generatePreEncryptHashes
 		} = this;
-		const {CodeDirectory} = Static;
 		const size = this.size(version);
 		const buffer = new ArrayBuffer(size);
 		const data = new Uint8Array(buffer);
@@ -446,10 +441,7 @@ export class CodeDirectoryBuilder {
 	 * @param version Compatibility version.
 	 * @returns Byte size.
 	 */
-	public static fixedSize<
-		T extends Pick<typeof CodeDirectoryBuilder, 'CodeDirectory'>
-	>(this: T, version: number) {
-		const {CodeDirectory} = this;
+	public static fixedSize(version: number) {
 		let size = CodeDirectory.sizeof;
 		if (version < CodeDirectory.supportsPreEncrypt) {
 			size -= 8;
@@ -496,9 +488,4 @@ export class CodeDirectoryBuilder {
 		}
 		throw new Error(`Unknown hash type: ${hashType}`);
 	}
-
-	/**
-	 * CodeDirectory reference.
-	 */
-	public static readonly CodeDirectory = CodeDirectory;
 }

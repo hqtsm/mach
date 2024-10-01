@@ -39,7 +39,6 @@ export class RequirementMaker {
 	 * @param kind Kind.
 	 */
 	constructor(kind: number) {
-		const {Requirement} = this.constructor;
 		const {sizeof} = Requirement;
 		const buffer = new ArrayBuffer(Math.max(sizeof, 1024));
 		const r = new Requirement(buffer);
@@ -56,10 +55,7 @@ export class RequirementMaker {
 	 * @returns View of allocated bytes.
 	 */
 	public alloc(size: number) {
-		const usedSize = alignUp(
-			size,
-			this.constructor.Requirement.baseAlignment
-		);
+		const usedSize = alignUp(size, Requirement.baseAlignment);
 		this.require(usedSize);
 		const a = new Uint8Array(this.#buffer, this.#pc, size);
 		this.#pc += usedSize;
@@ -222,7 +218,7 @@ export class RequirementMaker {
 	 */
 	public insert(label: Readonly<RequirementMakerLabel>, length = 4) {
 		const {pos} = label;
-		const req = new this.constructor.Requirement(this.#buffer);
+		const req = new Requirement(this.#buffer);
 		this.require(length);
 		const len = this.#pc - pos;
 		const reqDest = req.at(pos + length);
@@ -240,7 +236,7 @@ export class RequirementMaker {
 	 * @param kind Requirement kind.
 	 */
 	public kind(kind: number) {
-		new this.constructor.Requirement(this.#buffer).kind = kind;
+		new Requirement(this.#buffer).kind = kind;
 	}
 
 	/**
@@ -258,7 +254,7 @@ export class RequirementMaker {
 	 * @returns Requirement instance.
 	 */
 	public make() {
-		const r = new this.constructor.Requirement(this.#buffer);
+		const r = new Requirement(this.#buffer);
 		r.length = this.#pc;
 		return r;
 	}
@@ -282,9 +278,4 @@ export class RequirementMaker {
 			this.#buffer = d;
 		}
 	}
-
-	/**
-	 * Requirement reference.
-	 */
-	public static readonly Requirement = Requirement;
 }

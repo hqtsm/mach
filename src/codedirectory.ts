@@ -1,5 +1,4 @@
 import {Blob} from './blob.ts';
-import {CodeDirectoryScatter} from './codedirectoryscatter.ts';
 import {kSecCodeMagicCodeDirectory} from './const.ts';
 
 /**
@@ -427,9 +426,4 @@ export class CodeDirectory extends Blob(kSecCodeMagicCodeDirectory) {
 	 * First version to support pre-encrypt hashes and runtime version.
 	 */
 	public static readonly supportsPreEncrypt = 0x20500;
-
-	/**
-	 * Scatter structure.
-	 */
-	public static readonly Scatter = CodeDirectoryScatter;
 }

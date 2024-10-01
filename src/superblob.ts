@@ -34,10 +34,7 @@ export const SuperBlob = (_magic: number) =>
 		public blob(index: number) {
 			const offset = this.dataView.getUint32(16 + 8 * index);
 			return offset
-				? new this.constructor.BlobCore(
-						this.buffer,
-						this.byteOffset + offset
-					)
+				? new BlobCore(this.buffer, this.byteOffset + offset)
 				: null;
 		}
 
@@ -70,9 +67,4 @@ export const SuperBlob = (_magic: number) =>
 		 * @inheritdoc
 		 */
 		public static readonly sizeof: number = 12;
-
-		/**
-		 * BlobCore reference.
-		 */
-		public static readonly BlobCore = BlobCore;
 	};
