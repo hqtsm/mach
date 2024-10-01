@@ -1,4 +1,4 @@
-import type {BufferPointer, Cast, Newt} from './type.ts';
+import type {BufferPointer, Cast, Sized} from './type.ts';
 
 /**
  * Align a number up.
@@ -26,12 +26,12 @@ export function ranged(i: number, l: number, h: number) {
 }
 
 /**
- * Create new instance of a sized type with clean memory.
+ * Create new instance of a sized type with new memory.
  *
  * @param Constructor Constructor with sizeof property.
  * @returns New instance.
  */
-export function newt<T>(Constructor: Newt<T>) {
+export function cnew<T>(Constructor: Sized<T>) {
 	return new Constructor(new ArrayBuffer(Constructor.sizeof));
 }
 

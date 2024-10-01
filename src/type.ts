@@ -39,13 +39,13 @@ export interface BufferPointer {
 }
 
 /**
- * New type sized constructor.
+ * Binary constructor with size.
  */
-export interface Newt<T> {
+export interface Sized<T> {
 	/**
 	 * Create new instance from existing memory.
 	 */
-	new (buffer: ArrayBufferReal, byteOffset?: number): T;
+	new (buffer: ArrayBufferReal): T;
 
 	/**
 	 * Byte size of type.
