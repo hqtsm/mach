@@ -8,6 +8,7 @@ import {
 import {Requirement} from './requirement.ts';
 import {unhex} from './util.spec.ts';
 import {RequirementsMaker} from './requirementsmaker.ts';
+import {cast} from './util.ts';
 
 void describe('requirementsmaker', () => {
 	void it('empty', () => {
@@ -40,8 +41,14 @@ void describe('requirementsmaker', () => {
 			Buffer.from(designated).toString('hex')
 		);
 		const rsm = new RequirementsMaker();
-		rsm.add(kSecHostRequirementType, Requirement.blobify(host));
-		rsm.add(kSecDesignatedRequirementType, Requirement.blobify(designated));
+		rsm.add(
+			kSecHostRequirementType,
+			cast(Requirement, Requirement.blobify(host))
+		);
+		rsm.add(
+			kSecDesignatedRequirementType,
+			cast(Requirement, Requirement.blobify(designated))
+		);
 		const rs = rsm.make();
 		deepStrictEqual(
 			new Uint8Array(rs.buffer, rs.byteOffset, rs.byteLength),
