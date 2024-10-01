@@ -42,6 +42,6 @@ export function cnew<T>(Constructor: Sized<T>) {
  * @param ptr Buffer pointer.
  * @returns New instance.
  */
-export function cast<T>(Constructor: Cast<T>, ptr: BufferPointer) {
+export function cast<T>(Constructor: Cast<T>, ptr: Readonly<BufferPointer>) {
 	return new Constructor(ptr.buffer, ptr.byteOffset);
 }
