@@ -40,12 +40,13 @@ export class RequirementMaker {
 	 */
 	constructor(kind: number) {
 		const {Requirement} = this.constructor;
-		const buffer = new ArrayBuffer(1024);
+		const {sizeof} = Requirement;
+		const buffer = new ArrayBuffer(Math.max(sizeof, 1024));
 		const r = new Requirement(buffer);
 		r.initialize2();
 		r.kind = kind;
 		this.#buffer = buffer;
-		this.#pc = Requirement.sizeof;
+		this.#pc = sizeof;
 	}
 
 	/**
