@@ -38,10 +38,10 @@ export class Requirement extends Blob(kSecCodeMagicRequirement) {
 	/**
 	 * Kind: Prefix expr form.
 	 */
-	public static readonly exprForm: number = 1;
+	public static readonly exprForm = 1;
 
 	/**
 	 * Kind: DER encoded lightweight code requirement form.
 	 */
-	public static readonly lwcrForm: number = 2;
+	public static readonly lwcrForm = 2;
 }
