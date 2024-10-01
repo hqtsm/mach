@@ -10,7 +10,7 @@ void describe('blobwrapper', () => {
 		const {sizeof} = BlobWrapper;
 		const buffer = new ArrayBuffer(sizeof);
 		const bw = new BlobWrapper(buffer);
-		bw.initialize(sizeof);
+		bw.initialize2(sizeof);
 		deepStrictEqual(
 			new Uint8Array(buffer),
 			unhex('FA DE 0B 01 00 00 00 08')

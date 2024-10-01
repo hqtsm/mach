@@ -84,7 +84,7 @@ export const SuperBlobMaker = (_SuperBlob: ReturnType<typeof SuperBlob>) =>
 			const data = new Uint8Array(buffer);
 			const view = new DataView(buffer);
 			const sb = new this.constructor.SuperBlob(buffer);
-			sb.initialize(size);
+			sb.initialize2(size);
 			view.setUint32(8, count);
 			let o1 = 12;
 			let o2 = o1 + count * 8;

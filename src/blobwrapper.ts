@@ -1,5 +1,4 @@
 import {Blob} from './blob.ts';
-import {BlobCore} from './blobcore.ts';
 import {CSMAGIC_BLOBWRAPPER} from './const.ts';
 import type {BufferView} from './type.ts';
 
@@ -65,7 +64,7 @@ export class BlobWrapper extends Blob(CSMAGIC_BLOBWRAPPER) {
 		}
 		const buffer = new ArrayBuffer(size);
 		const blob = new this(buffer);
-		BlobCore.prototype.initialize.call(blob, magic, size);
+		blob.initialize(magic, size);
 		if (view) {
 			new Uint8Array(buffer, 8).set(view);
 		}

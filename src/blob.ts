@@ -16,13 +16,12 @@ export const Blob = (_magic: number) =>
 		public declare readonly ['constructor']: typeof Blob;
 
 		/**
-		 * Initialize blob with type and length.
+		 * Initialize blob with length.
 		 *
 		 * @param size Length.
 		 */
-		public initialize(size = 0) {
-			this.magic = this.constructor.typeMagic;
-			this.length = size;
+		public initialize2(size = 0) {
+			this.initialize(this.constructor.typeMagic, size);
 		}
 
 		/**
@@ -54,7 +53,7 @@ export const Blob = (_magic: number) =>
 			}
 			const buffer = new ArrayBuffer(size);
 			const blob = new this(buffer);
-			blob.initialize(size);
+			blob.initialize2(size);
 			if (view) {
 				new Uint8Array(buffer, 8).set(view);
 			}

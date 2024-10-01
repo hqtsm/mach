@@ -38,7 +38,7 @@ void describe('launchconstraintblob', () => {
 		const {sizeof} = LaunchConstraintBlob;
 		const buffer = new ArrayBuffer(sizeof);
 		const edb = new LaunchConstraintBlob(buffer);
-		edb.initialize(sizeof);
+		edb.initialize2(sizeof);
 		deepStrictEqual(
 			new Uint8Array(buffer),
 			unhex('FA DE 81 81 00 00 00 08')

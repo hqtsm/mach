@@ -22,7 +22,7 @@ void describe('entitlementblob', () => {
 		const {sizeof} = EntitlementBlob;
 		const buffer = new ArrayBuffer(sizeof);
 		const eb = new EntitlementBlob(buffer);
-		eb.initialize(sizeof);
+		eb.initialize2(sizeof);
 		deepStrictEqual(
 			new Uint8Array(buffer),
 			unhex('FA DE 71 71 00 00 00 08')
