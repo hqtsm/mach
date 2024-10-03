@@ -1,4 +1,5 @@
 import {Struct} from './struct.ts';
+import type {Cast} from './type.ts';
 
 /**
  * Polymorphic memory blobs with magics numbers.
@@ -78,11 +79,12 @@ export class BlobCore extends Struct {
 	/**
 	 * Get view of data at offset.
 	 *
+	 * @param Type Constructor function.
 	 * @param offset Byte offset.
 	 * @returns Data view.
 	 */
-	public at(offset: number) {
-		return new DataView(this.buffer, this.byteOffset + offset);
+	public at<T>(Type: Cast<T>, offset: number) {
+		return new Type(this.buffer, this.byteOffset + offset);
 	}
 
 	/**

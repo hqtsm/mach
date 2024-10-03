@@ -206,7 +206,7 @@ export class RequirementMaker {
 			throw new Error(`Unsupported requirement kind: ${kind}`);
 		}
 		const {sizeof} = Requirement;
-		this.copy(req.at(sizeof), req.length - sizeof);
+		this.copy(req.at(DataView, sizeof), req.length - sizeof);
 	}
 
 	/**
@@ -221,8 +221,8 @@ export class RequirementMaker {
 		const req = new Requirement(this.#buffer);
 		this.require(length);
 		const len = this.#pc - pos;
-		const reqDest = req.at(pos + length);
-		const reqSrc = req.at(pos);
+		const reqDest = req.at(DataView, pos + length);
+		const reqSrc = req.at(DataView, pos);
 		new Uint8Array(reqDest.buffer, reqDest.byteOffset, len).set(
 			new Uint8Array(reqSrc.buffer, reqSrc.byteOffset, len)
 		);
