@@ -26,10 +26,6 @@ void describe('embeddedsignatureblob', () => {
 				continue;
 			}
 
-			if (kind !== 'cli' || arch !== 'arm64' || file !== 'us/main') {
-				// continue;
-			}
-
 			void it(`${kind}: ${arch}: ${file}`, async () => {
 				const {macho, infoPlist, codeResources} = await readMachoFiles(
 					kind,
