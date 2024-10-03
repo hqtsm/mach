@@ -9,7 +9,7 @@ import {addCodeHashes, emptyRequirements} from './codedirectorybuilder.spec.ts';
 
 const fixtures = fixtureMachos();
 
-void describe('blob/codedirectory', () => {
+void describe('codedirectorybuilder', () => {
 	void describe('fixtures', () => {
 		for (const {kind, arch, file, archs} of fixtures) {
 			// Skip binaries with no signed architectures.
