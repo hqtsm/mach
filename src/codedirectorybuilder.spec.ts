@@ -1,5 +1,13 @@
-import {chunkedHashes, unhex} from './util.spec.ts';
+import {
+	chunkedHashes,
+	hash,
+	unhex,
+	type FixtureMachoSignatureInfo
+} from './util.spec.ts';
 import {CodeDirectoryBuilder} from './codedirectorybuilder.ts';
+import {cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot} from './const.ts';
+import {strictEqual} from 'node:assert';
+import {CodeDirectory} from './codedirectory.ts';
 
 export const emptyRequirements = unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00');
 
@@ -17,5 +25,67 @@ export async function addCodeHashes(
 	);
 	for (let i = hashes.length; i--; ) {
 		cd.setCodeSlot(i, hashes[i]);
+	}
+}
+
+export async function* createCodeDirectories(
+	info: Readonly<FixtureMachoSignatureInfo>,
+	thin: Readonly<Uint8Array>,
+	infoPlist: Readonly<Uint8Array> | null,
+	codeResources: Readonly<Uint8Array> | null
+) {
+	const {requirements} = info;
+	for (const hashType of info.hashes) {
+		const builder = new CodeDirectoryBuilder(hashType);
+		builder.flags = info.flags;
+		builder.execLength = info.offset;
+		builder.pageSize = info.page;
+		builder.execSegOffset = BigInt(info.execsegbase);
+		builder.execSegLimit = BigInt(info.execseglimit);
+		builder.execSegFlags = BigInt(info.execsegflags);
+		builder.identifier = new TextEncoder().encode(info.identifier);
+		builder.teamID = new TextEncoder().encode(info.teamid);
+		if (infoPlist) {
+			builder.setSpecialSlot(
+				cdInfoSlot,
+				// eslint-disable-next-line no-await-in-loop
+				await hash(hashType, infoPlist)
+			);
+		}
+		switch (requirements) {
+			case '': {
+				// No requirements.
+				break;
+			}
+			case 'count=0 size=12': {
+				builder.setSpecialSlot(
+					cdRequirementsSlot,
+					// eslint-disable-next-line no-await-in-loop
+					await hash(hashType, emptyRequirements)
+				);
+				break;
+			}
+			default: {
+				throw new Error(`Unexpected requirements: ${requirements}`);
+			}
+		}
+		if (codeResources) {
+			builder.setSpecialSlot(
+				cdResourceDirSlot,
+				// eslint-disable-next-line no-await-in-loop
+				await hash(hashType, codeResources)
+			);
+		}
+		// eslint-disable-next-line no-await-in-loop
+		await addCodeHashes(builder, thin);
+
+		// Offical library always minimum supports scatter.
+		strictEqual(
+			Math.max(builder.version, CodeDirectory.supportsScatter),
+			info.version
+		);
+
+		const cd = builder.build(info.version);
+		yield [hashType, cd] as const;
 	}
 }
