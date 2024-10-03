@@ -16,6 +16,17 @@ export const SuperBlob = (_magic: number) =>
 		public declare readonly ['constructor']: typeof SuperBlob;
 
 		/**
+		 * Setup size and number of blobs in super blob.
+		 *
+		 * @param size Blob length.
+		 * @param count Number of blobs.
+		 */
+		public setup(size: number, count: number) {
+			this.initialize2(size);
+			this.#count = count;
+		}
+
+		/**
 		 * Get type of index.
 		 *
 		 * @param index Index.
@@ -61,6 +72,16 @@ export const SuperBlob = (_magic: number) =>
 		 */
 		public get count() {
 			return this.dataView.getUint32(8);
+		}
+
+		/**
+		 * Number of blobs in super blob.
+		 *
+		 * @param value Blobs count.
+		 */
+		// eslint-disable-next-line accessor-pairs
+		set #count(value: number) {
+			this.dataView.setUint32(8, value);
 		}
 
 		/**

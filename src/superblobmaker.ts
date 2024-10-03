@@ -79,8 +79,7 @@ export const SuperBlobMaker = (_SuperBlob: ReturnType<typeof SuperBlob>) =>
 			const data = new Uint8Array(buffer);
 			const view = new DataView(buffer);
 			const sb = new _SuperBlob(buffer);
-			sb.initialize2(size);
-			view.setUint32(8, count);
+			sb.setup(size, count);
 			let o1 = 12;
 			let o2 = o1 + count * 8;
 			const types = [...pieces.keys()].sort((a, b) => a - b);
