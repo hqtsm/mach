@@ -29,13 +29,13 @@ void describe('codedirectorybuilder', () => {
 					const thin = machoThin(macho, info.arch[0], info.arch[1]);
 
 					// eslint-disable-next-line no-await-in-loop
-					for await (const [hashType, cd] of createCodeDirectories(
+					for await (const cd of createCodeDirectories(
 						info,
 						thin,
 						infoPlist,
 						codeResources
 					)) {
-						const message = `CD: ${arc}: hashType=${hashType}`;
+						const message = `CD: ${arc}: hashType=${cd.hashType}`;
 						notStrictEqual(
 							Buffer.from(thin).compare(
 								Buffer.from(

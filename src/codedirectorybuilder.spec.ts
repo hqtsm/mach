@@ -87,6 +87,6 @@ export async function* createCodeDirectories(
 		);
 
 		const cd = builder.build(info.version);
-		yield [hashType, cd] as const;
+		yield cd;
 	}
 }
