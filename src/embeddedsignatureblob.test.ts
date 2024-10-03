@@ -1,4 +1,5 @@
 import {describe, it} from 'node:test';
+import {strictEqual} from 'node:assert';
 
 import {machoThin, fixtureMachos, readMachoFiles} from './util.spec.ts';
 import {
@@ -14,8 +15,6 @@ import type {CodeDirectory} from './codedirectory.ts';
 import {EmbeddedSignatureBlobMaker} from './embeddedsignatureblobmaker.ts';
 import {RequirementsMaker} from './requirementsmaker.ts';
 import {BlobWrapper} from './blobwrapper.ts';
-import {strictEqual} from 'node:assert';
-// import {writeFile} from 'node:fs/promises';
 
 const fixtures = fixtureMachos();
 
