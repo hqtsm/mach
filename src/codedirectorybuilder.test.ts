@@ -22,6 +22,7 @@ void describe('codedirectorybuilder', () => {
 				);
 
 				for (const [arc, info] of archs) {
+					// Skip unsigned architectures in fat binaries.
 					if (!info) {
 						continue;
 					}

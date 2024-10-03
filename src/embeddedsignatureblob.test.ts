@@ -34,6 +34,7 @@ void describe('embeddedsignatureblob', () => {
 				);
 
 				for (const [arc, info] of archs) {
+					// Skip unsigned architectures in fat binaries.
 					if (!info) {
 						continue;
 					}
@@ -84,6 +85,7 @@ void describe('embeddedsignatureblob', () => {
 								break;
 							}
 							case 'count=0 size=12': {
+								// Empty requirements.
 								maker.add(
 									cdRequirementsSlot,
 									new RequirementsMaker().make()
@@ -99,6 +101,7 @@ void describe('embeddedsignatureblob', () => {
 							}
 						}
 
+						// Empty signature.
 						maker.add(cdSignatureSlot, BlobWrapper.alloc());
 					} else if (cds.length) {
 						throw new Error(
