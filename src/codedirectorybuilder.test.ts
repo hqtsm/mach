@@ -2,12 +2,12 @@ import {describe, it} from 'node:test';
 import {notStrictEqual, strictEqual} from 'node:assert';
 
 import {
-	fixtureMacho,
 	hash,
 	chunkedHashes,
 	machoThin,
 	fixtureMachos,
-	unhex
+	unhex,
+	readMachoFiles
 } from './util.spec.ts';
 import {CodeDirectory} from './codedirectory.ts';
 import {cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot} from './const.ts';
@@ -15,36 +15,10 @@ import {CodeDirectoryBuilder} from './codedirectorybuilder.ts';
 
 const emptyRequirements = unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00');
 
-async function readMachoFiles(kind: string, arch: string, file: string) {
-	let resources: string[] | null = null;
-	const bundle = file.match(
-		/^((.*\/)?([^./]+\.(app|framework)))\/([^.]+\/)[^/]+$/
-	);
-	if (bundle) {
-		const [, path, , , ext] = bundle;
-		resources =
-			ext === 'framework'
-				? [
-						`${path}/Versions/A/Resources/Info.plist`,
-						`${path}/Versions/A/_CodeSignature/CodeResources`
-					]
-				: [
-						`${path}/Contents/Info.plist`,
-						`${path}/Contents/_CodeSignature/CodeResources`
-					];
-	}
-	const files = await fixtureMacho(kind, arch, [file, ...(resources || [])]);
-	const [macho] = files;
-	const infoPlist = resources ? files[1] : null;
-	const codeResources = resources ? files[2] : null;
-	return {
-		macho,
-		infoPlist,
-		codeResources
-	};
-}
-
-async function addCodeHashes(cd: CodeDirectoryBuilder, macho: Uint8Array) {
+async function addCodeHashes(
+	cd: CodeDirectoryBuilder,
+	macho: Readonly<Uint8Array>
+) {
 	const {pageSize} = cd;
 	const hashes = await chunkedHashes(
 		cd.hashType,

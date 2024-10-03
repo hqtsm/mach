@@ -366,6 +366,35 @@ export async function fixtureMacho(
 	return datas;
 }
 
+export async function readMachoFiles(kind: string, arch: string, file: string) {
+	let resources: string[] | null = null;
+	const bundle = file.match(
+		/^((.*\/)?([^./]+\.(app|framework)))\/([^.]+\/)[^/]+$/
+	);
+	if (bundle) {
+		const [, path, , , ext] = bundle;
+		resources =
+			ext === 'framework'
+				? [
+						`${path}/Versions/A/Resources/Info.plist`,
+						`${path}/Versions/A/_CodeSignature/CodeResources`
+					]
+				: [
+						`${path}/Contents/Info.plist`,
+						`${path}/Contents/_CodeSignature/CodeResources`
+					];
+	}
+	const files = await fixtureMacho(kind, arch, [file, ...(resources || [])]);
+	const [macho] = files;
+	const infoPlist = resources ? files[1] : null;
+	const codeResources = resources ? files[2] : null;
+	return {
+		macho,
+		infoPlist,
+		codeResources
+	};
+}
+
 export function machoThin(
 	data: Readonly<BufferView>,
 	type: number,
