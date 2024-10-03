@@ -158,6 +158,15 @@ export const FAT_CIGAM = 0xbebafeca;
 export const FAT_MAGIC_64 = 0xcafebabf;
 export const FAT_CIGAM_64 = 0xbfbafeca;
 
+// Executable segment flags:
+export const CS_EXECSEG_MAIN_BINARY = 0x1;
+export const CS_EXECSEG_ALLOW_UNSIGNED = 0x10;
+export const CS_EXECSEG_DEBUGGER = 0x20;
+export const CS_EXECSEG_JIT = 0x40;
+export const CS_EXECSEG_SKIP_LV = 0x80;
+export const CS_EXECSEG_CAN_LOAD_CDHASH = 0x100;
+export const CS_EXECSEG_CAN_EXEC_CDHASH = 0x200;
+
 // Magic numbers used by code signing:
 export const CSMAGIC_REQUIREMENT = 0xfade0c00;
 export const CSMAGIC_REQUIREMENTS = 0xfade0c01;
@@ -165,8 +174,89 @@ export const CSMAGIC_CODEDIRECTORY = 0xfade0c02;
 export const CSMAGIC_EMBEDDED_SIGNATURE = 0xfade0cc0;
 export const CSMAGIC_EMBEDDED_SIGNATURE_OLD = 0xfade0b02;
 export const CSMAGIC_EMBEDDED_ENTITLEMENTS = 0xfade7171;
+export const CSMAGIC_EMBEDDED_DER_ENTITLEMENTS = 0xfade7172;
 export const CSMAGIC_DETACHED_SIGNATURE = 0xfade0cc1;
 export const CSMAGIC_BLOBWRAPPER = 0xfade0b01;
+export const CSMAGIC_EMBEDDED_LAUNCH_CONSTRAINT = 0xfade8181;
+
+export const CS_SUPPORTSSCATTER = 0x20100;
+export const CS_SUPPORTSTEAMID = 0x20200;
+export const CS_SUPPORTSCODELIMIT64 = 0x20300;
+export const CS_SUPPORTSEXECSEG = 0x20400;
+export const CS_SUPPORTSRUNTIME = 0x20500;
+export const CS_SUPPORTSLINKAGE = 0x20600;
+
+export const CSSLOT_CODEDIRECTORY = 0;
+export const CSSLOT_INFOSLOT = 1;
+export const CSSLOT_REQUIREMENTS = 2;
+export const CSSLOT_RESOURCEDIR = 3;
+export const CSSLOT_APPLICATION = 4;
+export const CSSLOT_ENTITLEMENTS = 5;
+export const CSSLOT_DER_ENTITLEMENTS = 7;
+export const CSSLOT_LAUNCH_CONSTRAINT_SELF = 8;
+export const CSSLOT_LAUNCH_CONSTRAINT_PARENT = 9;
+export const CSSLOT_LAUNCH_CONSTRAINT_RESPONSIBLE = 10;
+export const CSSLOT_LIBRARY_CONSTRAINT = 11;
+
+export const CSSLOT_ALTERNATE_CODEDIRECTORIES = 0x1000;
+export const CSSLOT_ALTERNATE_CODEDIRECTORY_MAX = 5;
+export const CSSLOT_ALTERNATE_CODEDIRECTORY_LIMIT =
+	CSSLOT_ALTERNATE_CODEDIRECTORIES + CSSLOT_ALTERNATE_CODEDIRECTORY_MAX;
+
+export const CSSLOT_SIGNATURESLOT = 0x10000;
+export const CSSLOT_IDENTIFICATIONSLOT = 0x10001;
+export const CSSLOT_TICKETSLOT = 0x10002;
+
+export const CSTYPE_INDEX_REQUIREMENTS = 0x00000002;
+export const CSTYPE_INDEX_ENTITLEMENTS = 0x00000005;
+
+export const CS_HASHTYPE_SHA1 = 1;
+export const CS_HASHTYPE_SHA256 = 2;
+export const CS_HASHTYPE_SHA256_TRUNCATED = 3;
+export const CS_HASHTYPE_SHA384 = 4;
+
+export const CS_SHA1_LEN = 20;
+export const CS_SHA256_LEN = 32;
+export const CS_SHA256_TRUNCATED_LEN = 20;
+
+export const CS_CDHASH_LEN = 20;
+export const CS_HASH_MAX_SIZE = 48;
+
+export const CS_SIGNER_TYPE_UNKNOWN = 0;
+export const CS_SIGNER_TYPE_LEGACYVPN = 5;
+export const CS_SIGNER_TYPE_MAC_APP_STORE = 6;
+
+export const CS_SUPPL_SIGNER_TYPE_UNKNOWN = 0;
+export const CS_SUPPL_SIGNER_TYPE_TRUSTCACHE = 7;
+export const CS_SUPPL_SIGNER_TYPE_LOCAL = 8;
+
+export const CS_SIGNER_TYPE_OOPJIT = 9;
+
+export const CS_VALIDATION_CATEGORY_INVALID = 0;
+export const CS_VALIDATION_CATEGORY_PLATFORM = 1;
+export const CS_VALIDATION_CATEGORY_TESTFLIGHT = 2;
+export const CS_VALIDATION_CATEGORY_DEVELOPMENT = 3;
+export const CS_VALIDATION_CATEGORY_APP_STORE = 4;
+export const CS_VALIDATION_CATEGORY_ENTERPRISE = 5;
+export const CS_VALIDATION_CATEGORY_DEVELOPER_ID = 6;
+export const CS_VALIDATION_CATEGORY_LOCAL_SIGNING = 7;
+export const CS_VALIDATION_CATEGORY_ROSETTA = 8;
+export const CS_VALIDATION_CATEGORY_OOPJIT = 9;
+export const CS_VALIDATION_CATEGORY_NONE = 10;
+
+// Set of application types to support linkage signatures:
+export const CS_LINKAGE_APPLICATION_INVALID = 0;
+export const CS_LINKAGE_APPLICATION_ROSETTA = 1;
+export const CS_LINKAGE_APPLICATION_XOJIT = 2;
+export const CS_LINKAGE_APPLICATION_OOPJIT = 2;
+
+// Set of application subtypes to support linkage signatures:
+export const CS_LINKAGE_APPLICATION_ROSETTA_AOT = 0;
+export const CS_LINKAGE_APPLICATION_XOJIT_PREVIEWS = 1;
+export const CS_LINKAGE_APPLICATION_OOPJIT_INVALID = 0;
+export const CS_LINKAGE_APPLICATION_OOPJIT_PREVIEWS = 1;
+export const CS_LINKAGE_APPLICATION_OOPJIT_MLCOMPILER = 2;
+export const CS_LINKAGE_APPLICATION_OOPJIT_TOTAL = 3;
 
 // Blob types used for code signing:
 export const kSecCodeMagicRequirement = 0xfade0c00;
@@ -231,6 +321,13 @@ export const cdLaunchConstraintSelf = 8;
 export const cdLaunchConstraintParent = 9;
 export const cdLaunchConstraintResponsible = 10;
 export const cdLibraryConstraint = 11;
+
+export const cdCodeDirectorySlot = 0;
+export const cdAlternateCodeDirectorySlots = 0x1000;
+export const cdAlternateCodeDirectoryLimit = 0x1005;
+export const cdSignatureSlot = 0x10000;
+export const cdIdentificationSlot = 0x10001;
+export const cdTicketSlot = 0x10002;
 
 // Opcodes exprForm:
 export const opFlagMask = 0xff000000;
