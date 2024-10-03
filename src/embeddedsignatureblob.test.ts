@@ -120,7 +120,11 @@ void describe('embeddedsignatureblob', () => {
 						thin.byteOffset + info.offset,
 						cs.byteLength
 					);
-					strictEqual(expected.compare(csBuffer), 0);
+					strictEqual(
+						expected.compare(csBuffer),
+						0,
+						message('compare')
+					);
 				}
 			});
 		}

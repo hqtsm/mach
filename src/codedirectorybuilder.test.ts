@@ -26,6 +26,7 @@ void describe('codedirectorybuilder', () => {
 						continue;
 					}
 
+					const message = (s: string) => `CD: ${arc}: ${s}`;
 					const thin = machoThin(macho, info.arch[0], info.arch[1]);
 
 					// eslint-disable-next-line no-await-in-loop
@@ -35,7 +36,6 @@ void describe('codedirectorybuilder', () => {
 						infoPlist,
 						codeResources
 					)) {
-						const message = `CD: ${arc}: hashType=${cd.hashType}`;
 						const cdBuffer = Buffer.from(
 							cd.buffer,
 							cd.byteOffset,
@@ -49,7 +49,7 @@ void describe('codedirectorybuilder', () => {
 						notStrictEqual(
 							expectedWithin.indexOf(cdBuffer),
 							-1,
-							message
+							message(`hashType=${cd.hashType}: within`)
 						);
 					}
 				}
