@@ -36,15 +36,18 @@ void describe('codedirectorybuilder', () => {
 						codeResources
 					)) {
 						const message = `CD: ${arc}: hashType=${cd.hashType}`;
+						const cdBuffer = Buffer.from(
+							cd.buffer,
+							cd.byteOffset,
+							cd.byteLength
+						);
+						const expectedWithin = Buffer.from(
+							thin.buffer,
+							thin.byteOffset + info.offset,
+							thin.byteLength - info.offset
+						);
 						notStrictEqual(
-							Buffer.from(thin).indexOf(
-								Buffer.from(
-									cd.buffer,
-									cd.byteOffset,
-									cd.byteLength
-								),
-								info.offset
-							),
+							expectedWithin.indexOf(cdBuffer),
 							-1,
 							message
 						);
