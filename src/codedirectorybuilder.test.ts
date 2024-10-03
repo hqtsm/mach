@@ -27,6 +27,7 @@ void describe('codedirectorybuilder', () => {
 					}
 
 					const thin = machoThin(macho, info.arch[0], info.arch[1]);
+
 					// eslint-disable-next-line no-await-in-loop
 					for await (const [hashType, cd] of createCodeDirectories(
 						info,
