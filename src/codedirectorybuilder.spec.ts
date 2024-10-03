@@ -1,3 +1,5 @@
+import {strictEqual} from 'node:assert';
+
 import {
 	chunkedHashes,
 	hash,
@@ -6,7 +8,6 @@ import {
 } from './util.spec.ts';
 import {CodeDirectoryBuilder} from './codedirectorybuilder.ts';
 import {cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot} from './const.ts';
-import {strictEqual} from 'node:assert';
 import {CodeDirectory} from './codedirectory.ts';
 
 export const emptyRequirements = unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00');
