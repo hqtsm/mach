@@ -77,6 +77,11 @@ void describe('embeddedsignatureblob', () => {
 					maker.add(cdCodeDirectorySlot, cd0);
 
 					if (!linkerSigned) {
+						let cdAlt = cdAlternateCodeDirectorySlots;
+						for (const cd of cds) {
+							maker.add(cdAlt++, cd);
+						}
+
 						const {requirements} = info;
 						switch (requirements) {
 							case '': {
@@ -97,11 +102,6 @@ void describe('embeddedsignatureblob', () => {
 									)
 								);
 							}
-						}
-
-						let cdAlt = cdAlternateCodeDirectorySlots;
-						for (const cd of cds) {
-							maker.add(cdAlt++, cd);
 						}
 
 						maker.add(cdSignatureSlot, BlobWrapper.alloc());

@@ -83,12 +83,13 @@ export const SuperBlobMaker = (_SuperBlob: ReturnType<typeof SuperBlob>) =>
 			view.setUint32(8, count);
 			let o1 = 12;
 			let o2 = o1 + count * 8;
-			for (const [type, blob] of pieces) {
+			const types = [...pieces.keys()].sort();
+			for (const type of types) {
 				view.setUint32(o1, type);
 				o1 += 4;
 				view.setUint32(o1, o2);
 				o1 += 4;
-				const {buffer, byteOffset, byteLength} = blob;
+				const {buffer, byteOffset, byteLength} = pieces.get(type)!;
 				data.set(new Uint8Array(buffer, byteOffset, byteLength), o2);
 				o2 += byteLength;
 			}
