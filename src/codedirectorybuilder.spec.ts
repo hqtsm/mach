@@ -67,7 +67,7 @@ export async function* createCodeDirectories(
 				break;
 			}
 			default: {
-				throw new Error(`Unexpected requirements: ${requirements}`);
+				throw new Error(`Unknown requirements: ${requirements}`);
 			}
 		}
 		if (codeResources) {
