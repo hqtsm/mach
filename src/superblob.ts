@@ -44,9 +44,7 @@ export const SuperBlob = (_magic: number) =>
 		 */
 		public blob(index: number) {
 			const offset = this.dataView.getUint32(16 + 8 * index);
-			return offset
-				? new BlobCore(this.buffer, this.byteOffset + offset)
-				: null;
+			return offset ? this.at(BlobCore, offset) : null;
 		}
 
 		/**
@@ -56,7 +54,7 @@ export const SuperBlob = (_magic: number) =>
 		 * @returns First match or null.
 		 */
 		public find(type: number) {
-			const {count} = this;
+			const count = this.#count;
 			for (let i = 0; i < count; i++) {
 				if (this.type(i) === type) {
 					return this.blob(i);
@@ -71,6 +69,15 @@ export const SuperBlob = (_magic: number) =>
 		 * @returns Blobs count.
 		 */
 		public get count() {
+			return this.#count;
+		}
+
+		/**
+		 * Number of blobs in super blob.
+		 *
+		 * @returns Blobs count.
+		 */
+		get #count() {
 			return this.dataView.getUint32(8);
 		}
 
@@ -79,7 +86,6 @@ export const SuperBlob = (_magic: number) =>
 		 *
 		 * @param value Blobs count.
 		 */
-		// eslint-disable-next-line accessor-pairs
 		set #count(value: number) {
 			this.dataView.setUint32(8, value);
 		}
