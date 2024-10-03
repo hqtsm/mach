@@ -37,7 +37,7 @@ void describe('codedirectorybuilder', () => {
 					)) {
 						const message = `CD: ${arc}: hashType=${cd.hashType}`;
 						notStrictEqual(
-							Buffer.from(thin).compare(
+							Buffer.from(thin).indexOf(
 								Buffer.from(
 									cd.buffer,
 									cd.byteOffset,
