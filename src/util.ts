@@ -28,20 +28,20 @@ export function ranged(i: number, l: number, h: number) {
 /**
  * Create new instance of a sized type with new memory.
  *
- * @param Constructor Constructor with sizeof property.
+ * @param Type Constructor with sizeof property.
  * @returns New instance.
  */
-export function cnew<T>(Constructor: Sized<T>) {
-	return new Constructor(new ArrayBuffer(Constructor.sizeof));
+export function cnew<T>(Type: Sized<T>) {
+	return new Type(new ArrayBuffer(Type.sizeof));
 }
 
 /**
  * Create new instance from existing memory.
  *
- * @param Constructor Constructor function.
+ * @param Type Constructor function.
  * @param ptr Buffer pointer.
  * @returns New instance.
  */
-export function cast<T>(Constructor: Cast<T>, ptr: Readonly<BufferPointer>) {
-	return new Constructor(ptr.buffer, ptr.byteOffset);
+export function cast<T>(Type: Cast<T>, ptr: Readonly<BufferPointer>) {
+	return new Type(ptr.buffer, ptr.byteOffset);
 }
