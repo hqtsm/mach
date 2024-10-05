@@ -14,6 +14,19 @@ export const HOST_LE = !HOST_BE;
 
 export const UINT32_MAX = 0xffffffff;
 
+// FAT mach magic numbers:
+export const FAT_MAGIC = 0xcafebabe;
+export const FAT_CIGAM = 0xbebafeca;
+export const FAT_MAGIC_64 = 0xcafebabf;
+export const FAT_CIGAM_64 = 0xbfbafeca;
+
+// Mach header magic numbers:
+export const MH_MAGIC = 0xfeedface;
+export const MH_CIGAM = 0xcefaedfe;
+export const MH_MAGIC_64 = 0xfeedfacf;
+export const MH_CIGAM_64 = 0xcffaedfe;
+
+// CPU types:
 export const CPU_ARCH_MASK = 0xff000000;
 export const CPU_ARCH_ABI64 = 0x01000000;
 export const CPU_ARCH_ABI64_32 = 0x02000000;
@@ -35,6 +48,7 @@ export const CPU_TYPE_I860 = 15;
 export const CPU_TYPE_POWERPC = 18;
 export const CPU_TYPE_POWERPC64 = CPU_TYPE_POWERPC | CPU_ARCH_ABI64;
 
+// CPU subtypes:
 export const CPU_SUBTYPE_MASK = 0xff000000;
 export const CPU_SUBTYPE_LIB64 = 0x80000000;
 export const CPU_SUBTYPE_PTRAUTH_ABI = 0x80000000;
@@ -151,16 +165,6 @@ export const CPU_SUBTYPE_ARM64E = 2;
 
 export const CPU_SUBTYPE_ARM64_32_ALL = 0;
 export const CPU_SUBTYPE_ARM64_32_V8 = 1;
-
-export const MH_MAGIC = 0xfeedface;
-export const MH_CIGAM = 0xcefaedfe;
-export const MH_MAGIC_64 = 0xfeedfacf;
-export const MH_CIGAM_64 = 0xcffaedfe;
-
-export const FAT_MAGIC = 0xcafebabe;
-export const FAT_CIGAM = 0xbebafeca;
-export const FAT_MAGIC_64 = 0xcafebabf;
-export const FAT_CIGAM_64 = 0xbfbafeca;
 
 // Executable segment flags:
 export const CS_EXECSEG_MAIN_BINARY = 0x1;
