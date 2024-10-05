@@ -5,6 +5,7 @@ export * from './memoryfile.ts';
 export * from './struct.ts';
 export * from './machheader.ts';
 export * from './machheader64.ts';
+export * from './loadcommand.ts';
 export * from './blobcore.ts';
 export * from './blob.ts';
 export * from './blobwrapper.ts';
