@@ -1,3 +1,4 @@
+import {HOST_LE} from './const.ts';
 import type {BufferView, ArrayBufferReal} from './type.ts';
 
 /**
@@ -52,7 +53,23 @@ export class Struct implements BufferView {
 	}
 
 	/**
+	 * Use little endian or big endian for host-defined endian fields.
+	 * Defaults to match the host architecture.
+	 *
+	 * @returns True for little endian, false for big endian.
+	 */
+	public get littleEndian(): this['constructor']['littleEndian'] {
+		return this.constructor.littleEndian;
+	}
+
+	/**
 	 * Size of new instance.
 	 */
 	public static readonly sizeof: number = 0;
+
+	/**
+	 * Use little endian or big endian for host-defined endian fields.
+	 * Defaults to match the host architecture.
+	 */
+	public static readonly littleEndian = HOST_LE;
 }

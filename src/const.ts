@@ -8,6 +8,10 @@ export const INT_LIMIT = 0x1fffffffffffff;
 // A very large but still compatible upper block size limit.
 export const BLK_LIMIT = 0x100000000;
 
+// Detect the host endianness.
+export const HOST_BE = !new Uint8Array(new Uint16Array([1]).buffer)[0];
+export const HOST_LE = !HOST_BE;
+
 export const UINT32_MAX = 0xffffffff;
 
 export const CPU_ARCH_MASK = 0xff000000;
