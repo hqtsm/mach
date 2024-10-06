@@ -1,6 +1,7 @@
 import {Blob} from './blob.ts';
 import {CSMAGIC_BLOBWRAPPER} from './const.ts';
 import type {BufferView} from './type.ts';
+import {constant} from './util.ts';
 
 /**
  * Generic blob wrapping arbitrary binary data.
@@ -39,11 +40,6 @@ export class BlobWrapper extends Blob {
 	}
 
 	/**
-	 * @inheritdoc
-	 */
-	public static readonly typeMagic: number = CSMAGIC_BLOBWRAPPER;
-
-	/**
 	 * Wrap data into a new blob.
 	 *
 	 * @param content Data to wrap, or number of bytes.
@@ -73,5 +69,9 @@ export class BlobWrapper extends Blob {
 			new Uint8Array(buffer, 8).set(view);
 		}
 		return blob;
+	}
+
+	static {
+		constant(this, 'typeMagic', CSMAGIC_BLOBWRAPPER);
 	}
 }

@@ -1,5 +1,7 @@
 /* eslint-disable max-classes-per-file */
+import {memberI32, memberU32} from './member.ts';
 import {Struct} from './struct.ts';
+import {constant} from './util.ts';
 
 /**
  * Mach-O header, 32-bit.
@@ -9,134 +11,50 @@ export class MachHeader extends Struct {
 
 	/**
 	 * Mach magic.
-	 *
-	 * @returns Magic number.
 	 */
-	public get magic() {
-		return this.dataView.getUint32(0, this.littleEndian);
-	}
-
-	/**
-	 * Mach magic.
-	 *
-	 * @param value Magic number.
-	 */
-	public set magic(value: number) {
-		this.dataView.setUint32(0, value, this.littleEndian);
-	}
+	public declare magic: number;
 
 	/**
 	 * CPU type.
-	 *
-	 * @returns Type ID.
 	 */
-	public get cputype() {
-		return this.dataView.getInt32(4, this.littleEndian);
-	}
-
-	/**
-	 * CPU type.
-	 *
-	 * @param value Type ID.
-	 */
-	public set cputype(value: number) {
-		this.dataView.setInt32(4, value, this.littleEndian);
-	}
+	public declare cputype: number;
 
 	/**
 	 * Machine type.
-	 *
-	 * @returns Type ID.
 	 */
-	public get cpusubtype() {
-		return this.dataView.getInt32(8, this.littleEndian);
-	}
-
-	/**
-	 * Machine type.
-	 *
-	 * @param value Type ID.
-	 */
-	public set cpusubtype(value: number) {
-		this.dataView.setInt32(8, value, this.littleEndian);
-	}
+	public declare cpusubtype: number;
 
 	/**
 	 * File type.
-	 *
-	 * @returns Type ID.
 	 */
-	public get filetype() {
-		return this.dataView.getUint32(12, this.littleEndian);
-	}
-
-	/**
-	 * File type.
-	 *
-	 * @param value Type ID.
-	 */
-	public set filetype(value: number) {
-		this.dataView.setUint32(12, value, this.littleEndian);
-	}
+	public declare filetype: number;
 
 	/**
 	 * Number of load commands.
-	 *
-	 * @returns Command count.
 	 */
-	public get ncmds() {
-		return this.dataView.getUint32(16, this.littleEndian);
-	}
-
-	/**
-	 * Number of load commands.
-	 *
-	 * @param value Command count.
-	 */
-	public set ncmds(value: number) {
-		this.dataView.setUint32(16, value, this.littleEndian);
-	}
+	public declare ncmds: number;
 
 	/**
 	 * Size of load commands.
-	 *
-	 * @returns Commands size.
 	 */
-	public get sizeofcmds() {
-		return this.dataView.getUint32(20, this.littleEndian);
-	}
-
-	/**
-	 * Size of load commands.
-	 *
-	 * @param value Commands size.
-	 */
-	public set sizeofcmds(value: number) {
-		this.dataView.setUint32(20, value, this.littleEndian);
-	}
+	public declare sizeofcmds: number;
 
 	/**
 	 * Flags.
-	 *
-	 * @returns Flags.
 	 */
-	public get flags() {
-		return this.dataView.getUint32(24, this.littleEndian);
-	}
+	public declare flags: number;
 
-	/**
-	 * Flags.
-	 *
-	 * @param value Flags.
-	 */
-	public set flags(value: number) {
-		this.dataView.setUint32(24, value, this.littleEndian);
+	static {
+		let {sizeof} = this;
+		sizeof += memberU32(this, sizeof, 'magic');
+		sizeof += memberI32(this, sizeof, 'cputype');
+		sizeof += memberI32(this, sizeof, 'cpusubtype');
+		sizeof += memberU32(this, sizeof, 'filetype');
+		sizeof += memberU32(this, sizeof, 'ncmds');
+		sizeof += memberU32(this, sizeof, 'sizeofcmds');
+		sizeof += memberU32(this, sizeof, 'flags');
+		constant(this, 'sizeof', sizeof);
 	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public static readonly sizeof: number = 28;
 }
 
 /**
@@ -147,6 +65,10 @@ export class MachHeaderBE extends MachHeader {
 	 * @inheritdoc
 	 */
 	public static readonly littleEndian = false;
+
+	static {
+		constant(this, 'littleEndian');
+	}
 }
 
 /**
@@ -157,4 +79,8 @@ export class MachHeaderLE extends MachHeader {
 	 * @inheritdoc
 	 */
 	public static readonly littleEndian = true;
+
+	static {
+		constant(this, 'littleEndian');
+	}
 }

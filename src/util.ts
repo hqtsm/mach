@@ -13,6 +13,17 @@ export function alignUp(value: number, alignment: number) {
 }
 
 /**
+ * Define constant.
+ *
+ * @param o Object to define constant property on.
+ * @param p Property name.
+ * @param value Optional value, defaults to current value.
+ */
+export function constant<T, U extends keyof T>(o: T, p: U, value: T[U] = o[p]) {
+	Object.defineProperty(o, p, {value, enumerable: true});
+}
+
+/**
  * Assert integer in range.
  *
  * @param i Integer value.

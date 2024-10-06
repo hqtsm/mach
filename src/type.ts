@@ -1,4 +1,11 @@
 /**
+ * Keys for a given value type.
+ */
+export type KeysForType<T, U> = {
+	[K in keyof T]: T[K] extends U ? K : never;
+}[keyof T];
+
+/**
  * Array buffer type, excluding similar incompatible types like typed arrays.
  */
 export type ArrayBufferReal = ArrayBufferLike & {BYTES_PER_ELEMENT?: never};

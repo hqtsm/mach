@@ -1,5 +1,6 @@
 import {kSecCodeMagicRequirementSet} from './const.ts';
 import {SuperBlob} from './superblob.ts';
+import {constant} from './util.ts';
 
 /**
  * Requirement groups indexed by SecRequirementType.
@@ -7,8 +8,7 @@ import {SuperBlob} from './superblob.ts';
 export class Requirements extends SuperBlob {
 	public declare readonly ['constructor']: typeof Requirements;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static readonly typeMagic: number = kSecCodeMagicRequirementSet;
+	static {
+		constant(this, 'typeMagic', kSecCodeMagicRequirementSet);
+	}
 }

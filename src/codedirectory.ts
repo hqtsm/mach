@@ -1,5 +1,7 @@
 import {Blob} from './blob.ts';
 import {kSecCodeMagicCodeDirectory} from './const.ts';
+import {memberU32, memberU64, memberU8} from './member.ts';
+import {constant} from './util.ts';
 
 /**
  * Describes secured pieces of a program.
@@ -9,361 +11,116 @@ export class CodeDirectory extends Blob {
 
 	/**
 	 * Compatibility version.
-	 *
-	 * @returns Version.
 	 */
-	public get version() {
-		return this.dataView.getUint32(8);
-	}
-
-	/**
-	 * Compatibility version.
-	 *
-	 * @param value Version.
-	 */
-	public set version(value: number) {
-		this.dataView.setUint32(8, value);
-	}
+	public declare version: number;
 
 	/**
 	 * Setup and mode flags (SecCodeSignatureFlags kSecCodeSignature*).
-	 *
-	 * @returns Flags.
 	 */
-	public get flags() {
-		return this.dataView.getUint32(12);
-	}
-
-	/**
-	 * Setup and mode flags (SecCodeSignatureFlags kSecCodeSignature*).
-	 *
-	 * @param value Flags.
-	 */
-	public set flags(value: number) {
-		this.dataView.setUint32(12, value);
-	}
+	public declare flags: number;
 
 	/**
 	 * Offset of hash slot element at index zero.
-	 *
-	 * @returns Byte offset.
 	 */
-	public get hashOffset() {
-		return this.dataView.getUint32(16);
-	}
-
-	/**
-	 * Offset of hash slot element at index zero.
-	 *
-	 * @param value Byte offset.
-	 */
-	public set hashOffset(value: number) {
-		this.dataView.setUint32(16, value);
-	}
+	public declare hashOffset: number;
 
 	/**
 	 * Offset of identifier string.
-	 *
-	 * @returns Byte offset.
 	 */
-	public get identOffset() {
-		return this.dataView.getUint32(20);
-	}
-
-	/**
-	 * Offset of identifier string.
-	 *
-	 * @param value Byte offset.
-	 */
-	public set identOffset(value: number) {
-		this.dataView.setUint32(20, value);
-	}
+	public declare identOffset: number;
 
 	/**
 	 * Number of special hash slots.
-	 *
-	 * @returns Number of slots.
 	 */
-	public get nSpecialSlots() {
-		return this.dataView.getUint32(24);
-	}
-
-	/**
-	 * Number of special hash slots.
-	 *
-	 * @param value Number of slots.
-	 */
-	public set nSpecialSlots(value: number) {
-		this.dataView.setUint32(24, value);
-	}
+	public declare nSpecialSlots: number;
 
 	/**
 	 * Number of ordinary (code) hash slots.
-	 *
-	 * @returns Number of slots.
 	 */
-	public get nCodeSlots() {
-		return this.dataView.getUint32(28);
-	}
-
-	/**
-	 * Number of ordinary (code) hash slots.
-	 *
-	 * @param value Number of slots.
-	 */
-	public set nCodeSlots(value: number) {
-		this.dataView.setUint32(28, value);
-	}
+	public declare nCodeSlots: number;
 
 	/**
 	 * Limit to main image signature range, 32 bits.
-	 *
-	 * @returns Limit.
 	 */
-	public get codeLimit() {
-		return this.dataView.getUint32(32);
-	}
-
-	/**
-	 * Limit to main image signature range, 32 bits.
-	 *
-	 * @param value Limit.
-	 */
-	public set codeLimit(value: number) {
-		this.dataView.setUint32(32, value);
-	}
+	public declare codeLimit: number;
 
 	/**
 	 * Size of each hash in bytes.
-	 *
-	 * @returns Byte length.
 	 */
-	public get hashSize() {
-		return this.dataView.getUint8(36);
-	}
-
-	/**
-	 * Size of each hash in bytes.
-	 *
-	 * @param value Byte length.
-	 */
-	public set hashSize(value: number) {
-		this.dataView.setUint8(36, value);
-	}
+	public declare hashSize: number;
 
 	/**
 	 * Hash type (SecCSDigestAlgorithm kSecCodeSignatureHash*).
-	 *
-	 * @returns Hash type.
 	 */
-	public get hashType() {
-		return this.dataView.getUint8(37);
-	}
-
-	/**
-	 * Hash type (SecCSDigestAlgorithm kSecCodeSignatureHash*).
-	 *
-	 * @param value Hash type.
-	 */
-	public set hashType(value: number) {
-		this.dataView.setUint8(37, value);
-	}
+	public declare hashType: number;
 
 	/**
 	 * Platform identifier, zero if not platform binary.
-	 *
-	 * @returns Platform identifier.
 	 */
-	public get platform() {
-		return this.dataView.getUint8(38);
-	}
+	public declare platform: number;
 
 	/**
-	 * Platform identifier, zero if not platform binary.
-	 *
-	 * @param value Platform identifier.
+	 * The page size, log2(page size in bytes), 0 => infinite.
 	 */
-	public set platform(value: number) {
-		this.dataView.setUint8(38, value);
-	}
+	public declare pageSize: number;
 
 	/**
-	 * The log2(page size in bytes), 0 => infinite.
-	 *
-	 * @returns Page size.
+	 * Unused, must be zero.
 	 */
-	public get pageSize() {
-		return this.dataView.getUint8(39);
-	}
+	public declare spare2: number;
 
 	/**
-	 * The log2(page size in bytes), 0 => infinite.
-	 *
-	 * @param value Page size.
-	 */
-	public set pageSize(value: number) {
-		this.dataView.setUint8(39, value);
-	}
-
-	/**
-	 * Offset of scatter vector.
+	 * Offset of scatter vector or 0 for none.
 	 * Assumes supportsScatter.
-	 *
-	 * @returns Byte offset, or 0 for none.
 	 */
-	public get scatterOffset() {
-		return this.dataView.getUint32(44);
-	}
+	public declare scatterOffset: number;
 
 	/**
-	 * Offset of scatter vector.
-	 * Assumes supportsScatter.
-	 *
-	 * @param value Byte offset, or 0 for none.
-	 */
-	public set scatterOffset(value: number) {
-		this.dataView.setUint32(44, value);
-	}
-
-	/**
-	 * Offset of team identifier.
+	 * Offset of team identifier or 0 for none.
 	 * Assumes supportsTeamID.
-	 *
-	 * @returns Byte offset, or 0 for none.
 	 */
-	public get teamIDOffset() {
-		return this.dataView.getUint32(48);
-	}
+	public declare teamIDOffset: number;
 
 	/**
-	 * Offset of team identifier.
-	 * Assumes supportsTeamID.
-	 *
-	 * @param value Byte offset, or 0 for none.
+	 * Unused, must be zero.
 	 */
-	public set teamIDOffset(value: number) {
-		this.dataView.setUint32(48, value);
-	}
+	public declare spare3: number;
 
 	/**
 	 * Limit to main image signature range, 64 bits.
 	 * Assumes supportsCodeLimit64.
-	 *
-	 * @returns Byte length.
 	 */
-	public get codeLimit64() {
-		return this.dataView.getBigUint64(56);
-	}
-
-	/**
-	 * Limit to main image signature range, 64 bits.
-	 * Assumes supportsCodeLimit64.
-	 *
-	 * @param value Byte length.
-	 */
-	public set codeLimit64(value: bigint) {
-		this.dataView.setBigUint64(56, value);
-	}
+	public declare codeLimit64: bigint;
 
 	/**
 	 * Offset of executable segment (TEXT segment file offset),
 	 * Assumes supportsExecSegment.
-	 *
-	 * @returns Byte offset.
 	 */
-	public get execSegBase() {
-		return this.dataView.getBigUint64(64);
-	}
-
-	/**
-	 * Offset of executable segment (TEXT segment file offset),
-	 * Assumes supportsExecSegment.
-	 *
-	 * @param value Byte offset.
-	 */
-	public set execSegBase(value: bigint) {
-		this.dataView.setBigUint64(64, value);
-	}
+	public declare execSegBase: bigint;
 
 	/**
 	 * Limit of executable segment (TEXT segment file size).
 	 * Assumes supportsExecSegment.
-	 *
-	 * @returns Byte length.
 	 */
-	public get execSegLimit() {
-		return this.dataView.getBigUint64(72);
-	}
-
-	/**
-	 * Limit of executable segment (TEXT segment file size).
-	 * Assumes supportsExecSegment.
-	 *
-	 * @param value Byte length.
-	 */
-	public set execSegLimit(value: bigint) {
-		this.dataView.setBigUint64(72, value);
-	}
+	public declare execSegLimit: bigint;
 
 	/**
 	 * The exec segment flags (SecCodeExecSegFlags kSecCodeExecSeg*).
 	 * Assumes supportsExecSegment.
-	 *
-	 * @returns Flags.
 	 */
-	public get execSegFlags() {
-		return this.dataView.getBigUint64(80);
-	}
-
-	/**
-	 * The exec segment flags (SecCodeExecSegFlags kSecCodeExecSeg*).
-	 * Assumes supportsExecSegment.
-	 *
-	 * @param value Flags.
-	 */
-	public set execSegFlags(value: bigint) {
-		this.dataView.setBigUint64(80, value);
-	}
+	public declare execSegFlags: bigint;
 
 	/**
 	 * Runtime version encoded as an unsigned integer.
 	 * Assumes supportsPreEncrypt.
-	 *
-	 * @returns Version.
 	 */
-	public get runtime() {
-		return this.dataView.getUint32(88);
-	}
-
-	/**
-	 * Runtime version encoded as an unsigned integer.
-	 * Assumes supportsPreEncrypt.
-	 *
-	 * @param value Version.
-	 */
-	public set runtime(value: number) {
-		this.dataView.setUint32(88, value);
-	}
+	public declare runtime: number;
 
 	/**
 	 * Offset of pre-encrypt hash slots.
 	 * Assumes supportsPreEncrypt.
-	 *
-	 * @returns Byte offset, or 0 for none.
 	 */
-	public get preEncryptOffset() {
-		return this.dataView.getUint32(92);
-	}
-
-	/**
-	 * Offset of pre-encrypt hash slots.
-	 * Assumes supportsPreEncrypt.
-	 *
-	 * @param value Byte offset.
-	 */
-	public set preEncryptOffset(value: number) {
-		this.dataView.setUint32(92, value);
-	}
+	public declare preEncryptOffset: number;
 
 	/**
 	 * Get slot data view.
@@ -391,16 +148,6 @@ export class CodeDirectory extends Blob {
 			hashSize
 		);
 	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public static readonly sizeof: number = 96;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static readonly typeMagic: number = kSecCodeMagicCodeDirectory;
 
 	/**
 	 * Earliest supported version.
@@ -431,4 +178,37 @@ export class CodeDirectory extends Blob {
 	 * First version to support pre-encrypt hashes and runtime version.
 	 */
 	public static readonly supportsPreEncrypt = 0x20500;
+
+	static {
+		let {sizeof} = this;
+		sizeof += memberU32(this, sizeof, 'version', false);
+		sizeof += memberU32(this, sizeof, 'flags', false);
+		sizeof += memberU32(this, sizeof, 'hashOffset', false);
+		sizeof += memberU32(this, sizeof, 'identOffset', false);
+		sizeof += memberU32(this, sizeof, 'nSpecialSlots', false);
+		sizeof += memberU32(this, sizeof, 'nCodeSlots', false);
+		sizeof += memberU32(this, sizeof, 'codeLimit', false);
+		sizeof += memberU8(this, sizeof, 'hashSize');
+		sizeof += memberU8(this, sizeof, 'hashType');
+		sizeof += memberU8(this, sizeof, 'platform');
+		sizeof += memberU8(this, sizeof, 'pageSize');
+		sizeof += memberU32(this, sizeof, 'spare2', false);
+		sizeof += memberU32(this, sizeof, 'scatterOffset', false);
+		sizeof += memberU32(this, sizeof, 'teamIDOffset', false);
+		sizeof += memberU32(this, sizeof, 'spare3', false);
+		sizeof += memberU64(this, sizeof, 'codeLimit64', false);
+		sizeof += memberU64(this, sizeof, 'execSegBase', false);
+		sizeof += memberU64(this, sizeof, 'execSegLimit', false);
+		sizeof += memberU64(this, sizeof, 'execSegFlags', false);
+		sizeof += memberU32(this, sizeof, 'runtime', false);
+		sizeof += memberU32(this, sizeof, 'preEncryptOffset', false);
+		constant(this, 'sizeof', sizeof);
+		constant(this, 'typeMagic', kSecCodeMagicCodeDirectory);
+		constant(this, 'earliestVersion');
+		constant(this, 'supportsScatter');
+		constant(this, 'supportsTeamID');
+		constant(this, 'supportsCodeLimit64');
+		constant(this, 'supportsExecSegment');
+		constant(this, 'supportsPreEncrypt');
+	}
 }

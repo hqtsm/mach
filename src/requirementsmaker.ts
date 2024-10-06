@@ -1,5 +1,6 @@
 import {Requirements} from './requirements.ts';
 import {SuperBlobMaker} from './superblobmaker.ts';
+import {constant} from './util.ts';
 
 /**
  * SuperBlob maker for Requirements.
@@ -14,4 +15,8 @@ export class RequirementsMaker extends SuperBlobMaker {
 	 * @inheritdoc
 	 */
 	public static readonly SuperBlob = Requirements;
+
+	static {
+		constant(this, 'SuperBlob');
+	}
 }

@@ -1,5 +1,6 @@
 import {kSecCodeMagicDetachedSignature} from './const.ts';
 import {SuperBlob} from './superblob.ts';
+import {constant} from './util.ts';
 
 /**
  * Multiple architecture EmbeddedSignatureBlobs for Mach-O detached signatures.
@@ -8,8 +9,7 @@ import {SuperBlob} from './superblob.ts';
 export class DetachedSignatureBlob extends SuperBlob {
 	public declare readonly ['constructor']: typeof DetachedSignatureBlob;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static readonly typeMagic: number = kSecCodeMagicDetachedSignature;
+	static {
+		constant(this, 'typeMagic', kSecCodeMagicDetachedSignature);
+	}
 }

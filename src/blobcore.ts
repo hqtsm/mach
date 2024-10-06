@@ -1,5 +1,7 @@
+import {memberU32} from './member.ts';
 import {Struct} from './struct.ts';
 import type {Cast} from './type.ts';
+import {constant} from './util.ts';
 
 /**
  * Polymorphic memory blobs with magics numbers.
@@ -9,11 +11,21 @@ export class BlobCore extends Struct {
 
 	/**
 	 * Magic number.
+	 */
+	protected declare mMagic: number;
+
+	/**
+	 * Blob length.
+	 */
+	protected declare mLength: number;
+
+	/**
+	 * Magic number.
 	 *
 	 * @returns Magic number.
 	 */
 	public get magic() {
-		return this.dataView.getUint32(0);
+		return this.mMagic;
 	}
 
 	/**
@@ -22,7 +34,7 @@ export class BlobCore extends Struct {
 	 * @param value Magic number.
 	 */
 	public set magic(value: number) {
-		this.dataView.setUint32(0, value);
+		this.mMagic = value;
 	}
 
 	/**
@@ -33,7 +45,7 @@ export class BlobCore extends Struct {
 	 * @returns Blob length.
 	 */
 	public get length() {
-		return this.dataView.getUint32(4);
+		return this.mLength;
 	}
 
 	/**
@@ -44,14 +56,14 @@ export class BlobCore extends Struct {
 	 * @param value Blob length.
 	 */
 	public set length(value) {
-		this.dataView.setUint32(4, value);
+		this.mLength = value;
 	}
 
 	/**
 	 * @inheritdoc
 	 */
 	public get byteLength() {
-		return this.dataView.getUint32(4);
+		return this.mLength;
 	}
 
 	/**
@@ -87,8 +99,10 @@ export class BlobCore extends Struct {
 		return new Type(this.buffer, this.byteOffset + offset);
 	}
 
-	/**
-	 * @inheritdoc
-	 */
-	public static readonly sizeof: number = 8;
+	static {
+		let {sizeof} = this;
+		sizeof += memberU32(this, sizeof, 'mMagic' as never, false);
+		sizeof += memberU32(this, sizeof, 'mLength' as never, false);
+		constant(this, 'sizeof', sizeof);
+	}
 }

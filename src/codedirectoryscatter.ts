@@ -1,4 +1,6 @@
+import {memberU32, memberU64} from './member.ts';
 import {Struct} from './struct.ts';
+import {constant} from './util.ts';
 
 /**
  * CodeDirectory scatter vector element.
@@ -7,56 +9,31 @@ export class CodeDirectoryScatter extends Struct {
 	public declare readonly ['constructor']: typeof CodeDirectoryScatter;
 
 	/**
-	 * Number of pages.
-	 *
-	 * @returns Page count; zero for sentinel (only).
+	 * Page count; zero for sentinel (only).
 	 */
-	public get count() {
-		return this.dataView.getUint32(0);
-	}
-
-	/**
-	 * Number of pages.
-	 *
-	 * @param value Page count; zero for sentinel (only).
-	 */
-	public set count(value: number) {
-		this.dataView.setUint32(0, value);
-	}
+	public declare count: number;
 
 	/**
 	 * First page number.
-	 *
-	 * @returns Page number.
 	 */
-	public get base() {
-		return this.dataView.getUint32(4);
-	}
-
-	/**
-	 * First page number.
-	 *
-	 * @param value Page number.
-	 */
-	public set base(value: number) {
-		this.dataView.setUint32(4, value);
-	}
+	public declare base: number;
 
 	/**
 	 * Byte offset in target.
-	 *
-	 * @returns Byte offset.
 	 */
-	public get targetOffset() {
-		return this.dataView.getBigUint64(8);
-	}
+	public declare targetOffset: bigint;
 
 	/**
-	 * Byte offset in target.
-	 *
-	 * @param value Byte offset.
+	 * Reserved, must be zero.
 	 */
-	public set targetOffset(value: bigint) {
-		this.dataView.setBigUint64(8, value);
+	public declare spare: bigint;
+
+	static {
+		let {sizeof} = this;
+		sizeof += memberU32(this, sizeof, 'count', false);
+		sizeof += memberU32(this, sizeof, 'base', false);
+		sizeof += memberU64(this, sizeof, 'targetOffset', false);
+		sizeof += memberU64(this, sizeof, 'spare', false);
+		constant(this, 'sizeof', sizeof);
 	}
 }

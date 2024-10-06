@@ -1,11 +1,18 @@
 import {Blob} from './blob.ts';
 import {BlobCore} from './blobcore.ts';
+import {memberU32} from './member.ts';
+import {constant} from './util.ts';
 
 /**
  * Multiple Blobs wrapped in a single indexed blob.
  */
 export class SuperBlob extends Blob {
 	public declare readonly ['constructor']: typeof SuperBlob;
+
+	/**
+	 * Number of blobs in super blob.
+	 */
+	private declare mCount: number;
 
 	/**
 	 * Setup size and number of blobs in super blob.
@@ -15,7 +22,7 @@ export class SuperBlob extends Blob {
 	 */
 	public setup(size: number, count: number) {
 		this.initialize2(size);
-		this.#count = count;
+		this.mCount = count;
 	}
 
 	/**
@@ -46,7 +53,7 @@ export class SuperBlob extends Blob {
 	 * @returns First match or null.
 	 */
 	public find(type: number) {
-		const count = this.#count;
+		const count = this.mCount;
 		for (let i = 0; i < count; i++) {
 			if (this.type(i) === type) {
 				return this.blob(i);
@@ -61,29 +68,12 @@ export class SuperBlob extends Blob {
 	 * @returns Blobs count.
 	 */
 	public get count() {
-		return this.#count;
+		return this.mCount;
 	}
 
-	/**
-	 * Number of blobs in super blob.
-	 *
-	 * @returns Blobs count.
-	 */
-	get #count() {
-		return this.dataView.getUint32(8);
+	static {
+		let {sizeof} = this;
+		sizeof += memberU32(this, sizeof, 'mCount' as never, false);
+		constant(this, 'sizeof', sizeof);
 	}
-
-	/**
-	 * Number of blobs in super blob.
-	 *
-	 * @param value Blobs count.
-	 */
-	set #count(value: number) {
-		this.dataView.setUint32(8, value);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public static readonly sizeof: number = 12;
 }

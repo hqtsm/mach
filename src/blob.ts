@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import {BlobCore} from './blobcore.ts';
 import type {BufferView} from './type.ts';
+import {constant} from './util.ts';
 
 /**
  * Polymorphic memory blob for magic number.
@@ -52,5 +53,9 @@ export class Blob extends BlobCore {
 			new Uint8Array(buffer, 8).set(view);
 		}
 		return new DataView(buffer);
+	}
+
+	static {
+		constant(this, 'typeMagic');
 	}
 }

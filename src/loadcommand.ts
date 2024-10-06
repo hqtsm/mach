@@ -1,5 +1,7 @@
 /* eslint-disable max-classes-per-file */
+import {memberU32} from './member.ts';
 import {Struct} from './struct.ts';
+import {constant} from './util.ts';
 
 /**
  * Load command.
@@ -9,44 +11,20 @@ export class LoadCommand extends Struct {
 
 	/**
 	 * Command type.
-	 *
-	 * @returns Type ID.
 	 */
-	public get cmd() {
-		return this.dataView.getUint32(0, this.littleEndian);
-	}
-
-	/**
-	 * Command type.
-	 *
-	 * @param value Type ID.
-	 */
-	public set cmd(value: number) {
-		this.dataView.setUint32(0, value, this.littleEndian);
-	}
+	public declare cmd: number;
 
 	/**
 	 * Command size.
-	 *
-	 * @returns Byte length.
 	 */
-	public get cmdsize() {
-		return this.dataView.getUint32(4, this.littleEndian);
-	}
+	public declare cmdsize: number;
 
-	/**
-	 * Command size.
-	 *
-	 * @param value Byte length.
-	 */
-	public set cmdsize(value: number) {
-		this.dataView.setUint32(4, value, this.littleEndian);
+	static {
+		let {sizeof} = this;
+		sizeof += memberU32(this, sizeof, 'cmd');
+		sizeof += memberU32(this, sizeof, 'cmdsize');
+		constant(this, 'sizeof', sizeof);
 	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public static readonly sizeof: number = 28;
 }
 
 /**
@@ -57,6 +35,10 @@ export class LoadCommandBE extends LoadCommand {
 	 * @inheritdoc
 	 */
 	public static readonly littleEndian = false;
+
+	static {
+		constant(this, 'littleEndian');
+	}
 }
 
 /**
@@ -67,4 +49,8 @@ export class LoadCommandLE extends LoadCommand {
 	 * @inheritdoc
 	 */
 	public static readonly littleEndian = true;
+
+	static {
+		constant(this, 'littleEndian');
+	}
 }

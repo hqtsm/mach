@@ -1,5 +1,6 @@
 import {kSecCodeMagicDRList} from './const.ts';
 import {SuperBlob} from './superblob.ts';
+import {constant} from './util.ts';
 
 /**
  * Dependency records from dylib inputs.
@@ -8,8 +9,7 @@ import {SuperBlob} from './superblob.ts';
 export class LibraryDependencyBlob extends SuperBlob {
 	public declare readonly ['constructor']: typeof LibraryDependencyBlob;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static readonly typeMagic: number = kSecCodeMagicDRList;
+	static {
+		constant(this, 'typeMagic', kSecCodeMagicDRList);
+	}
 }

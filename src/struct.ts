@@ -1,5 +1,6 @@
 import {HOST_LE} from './const.ts';
 import type {BufferView, ArrayBufferReal} from './type.ts';
+import {constant} from './util.ts';
 
 /**
  * Binary structure buffer view.
@@ -72,4 +73,9 @@ export class Struct implements BufferView {
 	 * Defaults to match the host architecture.
 	 */
 	public static readonly littleEndian = HOST_LE;
+
+	static {
+		constant(this, 'sizeof');
+		constant(this, 'littleEndian');
+	}
 }

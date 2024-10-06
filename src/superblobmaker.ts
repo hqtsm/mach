@@ -1,5 +1,6 @@
 import type {BlobCore} from './blobcore.ts';
 import {SuperBlob} from './superblob.ts';
+import {constant} from './util.ts';
 
 /**
  * SuperBlob maker.
@@ -88,4 +89,8 @@ export class SuperBlobMaker {
 	 * SuperBlob class.
 	 */
 	public static readonly SuperBlob = SuperBlob;
+
+	static {
+		constant(this, 'SuperBlob');
+	}
 }
