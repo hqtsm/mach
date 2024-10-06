@@ -62,12 +62,12 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Identifier.
 	 */
-	public identifier = new Uint8Array();
+	public identifier = new Int8Array();
 
 	/**
 	 * Team ID.
 	 */
-	public teamID = new Uint8Array();
+	public teamID = new Int8Array();
 
 	/**
 	 * Code slots.
@@ -404,10 +404,24 @@ export class CodeDirectoryBuilder {
 			}
 		}
 		dir.identOffset = offset;
-		data.set(identifier, offset);
+		data.set(
+			new Uint8Array(
+				identifier.buffer,
+				identifier.byteOffset,
+				identifier.byteLength
+			),
+			offset
+		);
 		offset += identifier.byteLength + 1;
 		if (teamID.byteLength && !(version < CodeDirectory.supportsTeamID)) {
-			data.set(teamID, offset);
+			data.set(
+				new Uint8Array(
+					teamID.buffer,
+					teamID.byteOffset,
+					teamID.byteLength
+				),
+				offset
+			);
 			offset += teamID.byteLength + 1;
 		}
 		const spe = !(version < CodeDirectory.supportsPreEncrypt);
