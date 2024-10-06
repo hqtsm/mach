@@ -49,7 +49,7 @@ export class SuperBlobMaker {
 	 * @returns Byte length.
 	 */
 	public size() {
-		let size = 12;
+		let size = SuperBlob.sizeof;
 		for (const [, blob] of this.#pieces) {
 			size += 8 + blob.byteLength;
 		}
@@ -70,7 +70,7 @@ export class SuperBlobMaker {
 		const view = new DataView(buffer);
 		const sb = new this.constructor.SuperBlob(buffer);
 		sb.setup(size, count);
-		let o1 = 12;
+		let o1 = SuperBlob.sizeof;
 		let o2 = o1 + count * 8;
 		const types = [...pieces.keys()].sort((a, b) => a - b);
 		for (const type of types) {

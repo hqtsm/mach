@@ -50,8 +50,9 @@ export class BlobWrapper extends Blob {
 		content: Readonly<BufferView> | number = 0,
 		magic = BlobWrapper.typeMagic
 	) {
+		const {sizeof} = BlobWrapper;
 		let view;
-		let size = 8;
+		let size = sizeof;
 		if (typeof content === 'number') {
 			size += content;
 		} else {
@@ -66,7 +67,7 @@ export class BlobWrapper extends Blob {
 		const blob = new BlobWrapper(buffer);
 		blob.initialize(magic, size);
 		if (view) {
-			new Uint8Array(buffer, 8).set(view);
+			new Uint8Array(buffer, sizeof).set(view);
 		}
 		return blob;
 	}
