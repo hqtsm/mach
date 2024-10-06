@@ -2,7 +2,7 @@
 import {Struct} from './struct.ts';
 
 /**
- * The 64-bit Mach-O header.
+ * Mach-O header, 64-bit.
  */
 export class MachHeader64 extends Struct {
 	public declare readonly ['constructor']: typeof MachHeader64;
@@ -158,7 +158,7 @@ export class MachHeader64 extends Struct {
 }
 
 /**
- * The 64-bit Mach-O header, big endian.
+ * Mach-O header, 64-bit, big endian.
  */
 export class MachHeader64BE extends MachHeader64 {
 	/**
@@ -168,7 +168,7 @@ export class MachHeader64BE extends MachHeader64 {
 }
 
 /**
- * The 64-bit Mach-O header, little endian.
+ * Mach-O header, 64-bit, little endian.
  */
 export class MachHeader64LE extends MachHeader64 {
 	/**
