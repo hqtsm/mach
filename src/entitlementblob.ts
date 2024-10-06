@@ -4,7 +4,7 @@ import {kSecCodeMagicEntitlement} from './const.ts';
 /**
  * For embedding entitlement configuration data.
  */
-export class EntitlementBlob extends Blob(kSecCodeMagicEntitlement) {
+export class EntitlementBlob extends Blob {
 	public declare readonly ['constructor']: typeof EntitlementBlob;
 
 	/**
@@ -24,4 +24,9 @@ export class EntitlementBlob extends Blob(kSecCodeMagicEntitlement) {
 	public get bodyLength() {
 		return this.length - 8;
 	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public static readonly typeMagic: number = kSecCodeMagicEntitlement;
 }

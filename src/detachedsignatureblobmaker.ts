@@ -4,11 +4,14 @@ import {SuperBlobMaker} from './superblobmaker.ts';
 /**
  * SuperBlob maker for DetachedSignatureBlob.
  */
-export class DetachedSignatureBlobMaker extends SuperBlobMaker(
-	DetachedSignatureBlob
-) {
+export class DetachedSignatureBlobMaker extends SuperBlobMaker {
 	public declare readonly ['constructor']: Omit<
 		typeof DetachedSignatureBlobMaker,
 		'new'
 	>;
+
+	/**
+	 * @inheritdoc
+	 */
+	public static readonly SuperBlob = DetachedSignatureBlob;
 }

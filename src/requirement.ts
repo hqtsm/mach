@@ -4,7 +4,7 @@ import {kSecCodeMagicRequirement} from './const.ts';
 /**
  * Single requirement.
  */
-export class Requirement extends Blob(kSecCodeMagicRequirement) {
+export class Requirement extends Blob {
 	public declare readonly ['constructor']: typeof Requirement;
 
 	/**
@@ -29,6 +29,11 @@ export class Requirement extends Blob(kSecCodeMagicRequirement) {
 	 * @inheritdoc
 	 */
 	public static readonly sizeof: number = 12;
+
+	/**
+	 * @inheritdoc
+	 */
+	public static readonly typeMagic: number = kSecCodeMagicRequirement;
 
 	/**
 	 * Common alignment rule for all requirement forms.

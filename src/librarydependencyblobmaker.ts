@@ -4,11 +4,14 @@ import {SuperBlobMaker} from './superblobmaker.ts';
 /**
  * SuperBlob maker for LibraryDependencyBlob.
  */
-export class LibraryDependencyBlobMaker extends SuperBlobMaker(
-	LibraryDependencyBlob
-) {
+export class LibraryDependencyBlobMaker extends SuperBlobMaker {
 	public declare readonly ['constructor']: Omit<
 		typeof LibraryDependencyBlobMaker,
 		'new'
 	>;
+
+	/**
+	 * @inheritdoc
+	 */
+	public static readonly SuperBlob = LibraryDependencyBlob;
 }

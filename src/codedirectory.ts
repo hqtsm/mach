@@ -4,7 +4,7 @@ import {kSecCodeMagicCodeDirectory} from './const.ts';
 /**
  * Describes secured pieces of a program.
  */
-export class CodeDirectory extends Blob(kSecCodeMagicCodeDirectory) {
+export class CodeDirectory extends Blob {
 	public declare readonly ['constructor']: typeof CodeDirectory;
 
 	/**
@@ -396,6 +396,11 @@ export class CodeDirectory extends Blob(kSecCodeMagicCodeDirectory) {
 	 * @inheritdoc
 	 */
 	public static readonly sizeof: number = 96;
+
+	/**
+	 * @inheritdoc
+	 */
+	public static readonly typeMagic: number = kSecCodeMagicCodeDirectory;
 
 	/**
 	 * Earliest supported version.

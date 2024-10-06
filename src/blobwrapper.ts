@@ -5,7 +5,7 @@ import type {BufferView} from './type.ts';
 /**
  * Generic blob wrapping arbitrary binary data.
  */
-export class BlobWrapper extends Blob(CSMAGIC_BLOBWRAPPER) {
+export class BlobWrapper extends Blob {
 	public declare readonly ['constructor']: typeof BlobWrapper;
 
 	/**
@@ -37,6 +37,11 @@ export class BlobWrapper extends Blob(CSMAGIC_BLOBWRAPPER) {
 		// No change, needed to keep setter.
 		super.length = value;
 	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public static readonly typeMagic: number = CSMAGIC_BLOBWRAPPER;
 
 	/**
 	 * Wrap data into a new blob.

@@ -1,60 +1,56 @@
+/* eslint-disable max-classes-per-file */
 import {BlobCore} from './blobcore.ts';
 import type {BufferView} from './type.ts';
 
 /**
- * Blob class template.
- *
- * @param _magic Type magic number.
- * @returns Blob class.
+ * Polymorphic memory blob for magic number.
  */
-export const Blob = (_magic: number) =>
-	//
+export class Blob extends BlobCore {
+	public declare readonly ['constructor']: typeof Blob;
+
 	/**
-	 * Polymorphic memory blob for magic number.
+	 * Initialize blob with length.
+	 *
+	 * @param size Length.
 	 */
-	class Blob extends BlobCore {
-		public declare readonly ['constructor']: typeof Blob;
+	public initialize2(size = 0) {
+		this.initialize(this.constructor.typeMagic, size);
+	}
 
-		/**
-		 * Initialize blob with length.
-		 *
-		 * @param size Length.
-		 */
-		public initialize2(size = 0) {
-			this.initialize(_magic, size);
+	/**
+	 * Type magic number for this blob.
+	 *
+	 * @returns Type magic number.
+	 */
+	public static readonly typeMagic: number = 0;
+
+	/**
+	 * Wrap data into a new blob.
+	 *
+	 * @param content Data to wrap, or number of bytes.
+	 * @returns Blob.
+	 */
+	public static blobify(content: Readonly<BufferView> | number = 0) {
+		let view;
+		let size = 8;
+		if (typeof content === 'number') {
+			size += content;
+		} else {
+			view = new Uint8Array(
+				content.buffer,
+				content.byteOffset,
+				content.byteLength
+			);
+			size += view.byteLength;
 		}
-
-		/**
-		 * Type magic number for this blob.
-		 *
-		 * @returns Type magic number.
-		 */
-		public static readonly typeMagic = _magic;
-
-		/**
-		 * Wrap data into a new blob.
-		 *
-		 * @param content Data to wrap, or number of bytes.
-		 * @returns Blob.
-		 */
-		public static blobify(content: Readonly<BufferView> | number = 0) {
-			let view;
-			let size = 8;
-			if (typeof content === 'number') {
-				size += content;
-			} else {
-				view = new Uint8Array(
-					content.buffer,
-					content.byteOffset,
-					content.byteLength
-				);
-				size += view.byteLength;
-			}
-			const buffer = new ArrayBuffer(size);
-			new Blob(buffer).initialize2(size);
-			if (view) {
-				new Uint8Array(buffer, 8).set(view);
-			}
-			return new DataView(buffer);
+		const buffer = new ArrayBuffer(size);
+		const {typeMagic} = this;
+		new (class extends Blob {
+			public static readonly typeMagic = typeMagic;
+		})(buffer).initialize2(size);
+		if (view) {
+			new Uint8Array(buffer, 8).set(view);
 		}
-	};
+		return new DataView(buffer);
+	}
+}
