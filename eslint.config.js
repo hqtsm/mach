@@ -288,7 +288,8 @@ export default [
 						MethodDefinition: true
 					},
 					checkGetters: true,
-					checkSetters: true
+					checkSetters: true,
+					publicOnly: true
 				}
 			],
 			'jsdoc/tag-lines': [

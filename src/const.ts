@@ -1,5 +1,4 @@
 /* eslint-disable no-bitwise */
-/* eslint-disable jsdoc/require-jsdoc */
 /* eslint-disable @typescript-eslint/naming-convention */
 
 // Highest number value before approximation, 2^53-1.
