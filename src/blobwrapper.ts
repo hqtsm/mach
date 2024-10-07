@@ -1,7 +1,8 @@
 import {Blob} from './blob.ts';
 import {CSMAGIC_BLOBWRAPPER} from './const.ts';
+import {memberU8A} from './member.ts';
 import type {BufferView} from './type.ts';
-import {constant} from './util.ts';
+import {cast, constant} from './util.ts';
 
 /**
  * Generic blob wrapping arbitrary binary data.
@@ -11,12 +12,17 @@ export class BlobWrapper extends Blob {
 
 	/**
 	 * Data of payload (only).
+	 */
+	public declare readonly dataArea: Uint8Array;
+
+	/**
+	 * Data of payload (only).
 	 *
 	 * @inheritdoc
 	 */
 	public get data() {
 		// Overridden to point to payload (only).
-		return new DataView(this.buffer, this.byteOffset + 8);
+		return cast(DataView, this.dataArea);
 	}
 
 	/**
@@ -73,6 +79,9 @@ export class BlobWrapper extends Blob {
 	}
 
 	static {
+		let {sizeof} = this;
+		sizeof += memberU8A(this, sizeof, 'dataArea', 0);
+		constant(this, 'sizeof', sizeof);
 		constant(this, 'typeMagic', CSMAGIC_BLOBWRAPPER);
 	}
 }

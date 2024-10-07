@@ -1,9 +1,38 @@
 /**
+ * Check if two types are equal.
+ */
+export type EqualTypes<A, B> =
+	(<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2
+		? true
+		: false;
+
+/**
+ * Readonly keys for a given type.
+ */
+export type ReadonlyKeyof<T> = NonNullable<
+	{
+		[K in keyof T]: EqualTypes<
+			{[L in K]: T[K]},
+			{readonly [L in K]: T[K]}
+		> extends true
+			? K
+			: never;
+	}[keyof T]
+>;
+
+/**
  * Keys for a given value type.
  */
-export type KeysForType<T, U> = {
+export type KeyofType<T, U> = {
 	[K in keyof T]: T[K] extends U ? K : never;
 }[keyof T];
+
+/**
+ * Readonly keys for a given value type.
+ */
+export type ReadonlyKeyofType<T, U> = {
+	[K in ReadonlyKeyof<T>]: T[K] extends U ? K : never;
+}[ReadonlyKeyof<T>];
 
 /**
  * Array buffer type, excluding similar incompatible types like typed arrays.

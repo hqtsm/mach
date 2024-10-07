@@ -1,4 +1,4 @@
-import type {KeysForType} from './type.ts';
+import type {KeyofType, ReadonlyKeyofType} from './type.ts';
 import type {Struct} from './struct.ts';
 
 /**
@@ -12,7 +12,7 @@ import type {Struct} from './struct.ts';
 export function memberI8<T extends typeof Struct>(
 	_Struct: T,
 	offset: number,
-	field: KeysForType<T['prototype'], number>
+	field: KeyofType<T['prototype'], number>
 ) {
 	Object.defineProperty(_Struct.prototype, field, {
 		get(this: T['prototype']) {
@@ -36,7 +36,7 @@ export function memberI8<T extends typeof Struct>(
 export function memberU8<T extends typeof Struct>(
 	_Struct: T,
 	offset: number,
-	field: KeysForType<T['prototype'], number>
+	field: KeyofType<T['prototype'], number>
 ) {
 	Object.defineProperty(_Struct.prototype, field, {
 		get(this: T['prototype']) {
@@ -61,7 +61,7 @@ export function memberU8<T extends typeof Struct>(
 export function memberI16<T extends typeof Struct>(
 	_Struct: T,
 	offset: number,
-	field: KeysForType<T['prototype'], number>,
+	field: KeyofType<T['prototype'], number>,
 	le: boolean | null = null
 ) {
 	Object.defineProperty(_Struct.prototype, field, {
@@ -87,7 +87,7 @@ export function memberI16<T extends typeof Struct>(
 export function memberU16<T extends typeof Struct>(
 	_Struct: T,
 	offset: number,
-	field: KeysForType<T['prototype'], number>,
+	field: KeyofType<T['prototype'], number>,
 	le: boolean | null = null
 ) {
 	Object.defineProperty(_Struct.prototype, field, {
@@ -113,7 +113,7 @@ export function memberU16<T extends typeof Struct>(
 export function memberI32<T extends typeof Struct>(
 	_Struct: T,
 	offset: number,
-	field: KeysForType<T['prototype'], number>,
+	field: KeyofType<T['prototype'], number>,
 	le: boolean | null = null
 ) {
 	Object.defineProperty(_Struct.prototype, field, {
@@ -139,7 +139,7 @@ export function memberI32<T extends typeof Struct>(
 export function memberU32<T extends typeof Struct>(
 	_Struct: T,
 	offset: number,
-	field: KeysForType<T['prototype'], number>,
+	field: KeyofType<T['prototype'], number>,
 	le: boolean | null = null
 ) {
 	Object.defineProperty(_Struct.prototype, field, {
@@ -165,7 +165,7 @@ export function memberU32<T extends typeof Struct>(
 export function memberI64<T extends typeof Struct>(
 	_Struct: T,
 	offset: number,
-	field: KeysForType<T['prototype'], bigint>,
+	field: KeyofType<T['prototype'], bigint>,
 	le: boolean | null = null
 ) {
 	Object.defineProperty(_Struct.prototype, field, {
@@ -191,7 +191,7 @@ export function memberI64<T extends typeof Struct>(
 export function memberU64<T extends typeof Struct>(
 	_Struct: T,
 	offset: number,
-	field: KeysForType<T['prototype'], bigint>,
+	field: KeyofType<T['prototype'], bigint>,
 	le: boolean | null = null
 ) {
 	Object.defineProperty(_Struct.prototype, field, {
@@ -203,4 +203,50 @@ export function memberU64<T extends typeof Struct>(
 		}
 	});
 	return 8;
+}
+
+/**
+ * Member int8 array.
+ *
+ * @param _Struct Struct constructor.
+ * @param offset Byte offset.
+ * @param field Field name.
+ * @param count Array length.
+ * @returns Byte length.
+ */
+export function memberI8A<T extends typeof Struct>(
+	_Struct: T,
+	offset: number,
+	field: ReadonlyKeyofType<T['prototype'], Int8Array>,
+	count: number
+) {
+	Object.defineProperty(_Struct.prototype, field, {
+		get(this: T['prototype']) {
+			return new Int8Array(this.buffer, this.byteOffset + offset, count);
+		}
+	});
+	return count;
+}
+
+/**
+ * Member uint8 array.
+ *
+ * @param _Struct Struct constructor.
+ * @param offset Byte offset.
+ * @param field Field name.
+ * @param count Array length.
+ * @returns Byte length.
+ */
+export function memberU8A<T extends typeof Struct>(
+	_Struct: T,
+	offset: number,
+	field: ReadonlyKeyofType<T['prototype'], Uint8Array>,
+	count: number
+) {
+	Object.defineProperty(_Struct.prototype, field, {
+		get(this: T['prototype']) {
+			return new Uint8Array(this.buffer, this.byteOffset + offset, count);
+		}
+	});
+	return count;
 }
