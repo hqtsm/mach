@@ -1,7 +1,7 @@
 /**
- * Check if two types are equal.
+ * If A equals B then C else D.
  */
-export type EqualTypes<A, B, C, D> =
+export type IfTypesEqual<A, B, C, D> =
 	(<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? C : D;
 
 /**
@@ -9,7 +9,7 @@ export type EqualTypes<A, B, C, D> =
  */
 export type ReadonlyKeyof<T> = NonNullable<
 	{
-		[K in keyof T]: EqualTypes<
+		[K in keyof T]: IfTypesEqual<
 			{[L in K]: T[K]},
 			{readonly [L in K]: T[K]},
 			K,
