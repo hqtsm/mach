@@ -1,10 +1,8 @@
 /**
  * Check if two types are equal.
  */
-export type EqualTypes<A, B> =
-	(<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2
-		? true
-		: false;
+export type EqualTypes<A, B, C, D> =
+	(<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? C : D;
 
 /**
  * Readonly keys for a given type.
@@ -13,10 +11,10 @@ export type ReadonlyKeyof<T> = NonNullable<
 	{
 		[K in keyof T]: EqualTypes<
 			{[L in K]: T[K]},
-			{readonly [L in K]: T[K]}
-		> extends true
-			? K
-			: never;
+			{readonly [L in K]: T[K]},
+			K,
+			never
+		>;
 	}[keyof T]
 >;
 
