@@ -4,17 +4,17 @@ import type {Struct} from './struct.ts';
 /**
  * Member int8.
  *
- * @param _Struct Struct constructor.
+ * @param StructT Struct constructor.
  * @param offset Byte offset.
  * @param field Field name.
  * @returns Byte length.
  */
 export function memberI8<T extends typeof Struct>(
-	_Struct: T,
+	StructT: T,
 	offset: number,
 	field: KeyofType<T['prototype'], number>
 ) {
-	Object.defineProperty(_Struct.prototype, field, {
+	Object.defineProperty(StructT.prototype, field, {
 		get(this: T['prototype']) {
 			return this.dataView.getInt8(offset);
 		},
@@ -28,17 +28,17 @@ export function memberI8<T extends typeof Struct>(
 /**
  * Member uint8.
  *
- * @param _Struct Struct constructor.
+ * @param StructT Struct constructor.
  * @param offset Byte offset.
  * @param field Field name.
  * @returns Byte length.
  */
 export function memberU8<T extends typeof Struct>(
-	_Struct: T,
+	StructT: T,
 	offset: number,
 	field: KeyofType<T['prototype'], number>
 ) {
-	Object.defineProperty(_Struct.prototype, field, {
+	Object.defineProperty(StructT.prototype, field, {
 		get(this: T['prototype']) {
 			return this.dataView.getUint8(offset);
 		},
@@ -52,19 +52,19 @@ export function memberU8<T extends typeof Struct>(
 /**
  * Member int16.
  *
- * @param _Struct Struct constructor.
+ * @param StructT Struct constructor.
  * @param offset Byte offset.
  * @param field Field name.
  * @param le Little endian, big endian, or default.
  * @returns Byte length.
  */
 export function memberI16<T extends typeof Struct>(
-	_Struct: T,
+	StructT: T,
 	offset: number,
 	field: KeyofType<T['prototype'], number>,
 	le: boolean | null = null
 ) {
-	Object.defineProperty(_Struct.prototype, field, {
+	Object.defineProperty(StructT.prototype, field, {
 		get(this: T['prototype']) {
 			return this.dataView.getInt16(offset, le ?? this.littleEndian);
 		},
@@ -78,19 +78,19 @@ export function memberI16<T extends typeof Struct>(
 /**
  * Member uint16.
  *
- * @param _Struct Struct constructor.
+ * @param StructT Struct constructor.
  * @param offset Byte offset.
  * @param field Field name.
  * @param le Little endian, big endian, or default.
  * @returns Byte length.
  */
 export function memberU16<T extends typeof Struct>(
-	_Struct: T,
+	StructT: T,
 	offset: number,
 	field: KeyofType<T['prototype'], number>,
 	le: boolean | null = null
 ) {
-	Object.defineProperty(_Struct.prototype, field, {
+	Object.defineProperty(StructT.prototype, field, {
 		get(this: T['prototype']) {
 			return this.dataView.getUint16(offset, le ?? this.littleEndian);
 		},
@@ -104,19 +104,19 @@ export function memberU16<T extends typeof Struct>(
 /**
  * Member int32.
  *
- * @param _Struct Struct constructor.
+ * @param StructT Struct constructor.
  * @param offset Byte offset.
  * @param field Field name.
  * @param le Little endian, big endian, or default.
  * @returns Byte length.
  */
 export function memberI32<T extends typeof Struct>(
-	_Struct: T,
+	StructT: T,
 	offset: number,
 	field: KeyofType<T['prototype'], number>,
 	le: boolean | null = null
 ) {
-	Object.defineProperty(_Struct.prototype, field, {
+	Object.defineProperty(StructT.prototype, field, {
 		get(this: T['prototype']) {
 			return this.dataView.getInt32(offset, le ?? this.littleEndian);
 		},
@@ -130,19 +130,19 @@ export function memberI32<T extends typeof Struct>(
 /**
  * Member uint32.
  *
- * @param _Struct Struct constructor.
+ * @param StructT Struct constructor.
  * @param offset Byte offset.
  * @param field Field name.
  * @param le Little endian, big endian, or default.
  * @returns Byte length.
  */
 export function memberU32<T extends typeof Struct>(
-	_Struct: T,
+	StructT: T,
 	offset: number,
 	field: KeyofType<T['prototype'], number>,
 	le: boolean | null = null
 ) {
-	Object.defineProperty(_Struct.prototype, field, {
+	Object.defineProperty(StructT.prototype, field, {
 		get(this: T['prototype']) {
 			return this.dataView.getUint32(offset, le ?? this.littleEndian);
 		},
@@ -156,19 +156,19 @@ export function memberU32<T extends typeof Struct>(
 /**
  * Member int64.
  *
- * @param _Struct Struct constructor.
+ * @param StructT Struct constructor.
  * @param offset Byte offset.
  * @param field Field name.
  * @param le Little endian, big endian, or default.
  * @returns Byte length.
  */
 export function memberI64<T extends typeof Struct>(
-	_Struct: T,
+	StructT: T,
 	offset: number,
 	field: KeyofType<T['prototype'], bigint>,
 	le: boolean | null = null
 ) {
-	Object.defineProperty(_Struct.prototype, field, {
+	Object.defineProperty(StructT.prototype, field, {
 		get(this: T['prototype']) {
 			return this.dataView.getBigInt64(offset, le ?? this.littleEndian);
 		},
@@ -182,19 +182,19 @@ export function memberI64<T extends typeof Struct>(
 /**
  * Member uint64.
  *
- * @param _Struct Struct constructor.
+ * @param StructT Struct constructor.
  * @param offset Byte offset.
  * @param field Field name.
  * @param le Little endian, big endian, or default.
  * @returns Byte length.
  */
 export function memberU64<T extends typeof Struct>(
-	_Struct: T,
+	StructT: T,
 	offset: number,
 	field: KeyofType<T['prototype'], bigint>,
 	le: boolean | null = null
 ) {
-	Object.defineProperty(_Struct.prototype, field, {
+	Object.defineProperty(StructT.prototype, field, {
 		get(this: T['prototype']) {
 			return this.dataView.getBigUint64(offset, le ?? this.littleEndian);
 		},
@@ -208,19 +208,19 @@ export function memberU64<T extends typeof Struct>(
 /**
  * Member int8 array.
  *
- * @param _Struct Struct constructor.
+ * @param StructT Struct constructor.
  * @param offset Byte offset.
  * @param field Field name.
  * @param count Array length.
  * @returns Byte length.
  */
 export function memberI8A<T extends typeof Struct>(
-	_Struct: T,
+	StructT: T,
 	offset: number,
 	field: ReadonlyKeyofType<T['prototype'], Int8Array>,
 	count: number
 ) {
-	Object.defineProperty(_Struct.prototype, field, {
+	Object.defineProperty(StructT.prototype, field, {
 		get(this: T['prototype']) {
 			return new Int8Array(this.buffer, this.byteOffset + offset, count);
 		}
@@ -231,19 +231,19 @@ export function memberI8A<T extends typeof Struct>(
 /**
  * Member uint8 array.
  *
- * @param _Struct Struct constructor.
+ * @param StructT Struct constructor.
  * @param offset Byte offset.
  * @param field Field name.
  * @param count Array length.
  * @returns Byte length.
  */
 export function memberU8A<T extends typeof Struct>(
-	_Struct: T,
+	StructT: T,
 	offset: number,
 	field: ReadonlyKeyofType<T['prototype'], Uint8Array>,
 	count: number
 ) {
-	Object.defineProperty(_Struct.prototype, field, {
+	Object.defineProperty(StructT.prototype, field, {
 		get(this: T['prototype']) {
 			return new Uint8Array(this.buffer, this.byteOffset + offset, count);
 		}
