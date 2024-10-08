@@ -3,7 +3,7 @@ import {strictEqual} from 'node:assert';
 
 import {SuperBlob} from './superblob.ts';
 
-void describe('superblob', () => {
+void describe('SuperBlob', () => {
 	void it('sizeof', () => {
 		strictEqual(SuperBlob.sizeof, 12);
 	});

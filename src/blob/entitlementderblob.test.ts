@@ -7,7 +7,7 @@ import {cast} from '../util.ts';
 
 import {EntitlementDERBlob} from './entitlementderblob.ts';
 
-void describe('entitlementderblob', () => {
+void describe('EntitlementDERBlob', () => {
 	void it('sizeof', () => {
 		strictEqual(EntitlementDERBlob.sizeof, 8);
 	});

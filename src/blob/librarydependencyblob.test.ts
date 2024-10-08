@@ -3,7 +3,7 @@ import {strictEqual} from 'node:assert';
 
 import {LibraryDependencyBlob} from './librarydependencyblob.ts';
 
-void describe('librarydependencyblob', () => {
+void describe('LibraryDependencyBlob', () => {
 	void it('sizeof', () => {
 		strictEqual(LibraryDependencyBlob.sizeof, 12);
 	});

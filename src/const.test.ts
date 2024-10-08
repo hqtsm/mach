@@ -1,4 +1,4 @@
-import {describe, it} from 'node:test';
+import {it} from 'node:test';
 
 import * as constants from './const.ts';
 
@@ -11,13 +11,11 @@ const signed = new Set([
 	'CPU_SUBTYPE_MULTIPLE'
 ]);
 
-void describe('const', () => {
-	void it('sign', () => {
-		for (const k of Object.keys(constants)) {
-			const v = (constants as {[k: string]: unknown})[k];
-			if (typeof v === 'number' && v < 0 && !signed.has(k)) {
-				throw new Error(`Invalid constant: ${k}`);
-			}
+void it('constants sign', () => {
+	for (const k of Object.keys(constants)) {
+		const v = (constants as {[k: string]: unknown})[k];
+		if (typeof v === 'number' && v < 0 && !signed.has(k)) {
+			throw new Error(`Invalid constant: ${k}`);
 		}
-	});
+	}
 });

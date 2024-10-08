@@ -3,7 +3,7 @@ import {strictEqual} from 'node:assert';
 
 import {CodeDirectoryScatter} from './codedirectoryscatter.ts';
 
-void describe('codedirectoryscatter', () => {
+void describe('CodeDirectoryScatter', () => {
 	void it('sizeof', () => {
 		strictEqual(CodeDirectoryScatter.sizeof, 24);
 	});

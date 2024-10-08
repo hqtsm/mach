@@ -7,7 +7,7 @@ import {createCodeDirectories} from './codedirectorybuilder.spec.ts';
 
 const fixtures = fixtureMachos();
 
-void describe('codedirectorybuilder', () => {
+void describe('CodeDirectoryBuilder', () => {
 	void describe('fixtures', () => {
 		for (const {kind, arch, file, archs} of fixtures) {
 			// Skip binaries with no signed architectures.

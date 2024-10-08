@@ -35,7 +35,7 @@ const sampleDer = unhex(
 	'43 4D 32 37 38 30 09 0C 04 76 65 72 73 02 01 01'
 );
 
-void describe('launchconstraintblob', () => {
+void describe('LaunchConstraintBlob', () => {
 	void it('sizeof', () => {
 		strictEqual(LaunchConstraintBlob.sizeof, 8);
 	});

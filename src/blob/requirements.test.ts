@@ -5,7 +5,7 @@ import {unhex} from '../util.spec.ts';
 
 import {Requirements} from './requirements.ts';
 
-void describe('requirements', () => {
+void describe('Requirements', () => {
 	void it('sizeof', () => {
 		strictEqual(Requirements.sizeof, 12);
 	});

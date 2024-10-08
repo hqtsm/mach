@@ -17,7 +17,7 @@ function fibinacci(n: number) {
 	return fib;
 }
 
-void describe('requirementmaker', () => {
+void describe('RequirementMaker', () => {
 	void it('alloc', () => {
 		// identifier "com.apple.simple"
 		const data = unhex(

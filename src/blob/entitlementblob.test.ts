@@ -19,7 +19,7 @@ const examplePlist = [
 	''
 ].join('\n');
 
-void describe('entitlementblob', () => {
+void describe('EntitlementBlob', () => {
 	void it('sizeof', () => {
 		strictEqual(EntitlementBlob.sizeof, 8);
 	});

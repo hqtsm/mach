@@ -7,7 +7,7 @@ import {cast} from '../util.ts';
 
 import {BlobWrapper} from './blobwrapper.ts';
 
-void describe('blobwrapper', () => {
+void describe('BlobWrapper', () => {
 	void it('sizeof', () => {
 		strictEqual(BlobWrapper.sizeof, 8);
 	});

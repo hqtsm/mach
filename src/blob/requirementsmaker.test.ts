@@ -11,7 +11,7 @@ import {cast} from '../util.ts';
 import {Requirement} from './requirement.ts';
 import {RequirementsMaker} from './requirementsmaker.ts';
 
-void describe('requirementsmaker', () => {
+void describe('RequirementsMaker', () => {
 	void it('empty', () => {
 		const rs = new RequirementsMaker().make();
 		deepStrictEqual(

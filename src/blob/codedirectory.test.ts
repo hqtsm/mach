@@ -3,7 +3,7 @@ import {strictEqual} from 'node:assert';
 
 import {CodeDirectory} from './codedirectory.ts';
 
-void describe('codedirectory', () => {
+void describe('CodeDirectory', () => {
 	void it('sizeof', () => {
 		strictEqual(CodeDirectory.sizeof, 96);
 	});

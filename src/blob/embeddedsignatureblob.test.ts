@@ -20,7 +20,7 @@ import {EmbeddedSignatureBlob} from './embeddedsignatureblob.ts';
 
 const fixtures = fixtureMachos();
 
-void describe('embeddedsignatureblob', () => {
+void describe('EmbeddedSignatureBlob', () => {
 	void it('sizeof', () => {
 		strictEqual(EmbeddedSignatureBlob.sizeof, 12);
 	});
