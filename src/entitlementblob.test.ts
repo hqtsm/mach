@@ -19,6 +19,10 @@ const examplePlist = [
 ].join('\n');
 
 void describe('entitlementblob', () => {
+	void it('sizeof', () => {
+		strictEqual(EntitlementBlob.sizeof, 8);
+	});
+
 	void it('empty (invalid?)', () => {
 		const {sizeof} = EntitlementBlob;
 		const buffer = new ArrayBuffer(sizeof);

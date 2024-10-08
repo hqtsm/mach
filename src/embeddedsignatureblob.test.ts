@@ -15,10 +15,15 @@ import type {CodeDirectory} from './codedirectory.ts';
 import {EmbeddedSignatureBlobMaker} from './embeddedsignatureblobmaker.ts';
 import {RequirementsMaker} from './requirementsmaker.ts';
 import {BlobWrapper} from './blobwrapper.ts';
+import {EmbeddedSignatureBlob} from './embeddedsignatureblob.ts';
 
 const fixtures = fixtureMachos();
 
 void describe('embeddedsignatureblob', () => {
+	void it('sizeof', () => {
+		strictEqual(EmbeddedSignatureBlob.sizeof, 12);
+	});
+
 	void describe('fixtures', () => {
 		for (const {kind, arch, file, archs} of fixtures) {
 			// Skip binaries with no signed architectures.

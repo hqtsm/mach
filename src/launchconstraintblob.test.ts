@@ -35,6 +35,10 @@ const sampleDer = unhex(
 );
 
 void describe('launchconstraintblob', () => {
+	void it('sizeof', () => {
+		strictEqual(LaunchConstraintBlob.sizeof, 8);
+	});
+
 	void it('empty (invalid?)', () => {
 		const {sizeof} = LaunchConstraintBlob;
 		const buffer = new ArrayBuffer(sizeof);

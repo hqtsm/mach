@@ -1,10 +1,14 @@
 import {describe, it} from 'node:test';
-import {deepStrictEqual} from 'node:assert';
+import {deepStrictEqual, strictEqual} from 'node:assert';
 
 import {Requirement} from './requirement.ts';
 import {unhex} from './util.spec.ts';
 
 void describe('requirement', () => {
+	void it('sizeof', () => {
+		strictEqual(Requirement.sizeof, 12);
+	});
+
 	void it('empty kind 0 (invalid?)', () => {
 		const {sizeof} = Requirement;
 		const buffer = new ArrayBuffer(sizeof);

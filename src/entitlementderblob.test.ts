@@ -7,6 +7,10 @@ import {EntitlementDERBlob} from './entitlementderblob.ts';
 import {cast} from './util.ts';
 
 void describe('entitlementderblob', () => {
+	void it('sizeof', () => {
+		strictEqual(EntitlementDERBlob.sizeof, 8);
+	});
+
 	void it('empty (invalid?)', () => {
 		const {sizeof} = EntitlementDERBlob;
 		const buffer = new ArrayBuffer(sizeof);

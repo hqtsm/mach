@@ -7,6 +7,10 @@ import {BlobWrapper} from './blobwrapper.ts';
 import {cast} from './util.ts';
 
 void describe('blobwrapper', () => {
+	void it('sizeof', () => {
+		strictEqual(BlobWrapper.sizeof, 8);
+	});
+
 	void it('empty', () => {
 		const {sizeof} = BlobWrapper;
 		const buffer = new ArrayBuffer(sizeof);
