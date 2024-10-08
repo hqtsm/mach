@@ -14,7 +14,7 @@ void describe('requirementsmaker', () => {
 	void it('empty', () => {
 		const rs = new RequirementsMaker().make();
 		deepStrictEqual(
-			new Uint8Array(rs.buffer, rs.byteOffset, rs.byteLength),
+			new Uint8Array(rs.buffer, rs.byteOffset, rs.length),
 			unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00')
 		);
 	});
@@ -51,7 +51,7 @@ void describe('requirementsmaker', () => {
 		);
 		const rs = rsm.make();
 		deepStrictEqual(
-			new Uint8Array(rs.buffer, rs.byteOffset, rs.byteLength),
+			new Uint8Array(rs.buffer, rs.byteOffset, rs.length),
 			data
 		);
 	});

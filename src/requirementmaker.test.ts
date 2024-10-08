@@ -28,12 +28,12 @@ void describe('requirementmaker', () => {
 		const add = maker.alloc(data.byteLength);
 		add.set(data);
 		const r = maker.make();
-		const dv = new DataView(r.buffer, r.byteOffset, r.byteLength);
+		const dv = new DataView(r.buffer, r.byteOffset, r.length);
 		strictEqual(dv.getUint32(0), kSecCodeMagicRequirement);
-		strictEqual(dv.getUint32(4), r.byteLength);
+		strictEqual(dv.getUint32(4), r.length);
 		strictEqual(dv.getUint32(8), Requirement.exprForm);
 		deepStrictEqual(
-			new Uint8Array(r.buffer, r.byteOffset + 12, r.byteLength - 12),
+			new Uint8Array(r.buffer, r.byteOffset + 12, r.length - 12),
 			data
 		);
 	});
@@ -46,9 +46,9 @@ void describe('requirementmaker', () => {
 			maker.alloc(size).set(d);
 		}
 		const r = maker.make();
-		const dv = new DataView(r.buffer, r.byteOffset, r.byteLength);
+		const dv = new DataView(r.buffer, r.byteOffset, r.length);
 		strictEqual(dv.getUint32(0), kSecCodeMagicRequirement);
-		strictEqual(dv.getUint32(4), r.byteLength);
+		strictEqual(dv.getUint32(4), r.length);
 		strictEqual(dv.getUint32(8), Requirement.lwcrForm);
 	});
 
@@ -60,9 +60,9 @@ void describe('requirementmaker', () => {
 			maker.alloc(size).set(d);
 		}
 		const r = maker.make();
-		const dv = new DataView(r.buffer, r.byteOffset, r.byteLength);
+		const dv = new DataView(r.buffer, r.byteOffset, r.length);
 		strictEqual(dv.getUint32(0), kSecCodeMagicRequirement);
-		strictEqual(dv.getUint32(4), r.byteLength);
+		strictEqual(dv.getUint32(4), r.length);
 		strictEqual(dv.getUint32(8), Requirement.lwcrForm);
 	});
 
@@ -76,10 +76,7 @@ void describe('requirementmaker', () => {
 		const maker = new RequirementMaker(Requirement.exprForm);
 		maker.ident(new TextEncoder().encode('com.apple.simple'));
 		const r = maker.make();
-		deepStrictEqual(
-			new Uint8Array(r.buffer, r.byteOffset, r.byteLength),
-			data
-		);
+		deepStrictEqual(new Uint8Array(r.buffer, r.byteOffset, r.length), data);
 	});
 
 	void it('anchor apple and identifier "com.apple.simple"', () => {
@@ -100,10 +97,7 @@ void describe('requirementmaker', () => {
 		and.add();
 
 		const r = maker.make();
-		deepStrictEqual(
-			new Uint8Array(r.buffer, r.byteOffset, r.byteLength),
-			data
-		);
+		deepStrictEqual(new Uint8Array(r.buffer, r.byteOffset, r.length), data);
 	});
 
 	void it('identifier "com.apple.simple" or anchor apple generic', () => {
@@ -124,10 +118,7 @@ void describe('requirementmaker', () => {
 		or.add();
 
 		const r = maker.make();
-		deepStrictEqual(
-			new Uint8Array(r.buffer, r.byteOffset, r.byteLength),
-			data
-		);
+		deepStrictEqual(new Uint8Array(r.buffer, r.byteOffset, r.length), data);
 	});
 
 	void it('(a and b) or (c and d)', () => {
@@ -169,10 +160,7 @@ void describe('requirementmaker', () => {
 		or.add();
 
 		const r = maker.make();
-		deepStrictEqual(
-			new Uint8Array(r.buffer, r.byteOffset, r.byteLength),
-			data
-		);
+		deepStrictEqual(new Uint8Array(r.buffer, r.byteOffset, r.length), data);
 	});
 
 	void it('(a or b) and (c or d)', () => {
@@ -214,9 +202,6 @@ void describe('requirementmaker', () => {
 		and.add();
 
 		const r = maker.make();
-		deepStrictEqual(
-			new Uint8Array(r.buffer, r.byteOffset, r.byteLength),
-			data
-		);
+		deepStrictEqual(new Uint8Array(r.buffer, r.byteOffset, r.length), data);
 	});
 });

@@ -1,6 +1,6 @@
-import type {BlobCore} from './blobcore.ts';
+import {BlobCore} from './blobcore.ts';
 import {SuperBlob} from './superblob.ts';
-import {constant} from './util.ts';
+import {cast, constant} from './util.ts';
 
 /**
  * SuperBlob maker.
@@ -20,7 +20,7 @@ export class SuperBlobMaker {
 	 * @param blob Blob.
 	 */
 	public add(type: number, blob: BlobCore) {
-		this.#pieces.set(type, blob);
+		this.#pieces.set(type, cast(BlobCore, blob));
 	}
 
 	/**
@@ -51,7 +51,7 @@ export class SuperBlobMaker {
 	public size() {
 		let size = SuperBlob.sizeof;
 		for (const [, blob] of this.#pieces) {
-			size += 8 + blob.byteLength;
+			size += 8 + blob.length;
 		}
 		return size;
 	}
@@ -78,9 +78,9 @@ export class SuperBlobMaker {
 			o1 += 4;
 			view.setUint32(o1, o2);
 			o1 += 4;
-			const {buffer, byteOffset, byteLength} = pieces.get(type)!;
-			data.set(new Uint8Array(buffer, byteOffset, byteLength), o2);
-			o2 += byteLength;
+			const {buffer, byteOffset, length} = pieces.get(type)!;
+			data.set(new Uint8Array(buffer, byteOffset, length), o2);
+			o2 += length;
 		}
 		return sb;
 	}

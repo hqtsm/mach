@@ -21,9 +21,9 @@ void describe('entitlementderblob', () => {
 	void it('data', () => {
 		const data = unhex('01 02 03 04 05 06 07 08 F0 F1 F2 F3 F4 F5 F6 F7');
 		const edb = cast(EntitlementDERBlob, EntitlementDERBlob.blobify(data));
-		const dv = new DataView(edb.buffer, edb.byteOffset, edb.byteLength);
+		const dv = new DataView(edb.buffer, edb.byteOffset, edb.length);
 		strictEqual(dv.getUint32(0), kSecCodeMagicEntitlementDER);
-		strictEqual(dv.getUint32(4), edb.byteLength);
+		strictEqual(dv.getUint32(4), edb.length);
 		deepStrictEqual(
 			new Uint8Array(edb.der.buffer, edb.der.byteOffset, edb.derLength),
 			data

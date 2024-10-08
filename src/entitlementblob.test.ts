@@ -34,9 +34,9 @@ void describe('entitlementblob', () => {
 		const data = new TextEncoder().encode(examplePlist);
 		const eb = cast(EntitlementBlob, EntitlementBlob.blobify(data));
 		eb.body.set(data);
-		const dv = new DataView(eb.buffer, eb.byteOffset, eb.byteLength);
+		const dv = new DataView(eb.buffer, eb.byteOffset, eb.length);
 		strictEqual(dv.getUint32(0), kSecCodeMagicEntitlement);
-		strictEqual(dv.getUint32(4), eb.byteLength);
+		strictEqual(dv.getUint32(4), eb.length);
 		deepStrictEqual(
 			new Uint8Array(eb.body.buffer, eb.body.byteOffset, eb.bodyLength),
 			data

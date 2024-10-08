@@ -60,13 +60,6 @@ export class BlobCore extends Struct {
 	}
 
 	/**
-	 * @inheritdoc
-	 */
-	public get byteLength() {
-		return this.mLength;
-	}
-
-	/**
 	 * Blob data.
 	 * By default includes magic and length.
 	 * Child classes may redefine this to be a smaller area.

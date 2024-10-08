@@ -40,7 +40,7 @@ void describe('codedirectorybuilder', () => {
 						const cdBuffer = Buffer.from(
 							cd.buffer,
 							cd.byteOffset,
-							cd.byteLength
+							cd.length
 						);
 						const expectedWithin = Buffer.from(
 							thin.buffer,

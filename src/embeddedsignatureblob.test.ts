@@ -116,12 +116,12 @@ void describe('embeddedsignatureblob', () => {
 					const csBuffer = Buffer.from(
 						cs.buffer,
 						cs.byteOffset,
-						cs.byteLength
+						cs.length
 					);
 					const expected = Buffer.from(
 						thin.buffer,
 						thin.byteOffset + info.offset,
-						cs.byteLength
+						cs.length
 					);
 					strictEqual(
 						expected.compare(csBuffer),
