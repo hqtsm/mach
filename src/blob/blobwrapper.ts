@@ -1,5 +1,5 @@
 import {CSMAGIC_BLOBWRAPPER} from '../const.ts';
-import {memberU8A} from '../member.ts';
+import {struct, structU8A} from '../struct.ts';
 import type {BufferView} from '../type.ts';
 import {cast, constant} from '../util.ts';
 
@@ -81,8 +81,8 @@ export class BlobWrapper extends Blob {
 
 	static {
 		let {BYTE_LENGTH: o} = this;
-		o += memberU8A(this, o, 'dataArea', 0);
-		constant(this, 'BYTE_LENGTH', o);
+		o += structU8A(this, o, 'dataArea', 0);
+		struct(this, o);
 		constant(this, 'typeMagic', CSMAGIC_BLOBWRAPPER);
 	}
 }

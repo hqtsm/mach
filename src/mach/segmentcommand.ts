@@ -1,7 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import {memberI32, memberI8A, memberU32} from '../member.ts';
-import {Struct} from '../struct.ts';
-import {constant} from '../util.ts';
+import {struct, Struct, structI32, structI8A, structU32} from '../struct.ts';
 
 /**
  * Segment command, 32-bit.
@@ -66,18 +64,18 @@ export class SegmentCommand extends Struct {
 
 	static {
 		let {BYTE_LENGTH: o} = this;
-		o += memberU32(this, o, 'cmd');
-		o += memberU32(this, o, 'cmdsize');
-		o += memberI8A(this, o, 'segname', 16);
-		o += memberU32(this, o, 'vmaddr');
-		o += memberU32(this, o, 'vmsize');
-		o += memberU32(this, o, 'fileoff');
-		o += memberU32(this, o, 'filesize');
-		o += memberI32(this, o, 'maxprot');
-		o += memberI32(this, o, 'initprot');
-		o += memberU32(this, o, 'nsects');
-		o += memberU32(this, o, 'flags');
-		constant(this, 'BYTE_LENGTH', o);
+		o += structU32(this, o, 'cmd');
+		o += structU32(this, o, 'cmdsize');
+		o += structI8A(this, o, 'segname', 16);
+		o += structU32(this, o, 'vmaddr');
+		o += structU32(this, o, 'vmsize');
+		o += structU32(this, o, 'fileoff');
+		o += structU32(this, o, 'filesize');
+		o += structI32(this, o, 'maxprot');
+		o += structI32(this, o, 'initprot');
+		o += structU32(this, o, 'nsects');
+		o += structU32(this, o, 'flags');
+		struct(this, o);
 	}
 }
 
@@ -91,7 +89,7 @@ export class SegmentCommandBE extends SegmentCommand {
 	public static readonly LITTLE_ENDIAN = false;
 
 	static {
-		constant(this, 'LITTLE_ENDIAN');
+		struct(this);
 	}
 }
 
@@ -105,6 +103,6 @@ export class SegmentCommandLE extends SegmentCommand {
 	public static readonly LITTLE_ENDIAN = true;
 
 	static {
-		constant(this, 'LITTLE_ENDIAN');
+		struct(this);
 	}
 }

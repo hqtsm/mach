@@ -1,4 +1,5 @@
 /* eslint-disable max-classes-per-file */
+import {struct} from '../struct.ts';
 import type {BufferView} from '../type.ts';
 import {constant} from '../util.ts';
 
@@ -58,6 +59,7 @@ export class Blob extends BlobCore {
 	}
 
 	static {
+		struct(this);
 		constant(this, 'typeMagic');
 	}
 }

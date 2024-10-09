@@ -1,5 +1,5 @@
 import {kSecCodeMagicCodeDirectory} from '../const.ts';
-import {memberU32, memberU64, memberU8} from '../member.ts';
+import {struct, structU32, structU64, structU8} from '../struct.ts';
 import {constant} from '../util.ts';
 
 import {Blob} from './blob.ts';
@@ -182,28 +182,28 @@ export class CodeDirectory extends Blob {
 
 	static {
 		let {BYTE_LENGTH: o} = this;
-		o += memberU32(this, o, 'version', false);
-		o += memberU32(this, o, 'flags', false);
-		o += memberU32(this, o, 'hashOffset', false);
-		o += memberU32(this, o, 'identOffset', false);
-		o += memberU32(this, o, 'nSpecialSlots', false);
-		o += memberU32(this, o, 'nCodeSlots', false);
-		o += memberU32(this, o, 'codeLimit', false);
-		o += memberU8(this, o, 'hashSize');
-		o += memberU8(this, o, 'hashType');
-		o += memberU8(this, o, 'platform');
-		o += memberU8(this, o, 'pageSize');
-		o += memberU32(this, o, 'spare2', false);
-		o += memberU32(this, o, 'scatterOffset', false);
-		o += memberU32(this, o, 'teamIDOffset', false);
-		o += memberU32(this, o, 'spare3', false);
-		o += memberU64(this, o, 'codeLimit64', false);
-		o += memberU64(this, o, 'execSegBase', false);
-		o += memberU64(this, o, 'execSegLimit', false);
-		o += memberU64(this, o, 'execSegFlags', false);
-		o += memberU32(this, o, 'runtime', false);
-		o += memberU32(this, o, 'preEncryptOffset', false);
-		constant(this, 'BYTE_LENGTH', o);
+		o += structU32(this, o, 'version', false);
+		o += structU32(this, o, 'flags', false);
+		o += structU32(this, o, 'hashOffset', false);
+		o += structU32(this, o, 'identOffset', false);
+		o += structU32(this, o, 'nSpecialSlots', false);
+		o += structU32(this, o, 'nCodeSlots', false);
+		o += structU32(this, o, 'codeLimit', false);
+		o += structU8(this, o, 'hashSize');
+		o += structU8(this, o, 'hashType');
+		o += structU8(this, o, 'platform');
+		o += structU8(this, o, 'pageSize');
+		o += structU32(this, o, 'spare2', false);
+		o += structU32(this, o, 'scatterOffset', false);
+		o += structU32(this, o, 'teamIDOffset', false);
+		o += structU32(this, o, 'spare3', false);
+		o += structU64(this, o, 'codeLimit64', false);
+		o += structU64(this, o, 'execSegBase', false);
+		o += structU64(this, o, 'execSegLimit', false);
+		o += structU64(this, o, 'execSegFlags', false);
+		o += structU32(this, o, 'runtime', false);
+		o += structU32(this, o, 'preEncryptOffset', false);
+		struct(this, o);
 		constant(this, 'typeMagic', kSecCodeMagicCodeDirectory);
 		constant(this, 'earliestVersion');
 		constant(this, 'supportsScatter');

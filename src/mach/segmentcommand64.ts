@@ -1,6 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import {memberI32, memberI8A, memberU32, memberU64} from '../member.ts';
-import {Struct} from '../struct.ts';
+import {Struct, structI32, structI8A, structU32, structU64} from '../struct.ts';
 import {constant} from '../util.ts';
 
 /**
@@ -66,17 +65,17 @@ export class SegmentCommand64 extends Struct {
 
 	static {
 		let {BYTE_LENGTH: o} = this;
-		o += memberU32(this, o, 'cmd');
-		o += memberU32(this, o, 'cmdsize');
-		o += memberI8A(this, o, 'segname', 16);
-		o += memberU64(this, o, 'vmaddr');
-		o += memberU64(this, o, 'vmsize');
-		o += memberU64(this, o, 'fileoff');
-		o += memberU64(this, o, 'filesize');
-		o += memberI32(this, o, 'maxprot');
-		o += memberI32(this, o, 'initprot');
-		o += memberU32(this, o, 'nsects');
-		o += memberU32(this, o, 'flags');
+		o += structU32(this, o, 'cmd');
+		o += structU32(this, o, 'cmdsize');
+		o += structI8A(this, o, 'segname', 16);
+		o += structU64(this, o, 'vmaddr');
+		o += structU64(this, o, 'vmsize');
+		o += structU64(this, o, 'fileoff');
+		o += structU64(this, o, 'filesize');
+		o += structI32(this, o, 'maxprot');
+		o += structI32(this, o, 'initprot');
+		o += structU32(this, o, 'nsects');
+		o += structU32(this, o, 'flags');
 		constant(this, 'BYTE_LENGTH', o);
 	}
 }

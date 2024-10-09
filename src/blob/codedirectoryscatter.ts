@@ -1,6 +1,4 @@
-import {memberU32, memberU64} from '../member.ts';
-import {Struct} from '../struct.ts';
-import {constant} from '../util.ts';
+import {struct, Struct, structU32, structU64} from '../struct.ts';
 
 /**
  * CodeDirectory scatter vector element.
@@ -30,10 +28,10 @@ export class CodeDirectoryScatter extends Struct {
 
 	static {
 		let {BYTE_LENGTH: o} = this;
-		o += memberU32(this, o, 'count', false);
-		o += memberU32(this, o, 'base', false);
-		o += memberU64(this, o, 'targetOffset', false);
-		o += memberU64(this, o, 'spare', false);
-		constant(this, 'BYTE_LENGTH', o);
+		o += structU32(this, o, 'count', false);
+		o += structU32(this, o, 'base', false);
+		o += structU64(this, o, 'targetOffset', false);
+		o += structU64(this, o, 'spare', false);
+		struct(this, o);
 	}
 }

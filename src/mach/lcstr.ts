@@ -1,7 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import {memberU32} from '../member.ts';
-import {Struct} from '../struct.ts';
-import {constant} from '../util.ts';
+import {struct, Struct, structU32} from '../struct.ts';
 
 /**
  * Load command string union.
@@ -16,9 +14,9 @@ export class LcStr extends Struct {
 
 	static {
 		let {BYTE_LENGTH: o} = this;
-		o += memberU32(this, o, 'offset');
+		o += structU32(this, o, 'offset');
 		// Union because there was a 32-bit char *ptr.
-		constant(this, 'BYTE_LENGTH', o);
+		struct(this, o);
 	}
 }
 
@@ -32,7 +30,7 @@ export class LcStrBE extends LcStr {
 	public static readonly LITTLE_ENDIAN = false;
 
 	static {
-		constant(this, 'LITTLE_ENDIAN');
+		struct(this);
 	}
 }
 
@@ -46,6 +44,6 @@ export class LcStrLE extends LcStr {
 	public static readonly LITTLE_ENDIAN = true;
 
 	static {
-		constant(this, 'LITTLE_ENDIAN');
+		struct(this);
 	}
 }

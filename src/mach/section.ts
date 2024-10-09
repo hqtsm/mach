@@ -1,7 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import {memberI8A, memberU32} from '../member.ts';
-import {Struct} from '../struct.ts';
-import {constant} from '../util.ts';
+import {struct, Struct, structI8A, structU32} from '../struct.ts';
 
 /**
  * Section, 32-bit.
@@ -66,18 +64,18 @@ export class Section extends Struct {
 
 	static {
 		let {BYTE_LENGTH: o} = this;
-		o += memberI8A(this, o, 'sectname', 16);
-		o += memberI8A(this, o, 'segname', 16);
-		o += memberU32(this, o, 'addr');
-		o += memberU32(this, o, 'size');
-		o += memberU32(this, o, 'offset');
-		o += memberU32(this, o, 'align');
-		o += memberU32(this, o, 'reloff');
-		o += memberU32(this, o, 'nreloc');
-		o += memberU32(this, o, 'flags');
-		o += memberU32(this, o, 'reserved1');
-		o += memberU32(this, o, 'reserved2');
-		constant(this, 'BYTE_LENGTH', o);
+		o += structI8A(this, o, 'sectname', 16);
+		o += structI8A(this, o, 'segname', 16);
+		o += structU32(this, o, 'addr');
+		o += structU32(this, o, 'size');
+		o += structU32(this, o, 'offset');
+		o += structU32(this, o, 'align');
+		o += structU32(this, o, 'reloff');
+		o += structU32(this, o, 'nreloc');
+		o += structU32(this, o, 'flags');
+		o += structU32(this, o, 'reserved1');
+		o += structU32(this, o, 'reserved2');
+		struct(this, o);
 	}
 }
 
@@ -91,7 +89,7 @@ export class SectionBE extends Section {
 	public static readonly LITTLE_ENDIAN = false;
 
 	static {
-		constant(this, 'LITTLE_ENDIAN');
+		struct(this);
 	}
 }
 
@@ -105,6 +103,6 @@ export class SectionLE extends Section {
 	public static readonly LITTLE_ENDIAN = true;
 
 	static {
-		constant(this, 'LITTLE_ENDIAN');
+		struct(this);
 	}
 }

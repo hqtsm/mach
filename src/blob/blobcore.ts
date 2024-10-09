@@ -1,7 +1,5 @@
-import {memberU32} from '../member.ts';
-import {Struct} from '../struct.ts';
+import {struct, Struct, structU32} from '../struct.ts';
 import type {Cast} from '../type.ts';
-import {constant} from '../util.ts';
 
 /**
  * Polymorphic memory blobs with magics numbers.
@@ -94,8 +92,8 @@ export class BlobCore extends Struct {
 
 	static {
 		let {BYTE_LENGTH: o} = this;
-		o += memberU32(this, o, 'mMagic' as never, false);
-		o += memberU32(this, o, 'mLength' as never, false);
-		constant(this, 'BYTE_LENGTH', o);
+		o += structU32(this, o, 'mMagic' as never, false);
+		o += structU32(this, o, 'mLength' as never, false);
+		struct(this, o);
 	}
 }
