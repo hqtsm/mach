@@ -4,7 +4,7 @@ import {strictEqual} from 'node:assert';
 import {BlobWrapper} from './blobwrapper.ts';
 
 void describe('BlobWrapper', () => {
-	void it('sizeof', () => {
-		strictEqual(BlobWrapper.sizeof, 8);
+	void it('BYTE_LENGTH', () => {
+		strictEqual(BlobWrapper.BYTE_LENGTH, 8);
 	});
 });

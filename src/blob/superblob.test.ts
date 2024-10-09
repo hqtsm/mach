@@ -4,7 +4,7 @@ import {strictEqual} from 'node:assert';
 import {SuperBlob} from './superblob.ts';
 
 void describe('SuperBlob', () => {
-	void it('sizeof', () => {
-		strictEqual(SuperBlob.sizeof, 12);
+	void it('BYTE_LENGTH', () => {
+		strictEqual(SuperBlob.BYTE_LENGTH, 12);
 	});
 });

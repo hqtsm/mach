@@ -33,9 +33,9 @@ export class Blob extends BlobCore {
 	 * @returns Blob.
 	 */
 	public static blobify(content: Readonly<BufferView> | number = 0) {
-		const {sizeof} = Blob;
+		const {BYTE_LENGTH} = Blob;
 		let view;
-		let size = sizeof;
+		let size = BYTE_LENGTH;
 		if (typeof content === 'number') {
 			size += content;
 		} else {
@@ -52,7 +52,7 @@ export class Blob extends BlobCore {
 			public static readonly typeMagic = typeMagic;
 		})(buffer).initialize2(size);
 		if (view) {
-			new Uint8Array(buffer, sizeof).set(view);
+			new Uint8Array(buffer, BYTE_LENGTH).set(view);
 		}
 		return new DataView(buffer);
 	}

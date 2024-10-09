@@ -4,7 +4,7 @@ import {strictEqual} from 'node:assert';
 import {CodeDirectory} from './codedirectory.ts';
 
 void describe('CodeDirectory', () => {
-	void it('sizeof', () => {
-		strictEqual(CodeDirectory.sizeof, 96);
+	void it('BYTE_LENGTH', () => {
+		strictEqual(CodeDirectory.BYTE_LENGTH, 96);
 	});
 });

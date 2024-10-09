@@ -34,7 +34,7 @@ export class Struct implements BufferView {
 	 * @inheritdoc
 	 */
 	public get byteLength() {
-		return this.constructor.sizeof;
+		return this.constructor.BYTE_LENGTH;
 	}
 
 	/**
@@ -66,7 +66,7 @@ export class Struct implements BufferView {
 	/**
 	 * Size of new instance.
 	 */
-	public static readonly sizeof: number = 0;
+	public static readonly BYTE_LENGTH: number = 0;
 
 	/**
 	 * Use little endian or big endian for host-defined endian fields.
@@ -75,7 +75,7 @@ export class Struct implements BufferView {
 	public static readonly LITTLE_ENDIAN = HOST_LE;
 
 	static {
-		constant(this, 'sizeof');
+		constant(this, 'BYTE_LENGTH');
 		constant(this, 'LITTLE_ENDIAN');
 	}
 }

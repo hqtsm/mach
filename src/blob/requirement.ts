@@ -31,9 +31,9 @@ export class Requirement extends Blob {
 	public static readonly lwcrForm = 2;
 
 	static {
-		let {sizeof} = this;
-		sizeof += memberU32(this, sizeof, 'kind', false);
-		constant(this, 'sizeof', sizeof);
+		let {BYTE_LENGTH: o} = this;
+		o += memberU32(this, o, 'kind', false);
+		constant(this, 'BYTE_LENGTH', o);
 		constant(this, 'typeMagic', kSecCodeMagicRequirement);
 		constant(this, 'baseAlignment');
 		constant(this, 'exprForm');

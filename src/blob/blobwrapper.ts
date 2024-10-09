@@ -57,9 +57,9 @@ export class BlobWrapper extends Blob {
 		content: Readonly<BufferView> | number = 0,
 		magic = BlobWrapper.typeMagic
 	) {
-		const {sizeof} = BlobWrapper;
+		const {BYTE_LENGTH} = BlobWrapper;
 		let view;
-		let size = sizeof;
+		let size = BYTE_LENGTH;
 		if (typeof content === 'number') {
 			size += content;
 		} else {
@@ -74,15 +74,15 @@ export class BlobWrapper extends Blob {
 		const blob = new BlobWrapper(buffer);
 		blob.initialize(magic, size);
 		if (view) {
-			new Uint8Array(buffer, sizeof).set(view);
+			new Uint8Array(buffer, BYTE_LENGTH).set(view);
 		}
 		return blob;
 	}
 
 	static {
-		let {sizeof} = this;
-		sizeof += memberU8A(this, sizeof, 'dataArea', 0);
-		constant(this, 'sizeof', sizeof);
+		let {BYTE_LENGTH: o} = this;
+		o += memberU8A(this, o, 'dataArea', 0);
+		constant(this, 'BYTE_LENGTH', o);
 		constant(this, 'typeMagic', CSMAGIC_BLOBWRAPPER);
 	}
 }

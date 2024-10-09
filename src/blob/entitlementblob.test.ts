@@ -20,15 +20,15 @@ const examplePlist = [
 ].join('\n');
 
 void describe('EntitlementBlob', () => {
-	void it('sizeof', () => {
-		strictEqual(EntitlementBlob.sizeof, 8);
+	void it('BYTE_LENGTH', () => {
+		strictEqual(EntitlementBlob.BYTE_LENGTH, 8);
 	});
 
 	void it('empty (invalid?)', () => {
-		const {sizeof} = EntitlementBlob;
-		const buffer = new ArrayBuffer(sizeof);
+		const {BYTE_LENGTH} = EntitlementBlob;
+		const buffer = new ArrayBuffer(BYTE_LENGTH);
 		const eb = new EntitlementBlob(buffer);
-		eb.initialize2(sizeof);
+		eb.initialize2(BYTE_LENGTH);
 		deepStrictEqual(
 			new Uint8Array(buffer),
 			unhex('FA DE 71 71 00 00 00 08')

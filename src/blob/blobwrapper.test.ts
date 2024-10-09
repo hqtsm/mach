@@ -8,15 +8,15 @@ import {cast} from '../util.ts';
 import {BlobWrapper} from './blobwrapper.ts';
 
 void describe('BlobWrapper', () => {
-	void it('sizeof', () => {
-		strictEqual(BlobWrapper.sizeof, 8);
+	void it('BYTE_LENGTH', () => {
+		strictEqual(BlobWrapper.BYTE_LENGTH, 8);
 	});
 
 	void it('empty', () => {
-		const {sizeof} = BlobWrapper;
-		const buffer = new ArrayBuffer(sizeof);
+		const {BYTE_LENGTH} = BlobWrapper;
+		const buffer = new ArrayBuffer(BYTE_LENGTH);
 		const bw = new BlobWrapper(buffer);
-		bw.initialize2(sizeof);
+		bw.initialize2(BYTE_LENGTH);
 		deepStrictEqual(
 			new Uint8Array(buffer),
 			unhex('FA DE 0B 01 00 00 00 08')

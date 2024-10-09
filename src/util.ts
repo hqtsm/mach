@@ -39,11 +39,11 @@ export function ranged(i: number, l: number, h: number) {
 /**
  * Create new instance of a sized type with new memory.
  *
- * @param Type Constructor with sizeof property.
+ * @param Type Constructor with BYTE_LENGTH property.
  * @returns New instance.
  */
 export function cnew<T>(Type: Sized<T>) {
-	return new Type(new ArrayBuffer(Type.sizeof));
+	return new Type(new ArrayBuffer(Type.BYTE_LENGTH));
 }
 
 /**

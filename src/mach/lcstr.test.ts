@@ -4,7 +4,7 @@ import {strictEqual} from 'node:assert';
 import {LcStr} from './lcstr.ts';
 
 void describe('LcStr', () => {
-	void it('sizeof', () => {
-		strictEqual(LcStr.sizeof, 4);
+	void it('BYTE_LENGTH', () => {
+		strictEqual(LcStr.BYTE_LENGTH, 4);
 	});
 });

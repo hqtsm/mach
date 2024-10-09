@@ -4,7 +4,7 @@ import {strictEqual} from 'node:assert';
 import {DetachedSignatureBlob} from './detachedsignatureblob.ts';
 
 void describe('DetachedSignatureBlob', () => {
-	void it('sizeof', () => {
-		strictEqual(DetachedSignatureBlob.sizeof, 12);
+	void it('BYTE_LENGTH', () => {
+		strictEqual(DetachedSignatureBlob.BYTE_LENGTH, 12);
 	});
 });

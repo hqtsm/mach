@@ -65,19 +65,19 @@ export class SegmentCommand64 extends Struct {
 	public declare flags: number;
 
 	static {
-		let {sizeof} = this;
-		sizeof += memberU32(this, sizeof, 'cmd');
-		sizeof += memberU32(this, sizeof, 'cmdsize');
-		sizeof += memberI8A(this, sizeof, 'segname', 16);
-		sizeof += memberU64(this, sizeof, 'vmaddr');
-		sizeof += memberU64(this, sizeof, 'vmsize');
-		sizeof += memberU64(this, sizeof, 'fileoff');
-		sizeof += memberU64(this, sizeof, 'filesize');
-		sizeof += memberI32(this, sizeof, 'maxprot');
-		sizeof += memberI32(this, sizeof, 'initprot');
-		sizeof += memberU32(this, sizeof, 'nsects');
-		sizeof += memberU32(this, sizeof, 'flags');
-		constant(this, 'sizeof', sizeof);
+		let {BYTE_LENGTH: o} = this;
+		o += memberU32(this, o, 'cmd');
+		o += memberU32(this, o, 'cmdsize');
+		o += memberI8A(this, o, 'segname', 16);
+		o += memberU64(this, o, 'vmaddr');
+		o += memberU64(this, o, 'vmsize');
+		o += memberU64(this, o, 'fileoff');
+		o += memberU64(this, o, 'filesize');
+		o += memberI32(this, o, 'maxprot');
+		o += memberI32(this, o, 'initprot');
+		o += memberU32(this, o, 'nsects');
+		o += memberU32(this, o, 'flags');
+		constant(this, 'BYTE_LENGTH', o);
 	}
 }
 

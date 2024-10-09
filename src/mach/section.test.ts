@@ -4,7 +4,7 @@ import {strictEqual} from 'node:assert';
 import {Section} from './section.ts';
 
 void describe('Section', () => {
-	void it('sizeof', () => {
-		strictEqual(Section.sizeof, 68);
+	void it('BYTE_LENGTH', () => {
+		strictEqual(Section.BYTE_LENGTH, 68);
 	});
 });

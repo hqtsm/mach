@@ -4,7 +4,7 @@ import {strictEqual} from 'node:assert';
 import {Blob} from './blob.ts';
 
 void describe('Blob', () => {
-	void it('sizeof', () => {
-		strictEqual(Blob.sizeof, 8);
+	void it('BYTE_LENGTH', () => {
+		strictEqual(Blob.BYTE_LENGTH, 8);
 	});
 });

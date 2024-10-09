@@ -36,15 +36,15 @@ const sampleDer = unhex(
 );
 
 void describe('LaunchConstraintBlob', () => {
-	void it('sizeof', () => {
-		strictEqual(LaunchConstraintBlob.sizeof, 8);
+	void it('BYTE_LENGTH', () => {
+		strictEqual(LaunchConstraintBlob.BYTE_LENGTH, 8);
 	});
 
 	void it('empty (invalid?)', () => {
-		const {sizeof} = LaunchConstraintBlob;
-		const buffer = new ArrayBuffer(sizeof);
+		const {BYTE_LENGTH} = LaunchConstraintBlob;
+		const buffer = new ArrayBuffer(BYTE_LENGTH);
 		const edb = new LaunchConstraintBlob(buffer);
-		edb.initialize2(sizeof);
+		edb.initialize2(BYTE_LENGTH);
 		deepStrictEqual(
 			new Uint8Array(buffer),
 			unhex('FA DE 81 81 00 00 00 08')

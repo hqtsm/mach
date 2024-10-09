@@ -93,9 +93,9 @@ export class BlobCore extends Struct {
 	}
 
 	static {
-		let {sizeof} = this;
-		sizeof += memberU32(this, sizeof, 'mMagic' as never, false);
-		sizeof += memberU32(this, sizeof, 'mLength' as never, false);
-		constant(this, 'sizeof', sizeof);
+		let {BYTE_LENGTH: o} = this;
+		o += memberU32(this, o, 'mMagic' as never, false);
+		o += memberU32(this, o, 'mLength' as never, false);
+		constant(this, 'BYTE_LENGTH', o);
 	}
 }

@@ -29,11 +29,11 @@ export class CodeDirectoryScatter extends Struct {
 	public declare spare: bigint;
 
 	static {
-		let {sizeof} = this;
-		sizeof += memberU32(this, sizeof, 'count', false);
-		sizeof += memberU32(this, sizeof, 'base', false);
-		sizeof += memberU64(this, sizeof, 'targetOffset', false);
-		sizeof += memberU64(this, sizeof, 'spare', false);
-		constant(this, 'sizeof', sizeof);
+		let {BYTE_LENGTH: o} = this;
+		o += memberU32(this, o, 'count', false);
+		o += memberU32(this, o, 'base', false);
+		o += memberU64(this, o, 'targetOffset', false);
+		o += memberU64(this, o, 'spare', false);
+		constant(this, 'BYTE_LENGTH', o);
 	}
 }

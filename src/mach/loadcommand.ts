@@ -20,10 +20,10 @@ export class LoadCommand extends Struct {
 	public declare cmdsize: number;
 
 	static {
-		let {sizeof} = this;
-		sizeof += memberU32(this, sizeof, 'cmd');
-		sizeof += memberU32(this, sizeof, 'cmdsize');
-		constant(this, 'sizeof', sizeof);
+		let {BYTE_LENGTH: o} = this;
+		o += memberU32(this, o, 'cmd');
+		o += memberU32(this, o, 'cmdsize');
+		constant(this, 'BYTE_LENGTH', o);
 	}
 }
 

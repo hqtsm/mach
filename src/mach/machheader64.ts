@@ -50,16 +50,16 @@ export class MachHeader64 extends Struct {
 	public declare reserved: number;
 
 	static {
-		let {sizeof} = this;
-		sizeof += memberU32(this, sizeof, 'magic');
-		sizeof += memberI32(this, sizeof, 'cputype');
-		sizeof += memberI32(this, sizeof, 'cpusubtype');
-		sizeof += memberU32(this, sizeof, 'filetype');
-		sizeof += memberU32(this, sizeof, 'ncmds');
-		sizeof += memberU32(this, sizeof, 'sizeofcmds');
-		sizeof += memberU32(this, sizeof, 'flags');
-		sizeof += memberU32(this, sizeof, 'reserved');
-		constant(this, 'sizeof', sizeof);
+		let {BYTE_LENGTH: o} = this;
+		o += memberU32(this, o, 'magic');
+		o += memberI32(this, o, 'cputype');
+		o += memberI32(this, o, 'cpusubtype');
+		o += memberU32(this, o, 'filetype');
+		o += memberU32(this, o, 'ncmds');
+		o += memberU32(this, o, 'sizeofcmds');
+		o += memberU32(this, o, 'flags');
+		o += memberU32(this, o, 'reserved');
+		constant(this, 'BYTE_LENGTH', o);
 	}
 }
 

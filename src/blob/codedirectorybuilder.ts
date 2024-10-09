@@ -258,11 +258,11 @@ export class CodeDirectoryBuilder {
 	 * @returns Scatter vector.
 	 */
 	public createScatter(count: number) {
-		const {sizeof} = CodeDirectoryScatter;
+		const {BYTE_LENGTH} = CodeDirectoryScatter;
 		const vector: typeof this.scatter = [];
 		const total = count + 1;
 		for (let i = 0; i < total; i++) {
-			vector.push(new CodeDirectoryScatter(new ArrayBuffer(sizeof)));
+			vector.push(new CodeDirectoryScatter(new ArrayBuffer(BYTE_LENGTH)));
 		}
 		this.scatter = vector;
 		return vector;
@@ -457,7 +457,7 @@ export class CodeDirectoryBuilder {
 	 * @returns Byte size.
 	 */
 	public static fixedSize(version: number) {
-		let size = CodeDirectory.sizeof;
+		let size = CodeDirectory.BYTE_LENGTH;
 		if (version < CodeDirectory.supportsPreEncrypt) {
 			size -= 8;
 		}

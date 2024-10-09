@@ -28,8 +28,8 @@ void describe('mach structs', () => {
 				ok(StLE.prototype, nameLE);
 				ok(StBE.prototype instanceof St, nameBE);
 				ok(StLE.prototype instanceof St, nameLE);
-				strictEqual(StBE.sizeof, St.sizeof, nameBE);
-				strictEqual(StLE.sizeof, St.sizeof, nameLE);
+				strictEqual(StBE.BYTE_LENGTH, St.BYTE_LENGTH, nameBE);
+				strictEqual(StLE.BYTE_LENGTH, St.BYTE_LENGTH, nameLE);
 				strictEqual(StBE.LITTLE_ENDIAN, false, nameBE);
 				strictEqual(StLE.LITTLE_ENDIAN, true, nameLE);
 				strictEqual(St.LITTLE_ENDIAN, HOST_LE);

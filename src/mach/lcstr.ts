@@ -15,10 +15,10 @@ export class LcStr extends Struct {
 	public declare offset: number;
 
 	static {
-		let {sizeof} = this;
-		sizeof += memberU32(this, sizeof, 'offset');
+		let {BYTE_LENGTH: o} = this;
+		o += memberU32(this, o, 'offset');
 		// Union because there was a 32-bit char *ptr.
-		constant(this, 'sizeof', sizeof);
+		constant(this, 'BYTE_LENGTH', o);
 	}
 }
 

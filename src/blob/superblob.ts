@@ -73,8 +73,8 @@ export class SuperBlob extends Blob {
 	}
 
 	static {
-		let {sizeof} = this;
-		sizeof += memberU32(this, sizeof, 'mCount' as never, false);
-		constant(this, 'sizeof', sizeof);
+		let {BYTE_LENGTH: o} = this;
+		o += memberU32(this, o, 'mCount' as never, false);
+		constant(this, 'BYTE_LENGTH', o);
 	}
 }

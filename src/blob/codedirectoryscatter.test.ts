@@ -4,7 +4,7 @@ import {strictEqual} from 'node:assert';
 import {CodeDirectoryScatter} from './codedirectoryscatter.ts';
 
 void describe('CodeDirectoryScatter', () => {
-	void it('sizeof', () => {
-		strictEqual(CodeDirectoryScatter.sizeof, 24);
+	void it('BYTE_LENGTH', () => {
+		strictEqual(CodeDirectoryScatter.BYTE_LENGTH, 24);
 	});
 });

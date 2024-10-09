@@ -4,7 +4,7 @@ import {strictEqual} from 'node:assert';
 import {SegmentCommand} from './segmentcommand.ts';
 
 void describe('SegmentCommand', () => {
-	void it('sizeof', () => {
-		strictEqual(SegmentCommand.sizeof, 56);
+	void it('BYTE_LENGTH', () => {
+		strictEqual(SegmentCommand.BYTE_LENGTH, 56);
 	});
 });

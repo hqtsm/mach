@@ -4,7 +4,7 @@ import {strictEqual} from 'node:assert';
 import {MachHeader} from './machheader.ts';
 
 void describe('MachHeader', () => {
-	void it('sizeof', () => {
-		strictEqual(MachHeader.sizeof, 28);
+	void it('BYTE_LENGTH', () => {
+		strictEqual(MachHeader.BYTE_LENGTH, 28);
 	});
 });

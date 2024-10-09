@@ -84,7 +84,7 @@ export interface Sized<T> {
 	/**
 	 * Byte size of type.
 	 */
-	readonly sizeof: number;
+	readonly BYTE_LENGTH: number;
 }
 
 /**

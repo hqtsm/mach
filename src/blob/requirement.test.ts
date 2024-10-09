@@ -6,15 +6,15 @@ import {unhex} from '../util.spec.ts';
 import {Requirement} from './requirement.ts';
 
 void describe('Requirement', () => {
-	void it('sizeof', () => {
-		strictEqual(Requirement.sizeof, 12);
+	void it('BYTE_LENGTH', () => {
+		strictEqual(Requirement.BYTE_LENGTH, 12);
 	});
 
 	void it('empty kind 0 (invalid?)', () => {
-		const {sizeof} = Requirement;
-		const buffer = new ArrayBuffer(sizeof);
+		const {BYTE_LENGTH} = Requirement;
+		const buffer = new ArrayBuffer(BYTE_LENGTH);
 		const r = new Requirement(buffer);
-		r.initialize2(sizeof);
+		r.initialize2(BYTE_LENGTH);
 		deepStrictEqual(
 			new Uint8Array(buffer),
 			unhex('FA DE 0C 00 00 00 00 0C 00 00 00 00')
@@ -22,10 +22,10 @@ void describe('Requirement', () => {
 	});
 
 	void it('empty kind 1 (invalid?)', () => {
-		const {sizeof} = Requirement;
-		const buffer = new ArrayBuffer(sizeof);
+		const {BYTE_LENGTH} = Requirement;
+		const buffer = new ArrayBuffer(BYTE_LENGTH);
 		const r = new Requirement(buffer);
-		r.initialize2(sizeof);
+		r.initialize2(BYTE_LENGTH);
 		r.kind = Requirement.exprForm;
 		deepStrictEqual(
 			new Uint8Array(buffer),
@@ -34,10 +34,10 @@ void describe('Requirement', () => {
 	});
 
 	void it('empty kind 2 (invalid?)', () => {
-		const {sizeof} = Requirement;
-		const buffer = new ArrayBuffer(sizeof);
+		const {BYTE_LENGTH} = Requirement;
+		const buffer = new ArrayBuffer(BYTE_LENGTH);
 		const r = new Requirement(buffer);
-		r.initialize2(sizeof);
+		r.initialize2(BYTE_LENGTH);
 		r.kind = Requirement.lwcrForm;
 		deepStrictEqual(
 			new Uint8Array(buffer),

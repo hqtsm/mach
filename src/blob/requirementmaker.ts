@@ -40,13 +40,13 @@ export class RequirementMaker {
 	 * @param kind Kind.
 	 */
 	constructor(kind: number) {
-		const {sizeof} = Requirement;
-		const buffer = new ArrayBuffer(Math.max(sizeof, 1024));
+		const {BYTE_LENGTH} = Requirement;
+		const buffer = new ArrayBuffer(Math.max(BYTE_LENGTH, 1024));
 		const r = new Requirement(buffer);
 		r.initialize2();
 		r.kind = kind;
 		this.#buffer = buffer;
-		this.#pc = sizeof;
+		this.#pc = BYTE_LENGTH;
 	}
 
 	/**
@@ -206,8 +206,8 @@ export class RequirementMaker {
 		if (kind !== Requirement.exprForm) {
 			throw new Error(`Unsupported requirement kind: ${kind}`);
 		}
-		const {sizeof} = Requirement;
-		this.copy(req.at(DataView, sizeof), req.length - sizeof);
+		const {BYTE_LENGTH} = Requirement;
+		this.copy(req.at(DataView, BYTE_LENGTH), req.length - BYTE_LENGTH);
 	}
 
 	/**

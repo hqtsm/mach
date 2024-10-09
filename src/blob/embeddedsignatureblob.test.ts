@@ -21,8 +21,8 @@ import {EmbeddedSignatureBlob} from './embeddedsignatureblob.ts';
 const fixtures = fixtureMachos();
 
 void describe('EmbeddedSignatureBlob', () => {
-	void it('sizeof', () => {
-		strictEqual(EmbeddedSignatureBlob.sizeof, 12);
+	void it('BYTE_LENGTH', () => {
+		strictEqual(EmbeddedSignatureBlob.BYTE_LENGTH, 12);
 	});
 
 	void describe('fixtures', () => {

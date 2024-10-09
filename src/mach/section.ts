@@ -65,19 +65,19 @@ export class Section extends Struct {
 	public declare reserved2: number;
 
 	static {
-		let {sizeof} = this;
-		sizeof += memberI8A(this, sizeof, 'sectname', 16);
-		sizeof += memberI8A(this, sizeof, 'segname', 16);
-		sizeof += memberU32(this, sizeof, 'addr');
-		sizeof += memberU32(this, sizeof, 'size');
-		sizeof += memberU32(this, sizeof, 'offset');
-		sizeof += memberU32(this, sizeof, 'align');
-		sizeof += memberU32(this, sizeof, 'reloff');
-		sizeof += memberU32(this, sizeof, 'nreloc');
-		sizeof += memberU32(this, sizeof, 'flags');
-		sizeof += memberU32(this, sizeof, 'reserved1');
-		sizeof += memberU32(this, sizeof, 'reserved2');
-		constant(this, 'sizeof', sizeof);
+		let {BYTE_LENGTH: o} = this;
+		o += memberI8A(this, o, 'sectname', 16);
+		o += memberI8A(this, o, 'segname', 16);
+		o += memberU32(this, o, 'addr');
+		o += memberU32(this, o, 'size');
+		o += memberU32(this, o, 'offset');
+		o += memberU32(this, o, 'align');
+		o += memberU32(this, o, 'reloff');
+		o += memberU32(this, o, 'nreloc');
+		o += memberU32(this, o, 'flags');
+		o += memberU32(this, o, 'reserved1');
+		o += memberU32(this, o, 'reserved2');
+		constant(this, 'BYTE_LENGTH', o);
 	}
 }
 

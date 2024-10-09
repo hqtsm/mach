@@ -4,7 +4,7 @@ import {strictEqual} from 'node:assert';
 import {Section64} from './section64.ts';
 
 void describe('Section64', () => {
-	void it('sizeof', () => {
-		strictEqual(Section64.sizeof, 80);
+	void it('BYTE_LENGTH', () => {
+		strictEqual(Section64.BYTE_LENGTH, 80);
 	});
 });

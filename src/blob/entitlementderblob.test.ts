@@ -8,15 +8,15 @@ import {cast} from '../util.ts';
 import {EntitlementDERBlob} from './entitlementderblob.ts';
 
 void describe('EntitlementDERBlob', () => {
-	void it('sizeof', () => {
-		strictEqual(EntitlementDERBlob.sizeof, 8);
+	void it('BYTE_LENGTH', () => {
+		strictEqual(EntitlementDERBlob.BYTE_LENGTH, 8);
 	});
 
 	void it('empty (invalid?)', () => {
-		const {sizeof} = EntitlementDERBlob;
-		const buffer = new ArrayBuffer(sizeof);
+		const {BYTE_LENGTH} = EntitlementDERBlob;
+		const buffer = new ArrayBuffer(BYTE_LENGTH);
 		const edb = new EntitlementDERBlob(buffer);
-		edb.initialize2(sizeof);
+		edb.initialize2(BYTE_LENGTH);
 		deepStrictEqual(
 			new Uint8Array(buffer),
 			unhex('FA DE 71 72 00 00 00 08')
