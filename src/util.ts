@@ -20,7 +20,7 @@ export function alignUp(value: number, alignment: number) {
  * @param value Optional value, defaults to current value.
  */
 export function constant<T, U extends keyof T>(o: T, p: U, value: T[U] = o[p]) {
-	Object.defineProperty(o, p, {value, enumerable: true});
+	Object.defineProperty(o, p, {value});
 }
 
 /**
