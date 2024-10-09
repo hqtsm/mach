@@ -1,6 +1,12 @@
 /* eslint-disable max-classes-per-file */
-import {Struct, structI32, structI8A, structU32, structU64} from '../struct.ts';
-import {constant} from '../util.ts';
+import {
+	struct,
+	Struct,
+	structI32,
+	structI8A,
+	structU32,
+	structU64
+} from '../struct.ts';
 
 /**
  * Segment command, 64-bit.
@@ -76,7 +82,7 @@ export class SegmentCommand64 extends Struct {
 		o += structI32(this, o, 'initprot');
 		o += structU32(this, o, 'nsects');
 		o += structU32(this, o, 'flags');
-		constant(this, 'BYTE_LENGTH', o);
+		struct(this, o);
 	}
 }
 
@@ -90,7 +96,7 @@ export class SegmentCommand64BE extends SegmentCommand64 {
 	public static readonly LITTLE_ENDIAN = false;
 
 	static {
-		constant(this, 'LITTLE_ENDIAN');
+		struct(this);
 	}
 }
 
@@ -104,6 +110,6 @@ export class SegmentCommand64LE extends SegmentCommand64 {
 	public static readonly LITTLE_ENDIAN = true;
 
 	static {
-		constant(this, 'LITTLE_ENDIAN');
+		struct(this);
 	}
 }
