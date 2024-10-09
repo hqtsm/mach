@@ -1,5 +1,5 @@
 import {kSecCodeMagicDRList} from '../const.ts';
-import {constant} from '../util.ts';
+import {blob} from './blob.ts';
 
 import {SuperBlob} from './superblob.ts';
 
@@ -10,7 +10,12 @@ import {SuperBlob} from './superblob.ts';
 export class LibraryDependencyBlob extends SuperBlob {
 	public declare readonly ['constructor']: typeof LibraryDependencyBlob;
 
+	/**
+	 * @inheritdoc
+	 */
+	public static readonly typeMagic = kSecCodeMagicDRList;
+
 	static {
-		constant(this, 'typeMagic', kSecCodeMagicDRList);
+		blob(this);
 	}
 }

@@ -59,7 +59,20 @@ export class Blob extends BlobCore {
 	}
 
 	static {
-		struct(this);
-		constant(this, 'typeMagic');
+		blob(this);
 	}
+}
+
+/**
+ * Finalize blob.
+ *
+ * @param BlobT Blob constructor.
+ * @param byteLength Byte length.
+ */
+export function blob(
+	BlobT: typeof Blob,
+	byteLength: number = BlobT.BYTE_LENGTH
+) {
+	struct(BlobT, byteLength);
+	constant(BlobT, 'typeMagic');
 }

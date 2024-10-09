@@ -1,6 +1,6 @@
-import {struct, structU32} from '../struct.ts';
+import {structU32} from '../struct.ts';
 
-import {Blob} from './blob.ts';
+import {blob, Blob} from './blob.ts';
 import {BlobCore} from './blobcore.ts';
 
 /**
@@ -74,6 +74,6 @@ export class SuperBlob extends Blob {
 	static {
 		let {BYTE_LENGTH: o} = this;
 		o += structU32(this, o, 'mCount' as never, false);
-		struct(this, o);
+		blob(this, o);
 	}
 }

@@ -1,9 +1,9 @@
 import {CSMAGIC_BLOBWRAPPER} from '../const.ts';
-import {struct, structU8A} from '../struct.ts';
+import {structU8A} from '../struct.ts';
 import type {BufferView} from '../type.ts';
-import {cast, constant} from '../util.ts';
+import {cast} from '../util.ts';
 
-import {Blob} from './blob.ts';
+import {blob, Blob} from './blob.ts';
 
 /**
  * Generic blob wrapping arbitrary binary data.
@@ -47,6 +47,11 @@ export class BlobWrapper extends Blob {
 	}
 
 	/**
+	 * @inheritdoc
+	 */
+	public static readonly typeMagic = CSMAGIC_BLOBWRAPPER;
+
+	/**
 	 * Wrap data into a new blob.
 	 *
 	 * @param content Data to wrap, or number of bytes.
@@ -82,7 +87,6 @@ export class BlobWrapper extends Blob {
 	static {
 		let {BYTE_LENGTH: o} = this;
 		o += structU8A(this, o, 'dataArea', 0);
-		struct(this, o);
-		constant(this, 'typeMagic', CSMAGIC_BLOBWRAPPER);
+		blob(this, o);
 	}
 }

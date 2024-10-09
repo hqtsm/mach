@@ -1,8 +1,8 @@
 import {kSecCodeMagicCodeDirectory} from '../const.ts';
-import {struct, structU32, structU64, structU8} from '../struct.ts';
+import {structU32, structU64, structU8} from '../struct.ts';
 import {constant} from '../util.ts';
 
-import {Blob} from './blob.ts';
+import {blob, Blob} from './blob.ts';
 
 /**
  * Describes secured pieces of a program.
@@ -151,6 +151,11 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
+	 * @inheritdoc
+	 */
+	public static readonly typeMagic = kSecCodeMagicCodeDirectory;
+
+	/**
 	 * Earliest supported version.
 	 */
 	public static readonly earliestVersion = 0x20001;
@@ -203,8 +208,7 @@ export class CodeDirectory extends Blob {
 		o += structU64(this, o, 'execSegFlags', false);
 		o += structU32(this, o, 'runtime', false);
 		o += structU32(this, o, 'preEncryptOffset', false);
-		struct(this, o);
-		constant(this, 'typeMagic', kSecCodeMagicCodeDirectory);
+		blob(this, o);
 		constant(this, 'earliestVersion');
 		constant(this, 'supportsScatter');
 		constant(this, 'supportsTeamID');

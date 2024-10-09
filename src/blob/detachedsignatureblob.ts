@@ -1,5 +1,5 @@
 import {kSecCodeMagicDetachedSignature} from '../const.ts';
-import {constant} from '../util.ts';
+import {blob} from './blob.ts';
 
 import {SuperBlob} from './superblob.ts';
 
@@ -10,7 +10,12 @@ import {SuperBlob} from './superblob.ts';
 export class DetachedSignatureBlob extends SuperBlob {
 	public declare readonly ['constructor']: typeof DetachedSignatureBlob;
 
+	/**
+	 * @inheritdoc
+	 */
+	public static readonly typeMagic = kSecCodeMagicDetachedSignature;
+
 	static {
-		constant(this, 'typeMagic', kSecCodeMagicDetachedSignature);
+		blob(this);
 	}
 }
