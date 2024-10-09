@@ -1,4 +1,4 @@
-import type {BufferPointer, Cast, Sized} from './type.ts';
+import type {BufferPointer, Cast, ReadonlyKeyof, Sized} from './type.ts';
 
 /**
  * Align a number up.
@@ -19,7 +19,11 @@ export function alignUp(value: number, alignment: number) {
  * @param p Property name.
  * @param value Optional value, defaults to current value.
  */
-export function constant<T, U extends keyof T>(o: T, p: U, value: T[U] = o[p]) {
+export function constant<T, U extends ReadonlyKeyof<T>>(
+	o: T,
+	p: U,
+	value: T[U] = o[p]
+) {
 	Object.defineProperty(o, p, {value});
 }
 
