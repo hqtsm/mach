@@ -335,7 +335,7 @@ export function structU8A<T extends typeof Struct>(
 }
 
 /**
- * Finalize struct.
+ * Finalize Struct.
  *
  * @param StructT Struct constructor.
  * @param byteLength Byte length.

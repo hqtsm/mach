@@ -64,7 +64,7 @@ export class Blob extends BlobCore {
 }
 
 /**
- * Finalize blob.
+ * Finalize Blob.
  *
  * @param BlobT Blob constructor.
  * @param byteLength Byte length.

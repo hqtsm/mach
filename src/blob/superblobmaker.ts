@@ -92,6 +92,15 @@ export class SuperBlobMaker {
 	public static readonly SuperBlob = SuperBlob;
 
 	static {
-		constant(this, 'SuperBlob');
+		superblobmaker(this);
 	}
+}
+
+/**
+ * Finalize SuperBlobMaker.
+ *
+ * @param SuperBlobMakerT SuperBlobMaker.
+ */
+export function superblobmaker(SuperBlobMakerT: typeof SuperBlobMaker) {
+	constant(SuperBlobMakerT, 'SuperBlob');
 }

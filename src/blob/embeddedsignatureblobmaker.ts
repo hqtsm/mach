@@ -1,7 +1,5 @@
-import {constant} from '../util.ts';
-
 import {EmbeddedSignatureBlob} from './embeddedsignatureblob.ts';
-import {SuperBlobMaker} from './superblobmaker.ts';
+import {superblobmaker, SuperBlobMaker} from './superblobmaker.ts';
 
 /**
  * SuperBlob maker for EmbeddedSignatureBlob.
@@ -18,6 +16,6 @@ export class EmbeddedSignatureBlobMaker extends SuperBlobMaker {
 	public static readonly SuperBlob = EmbeddedSignatureBlob;
 
 	static {
-		constant(this, 'SuperBlob');
+		superblobmaker(this);
 	}
 }
