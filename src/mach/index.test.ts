@@ -6,7 +6,7 @@ import {Struct} from '../struct.ts';
 
 import * as index from './index.ts';
 
-void describe('mach structs', () => {
+void describe('Mach structs', () => {
 	void it('endians', () => {
 		for (const name of Object.keys(index)) {
 			if (name.endsWith('LE') || name.endsWith('BE')) {
