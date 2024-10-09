@@ -1,5 +1,5 @@
 import {describe, it} from 'node:test';
-import {strictEqual} from 'node:assert';
+import {ok, strictEqual} from 'node:assert';
 import {resolve, dirname} from 'node:path';
 import {readFile, readdir} from 'node:fs/promises';
 
@@ -94,6 +94,19 @@ void describe('index', () => {
 		for await (const uri of findModules(dir)) {
 			const m = await impire(uri);
 			assertExported(m, index, uri);
+		}
+	});
+
+	void it('structs', async () => {
+		const all = index as {
+			[name: string]: typeof index.Struct | unknown;
+		};
+		for (const name of Object.keys(index)) {
+			const St = all[name] as typeof index.Struct | undefined;
+			if (St && St.prototype && St.prototype instanceof index.Struct) {
+				ok(Object.hasOwn(St, 'BYTE_LENGTH'), name);
+				ok(Object.hasOwn(St, 'LITTLE_ENDIAN'), name);
+			}
 		}
 	});
 });

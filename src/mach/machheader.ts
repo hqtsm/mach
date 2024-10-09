@@ -1,6 +1,5 @@
 /* eslint-disable max-classes-per-file */
 import {struct, Struct, structI32, structU32} from '../struct.ts';
-import {constant} from '../util.ts';
 
 /**
  * Mach-O header, 32-bit.
@@ -52,7 +51,7 @@ export class MachHeader extends Struct {
 		o += structU32(this, o, 'ncmds');
 		o += structU32(this, o, 'sizeofcmds');
 		o += structU32(this, o, 'flags');
-		constant(this, 'BYTE_LENGTH', o);
+		struct(this, o);
 	}
 }
 
