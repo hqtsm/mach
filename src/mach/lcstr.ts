@@ -29,10 +29,10 @@ export class LcStrBE extends LcStr {
 	/**
 	 * @inheritdoc
 	 */
-	public static readonly littleEndian = false;
+	public static readonly LITTLE_ENDIAN = false;
 
 	static {
-		constant(this, 'littleEndian');
+		constant(this, 'LITTLE_ENDIAN');
 	}
 }
 
@@ -43,9 +43,9 @@ export class LcStrLE extends LcStr {
 	/**
 	 * @inheritdoc
 	 */
-	public static readonly littleEndian = true;
+	public static readonly LITTLE_ENDIAN = true;
 
 	static {
-		constant(this, 'littleEndian');
+		constant(this, 'LITTLE_ENDIAN');
 	}
 }

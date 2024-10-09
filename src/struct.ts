@@ -59,8 +59,8 @@ export class Struct implements BufferView {
 	 *
 	 * @returns True for little endian, false for big endian.
 	 */
-	public get littleEndian(): this['constructor']['littleEndian'] {
-		return this.constructor.littleEndian;
+	public get littleEndian(): this['constructor']['LITTLE_ENDIAN'] {
+		return this.constructor.LITTLE_ENDIAN;
 	}
 
 	/**
@@ -72,10 +72,10 @@ export class Struct implements BufferView {
 	 * Use little endian or big endian for host-defined endian fields.
 	 * Defaults to match the host architecture.
 	 */
-	public static readonly littleEndian = HOST_LE;
+	public static readonly LITTLE_ENDIAN = HOST_LE;
 
 	static {
 		constant(this, 'sizeof');
-		constant(this, 'littleEndian');
+		constant(this, 'LITTLE_ENDIAN');
 	}
 }

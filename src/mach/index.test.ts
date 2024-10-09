@@ -30,9 +30,9 @@ void describe('mach structs', () => {
 				ok(StLE.prototype instanceof St, nameLE);
 				strictEqual(StBE.sizeof, St.sizeof, nameBE);
 				strictEqual(StLE.sizeof, St.sizeof, nameLE);
-				strictEqual(StBE.littleEndian, false, nameBE);
-				strictEqual(StLE.littleEndian, true, nameLE);
-				strictEqual(St.littleEndian, HOST_LE);
+				strictEqual(StBE.LITTLE_ENDIAN, false, nameBE);
+				strictEqual(StLE.LITTLE_ENDIAN, true, nameLE);
+				strictEqual(St.LITTLE_ENDIAN, HOST_LE);
 			}
 		}
 	});

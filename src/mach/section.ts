@@ -88,10 +88,10 @@ export class SectionBE extends Section {
 	/**
 	 * @inheritdoc
 	 */
-	public static readonly littleEndian = false;
+	public static readonly LITTLE_ENDIAN = false;
 
 	static {
-		constant(this, 'littleEndian');
+		constant(this, 'LITTLE_ENDIAN');
 	}
 }
 
@@ -102,9 +102,9 @@ export class SectionLE extends Section {
 	/**
 	 * @inheritdoc
 	 */
-	public static readonly littleEndian = true;
+	public static readonly LITTLE_ENDIAN = true;
 
 	static {
-		constant(this, 'littleEndian');
+		constant(this, 'LITTLE_ENDIAN');
 	}
 }
