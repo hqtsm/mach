@@ -39,24 +39,3 @@ export function ranged(i: number, l: number, h: number) {
 		throw new RangeError(`Value ${i} out of range ${l}-${h}`);
 	}
 }
-
-/**
- * Create new instance of a sized type with new memory.
- *
- * @param Type Constructor with BYTE_LENGTH property.
- * @returns New instance.
- */
-export function cnew<T>(Type: Sized<T>) {
-	return new Type(new ArrayBuffer(Type.BYTE_LENGTH));
-}
-
-/**
- * Create new instance from existing memory.
- *
- * @param Type Constructor function.
- * @param ptr Buffer pointer.
- * @returns New instance.
- */
-export function cast<T>(Type: Cast<T>, ptr: Readonly<BufferPointer>) {
-	return new Type(ptr.buffer, ptr.byteOffset);
-}
