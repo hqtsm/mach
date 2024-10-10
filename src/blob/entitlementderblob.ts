@@ -1,6 +1,6 @@
 import {kSecCodeMagicEntitlementDER} from '../const.ts';
 
-import {blob, Blob} from './blob.ts';
+import {Blob} from './blob.ts';
 
 /**
  * For embedding entitlement configuration data, in DER format.
@@ -30,8 +30,4 @@ export class EntitlementDERBlob extends Blob {
 	 * @inheritdoc
 	 */
 	public static readonly typeMagic = kSecCodeMagicEntitlementDER;
-
-	static {
-		blob(this);
-	}
 }

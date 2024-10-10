@@ -1,4 +1,4 @@
-import {struct, Struct, structU32, structU64} from '../struct.ts';
+import {Struct, structU32, structU64} from '../struct.ts';
 
 /**
  * CodeDirectory scatter vector element.
@@ -36,8 +36,4 @@ export class CodeDirectoryScatter extends Struct {
 		o += structU64(this, o, 'spare', false);
 		return o;
 	})(super.BYTE_LENGTH);
-
-	static {
-		struct(this);
-	}
 }

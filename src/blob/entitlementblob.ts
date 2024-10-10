@@ -1,6 +1,6 @@
 import {kSecCodeMagicEntitlement} from '../const.ts';
 
-import {blob, Blob} from './blob.ts';
+import {Blob} from './blob.ts';
 
 /**
  * For embedding entitlement configuration data.
@@ -30,8 +30,4 @@ export class EntitlementBlob extends Blob {
 	 * @inheritdoc
 	 */
 	public static readonly typeMagic = kSecCodeMagicEntitlement;
-
-	static {
-		blob(this);
-	}
 }

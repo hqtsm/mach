@@ -1,5 +1,5 @@
 import {LibraryDependencyBlob} from './librarydependencyblob.ts';
-import {superblobmaker, SuperBlobMaker} from './superblobmaker.ts';
+import {SuperBlobMaker} from './superblobmaker.ts';
 
 /**
  * SuperBlob maker for LibraryDependencyBlob.
@@ -14,8 +14,4 @@ export class LibraryDependencyBlobMaker extends SuperBlobMaker {
 	 * @inheritdoc
 	 */
 	public static readonly SuperBlob = LibraryDependencyBlob;
-
-	static {
-		superblobmaker(this);
-	}
 }

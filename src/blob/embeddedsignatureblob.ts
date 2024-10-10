@@ -1,5 +1,4 @@
 import {kSecCodeMagicEmbeddedSignature} from '../const.ts';
-import {blob} from './blob.ts';
 
 import {SuperBlob} from './superblob.ts';
 
@@ -14,8 +13,4 @@ export class EmbeddedSignatureBlob extends SuperBlob {
 	 * @inheritdoc
 	 */
 	public static readonly typeMagic = kSecCodeMagicEmbeddedSignature;
-
-	static {
-		blob(this);
-	}
 }

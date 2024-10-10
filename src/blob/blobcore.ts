@@ -1,4 +1,4 @@
-import {struct, Struct, structU32} from '../struct.ts';
+import {Struct, structU32} from '../struct.ts';
 import type {ArrayBufferReal} from '../type.ts';
 
 /**
@@ -101,8 +101,4 @@ export class BlobCore extends Struct {
 		o += structU32(this, o, 'mLength' as never, false);
 		return o;
 	})(super.BYTE_LENGTH);
-
-	static {
-		struct(this);
-	}
 }

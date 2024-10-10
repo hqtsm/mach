@@ -1,5 +1,4 @@
 import {kSecCodeMagicRequirementSet} from '../const.ts';
-import {blob} from './blob.ts';
 
 import {SuperBlob} from './superblob.ts';
 
@@ -13,8 +12,4 @@ export class Requirements extends SuperBlob {
 	 * @inheritdoc
 	 */
 	public static readonly typeMagic = kSecCodeMagicRequirementSet;
-
-	static {
-		blob(this);
-	}
 }

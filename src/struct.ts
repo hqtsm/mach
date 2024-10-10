@@ -5,7 +5,6 @@ import type {
 	ReadonlyKeyofType,
 	KeyofType
 } from './type.ts';
-import {constant} from './util.ts';
 
 /**
  * Binary structure buffer view.
@@ -78,10 +77,6 @@ export class Struct implements BufferView {
 	 * Defaults to match the host architecture.
 	 */
 	public static readonly LITTLE_ENDIAN = HOST_LE;
-
-	static {
-		struct(this);
-	}
 }
 
 /**
@@ -362,14 +357,4 @@ export function structT<
 		}
 	});
 	return StructC.BYTE_LENGTH;
-}
-
-/**
- * Finalize Struct.
- *
- * @param StructT Struct constructor.
- */
-export function struct(StructT: typeof Struct) {
-	constant(StructT, 'BYTE_LENGTH');
-	constant(StructT, 'LITTLE_ENDIAN');
 }

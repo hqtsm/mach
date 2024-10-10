@@ -1,6 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import {struct, Struct, structT, structU32} from '../struct.ts';
-import {constant} from '../util.ts';
+import {Struct, structT, structU32} from '../struct.ts';
 import {LcStr, LcStrBE, LcStrLE} from './lcstr.ts';
 
 /**
@@ -38,11 +37,6 @@ export class Fvmlib extends Struct {
 		o += structU32(this, o, 'header_addr');
 		return o;
 	})(super.BYTE_LENGTH);
-
-	static {
-		struct(this);
-		constant(this, 'LcStr');
-	}
 }
 
 /**
@@ -60,11 +54,6 @@ export class FvmlibBE extends Fvmlib {
 	 * @inheritdoc
 	 */
 	public static readonly LcStr = LcStrBE;
-
-	static {
-		struct(this);
-		constant(this, 'LcStr');
-	}
 }
 
 /**
@@ -82,9 +71,4 @@ export class FvmlibLE extends Fvmlib {
 	 * @inheritdoc
 	 */
 	public static readonly LcStr = LcStrLE;
-
-	static {
-		struct(this);
-		constant(this, 'LcStr');
-	}
 }

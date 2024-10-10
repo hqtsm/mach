@@ -1,6 +1,6 @@
 import {kSecCodeMagicLaunchConstraint} from '../const.ts';
 
-import {blob, Blob} from './blob.ts';
+import {Blob} from './blob.ts';
 
 /**
  * Launch constraint in DER format.
@@ -30,8 +30,4 @@ export class LaunchConstraintBlob extends Blob {
 	 * @inheritdoc
 	 */
 	public static readonly typeMagic = kSecCodeMagicLaunchConstraint;
-
-	static {
-		blob(this);
-	}
 }

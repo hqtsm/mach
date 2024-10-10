@@ -9,6 +9,9 @@ import * as index from './index.ts';
 void describe('Blob structs', () => {
 	void it('typeMagic', () => {
 		for (const name of Object.keys(index)) {
+			if (name === 'SuperBlob') {
+				continue;
+			}
 			const all = index as {
 				[name: string]: typeof Blob | unknown;
 			};

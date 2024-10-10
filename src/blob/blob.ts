@@ -1,7 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import {struct} from '../struct.ts';
 import type {BufferView} from '../type.ts';
-import {constant} from '../util.ts';
 
 import {BlobCore} from './blobcore.ts';
 
@@ -57,18 +55,4 @@ export class Blob extends BlobCore {
 		}
 		return new DataView(buffer);
 	}
-
-	static {
-		blob(this);
-	}
-}
-
-/**
- * Finalize Blob.
- *
- * @param BlobT Blob constructor.
- */
-export function blob(BlobT: typeof Blob) {
-	struct(BlobT);
-	constant(BlobT, 'typeMagic');
 }

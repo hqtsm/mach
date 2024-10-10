@@ -1,5 +1,3 @@
-import {constant} from '../util.ts';
-
 import {BlobCore} from './blobcore.ts';
 import {SuperBlob} from './superblob.ts';
 
@@ -90,17 +88,4 @@ export class SuperBlobMaker {
 	 * SuperBlob class.
 	 */
 	public static readonly SuperBlob = SuperBlob;
-
-	static {
-		superblobmaker(this);
-	}
-}
-
-/**
- * Finalize SuperBlobMaker.
- *
- * @param SuperBlobMakerT SuperBlobMaker.
- */
-export function superblobmaker(SuperBlobMakerT: typeof SuperBlobMaker) {
-	constant(SuperBlobMakerT, 'SuperBlob');
 }

@@ -1,8 +1,7 @@
 import {kSecCodeMagicRequirement} from '../const.ts';
 import {structU32} from '../struct.ts';
-import {constant} from '../util.ts';
 
-import {blob, Blob} from './blob.ts';
+import {Blob} from './blob.ts';
 
 /**
  * Single requirement.
@@ -42,11 +41,4 @@ export class Requirement extends Blob {
 		o += structU32(this, o, 'kind', false);
 		return o;
 	})(super.BYTE_LENGTH);
-
-	static {
-		blob(this);
-		constant(this, 'baseAlignment');
-		constant(this, 'exprForm');
-		constant(this, 'lwcrForm');
-	}
 }

@@ -1,8 +1,7 @@
 import {kSecCodeMagicCodeDirectory} from '../const.ts';
 import {structU32, structU64, structU8} from '../struct.ts';
-import {constant} from '../util.ts';
 
-import {blob, Blob} from './blob.ts';
+import {Blob} from './blob.ts';
 
 /**
  * Describes secured pieces of a program.
@@ -212,14 +211,4 @@ export class CodeDirectory extends Blob {
 		o += structU32(this, o, 'preEncryptOffset', false);
 		return o;
 	})(super.BYTE_LENGTH);
-
-	static {
-		blob(this);
-		constant(this, 'earliestVersion');
-		constant(this, 'supportsScatter');
-		constant(this, 'supportsTeamID');
-		constant(this, 'supportsCodeLimit64');
-		constant(this, 'supportsExecSegment');
-		constant(this, 'supportsPreEncrypt');
-	}
 }

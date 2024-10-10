@@ -1,5 +1,5 @@
 import {DetachedSignatureBlob} from './detachedsignatureblob.ts';
-import {superblobmaker, SuperBlobMaker} from './superblobmaker.ts';
+import {SuperBlobMaker} from './superblobmaker.ts';
 
 /**
  * SuperBlob maker for DetachedSignatureBlob.
@@ -14,8 +14,4 @@ export class DetachedSignatureBlobMaker extends SuperBlobMaker {
 	 * @inheritdoc
 	 */
 	public static readonly SuperBlob = DetachedSignatureBlob;
-
-	static {
-		superblobmaker(this);
-	}
 }

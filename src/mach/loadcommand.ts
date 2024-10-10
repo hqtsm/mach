@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import {struct, Struct, structU32} from '../struct.ts';
+import {Struct, structU32} from '../struct.ts';
 
 /**
  * Load command.
@@ -25,10 +25,6 @@ export class LoadCommand extends Struct {
 		o += structU32(this, o, 'cmdsize');
 		return o;
 	})(super.BYTE_LENGTH);
-
-	static {
-		struct(this);
-	}
 }
 
 /**
@@ -41,10 +37,6 @@ export class LoadCommandBE extends LoadCommand {
 	 * @inheritdoc
 	 */
 	public static readonly LITTLE_ENDIAN = false;
-
-	static {
-		struct(this);
-	}
 }
 
 /**
@@ -57,8 +49,4 @@ export class LoadCommandLE extends LoadCommand {
 	 * @inheritdoc
 	 */
 	public static readonly LITTLE_ENDIAN = true;
-
-	static {
-		struct(this);
-	}
 }

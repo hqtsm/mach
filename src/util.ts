@@ -1,5 +1,3 @@
-import type {ReadonlyKeyof} from './type.ts';
-
 /**
  * Align a number up.
  *
@@ -10,21 +8,6 @@ import type {ReadonlyKeyof} from './type.ts';
 export function alignUp(value: number, alignment: number) {
 	const over = value % alignment;
 	return over ? value + alignment - over : value;
-}
-
-/**
- * Define constant.
- *
- * @param o Object to define constant property on.
- * @param p Property name.
- * @param value Optional value, defaults to current value.
- */
-export function constant<T, U extends ReadonlyKeyof<T>>(
-	o: T,
-	p: U,
-	value: T[U] = o[p]
-) {
-	Object.defineProperty(o, p, {value});
 }
 
 /**

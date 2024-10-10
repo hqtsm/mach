@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import {struct, Struct, structI8A, structU32} from '../struct.ts';
+import {Struct, structI8A, structU32} from '../struct.ts';
 
 /**
  * Section, 32-bit.
@@ -79,10 +79,6 @@ export class Section extends Struct {
 		o += structU32(this, o, 'reserved2');
 		return o;
 	})(super.BYTE_LENGTH);
-
-	static {
-		struct(this);
-	}
 }
 
 /**
@@ -95,10 +91,6 @@ export class SectionBE extends Section {
 	 * @inheritdoc
 	 */
 	public static readonly LITTLE_ENDIAN = false;
-
-	static {
-		struct(this);
-	}
 }
 
 /**
@@ -111,8 +103,4 @@ export class SectionLE extends Section {
 	 * @inheritdoc
 	 */
 	public static readonly LITTLE_ENDIAN = true;
-
-	static {
-		struct(this);
-	}
 }
