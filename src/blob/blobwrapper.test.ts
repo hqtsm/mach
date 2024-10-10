@@ -3,7 +3,6 @@ import {deepStrictEqual, strictEqual} from 'node:assert';
 
 import {unhex} from '../util.spec.ts';
 import {CSMAGIC_BLOBWRAPPER} from '../const.ts';
-import {cast} from '../util.ts';
 
 import {BlobWrapper} from './blobwrapper.ts';
 
@@ -25,7 +24,7 @@ void describe('BlobWrapper', () => {
 
 	void it('data', () => {
 		const data = unhex('09 AB CD EF 01 02 03 04 05 06 07 08 09 0A 0B 0C');
-		const bw = cast(BlobWrapper, BlobWrapper.blobify(data));
+		const bw = new BlobWrapper(BlobWrapper.blobify(data).buffer);
 		const dv = new DataView(bw.buffer, bw.byteOffset, 8);
 		strictEqual(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
 		strictEqual(dv.getUint32(4), bw.length + 8);

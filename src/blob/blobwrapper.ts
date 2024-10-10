@@ -1,7 +1,6 @@
 import {CSMAGIC_BLOBWRAPPER} from '../const.ts';
 import {structU8A} from '../struct.ts';
 import type {BufferView} from '../type.ts';
-import {cast} from '../util.ts';
 
 import {blob, Blob} from './blob.ts';
 
@@ -23,7 +22,8 @@ export class BlobWrapper extends Blob {
 	 */
 	public get data() {
 		// Overridden to point to payload (only).
-		return cast(DataView, this.dataArea);
+		const {dataArea} = this;
+		return new DataView(dataArea.buffer, dataArea.byteOffset);
 	}
 
 	/**

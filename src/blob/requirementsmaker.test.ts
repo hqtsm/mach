@@ -6,7 +6,6 @@ import {
 	kSecHostRequirementType
 } from '../const.ts';
 import {unhex} from '../util.spec.ts';
-import {cast} from '../util.ts';
 
 import {Requirement} from './requirement.ts';
 import {RequirementsMaker} from './requirementsmaker.ts';
@@ -44,11 +43,11 @@ void describe('RequirementsMaker', () => {
 		const rsm = new RequirementsMaker();
 		rsm.add(
 			kSecHostRequirementType,
-			cast(Requirement, Requirement.blobify(host))
+			new Requirement(Requirement.blobify(host).buffer)
 		);
 		rsm.add(
 			kSecDesignatedRequirementType,
-			cast(Requirement, Requirement.blobify(designated))
+			new Requirement(Requirement.blobify(designated).buffer)
 		);
 		const rs = rsm.make();
 		deepStrictEqual(

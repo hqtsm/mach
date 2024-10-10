@@ -3,7 +3,6 @@ import {deepStrictEqual, strictEqual} from 'node:assert';
 
 import {unhex} from '../util.spec.ts';
 import {kSecCodeMagicLaunchConstraint} from '../const.ts';
-import {cast} from '../util.ts';
 
 import {LaunchConstraintBlob} from './launchconstraintblob.ts';
 
@@ -52,9 +51,8 @@ void describe('LaunchConstraintBlob', () => {
 	});
 
 	void it('data', () => {
-		const edb = cast(
-			LaunchConstraintBlob,
-			LaunchConstraintBlob.blobify(sampleDer)
+		const edb = new LaunchConstraintBlob(
+			LaunchConstraintBlob.blobify(sampleDer).buffer
 		);
 		const dv = new DataView(edb.buffer, edb.byteOffset, edb.length);
 		strictEqual(dv.getUint32(0), kSecCodeMagicLaunchConstraint);

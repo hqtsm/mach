@@ -1,4 +1,4 @@
-import {cast, constant} from '../util.ts';
+import {constant} from '../util.ts';
 
 import {BlobCore} from './blobcore.ts';
 import {SuperBlob} from './superblob.ts';
@@ -21,7 +21,7 @@ export class SuperBlobMaker {
 	 * @param blob Blob.
 	 */
 	public add(type: number, blob: BlobCore) {
-		this.#pieces.set(type, cast(BlobCore, blob));
+		this.#pieces.set(type, new BlobCore(blob.buffer, blob.byteOffset));
 	}
 
 	/**

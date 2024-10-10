@@ -3,7 +3,6 @@ import {deepStrictEqual, strictEqual} from 'node:assert';
 
 import {unhex} from '../util.spec.ts';
 import {kSecCodeMagicEntitlement} from '../const.ts';
-import {cast} from '../util.ts';
 
 import {EntitlementBlob} from './entitlementblob.ts';
 
@@ -37,7 +36,7 @@ void describe('EntitlementBlob', () => {
 
 	void it('data', () => {
 		const data = new TextEncoder().encode(examplePlist);
-		const eb = cast(EntitlementBlob, EntitlementBlob.blobify(data));
+		const eb = new EntitlementBlob(EntitlementBlob.blobify(data).buffer);
 		eb.body.set(data);
 		const dv = new DataView(eb.buffer, eb.byteOffset, eb.length);
 		strictEqual(dv.getUint32(0), kSecCodeMagicEntitlement);
