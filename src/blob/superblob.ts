@@ -71,9 +71,15 @@ export class SuperBlob extends Blob {
 		return this.mCount;
 	}
 
-	static {
-		let {BYTE_LENGTH: o} = this;
+	/**
+	 * @inheritdoc
+	 */
+	public static BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'mCount' as never, false);
-		blob(this, o);
+		return o;
+	})(super.BYTE_LENGTH);
+
+	static {
+		blob(this);
 	}
 }

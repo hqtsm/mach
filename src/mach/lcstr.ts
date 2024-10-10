@@ -12,11 +12,17 @@ export class LcStr extends Struct {
 	 */
 	public declare offset: number;
 
-	static {
-		let {BYTE_LENGTH: o} = this;
+	/**
+	 * @inheritdoc
+	 */
+	public static BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'offset');
 		// Union because there was a 32-bit char *ptr.
-		struct(this, o);
+		return o;
+	})(super.BYTE_LENGTH);
+
+	static {
+		struct(this);
 	}
 }
 

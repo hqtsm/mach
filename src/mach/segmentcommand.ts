@@ -62,8 +62,10 @@ export class SegmentCommand extends Struct {
 	 */
 	public declare flags: number;
 
-	static {
-		let {BYTE_LENGTH: o} = this;
+	/**
+	 * @inheritdoc
+	 */
+	public static BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'cmd');
 		o += structU32(this, o, 'cmdsize');
 		o += structI8A(this, o, 'segname', 16);
@@ -75,7 +77,11 @@ export class SegmentCommand extends Struct {
 		o += structI32(this, o, 'initprot');
 		o += structU32(this, o, 'nsects');
 		o += structU32(this, o, 'flags');
-		struct(this, o);
+		return o;
+	})(super.BYTE_LENGTH);
+
+	static {
+		struct(this);
 	}
 }
 

@@ -84,9 +84,15 @@ export class BlobWrapper extends Blob {
 		return blob;
 	}
 
-	static {
-		let {BYTE_LENGTH: o} = this;
+	/**
+	 * @inheritdoc
+	 */
+	public static BYTE_LENGTH = (o => {
 		o += structU8A(this, o, 'dataArea', 0);
-		blob(this, o);
+		return o;
+	})(super.BYTE_LENGTH);
+
+	static {
+		blob(this);
 	}
 }

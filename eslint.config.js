@@ -222,6 +222,7 @@ export default [
 
 			// Unicorn plugin:
 			'unicorn/catch-error-name': 'off',
+			'unicorn/consistent-function-scoping': 'off',
 			'unicorn/explicit-length-check': 'off',
 			'unicorn/import-style': 'off',
 			'unicorn/no-anonymous-default-export': 'off',

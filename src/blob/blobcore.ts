@@ -90,10 +90,16 @@ export class BlobCore extends Struct {
 		return new Type(this.buffer, this.byteOffset + offset);
 	}
 
-	static {
-		let {BYTE_LENGTH: o} = this;
+	/**
+	 * @inheritdoc
+	 */
+	public static BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'mMagic' as never, false);
 		o += structU32(this, o, 'mLength' as never, false);
-		struct(this, o);
+		return o;
+	})(super.BYTE_LENGTH);
+
+	static {
+		struct(this);
 	}
 }

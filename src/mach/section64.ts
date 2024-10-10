@@ -67,8 +67,10 @@ export class Section64 extends Struct {
 	 */
 	public declare reserved3: number;
 
-	static {
-		let {BYTE_LENGTH: o} = this;
+	/**
+	 * @inheritdoc
+	 */
+	public static BYTE_LENGTH = (o => {
 		o += structI8A(this, o, 'sectname', 16);
 		o += structI8A(this, o, 'segname', 16);
 		o += structU64(this, o, 'addr');
@@ -81,7 +83,11 @@ export class Section64 extends Struct {
 		o += structU32(this, o, 'reserved1');
 		o += structU32(this, o, 'reserved2');
 		o += structU32(this, o, 'reserved3');
-		struct(this, o);
+		return o;
+	})(super.BYTE_LENGTH);
+
+	static {
+		struct(this);
 	}
 }
 

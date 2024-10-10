@@ -185,8 +185,10 @@ export class CodeDirectory extends Blob {
 	 */
 	public static readonly supportsPreEncrypt = 0x20500;
 
-	static {
-		let {BYTE_LENGTH: o} = this;
+	/**
+	 * @inheritdoc
+	 */
+	public static BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'version', false);
 		o += structU32(this, o, 'flags', false);
 		o += structU32(this, o, 'hashOffset', false);
@@ -208,7 +210,11 @@ export class CodeDirectory extends Blob {
 		o += structU64(this, o, 'execSegFlags', false);
 		o += structU32(this, o, 'runtime', false);
 		o += structU32(this, o, 'preEncryptOffset', false);
-		blob(this, o);
+		return o;
+	})(super.BYTE_LENGTH);
+
+	static {
+		blob(this);
 		constant(this, 'earliestVersion');
 		constant(this, 'supportsScatter');
 		constant(this, 'supportsTeamID');

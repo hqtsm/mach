@@ -17,11 +17,17 @@ export class LoadCommand extends Struct {
 	 */
 	public declare cmdsize: number;
 
-	static {
-		let {BYTE_LENGTH: o} = this;
+	/**
+	 * @inheritdoc
+	 */
+	public static BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'cmd');
 		o += structU32(this, o, 'cmdsize');
-		struct(this, o);
+		return o;
+	})(super.BYTE_LENGTH);
+
+	static {
+		struct(this);
 	}
 }
 

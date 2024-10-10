@@ -368,12 +368,8 @@ export function structT<
  * Finalize Struct.
  *
  * @param StructT Struct constructor.
- * @param byteLength Byte length.
  */
-export function struct(
-	StructT: typeof Struct,
-	byteLength: number = StructT.BYTE_LENGTH
-) {
-	constant(StructT, 'BYTE_LENGTH', byteLength);
+export function struct(StructT: typeof Struct) {
+	constant(StructT, 'BYTE_LENGTH');
 	constant(StructT, 'LITTLE_ENDIAN');
 }

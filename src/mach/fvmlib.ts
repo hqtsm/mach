@@ -29,12 +29,18 @@ export class Fvmlib extends Struct {
 	 */
 	public static readonly LcStr = LcStr;
 
-	static {
-		let {BYTE_LENGTH: o} = this;
+	/**
+	 * @inheritdoc
+	 */
+	public static BYTE_LENGTH = (o => {
 		o += structT(this, 'LcStr', o, 'name');
 		o += structU32(this, o, 'minor_version');
 		o += structU32(this, o, 'header_addr');
-		struct(this, o);
+		return o;
+	})(super.BYTE_LENGTH);
+
+	static {
+		struct(this);
 		constant(this, 'LcStr');
 	}
 }

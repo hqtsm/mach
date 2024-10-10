@@ -42,8 +42,10 @@ export class MachHeader extends Struct {
 	 */
 	public declare flags: number;
 
-	static {
-		let {BYTE_LENGTH: o} = this;
+	/**
+	 * @inheritdoc
+	 */
+	public static BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'magic');
 		o += structI32(this, o, 'cputype');
 		o += structI32(this, o, 'cpusubtype');
@@ -51,7 +53,11 @@ export class MachHeader extends Struct {
 		o += structU32(this, o, 'ncmds');
 		o += structU32(this, o, 'sizeofcmds');
 		o += structU32(this, o, 'flags');
-		struct(this, o);
+		return o;
+	})(super.BYTE_LENGTH);
+
+	static {
+		struct(this);
 	}
 }
 

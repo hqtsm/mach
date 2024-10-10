@@ -26,12 +26,18 @@ export class CodeDirectoryScatter extends Struct {
 	 */
 	public declare spare: bigint;
 
-	static {
-		let {BYTE_LENGTH: o} = this;
+	/**
+	 * @inheritdoc
+	 */
+	public static BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'count', false);
 		o += structU32(this, o, 'base', false);
 		o += structU64(this, o, 'targetOffset', false);
 		o += structU64(this, o, 'spare', false);
-		struct(this, o);
+		return o;
+	})(super.BYTE_LENGTH);
+
+	static {
+		struct(this);
 	}
 }
