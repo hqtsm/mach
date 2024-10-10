@@ -31,7 +31,7 @@ export class Fvmlib extends Struct {
 
 	static {
 		let {BYTE_LENGTH: o} = this;
-		o += structT(LcStr, this, o, 'name');
+		o += structT(this, 'LcStr', o, 'name');
 		o += structU32(this, o, 'minor_version');
 		o += structU32(this, o, 'header_addr');
 		struct(this, o);

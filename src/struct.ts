@@ -337,24 +337,31 @@ export function structU8A<T extends typeof Struct>(
 /**
  * Member struct.
  *
- * @param Type Struct type.
  * @param StructT Struct constructor.
+ * @param Type Struct type.
  * @param offset Byte offset.
  * @param field Field name.
  * @returns Byte length.
  */
-export function structT<S extends typeof Struct, T extends typeof Struct>(
-	Type: S,
+export function structT<
+	T extends typeof Struct,
+	U extends ReadonlyKeyofType<T, typeof Struct>
+>(
 	StructT: T,
+	Type: U,
 	offset: number,
-	field: ReadonlyKeyofType<T['prototype'], S['prototype']>
+	field: ReadonlyKeyofType<
+		T['prototype'],
+		T[U] extends typeof Struct ? T[U]['prototype'] : never
+	>
 ) {
+	const StructC = StructT[Type] as typeof Struct;
 	Object.defineProperty(StructT.prototype, field, {
 		get(this: T['prototype']) {
-			return new Type(this.buffer, this.byteOffset + offset);
+			return new StructC(this.buffer, this.byteOffset + offset);
 		}
 	});
-	return Type.BYTE_LENGTH;
+	return StructC.BYTE_LENGTH;
 }
 
 /**
