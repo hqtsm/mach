@@ -90,6 +90,8 @@ export class SegmentCommand64 extends Struct {
  * Segment command, 64-bit, big endian.
  */
 export class SegmentCommand64BE extends SegmentCommand64 {
+	public declare readonly ['constructor']: typeof SegmentCommand64BE;
+
 	/**
 	 * @inheritdoc
 	 */
@@ -104,6 +106,8 @@ export class SegmentCommand64BE extends SegmentCommand64 {
  * Segment command, 64-bit, little endian.
  */
 export class SegmentCommand64LE extends SegmentCommand64 {
+	public declare readonly ['constructor']: typeof SegmentCommand64LE;
+
 	/**
 	 * @inheritdoc
 	 */

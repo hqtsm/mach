@@ -24,6 +24,8 @@ export class LcStr extends Struct {
  * Load command string union, big endian.
  */
 export class LcStrBE extends LcStr {
+	public declare readonly ['constructor']: typeof LcStrBE;
+
 	/**
 	 * @inheritdoc
 	 */
@@ -38,6 +40,8 @@ export class LcStrBE extends LcStr {
  * Load command string union, little endian.
  */
 export class LcStrLE extends LcStr {
+	public declare readonly ['constructor']: typeof LcStrLE;
+
 	/**
 	 * @inheritdoc
 	 */

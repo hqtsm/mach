@@ -89,6 +89,8 @@ export class Section64 extends Struct {
  * Section, 64-bit, big endian.
  */
 export class Section64BE extends Section64 {
+	public declare readonly ['constructor']: typeof Section64BE;
+
 	/**
 	 * @inheritdoc
 	 */
@@ -103,6 +105,8 @@ export class Section64BE extends Section64 {
  * Section, 64-bit, little endian.
  */
 export class Section64LE extends Section64 {
+	public declare readonly ['constructor']: typeof Section64LE;
+
 	/**
 	 * @inheritdoc
 	 */

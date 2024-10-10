@@ -29,6 +29,8 @@ export class LoadCommand extends Struct {
  * Load command, big endian.
  */
 export class LoadCommandBE extends LoadCommand {
+	public declare readonly ['constructor']: typeof LoadCommandBE;
+
 	/**
 	 * @inheritdoc
 	 */
@@ -43,6 +45,8 @@ export class LoadCommandBE extends LoadCommand {
  * Load command, little endian.
  */
 export class LoadCommandLE extends LoadCommand {
+	public declare readonly ['constructor']: typeof LoadCommandLE;
+
 	/**
 	 * @inheritdoc
 	 */

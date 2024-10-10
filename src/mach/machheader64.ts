@@ -65,6 +65,8 @@ export class MachHeader64 extends Struct {
  * Mach-O header, 64-bit, big endian.
  */
 export class MachHeader64BE extends MachHeader64 {
+	public declare readonly ['constructor']: typeof MachHeader64BE;
+
 	/**
 	 * @inheritdoc
 	 */
@@ -79,6 +81,8 @@ export class MachHeader64BE extends MachHeader64 {
  * Mach-O header, 64-bit, little endian.
  */
 export class MachHeader64LE extends MachHeader64 {
+	public declare readonly ['constructor']: typeof MachHeader64LE;
+
 	/**
 	 * @inheritdoc
 	 */
