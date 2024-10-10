@@ -6,3 +6,4 @@ export * from './segmentcommand.ts';
 export * from './segmentcommand64.ts';
 export * from './section.ts';
 export * from './section64.ts';
+export * from './fvmlib.ts';
