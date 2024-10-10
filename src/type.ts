@@ -58,36 +58,6 @@ export interface BufferView {
 }
 
 /**
- * Buffer pointer.
- */
-export interface BufferPointer {
-	/**
-	 * Array buffer.
-	 */
-	readonly buffer: ArrayBufferReal;
-
-	/**
-	 * Byte offset.
-	 */
-	readonly byteOffset: number;
-}
-
-/**
- * Binary constructor with size.
- */
-export interface Sized<T> {
-	/**
-	 * Create new instance from existing memory.
-	 */
-	new (buffer: ArrayBufferReal): T;
-
-	/**
-	 * Byte size of type.
-	 */
-	readonly BYTE_LENGTH: number;
-}
-
-/**
  * Cast type sized constructor.
  */
 export interface Cast<T> {

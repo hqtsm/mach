@@ -1,5 +1,5 @@
 import {struct, Struct, structU32} from '../struct.ts';
-import type {Cast} from '../type.ts';
+import type {ArrayBufferReal} from '../type.ts';
 
 /**
  * Polymorphic memory blobs with magics numbers.
@@ -86,7 +86,10 @@ export class BlobCore extends Struct {
 	 * @param offset Byte offset.
 	 * @returns Data view.
 	 */
-	public at<T>(Type: Cast<T>, offset: number) {
+	public at<T>(
+		Type: new (buffer: ArrayBufferReal, byteOffset?: number) => T,
+		offset: number
+	) {
 		return new Type(this.buffer, this.byteOffset + offset);
 	}
 

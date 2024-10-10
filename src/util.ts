@@ -1,4 +1,4 @@
-import type {BufferPointer, Cast, ReadonlyKeyof, Sized} from './type.ts';
+import type {ReadonlyKeyof} from './type.ts';
 
 /**
  * Align a number up.
