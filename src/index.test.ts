@@ -57,7 +57,7 @@ async function* findModules(dir: string) {
 				continue;
 			}
 			if (
-				!/\.(c|m|)[jt]sx?$/i.test(name) ||
+				!/\.[cm]?[jt]sx?$/i.test(name) ||
 				/\.(test|spec)\.[^.]+$/i.test(name)
 			) {
 				continue;
