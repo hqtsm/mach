@@ -31,7 +31,7 @@ export class FvmlibCommand extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static BYTE_LENGTH = (o => {
+	public static readonly BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'cmd');
 		o += structU32(this, o, 'cmdsize');
 		o += structT(this, 'Fvmlib', o, 'name');

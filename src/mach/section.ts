@@ -65,7 +65,7 @@ export class Section extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static BYTE_LENGTH = (o => {
+	public static readonly BYTE_LENGTH = (o => {
 		o += structI8A(this, o, 'sectname', 16);
 		o += structI8A(this, o, 'segname', 16);
 		o += structU32(this, o, 'addr');

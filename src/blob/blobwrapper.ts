@@ -87,7 +87,7 @@ export class BlobWrapper extends Blob {
 	/**
 	 * @inheritdoc
 	 */
-	public static BYTE_LENGTH = (o => {
+	public static readonly BYTE_LENGTH = (o => {
 		o += structU8A(this, o, 'dataArea', 0);
 		return o;
 	})(super.BYTE_LENGTH);

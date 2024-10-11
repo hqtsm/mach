@@ -31,7 +31,7 @@ export class Fvmlib extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static BYTE_LENGTH = (o => {
+	public static readonly BYTE_LENGTH = (o => {
 		o += structT(this, 'LcStr', o, 'name');
 		o += structU32(this, o, 'minor_version');
 		o += structU32(this, o, 'header_addr');

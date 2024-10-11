@@ -37,7 +37,7 @@ export class Requirement extends Blob {
 	/**
 	 * @inheritdoc
 	 */
-	public static BYTE_LENGTH = (o => {
+	public static readonly BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'kind', false);
 		return o;
 	})(super.BYTE_LENGTH);

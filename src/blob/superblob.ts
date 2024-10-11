@@ -74,7 +74,7 @@ export class SuperBlob extends Blob {
 	/**
 	 * @inheritdoc
 	 */
-	public static BYTE_LENGTH = (o => {
+	public static readonly BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'mCount' as never, false);
 		return o;
 	})(super.BYTE_LENGTH);

@@ -96,7 +96,7 @@ export class BlobCore extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static BYTE_LENGTH = (o => {
+	public static readonly BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'mMagic' as never, false);
 		o += structU32(this, o, 'mLength' as never, false);
 		return o;

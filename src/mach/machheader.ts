@@ -45,7 +45,7 @@ export class MachHeader extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static BYTE_LENGTH = (o => {
+	public static readonly BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'magic');
 		o += structI32(this, o, 'cputype');
 		o += structI32(this, o, 'cpusubtype');
