@@ -17,3 +17,4 @@ export * from './subumbrellacommand.ts';
 export * from './sublibrarycommand.ts';
 export * from './preloaddylibcommand.ts';
 export * from './dylinkercommand.ts';
+export * from './threadcommand.ts';
