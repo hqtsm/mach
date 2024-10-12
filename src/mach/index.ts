@@ -8,3 +8,4 @@ export * from './section.ts';
 export * from './section64.ts';
 export * from './fvmlib.ts';
 export * from './fvmlibcommand.ts';
+export * from './dylib.ts';
