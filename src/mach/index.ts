@@ -10,3 +10,4 @@ export * from './fvmlib.ts';
 export * from './fvmlibcommand.ts';
 export * from './dylib.ts';
 export * from './dylibcommand.ts';
+export * from './dylibusecommand.ts';
