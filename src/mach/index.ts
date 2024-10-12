@@ -20,3 +20,4 @@ export * from './dylinkercommand.ts';
 export * from './threadcommand.ts';
 export * from './routinescommand.ts';
 export * from './routinescommand64.ts';
+export * from './symtabcommand.ts';
