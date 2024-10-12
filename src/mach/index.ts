@@ -11,3 +11,7 @@ export * from './fvmlibcommand.ts';
 export * from './dylib.ts';
 export * from './dylibcommand.ts';
 export * from './dylibusecommand.ts';
+export * from './subframeworkcommand.ts';
+export * from './subclientcommand.ts';
+export * from './subumbrellacommand.ts';
+export * from './sublibrarycommand.ts';
