@@ -16,3 +16,4 @@ export * from './subclientcommand.ts';
 export * from './subumbrellacommand.ts';
 export * from './sublibrarycommand.ts';
 export * from './preloaddylibcommand.ts';
+export * from './dylinkercommand.ts';
