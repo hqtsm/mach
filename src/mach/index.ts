@@ -18,3 +18,5 @@ export * from './sublibrarycommand.ts';
 export * from './preloaddylibcommand.ts';
 export * from './dylinkercommand.ts';
 export * from './threadcommand.ts';
+export * from './routinescommand.ts';
+export * from './routinescommand64.ts';
