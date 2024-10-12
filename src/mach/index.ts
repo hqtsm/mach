@@ -9,3 +9,4 @@ export * from './section64.ts';
 export * from './fvmlib.ts';
 export * from './fvmlibcommand.ts';
 export * from './dylib.ts';
+export * from './dylibcommand.ts';
