@@ -21,7 +21,7 @@ export class FvmlibCommand extends Struct {
 	/**
 	 * Library identification.
 	 */
-	public declare readonly name: this['constructor']['Fvmlib']['prototype'];
+	public declare readonly fvmlib: this['constructor']['Fvmlib']['prototype'];
 
 	/**
 	 * Fvmlib reference.
@@ -34,7 +34,7 @@ export class FvmlibCommand extends Struct {
 	public static readonly BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'cmd');
 		o += structU32(this, o, 'cmdsize');
-		o += structT(this, o, 'name', 'Fvmlib');
+		o += structT(this, o, 'fvmlib', 'Fvmlib');
 		return o;
 	})(super.BYTE_LENGTH);
 }
