@@ -48,3 +48,4 @@ export * from './dataincodeentry.ts';
 export * from './tlvdescriptor.ts';
 export * from './tlvdescriptor64.ts';
 export * from './notecommand.ts';
+export * from './filesetentrycommand.ts';
