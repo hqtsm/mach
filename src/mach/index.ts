@@ -23,3 +23,5 @@ export * from './routinescommand64.ts';
 export * from './symtabcommand.ts';
 export * from './dysymtabcommand.ts';
 export * from './dylibtableofcontents.ts';
+export * from './dylibmodule.ts';
+export * from './dylibmodule64.ts';
