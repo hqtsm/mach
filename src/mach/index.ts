@@ -43,3 +43,4 @@ export * from './symsegcommand.ts';
 export * from './identcommand.ts';
 export * from './fvmfilecommand.ts';
 export * from './entrypointcommand.ts';
+export * from './sourceversioncommand.ts';
