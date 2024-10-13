@@ -34,3 +34,5 @@ export * from './rpathcommand.ts';
 export * from './linkeditdatacommand.ts';
 export * from './encryptioninfocommand.ts';
 export * from './encryptioninfocommand64.ts';
+export * from './versionmincommand.ts';
+export * from './buildversioncommand.ts';
