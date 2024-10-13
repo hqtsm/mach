@@ -5,6 +5,7 @@ import type {
 	ReadonlyKeyofType,
 	KeyofType
 } from './type.ts';
+import {getUint24, setUint24} from './util.ts';
 
 /**
  * Binary structure buffer view.
@@ -177,6 +178,60 @@ export function structU16<T extends typeof Struct>(
 		}
 	});
 	return 2;
+}
+
+/**
+ * Member int24.
+ *
+ * @param StructT Struct constructor.
+ * @param offset Byte offset.
+ * @param field Field name.
+ * @param le Little endian, big endian, or default.
+ * @returns Byte length.
+ */
+export function structI24<T extends typeof Struct>(
+	StructT: T,
+	offset: number,
+	field: KeyofType<T['prototype'], number>,
+	le: boolean | null = null
+) {
+	Object.defineProperty(StructT.prototype, field, {
+		get(this: T['prototype']) {
+			const u = getUint24(this.dataView, offset, le ?? this.littleEndian);
+			// eslint-disable-next-line no-bitwise
+			return (u << 8) >> 8;
+		},
+		set(this: T['prototype'], value: number) {
+			setUint24(this.dataView, offset, value, le ?? this.littleEndian);
+		}
+	});
+	return 3;
+}
+
+/**
+ * Member uint24.
+ *
+ * @param StructT Struct constructor.
+ * @param offset Byte offset.
+ * @param field Field name.
+ * @param le Little endian, big endian, or default.
+ * @returns Byte length.
+ */
+export function structU24<T extends typeof Struct>(
+	StructT: T,
+	offset: number,
+	field: KeyofType<T['prototype'], number>,
+	le: boolean | null = null
+) {
+	Object.defineProperty(StructT.prototype, field, {
+		get(this: T['prototype']) {
+			return getUint24(this.dataView, offset, le ?? this.littleEndian);
+		},
+		set(this: T['prototype'], value: number) {
+			setUint24(this.dataView, offset, value, le ?? this.littleEndian);
+		}
+	});
+	return 3;
 }
 
 /**
