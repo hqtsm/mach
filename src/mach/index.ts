@@ -32,3 +32,5 @@ export * from './prebindcksumcommand.ts';
 export * from './uuidcommand.ts';
 export * from './rpathcommand.ts';
 export * from './linkeditdatacommand.ts';
+export * from './encryptioninfocommand.ts';
+export * from './encryptioninfocommand64.ts';
