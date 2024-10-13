@@ -16,12 +16,12 @@ export class Fvmlib extends Struct {
 	/**
 	 * Minor version.
 	 */
-	public declare minor_version: number;
+	public declare minorVersion: number;
 
 	/**
 	 * Header address.
 	 */
-	public declare header_addr: number;
+	public declare headerAddr: number;
 
 	/**
 	 * LcStr reference.
@@ -33,8 +33,8 @@ export class Fvmlib extends Struct {
 	 */
 	public static readonly BYTE_LENGTH = (o => {
 		o += structT(this, o, 'name', 'LcStr');
-		o += structU32(this, o, 'minor_version');
-		o += structU32(this, o, 'header_addr');
+		o += structU32(this, o, 'minorVersion');
+		o += structU32(this, o, 'headerAddr');
 		return o;
 	})(super.BYTE_LENGTH);
 }

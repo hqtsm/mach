@@ -22,7 +22,7 @@ export class SubUmbrellaCommand extends Struct {
 	 * The sub_umbrella framework name.
 	 */
 	// eslint-disable-next-line max-len
-	public declare readonly sub_umbrella: this['constructor']['LcStr']['prototype'];
+	public declare readonly subUmbrella: this['constructor']['LcStr']['prototype'];
 
 	/**
 	 * LcStr reference.
@@ -35,7 +35,7 @@ export class SubUmbrellaCommand extends Struct {
 	public static readonly BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'cmd');
 		o += structU32(this, o, 'cmdsize');
-		o += structT(this, o, 'sub_umbrella', 'LcStr');
+		o += structT(this, o, 'subUmbrella', 'LcStr');
 		return o;
 	})(super.BYTE_LENGTH);
 }

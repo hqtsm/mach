@@ -20,12 +20,12 @@ export class RoutinesCommand extends Struct {
 	/**
 	 * Address of initialization routine.
 	 */
-	public declare init_address: number;
+	public declare initAddress: number;
 
 	/**
 	 * Index of initialization routine in module table.
 	 */
-	public declare init_module: number;
+	public declare initModule: number;
 
 	/**
 	 * Reserved.
@@ -63,8 +63,8 @@ export class RoutinesCommand extends Struct {
 	public static readonly BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'cmd');
 		o += structU32(this, o, 'cmdsize');
-		o += structU32(this, o, 'init_address');
-		o += structU32(this, o, 'init_module');
+		o += structU32(this, o, 'initAddress');
+		o += structU32(this, o, 'initModule');
 		o += structU32(this, o, 'reserved1');
 		o += structU32(this, o, 'reserved2');
 		o += structU32(this, o, 'reserved3');

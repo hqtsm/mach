@@ -26,7 +26,7 @@ export class FvmfileCommand extends Struct {
 	/**
 	 * File virtual address.
 	 */
-	public declare header_addr: number;
+	public declare headerAddr: number;
 
 	/**
 	 * LcStr reference.
@@ -40,7 +40,7 @@ export class FvmfileCommand extends Struct {
 		o += structU32(this, o, 'cmd');
 		o += structU32(this, o, 'cmdsize');
 		o += structT(this, o, 'name', 'LcStr');
-		o += structU32(this, o, 'header_addr');
+		o += structU32(this, o, 'headerAddr');
 		return o;
 	})(super.BYTE_LENGTH);
 }

@@ -20,7 +20,7 @@ export class NoteCommand extends Struct {
 	/**
 	 * Owner name.
 	 */
-	public declare readonly data_owner: Int8Array;
+	public declare readonly dataOwner: Int8Array;
 
 	/**
 	 * File offset.
@@ -38,7 +38,7 @@ export class NoteCommand extends Struct {
 	public static readonly BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'cmd');
 		o += structU32(this, o, 'cmdsize');
-		o += structI8A(this, o, 'data_owner', 16);
+		o += structI8A(this, o, 'dataOwner', 16);
 		o += structU64(this, o, 'offset');
 		o += structU64(this, o, 'size');
 		return o;

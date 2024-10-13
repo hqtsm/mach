@@ -10,7 +10,7 @@ export class DylibModule64 extends Struct {
 	/**
 	 * Module name index in string table.
 	 */
-	public declare module_name: number;
+	public declare moduleName: number;
 
 	/**
 	 * Index in external symbols.
@@ -56,29 +56,29 @@ export class DylibModule64 extends Struct {
 	 * Low 16 bits index of init section.
 	 * High 16 bits index of term section.
 	 */
-	public declare iinit_iterm: number;
+	public declare iinitIterm: number;
 
 	/**
 	 * Low 16 bits number of init section.
 	 * High 16 bits number of term section.
 	 */
-	public declare ninit_nterm: number;
+	public declare ninitNterm: number;
 
 	/**
 	 * Size of module info section.
 	 */
-	public declare objc_module_info_size: number;
+	public declare objcModuleInfoSize: number;
 
 	/**
 	 * Address of start of module info section.
 	 */
-	public declare objc_module_info_addr: bigint;
+	public declare objcModuleInfoAddr: bigint;
 
 	/**
 	 * @inheritdoc
 	 */
 	public static readonly BYTE_LENGTH = (o => {
-		o += structU32(this, o, 'module_name');
+		o += structU32(this, o, 'moduleName');
 		o += structU32(this, o, 'iextdefsym');
 		o += structU32(this, o, 'nextdefsym');
 		o += structU32(this, o, 'irefsym');
@@ -87,10 +87,10 @@ export class DylibModule64 extends Struct {
 		o += structU32(this, o, 'nlocalsym');
 		o += structU32(this, o, 'iextrel');
 		o += structU32(this, o, 'nextrel');
-		o += structU32(this, o, 'iinit_iterm');
-		o += structU32(this, o, 'ninit_nterm');
-		o += structU32(this, o, 'objc_module_info_size');
-		o += structU64(this, o, 'objc_module_info_addr');
+		o += structU32(this, o, 'iinitIterm');
+		o += structU32(this, o, 'ninitNterm');
+		o += structU32(this, o, 'objcModuleInfoSize');
+		o += structU64(this, o, 'objcModuleInfoAddr');
 		return o;
 	})(super.BYTE_LENGTH);
 }

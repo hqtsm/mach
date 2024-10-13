@@ -22,7 +22,7 @@ export class SubLibraryCommand extends Struct {
 	 * The sub_library name.
 	 */
 	// eslint-disable-next-line max-len
-	public declare readonly sub_library: this['constructor']['LcStr']['prototype'];
+	public declare readonly subLibrary: this['constructor']['LcStr']['prototype'];
 
 	/**
 	 * LcStr reference.
@@ -35,7 +35,7 @@ export class SubLibraryCommand extends Struct {
 	public static readonly BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'cmd');
 		o += structU32(this, o, 'cmdsize');
-		o += structT(this, o, 'sub_library', 'LcStr');
+		o += structT(this, o, 'subLibrary', 'LcStr');
 		return o;
 	})(super.BYTE_LENGTH);
 }

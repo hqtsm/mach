@@ -31,7 +31,7 @@ export class FilesetEntryCommand extends Struct {
 	/**
 	 * File pathname.
 	 */
-	public declare readonly entry_id: this['constructor']['LcStr']['prototype'];
+	public declare readonly entryId: this['constructor']['LcStr']['prototype'];
 
 	/**
 	 * Reserved.
@@ -51,7 +51,7 @@ export class FilesetEntryCommand extends Struct {
 		o += structU32(this, o, 'cmdsize');
 		o += structU64(this, o, 'vmaddr');
 		o += structU64(this, o, 'fileoff');
-		o += structT(this, o, 'entry_id', 'LcStr');
+		o += structT(this, o, 'entryId', 'LcStr');
 		o += structU32(this, o, 'reserved');
 		return o;
 	})(super.BYTE_LENGTH);

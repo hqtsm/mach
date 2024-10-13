@@ -10,19 +10,19 @@ export class DylibTableOfContents extends Struct {
 	/**
 	 * External symbol index in symbol table.
 	 */
-	public declare symbol_index: number;
+	public declare symbolIndex: number;
 
 	/**
 	 * Index in module table.
 	 */
-	public declare module_index: number;
+	public declare moduleIndex: number;
 
 	/**
 	 * @inheritdoc
 	 */
 	public static readonly BYTE_LENGTH = (o => {
-		o += structU32(this, o, 'symbol_index');
-		o += structU32(this, o, 'module_index');
+		o += structU32(this, o, 'symbolIndex');
+		o += structU32(this, o, 'moduleIndex');
 		return o;
 	})(super.BYTE_LENGTH);
 }

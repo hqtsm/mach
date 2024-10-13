@@ -21,12 +21,12 @@ export class Dylib extends Struct {
 	/**
 	 * Current version.
 	 */
-	public declare current_version: number;
+	public declare currentVersion: number;
 
 	/**
 	 * Compatibility version.
 	 */
-	public declare compatibility_version: number;
+	public declare compatibilityVersion: number;
 
 	/**
 	 * LcStr reference.
@@ -39,8 +39,8 @@ export class Dylib extends Struct {
 	public static readonly BYTE_LENGTH = (o => {
 		o += structT(this, o, 'name', 'LcStr');
 		o += structU32(this, o, 'timestamp');
-		o += structU32(this, o, 'current_version');
-		o += structU32(this, o, 'compatibility_version');
+		o += structU32(this, o, 'currentVersion');
+		o += structU32(this, o, 'compatibilityVersion');
 		return o;
 	})(super.BYTE_LENGTH);
 }

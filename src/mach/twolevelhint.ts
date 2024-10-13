@@ -10,7 +10,7 @@ export class TwolevelHint extends Struct {
 	/**
 	 * Index in symbol table.
 	 */
-	public declare isub_image: number;
+	public declare isubImage: number;
 
 	/**
 	 * Flags for reference type.
@@ -21,7 +21,7 @@ export class TwolevelHint extends Struct {
 	 * @inheritdoc
 	 */
 	public static readonly BYTE_LENGTH = (o => {
-		o += structU8(this, o, 'isub_image');
+		o += structU8(this, o, 'isubImage');
 		o += structU24(this, o, 'itoc');
 		return o;
 	})(super.BYTE_LENGTH);

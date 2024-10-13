@@ -32,7 +32,7 @@ export class PreloadDylibCommand extends Struct {
 	 * Bit vector of linked modules.
 	 */
 	// eslint-disable-next-line max-len
-	public declare readonly linked_modules: this['constructor']['LcStr']['prototype'];
+	public declare readonly linkedModules: this['constructor']['LcStr']['prototype'];
 
 	/**
 	 * LcStr reference.
@@ -47,7 +47,7 @@ export class PreloadDylibCommand extends Struct {
 		o += structU32(this, o, 'cmdsize');
 		o += structT(this, o, 'name', 'LcStr');
 		o += structU32(this, o, 'nmodules');
-		o += structT(this, o, 'linked_modules', 'LcStr');
+		o += structT(this, o, 'linkedModules', 'LcStr');
 		return o;
 	})(super.BYTE_LENGTH);
 }

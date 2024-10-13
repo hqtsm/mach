@@ -30,12 +30,12 @@ export class DylibUseCommand extends Struct {
 	/**
 	 * Current version.
 	 */
-	public declare current_version: number;
+	public declare currentVersion: number;
 
 	/**
 	 * Compatibility version.
 	 */
-	public declare compat_version: number;
+	public declare compatVersion: number;
 
 	/**
 	 * Flags.
@@ -50,8 +50,8 @@ export class DylibUseCommand extends Struct {
 		o += structU32(this, o, 'cmdsize');
 		o += structU32(this, o, 'nameoff');
 		o += structU32(this, o, 'marker');
-		o += structU32(this, o, 'current_version');
-		o += structU32(this, o, 'compat_version');
+		o += structU32(this, o, 'currentVersion');
+		o += structU32(this, o, 'compatVersion');
 		o += structU32(this, o, 'flags');
 		return o;
 	})(super.BYTE_LENGTH);

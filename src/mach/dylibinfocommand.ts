@@ -20,52 +20,52 @@ export class DylibInfoCommand extends Struct {
 	/**
 	 * File offset of rebase info.
 	 */
-	public declare rebase_off: number;
+	public declare rebaseOff: number;
 
 	/**
 	 * Size of rebase info.
 	 */
-	public declare rebase_size: number;
+	public declare rebaseSize: number;
 
 	/**
 	 * File offset of binding info.
 	 */
-	public declare bind_off: number;
+	public declare bindOff: number;
 
 	/**
 	 * Size of binding info.
 	 */
-	public declare bind_size: number;
+	public declare bindSize: number;
 
 	/**
 	 * File offset of weak binding info.
 	 */
-	public declare weak_bind_off: number;
+	public declare weakBindOff: number;
 
 	/**
 	 * Size of weak binding info.
 	 */
-	public declare weak_bind_size: number;
+	public declare weakBindSize: number;
 
 	/**
 	 * File offset of lazy binding info.
 	 */
-	public declare lazy_bind_off: number;
+	public declare lazyBindOff: number;
 
 	/**
 	 * Size of lazy binding info.
 	 */
-	public declare lazy_bind_size: number;
+	public declare lazyBindSize: number;
 
 	/**
 	 * File offset of export info.
 	 */
-	public declare export_off: number;
+	public declare exportOff: number;
 
 	/**
 	 * Size of export info.
 	 */
-	public declare export_size: number;
+	public declare exportSize: number;
 
 	/**
 	 * @inheritdoc
@@ -73,16 +73,16 @@ export class DylibInfoCommand extends Struct {
 	public static readonly BYTE_LENGTH = (o => {
 		o += structU32(this, o, 'cmd');
 		o += structU32(this, o, 'cmdsize');
-		o += structU32(this, o, 'rebase_off');
-		o += structU32(this, o, 'rebase_size');
-		o += structU32(this, o, 'bind_off');
-		o += structU32(this, o, 'bind_size');
-		o += structU32(this, o, 'weak_bind_off');
-		o += structU32(this, o, 'weak_bind_size');
-		o += structU32(this, o, 'lazy_bind_off');
-		o += structU32(this, o, 'lazy_bind_size');
-		o += structU32(this, o, 'export_off');
-		o += structU32(this, o, 'export_size');
+		o += structU32(this, o, 'rebaseOff');
+		o += structU32(this, o, 'rebaseSize');
+		o += structU32(this, o, 'bindOff');
+		o += structU32(this, o, 'bindSize');
+		o += structU32(this, o, 'weakBindOff');
+		o += structU32(this, o, 'weakBindSize');
+		o += structU32(this, o, 'lazyBindOff');
+		o += structU32(this, o, 'lazyBindSize');
+		o += structU32(this, o, 'exportOff');
+		o += structU32(this, o, 'exportSize');
 		return o;
 	})(super.BYTE_LENGTH);
 }
