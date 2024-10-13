@@ -36,3 +36,4 @@ export * from './encryptioninfocommand.ts';
 export * from './encryptioninfocommand64.ts';
 export * from './versionmincommand.ts';
 export * from './buildversioncommand.ts';
+export * from './buildtoolversion.ts';
