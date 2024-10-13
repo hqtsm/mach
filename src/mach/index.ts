@@ -38,3 +38,4 @@ export * from './versionmincommand.ts';
 export * from './buildversioncommand.ts';
 export * from './buildtoolversion.ts';
 export * from './dylibinfocommand.ts';
+export * from './linkeroptioncommand.ts';
