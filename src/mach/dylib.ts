@@ -21,12 +21,12 @@ export class Dylib extends Struct {
 	/**
 	 * Current version.
 	 */
-	public declare readonly current_version: number;
+	public declare current_version: number;
 
 	/**
 	 * Compatibility version.
 	 */
-	public declare readonly compatibility_version: number;
+	public declare compatibility_version: number;
 
 	/**
 	 * LcStr reference.

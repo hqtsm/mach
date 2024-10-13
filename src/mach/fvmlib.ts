@@ -21,7 +21,7 @@ export class Fvmlib extends Struct {
 	/**
 	 * Header address.
 	 */
-	public declare readonly header_addr: number;
+	public declare header_addr: number;
 
 	/**
 	 * LcStr reference.
