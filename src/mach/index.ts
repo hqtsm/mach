@@ -42,3 +42,4 @@ export * from './linkeroptioncommand.ts';
 export * from './symsegcommand.ts';
 export * from './identcommand.ts';
 export * from './fvmfilecommand.ts';
+export * from './entrypointcommand.ts';
