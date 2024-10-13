@@ -109,6 +109,10 @@ export function setUint24(
 		// eslint-disable-next-line no-bitwise
 		a = (value >>> 16) & 0xff;
 	}
+	if (offset <= -1) {
+		// Trigger native OOB exception.
+		dataView.setUint8(offset, a);
+	}
 	dataView.setUint8(offset + 2, c);
 	dataView.setUint8(offset + 1, b);
 	dataView.setUint8(offset, a);
