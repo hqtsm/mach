@@ -77,6 +77,13 @@ function assertExported(subset: Exports, superset: Exports, what: string) {
 	}
 }
 
+function isClass(x: unknown) {
+	return (
+		typeof x === 'function' &&
+		!Object.getOwnPropertyDescriptor(x, 'prototype')?.writable
+	);
+}
+
 const file = getFilename();
 const dir = dirname(file);
 const impire = getImport();
@@ -94,6 +101,23 @@ void describe('index', () => {
 		for await (const uri of findModules(dir)) {
 			const m = await impire(uri);
 			assertExported(m, index, uri);
+
+			const [file] = uri.split('/').pop()!.split('.');
+			if (file === 'index') {
+				continue;
+			}
+
+			for (const name of Object.keys(m)) {
+				const Class = m[name];
+				if (!isClass(Class)) {
+					continue;
+				}
+				strictEqual(
+					name.replace(/[BL]E$/, '').toLowerCase(),
+					file,
+					`${file}: ${uri}`
+				);
+			}
 		}
 	});
 });
