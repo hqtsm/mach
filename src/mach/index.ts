@@ -45,3 +45,5 @@ export * from './fvmfilecommand.ts';
 export * from './entrypointcommand.ts';
 export * from './sourceversioncommand.ts';
 export * from './dataincodeentry.ts';
+export * from './tlvdescriptor.ts';
+export * from './tlvdescriptor64.ts';
