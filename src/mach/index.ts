@@ -44,3 +44,4 @@ export * from './identcommand.ts';
 export * from './fvmfilecommand.ts';
 export * from './entrypointcommand.ts';
 export * from './sourceversioncommand.ts';
+export * from './dataincodeentry.ts';
