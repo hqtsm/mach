@@ -1,3 +1,6 @@
+export * from './fatheader.ts';
+export * from './fatarch.ts';
+export * from './fatarch64.ts';
 export * from './machheader.ts';
 export * from './machheader64.ts';
 export * from './loadcommand.ts';
