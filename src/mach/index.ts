@@ -29,3 +29,4 @@ export * from './dylibreference.ts';
 export * from './twolevelhintscommand.ts';
 export * from './twolevelhint.ts';
 export * from './prebindcksumcommand.ts';
+export * from './uuidcommand.ts';
