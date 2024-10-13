@@ -25,3 +25,4 @@ export * from './dysymtabcommand.ts';
 export * from './dylibtableofcontents.ts';
 export * from './dylibmodule.ts';
 export * from './dylibmodule64.ts';
+export * from './dylibreference.ts';
