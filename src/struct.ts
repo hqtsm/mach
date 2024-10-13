@@ -5,7 +5,7 @@ import type {
 	ReadonlyKeyofType,
 	KeyofType
 } from './type.ts';
-import {getUint24, setUint24} from './util.ts';
+import {getInt24, getUint24, setInt24, setUint24} from './util.ts';
 
 /**
  * Binary structure buffer view.
@@ -197,12 +197,10 @@ export function structI24<T extends typeof Struct>(
 ) {
 	Object.defineProperty(StructT.prototype, field, {
 		get(this: T['prototype']) {
-			const u = getUint24(this.dataView, offset, le ?? this.littleEndian);
-			// eslint-disable-next-line no-bitwise
-			return (u << 8) >> 8;
+			return getInt24(this.dataView, offset, le ?? this.littleEndian);
 		},
 		set(this: T['prototype'], value: number) {
-			setUint24(this.dataView, offset, value, le ?? this.littleEndian);
+			setInt24(this.dataView, offset, value, le ?? this.littleEndian);
 		}
 	});
 	return 3;
