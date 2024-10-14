@@ -8,7 +8,7 @@ macOS 10.6.8 with Xcode 3.2.6
 ./scripts/macho-1.sh
 ```
 
-## Step 2
+## Step 2:
 
 macOS 11.6.8 with Command Line Tools for Xcode 12.5.1
 
