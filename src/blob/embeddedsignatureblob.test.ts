@@ -1,5 +1,5 @@
 import {describe, it} from 'node:test';
-import {strictEqual} from 'node:assert';
+import {deepStrictEqual, strictEqual} from 'node:assert';
 
 import {machoThin, fixtureMachos, readMachoFiles} from '../util.spec.ts';
 import {
@@ -119,21 +119,17 @@ void describe('EmbeddedSignatureBlob', () => {
 
 					const cs = maker.make();
 
-					const csBuffer = Buffer.from(
+					const csBuffer = new Uint8Array(
 						cs.buffer,
 						cs.byteOffset,
 						cs.length
 					);
-					const expected = Buffer.from(
+					const expected = new Uint8Array(
 						thin.buffer,
 						thin.byteOffset + info.offset,
 						cs.length
 					);
-					strictEqual(
-						expected.compare(csBuffer),
-						0,
-						message('compare')
-					);
+					deepStrictEqual(csBuffer, expected, message('compare'));
 				}
 			});
 		}

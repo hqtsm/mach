@@ -1,7 +1,12 @@
 import {describe, it} from 'node:test';
 import {notStrictEqual} from 'node:assert';
 
-import {machoThin, fixtureMachos, readMachoFiles} from '../util.spec.ts';
+import {
+	machoThin,
+	fixtureMachos,
+	readMachoFiles,
+	indexOf
+} from '../util.spec.ts';
 
 import {createCodeDirectories} from './codedirectorybuilder.spec.ts';
 
@@ -38,18 +43,18 @@ void describe('CodeDirectoryBuilder', () => {
 						infoPlist,
 						codeResources
 					)) {
-						const cdBuffer = Buffer.from(
+						const cdBuffer = new Uint8Array(
 							cd.buffer,
 							cd.byteOffset,
 							cd.length
 						);
-						const expectedWithin = Buffer.from(
+						const expectedWithin = new Uint8Array(
 							thin.buffer,
 							thin.byteOffset + info.offset,
 							thin.byteLength - info.offset
 						);
 						notStrictEqual(
-							expectedWithin.indexOf(cdBuffer),
+							indexOf(expectedWithin, cdBuffer),
 							-1,
 							message(`hashType=${cd.hashType}: within`)
 						);
