@@ -107,11 +107,7 @@ export async function chunkedHashes(
 	return Promise.all(slices.map(async d => hash(hashType, d)));
 }
 
-async function zlibInflateRaw(
-	data: Readonly<Uint8Array>,
-	crc: number,
-	size: number
-) {
+async function inflate(data: Readonly<Uint8Array>, size: number, crc: number) {
 	const d = new Uint8Array(size);
 	const r: ReadableStreamDefaultReader<Uint8Array> =
 		new ReadableStream<Uint8Array>({
@@ -187,14 +183,14 @@ export async function* zipped(file: string) {
 			yield [
 				name,
 				async () => {
-					let inflater: typeof zlibInflateRaw | null;
+					let inflater: typeof inflate | null;
 					switch (compression) {
 						case 0: {
 							inflater = null;
 							break;
 						}
 						case 8: {
-							inflater = zlibInflateRaw;
+							inflater = inflate;
 							break;
 						}
 						default: {
@@ -229,7 +225,7 @@ export async function* zipped(file: string) {
 
 					const cData = new Uint8Array(cSize);
 					await f.read(cData, 0, cSize, headerOffset + i);
-					return inflater ? inflater(cData, crc, uSize) : cData;
+					return inflater ? inflater(cData, uSize, crc) : cData;
 				}
 			] as const;
 		}

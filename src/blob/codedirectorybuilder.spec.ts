@@ -97,7 +97,6 @@ export async function* createCodeDirectories(
 			info.version
 		);
 
-		const cd = builder.build(info.version);
-		yield cd;
+		yield builder.build(info.version);
 	}
 }
