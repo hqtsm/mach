@@ -113,31 +113,32 @@ async function zlibInflateRaw(
 	size: number
 ) {
 	const d = new Uint8Array(size);
-	const reader = new ReadableStream({
-		start(controller) {
-			controller.enqueue(
-				new Uint8Array([31, 139, 8, 0, 0, 0, 0, 0, 0, 0])
-			);
-			controller.enqueue(data);
-			const tail = new ArrayBuffer(8);
-			const view = new DataView(tail);
-			view.setUint32(0, crc, true);
-			view.setUint32(4, size, true);
-			controller.enqueue(new Uint8Array(tail));
-			controller.close();
-		}
-	})
-		.pipeThrough(new DecompressionStream('gzip'))
-		.getReader();
-	let read = 0;
+	const r: ReadableStreamDefaultReader<Uint8Array> =
+		new ReadableStream<Uint8Array>({
+			start(controller) {
+				controller.enqueue(
+					new Uint8Array([31, 139, 8, 0, 0, 0, 0, 0, 0, 0])
+				);
+				controller.enqueue(data);
+				const tail = new ArrayBuffer(8);
+				const view = new DataView(tail);
+				view.setUint32(0, crc, true);
+				view.setUint32(4, size, true);
+				controller.enqueue(new Uint8Array(tail));
+				controller.close();
+			}
+		})
+			.pipeThrough(new DecompressionStream('gzip'))
+			.getReader();
+	let i = 0;
 	for (;;) {
 		// eslint-disable-next-line no-await-in-loop
-		const {done, value} = await reader.read();
+		const {done, value} = await r.read();
 		if (done) {
 			break;
 		}
-		d.set(value, read);
-		read += value.length;
+		d.set(value, i);
+		i += value.length;
 	}
 	return d;
 }
