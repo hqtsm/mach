@@ -29,8 +29,13 @@ import {
 } from './const.ts';
 
 export function unhex(...hex: string[]) {
-	const b = Buffer.from(hex.join('').replace(/\s+/g, ''), 'hex');
-	return new Uint8Array(b.buffer, b.byteOffset, b.byteLength);
+	return new Uint8Array(
+		hex
+			.join('')
+			.replace(/\s+/g, '')
+			.match(/.{1,2}/g)!
+			.map(x => +`0x${x}`)
+	);
 }
 
 export async function hash(hashType: number, data: Readonly<BufferView>) {
