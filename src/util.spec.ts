@@ -1,6 +1,5 @@
 import {readFileSync} from 'node:fs';
 import {open} from 'node:fs/promises';
-import {inflateRaw} from 'node:zlib';
 import {subtle} from 'node:crypto';
 
 import type {BufferView} from './type.ts';
@@ -108,16 +107,39 @@ export async function chunkedHashes(
 	return Promise.all(slices.map(async d => hash(hashType, d)));
 }
 
-async function zlibInflateRaw(data: Readonly<Buffer>) {
-	return new Promise<Buffer>((resolve, reject) => {
-		inflateRaw(data, (err, data) => {
-			if (err) {
-				reject(err);
-				return;
-			}
-			resolve(data);
-		});
-	});
+async function zlibInflateRaw(
+	data: Readonly<Uint8Array>,
+	crc: number,
+	size: number
+) {
+	const d = new Uint8Array(size);
+	const reader = new ReadableStream({
+		start(controller) {
+			controller.enqueue(
+				new Uint8Array([31, 139, 8, 0, 0, 0, 0, 0, 0, 0])
+			);
+			controller.enqueue(data);
+			const tail = new ArrayBuffer(8);
+			const view = new DataView(tail);
+			view.setUint32(0, crc, true);
+			view.setUint32(4, size, true);
+			controller.enqueue(new Uint8Array(tail));
+			controller.close();
+		}
+	})
+		.pipeThrough(new DecompressionStream('gzip'))
+		.getReader();
+	let read = 0;
+	for (;;) {
+		// eslint-disable-next-line no-await-in-loop
+		const {done, value} = await reader.read();
+		if (done) {
+			break;
+		}
+		d.set(value, read);
+		read += value.length;
+	}
+	return d;
 }
 
 export async function* zipped(file: string) {
@@ -139,6 +161,7 @@ export async function* zipped(file: string) {
 			i += 2;
 			i += 2;
 			i += 2;
+			const crc = dirData.readUint32LE(i);
 			i += 4;
 			const cSize = dirData.readUint32LE(i);
 			i += 4;
@@ -163,7 +186,7 @@ export async function* zipped(file: string) {
 			yield [
 				name,
 				async () => {
-					let inflater: ((data: Buffer) => Promise<Buffer>) | null;
+					let inflater: typeof zlibInflateRaw | null;
 					switch (compression) {
 						case 0: {
 							inflater = null;
@@ -206,22 +229,9 @@ export async function* zipped(file: string) {
 					const buffer = new ArrayBuffer(cSize);
 					const cData = Buffer.from(buffer);
 					await f.read(cData, 0, cSize, headerOffset + i);
-					if (!inflater) {
-						return new Uint8Array(buffer);
-					}
-
-					const uData = await inflater(cData);
-					const {byteLength} = uData;
-					if (byteLength !== uSize) {
-						throw new Error(
-							`Bad decompressed size: ${byteLength} != ${uSize}`
-						);
-					}
-					return new Uint8Array(
-						uData.buffer,
-						uData.byteOffset,
-						byteLength
-					);
+					return inflater
+						? inflater(cData, crc, uSize)
+						: new Uint8Array(buffer);
 				}
 			] as const;
 		}
