@@ -30,16 +30,18 @@ void describe('RequirementsMaker', () => {
 			'00 00 00 01 00 00 00 02 00 00 00 14',
 			'63 6F 6D 2E 61 70 70 6C 65 2E 64 65 73 69 67 6E 61 74 65 64'
 		);
-		const data = unhex(
-			'FA DE 0C 01 00 00 00 68',
-			'00 00 00 02',
-			'00 00 00 01 00 00 00 1C',
-			'00 00 00 03 00 00 00 40',
-			'FA DE 0C 00 00 00 00 24',
-			Buffer.from(host).toString('hex'),
-			'FA DE 0C 00 00 00 00 28',
-			Buffer.from(designated).toString('hex')
-		);
+		const data = new Uint8Array([
+			...unhex(
+				'FA DE 0C 01 00 00 00 68',
+				'00 00 00 02',
+				'00 00 00 01 00 00 00 1C',
+				'00 00 00 03 00 00 00 40',
+				'FA DE 0C 00 00 00 00 24'
+			),
+			...host,
+			...unhex('FA DE 0C 00 00 00 00 28'),
+			...designated
+		]);
 		const rsm = new RequirementsMaker();
 		rsm.add(
 			kSecHostRequirementType,
