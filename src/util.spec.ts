@@ -226,12 +226,9 @@ export async function* zipped(file: string) {
 					i += fileNameSize;
 					i += extraSize;
 
-					const buffer = new ArrayBuffer(cSize);
-					const cData = Buffer.from(buffer);
+					const cData = new Uint8Array(cSize);
 					await f.read(cData, 0, cSize, headerOffset + i);
-					return inflater
-						? inflater(cData, crc, uSize)
-						: new Uint8Array(buffer);
+					return inflater ? inflater(cData, crc, uSize) : cData;
 				}
 			] as const;
 		}
