@@ -1,12 +1,3 @@
-// deno-lint-ignore no-external-import
-import { readFileSync } from 'node:fs';
-// deno-lint-ignore no-external-import
-import { open, stat } from 'node:fs/promises';
-// deno-lint-ignore no-external-import
-import { subtle } from 'node:crypto';
-// deno-lint-ignore no-external-import
-import { Buffer } from 'node:buffer';
-
 import type { BufferView } from './type.ts';
 import {
 	CPU_SUBTYPE_POWERPC_7400,
@@ -95,7 +86,7 @@ export async function hash(
 			throw new Error(`Unknown hash type: ${hashType}`);
 		}
 	}
-	const h = await subtle.digest(algo, data);
+	const h = await crypto.subtle.digest(algo, data);
 	return new Uint8Array(limit < 0 ? h : h.slice(0, limit));
 }
 
@@ -157,42 +148,47 @@ async function inflate(
 export async function* zipped(file: string): AsyncGenerator<
 	readonly [string, () => Promise<Uint8Array>]
 > {
-	const { size } = await stat(file);
-	const f = await open(file, 'r');
+	const f = await Deno.open(file);
 	try {
-		const tail = Buffer.alloc(22);
-		await f.read(tail, 0, 22, size - 22);
-		const dirSize = tail.readUInt32LE(12);
-		const dirOffset = tail.readUInt32LE(16);
-		const dirData = Buffer.alloc(dirSize);
-		await f.read(dirData, 0, dirSize, dirOffset);
+		const tailD = new Uint8Array(22);
+		const tailV = new DataView(tailD.buffer);
+		await f.seek(-tailD.byteLength, Deno.SeekMode.End);
+		await f.read(tailD);
+		const dirSize = tailV.getUint32(12, true);
+		const dirOffset = tailV.getUint32(16, true);
+		const dirD = new Uint8Array(dirSize);
+		const dirV = new DataView(dirD.buffer);
+		await f.seek(dirOffset, Deno.SeekMode.Start);
+		await f.read(dirD);
 		for (let i = 0; i < dirSize;) {
 			i += 4;
 			i += 2;
 			i += 2;
 			i += 2;
-			const compression = dirData.readUint16LE(i);
+			const compression = dirV.getUint16(i, true);
 			i += 2;
 			i += 2;
 			i += 2;
-			const crc = dirData.readUint32LE(i);
+			const crc = dirV.getUint32(i, true);
 			i += 4;
-			const cSize = dirData.readUint32LE(i);
+			const cSize = dirV.getUint32(i, true);
 			i += 4;
-			const uSize = dirData.readUint32LE(i);
+			const uSize = dirV.getUint32(i, true);
 			i += 4;
-			const nameSize = dirData.readUint16LE(i);
+			const nameSize = dirV.getUint16(i, true);
 			i += 2;
-			const extraSize = dirData.readUint16LE(i);
+			const extraSize = dirV.getUint16(i, true);
 			i += 2;
-			const commentSize = dirData.readUint16LE(i);
+			const commentSize = dirV.getUint16(i, true);
 			i += 2;
 			i += 2;
 			i += 2;
 			i += 4;
-			const headerOffset = dirData.readUint32LE(i);
+			const headerOffset = dirV.getUint32(i, true);
 			i += 4;
-			const name = dirData.toString('utf8', i, i + nameSize);
+			const name = new TextDecoder().decode(
+				dirD.subarray(i, i + nameSize),
+			);
 			i += nameSize;
 			i += extraSize;
 			i += commentSize;
@@ -221,8 +217,10 @@ export async function* zipped(file: string): AsyncGenerator<
 						return new Uint8Array();
 					}
 
-					const header = Buffer.alloc(30);
-					await f.read(header, 0, 30, headerOffset);
+					const headerD = new Uint8Array(30);
+					const headerV = new DataView(headerD.buffer);
+					await f.seek(headerOffset, Deno.SeekMode.Start);
+					await f.read(headerD);
 					let i = 0;
 					i += 4;
 					i += 2;
@@ -233,15 +231,16 @@ export async function* zipped(file: string): AsyncGenerator<
 					i += 4;
 					i += 4;
 					i += 4;
-					const fileNameSize = header.readUint16LE(i);
+					const fileNameSize = headerV.getUint16(i, true);
 					i += 2;
-					const extraSize = header.readUint16LE(i);
+					const extraSize = headerV.getUint16(i, true);
 					i += 2;
 					i += fileNameSize;
 					i += extraSize;
 
 					const cData = new Uint8Array(cSize);
-					await f.read(cData, 0, cSize, headerOffset + i);
+					await f.seek(headerOffset + i, Deno.SeekMode.Start);
+					await f.read(cData);
 					return inflater ? inflater(cData, uSize, crc) : cData;
 				},
 			] as const;
@@ -290,7 +289,8 @@ function fixtureMachosRead(): {
 		ppc970: [CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_970],
 		ppc: [CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_ALL],
 	};
-	const lines = readFileSync('spec/fixtures/macho.txt', 'utf8').split('\n');
+	const lines = Deno.readTextFileSync('spec/fixtures/macho.txt')
+		.split('\n');
 	const all = new Map<
 		string,
 		Map<string, FixtureMachoSignatureInfo | null>
