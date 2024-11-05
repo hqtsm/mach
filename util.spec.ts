@@ -148,105 +148,90 @@ async function inflate(
 export async function* zipped(file: string): AsyncGenerator<
 	readonly [string, () => Promise<Uint8Array>]
 > {
-	const f = await Deno.open(file);
-	try {
-		const tailD = new Uint8Array(22);
-		const tailV = new DataView(tailD.buffer);
-		await f.seek(-tailD.byteLength, Deno.SeekMode.End);
-		await f.read(tailD);
-		const dirSize = tailV.getUint32(12, true);
-		const dirOffset = tailV.getUint32(16, true);
-		const dirD = new Uint8Array(dirSize);
-		const dirV = new DataView(dirD.buffer);
-		await f.seek(dirOffset, Deno.SeekMode.Start);
-		await f.read(dirD);
-		for (let i = 0; i < dirSize;) {
+	const d = await Deno.readFile(file);
+	const v = new DataView(d.buffer, d.byteOffset, d.byteLength);
+	const dirSize = v.getUint32(d.byteLength - 22 + 12, true);
+	const dirOffset = v.getUint32(d.byteLength - 22 + 16, true);
+
+	for (let i = 0; i < dirSize;) {
+		i += 4;
+		i += 2;
+		i += 2;
+		i += 2;
+		const compression = v.getUint16(dirOffset + i, true);
+		i += 2;
+		i += 2;
+		i += 2;
+		const crc = v.getUint32(dirOffset + i, true);
+		i += 4;
+		const cSize = v.getUint32(dirOffset + i, true);
+		i += 4;
+		const uSize = v.getUint32(dirOffset + i, true);
+		i += 4;
+		const nameSize = v.getUint16(dirOffset + i, true);
+		i += 2;
+		const extraSize = v.getUint16(dirOffset + i, true);
+		i += 2;
+		const commentSize = v.getUint16(dirOffset + i, true);
+		i += 2;
+		i += 2;
+		i += 2;
+		i += 4;
+		const headerOffset = v.getUint32(dirOffset + i, true);
+		i += 4;
+		const name = new TextDecoder().decode(
+			d.subarray(dirOffset + i, dirOffset + i + nameSize),
+		);
+		i += nameSize;
+		i += extraSize;
+		i += commentSize;
+
+		yield [name, async () => {
+			let inflater: typeof inflate | null;
+			switch (compression) {
+				case 0: {
+					inflater = null;
+					break;
+				}
+				case 8: {
+					inflater = inflate;
+					break;
+				}
+				default: {
+					throw new Error(
+						`Unknown compression type: ${compression}`,
+					);
+				}
+			}
+
+			if (!uSize) {
+				return new Uint8Array();
+			}
+
+			let i = 0;
 			i += 4;
 			i += 2;
 			i += 2;
 			i += 2;
-			const compression = dirV.getUint16(i, true);
-			i += 2;
-			i += 2;
-			i += 2;
-			const crc = dirV.getUint32(i, true);
-			i += 4;
-			const cSize = dirV.getUint32(i, true);
-			i += 4;
-			const uSize = dirV.getUint32(i, true);
-			i += 4;
-			const nameSize = dirV.getUint16(i, true);
-			i += 2;
-			const extraSize = dirV.getUint16(i, true);
-			i += 2;
-			const commentSize = dirV.getUint16(i, true);
-			i += 2;
 			i += 2;
 			i += 2;
 			i += 4;
-			const headerOffset = dirV.getUint32(i, true);
 			i += 4;
-			const name = new TextDecoder().decode(
-				dirD.subarray(i, i + nameSize),
-			);
-			i += nameSize;
+			i += 4;
+			const fileNameSize = v.getUint16(headerOffset + i, true);
+			i += 2;
+			const extraSize = v.getUint16(headerOffset + i, true);
+			i += 2;
+			i += fileNameSize;
 			i += extraSize;
-			i += commentSize;
 
-			yield [
-				name,
-				async () => {
-					let inflater: typeof inflate | null;
-					switch (compression) {
-						case 0: {
-							inflater = null;
-							break;
-						}
-						case 8: {
-							inflater = inflate;
-							break;
-						}
-						default: {
-							throw new Error(
-								`Unknown compression type: ${compression}`,
-							);
-						}
-					}
-
-					if (!uSize) {
-						return new Uint8Array();
-					}
-
-					const headerD = new Uint8Array(30);
-					const headerV = new DataView(headerD.buffer);
-					await f.seek(headerOffset, Deno.SeekMode.Start);
-					await f.read(headerD);
-					let i = 0;
-					i += 4;
-					i += 2;
-					i += 2;
-					i += 2;
-					i += 2;
-					i += 2;
-					i += 4;
-					i += 4;
-					i += 4;
-					const fileNameSize = headerV.getUint16(i, true);
-					i += 2;
-					const extraSize = headerV.getUint16(i, true);
-					i += 2;
-					i += fileNameSize;
-					i += extraSize;
-
-					const cData = new Uint8Array(cSize);
-					await f.seek(headerOffset + i, Deno.SeekMode.Start);
-					await f.read(cData);
-					return inflater ? inflater(cData, uSize, crc) : cData;
-				},
-			] as const;
-		}
-	} finally {
-		await f.close();
+			const cData = new Uint8Array(
+				d.buffer,
+				d.byteOffset + headerOffset + i,
+				cSize,
+			);
+			return inflater ? await inflater(cData, uSize, crc) : cData;
+		}];
 	}
 }
 
