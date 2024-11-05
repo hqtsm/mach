@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { Struct, structU32 } from '../struct.ts';
 
 /**
@@ -110,7 +109,7 @@ export class DysymtabCommand extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static override readonly BYTE_LENGTH = ((o) => {
+	public static override readonly BYTE_LENGTH: number = ((o) => {
 		o += structU32(this, o, 'cmd');
 		o += structU32(this, o, 'cmdsize');
 		o += structU32(this, o, 'ilocalsym');

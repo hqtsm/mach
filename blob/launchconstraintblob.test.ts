@@ -5,7 +5,6 @@ import { kSecCodeMagicLaunchConstraint } from '../const.ts';
 
 import { LaunchConstraintBlob } from './launchconstraintblob.ts';
 
-/* eslint-disable max-len */
 /*
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -18,7 +17,6 @@ import { LaunchConstraintBlob } from './launchconstraintblob.ts';
 </dict>
 </plist>
 */
-/* eslint-enable max-len */
 const sampleDer = unhex(
 	'70 81 AD 02 01 01 B0 81 A7 30 09 0C 04 63 63 61',
 	'74 02 01 00 30 09 0C 04 63 6F 6D 70 02 01 01 30',

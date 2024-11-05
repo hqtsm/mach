@@ -22,7 +22,7 @@ export class BlobCore extends Struct {
 	 *
 	 * @returns Magic number.
 	 */
-	public get magic() {
+	public get magic(): number {
 		return this.mMagic;
 	}
 
@@ -42,7 +42,7 @@ export class BlobCore extends Struct {
 	 *
 	 * @returns Blob length.
 	 */
-	public get length() {
+	public get length(): number {
 		return this.mLength;
 	}
 
@@ -53,7 +53,7 @@ export class BlobCore extends Struct {
 	 *
 	 * @param value Blob length.
 	 */
-	public set length(value) {
+	public set length(value: number) {
 		this.mLength = value;
 	}
 
@@ -64,7 +64,7 @@ export class BlobCore extends Struct {
 	 *
 	 * @returns View starting from blob data start.
 	 */
-	public get data() {
+	public get data(): DataView {
 		return new DataView(this.buffer, this.byteOffset);
 	}
 
@@ -74,7 +74,7 @@ export class BlobCore extends Struct {
 	 * @param magic Magic number.
 	 * @param length Length.
 	 */
-	public initialize(magic: number, length = 0) {
+	public initialize(magic: number, length = 0): void {
 		this.magic = magic;
 		this.length = length;
 	}
@@ -89,14 +89,14 @@ export class BlobCore extends Struct {
 	public at<T>(
 		Type: new (buffer: ArrayBufferReal, byteOffset?: number) => T,
 		offset: number,
-	) {
+	): T {
 		return new Type(this.buffer, this.byteOffset + offset);
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public static override readonly BYTE_LENGTH = ((o) => {
+	public static override readonly BYTE_LENGTH: number = ((o) => {
 		o += structU32(this, o, 'mMagic' as never, false);
 		o += structU32(this, o, 'mLength' as never, false);
 		return o;

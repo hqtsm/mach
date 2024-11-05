@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { Struct, structU24, structU8 } from '../struct.ts';
 
 /**
@@ -20,7 +19,7 @@ export class TwolevelHint extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static override readonly BYTE_LENGTH = ((o) => {
+	public static override readonly BYTE_LENGTH: number = ((o) => {
 		o += structU8(this, o, 'isubImage');
 		o += structU24(this, o, 'itoc');
 		return o;

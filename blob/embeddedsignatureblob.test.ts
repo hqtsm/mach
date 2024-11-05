@@ -46,7 +46,6 @@ for (const { kind, arch, file, archs } of fixtures) {
 			const thin = machoThin(macho, info.arch[0], info.arch[1]);
 			const cds = [];
 
-			// eslint-disable-next-line no-await-in-loop
 			for await (
 				const cd of createCodeDirectories(
 					info,
@@ -70,7 +69,6 @@ for (const { kind, arch, file, archs } of fixtures) {
 			}
 
 			const linkerSigned = !!(
-				// eslint-disable-next-line no-bitwise
 				cd0.flags & kSecCodeSignatureLinkerSigned
 			);
 

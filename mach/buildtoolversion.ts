@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { Struct, structU32 } from '../struct.ts';
 
 /**
@@ -20,7 +19,7 @@ export class BuildToolVersion extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static override readonly BYTE_LENGTH = ((o) => {
+	public static override readonly BYTE_LENGTH: number = ((o) => {
 		o += structU32(this, o, 'tool');
 		o += structU32(this, o, 'version');
 		return o;

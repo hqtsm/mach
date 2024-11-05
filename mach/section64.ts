@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { Struct, structI8A, structU32, structU64 } from '../struct.ts';
 
 /**
@@ -70,7 +69,7 @@ export class Section64 extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static override readonly BYTE_LENGTH = ((o) => {
+	public static override readonly BYTE_LENGTH: number = ((o) => {
 		o += structI8A(this, o, 'sectname', 16);
 		o += structI8A(this, o, 'segname', 16);
 		o += structU64(this, o, 'addr');

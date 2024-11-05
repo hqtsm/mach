@@ -31,21 +31,21 @@ export class Struct implements BufferView {
 	/**
 	 * @inheritdoc
 	 */
-	public get buffer() {
+	public get buffer(): ArrayBuffer {
 		return this.#data.buffer;
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public get byteLength() {
+	public get byteLength(): number {
 		return this.constructor.BYTE_LENGTH;
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public get byteOffset() {
+	public get byteOffset(): number {
 		return this.#data.byteOffset;
 	}
 
@@ -54,7 +54,7 @@ export class Struct implements BufferView {
 	 *
 	 * @returns Data view of buffer.
 	 */
-	public get dataView() {
+	public get dataView(): DataView {
 		return this.#data;
 	}
 
@@ -92,12 +92,12 @@ export function structI8<T extends typeof Struct>(
 	StructT: T,
 	offset: number,
 	field: KeyofType<T['prototype'], number>,
-) {
+): number {
 	Object.defineProperty(StructT.prototype, field, {
-		get(this: T['prototype']) {
+		get(this: T['prototype']): number {
 			return this.dataView.getInt8(offset);
 		},
-		set(this: T['prototype'], value: number) {
+		set(this: T['prototype'], value: number): void {
 			this.dataView.setInt8(offset, value);
 		},
 	});
@@ -116,12 +116,12 @@ export function structU8<T extends typeof Struct>(
 	StructT: T,
 	offset: number,
 	field: KeyofType<T['prototype'], number>,
-) {
+): number {
 	Object.defineProperty(StructT.prototype, field, {
-		get(this: T['prototype']) {
+		get(this: T['prototype']): number {
 			return this.dataView.getUint8(offset);
 		},
-		set(this: T['prototype'], value: number) {
+		set(this: T['prototype'], value: number): void {
 			this.dataView.setUint8(offset, value);
 		},
 	});
@@ -142,12 +142,12 @@ export function structI16<T extends typeof Struct>(
 	offset: number,
 	field: KeyofType<T['prototype'], number>,
 	le: boolean | null = null,
-) {
+): number {
 	Object.defineProperty(StructT.prototype, field, {
-		get(this: T['prototype']) {
+		get(this: T['prototype']): number {
 			return this.dataView.getInt16(offset, le ?? this.littleEndian);
 		},
-		set(this: T['prototype'], value: number) {
+		set(this: T['prototype'], value: number): void {
 			this.dataView.setInt16(offset, value, le ?? this.littleEndian);
 		},
 	});
@@ -168,12 +168,12 @@ export function structU16<T extends typeof Struct>(
 	offset: number,
 	field: KeyofType<T['prototype'], number>,
 	le: boolean | null = null,
-) {
+): number {
 	Object.defineProperty(StructT.prototype, field, {
-		get(this: T['prototype']) {
+		get(this: T['prototype']): number {
 			return this.dataView.getUint16(offset, le ?? this.littleEndian);
 		},
-		set(this: T['prototype'], value: number) {
+		set(this: T['prototype'], value: number): void {
 			this.dataView.setUint16(offset, value, le ?? this.littleEndian);
 		},
 	});
@@ -194,12 +194,12 @@ export function structI24<T extends typeof Struct>(
 	offset: number,
 	field: KeyofType<T['prototype'], number>,
 	le: boolean | null = null,
-) {
+): number {
 	Object.defineProperty(StructT.prototype, field, {
-		get(this: T['prototype']) {
+		get(this: T['prototype']): number {
 			return getInt24(this.dataView, offset, le ?? this.littleEndian);
 		},
-		set(this: T['prototype'], value: number) {
+		set(this: T['prototype'], value: number): void {
 			setInt24(this.dataView, offset, value, le ?? this.littleEndian);
 		},
 	});
@@ -220,12 +220,12 @@ export function structU24<T extends typeof Struct>(
 	offset: number,
 	field: KeyofType<T['prototype'], number>,
 	le: boolean | null = null,
-) {
+): number {
 	Object.defineProperty(StructT.prototype, field, {
-		get(this: T['prototype']) {
+		get(this: T['prototype']): number {
 			return getUint24(this.dataView, offset, le ?? this.littleEndian);
 		},
-		set(this: T['prototype'], value: number) {
+		set(this: T['prototype'], value: number): void {
 			setUint24(this.dataView, offset, value, le ?? this.littleEndian);
 		},
 	});
@@ -246,12 +246,12 @@ export function structI32<T extends typeof Struct>(
 	offset: number,
 	field: KeyofType<T['prototype'], number>,
 	le: boolean | null = null,
-) {
+): number {
 	Object.defineProperty(StructT.prototype, field, {
-		get(this: T['prototype']) {
+		get(this: T['prototype']): number {
 			return this.dataView.getInt32(offset, le ?? this.littleEndian);
 		},
-		set(this: T['prototype'], value: number) {
+		set(this: T['prototype'], value: number): void {
 			this.dataView.setInt32(offset, value, le ?? this.littleEndian);
 		},
 	});
@@ -272,12 +272,12 @@ export function structU32<T extends typeof Struct>(
 	offset: number,
 	field: KeyofType<T['prototype'], number>,
 	le: boolean | null = null,
-) {
+): number {
 	Object.defineProperty(StructT.prototype, field, {
-		get(this: T['prototype']) {
+		get(this: T['prototype']): number {
 			return this.dataView.getUint32(offset, le ?? this.littleEndian);
 		},
-		set(this: T['prototype'], value: number) {
+		set(this: T['prototype'], value: number): void {
 			this.dataView.setUint32(offset, value, le ?? this.littleEndian);
 		},
 	});
@@ -298,12 +298,12 @@ export function structI64<T extends typeof Struct>(
 	offset: number,
 	field: KeyofType<T['prototype'], bigint>,
 	le: boolean | null = null,
-) {
+): number {
 	Object.defineProperty(StructT.prototype, field, {
-		get(this: T['prototype']) {
+		get(this: T['prototype']): bigint {
 			return this.dataView.getBigInt64(offset, le ?? this.littleEndian);
 		},
-		set(this: T['prototype'], value: bigint) {
+		set(this: T['prototype'], value: bigint): void {
 			this.dataView.setBigInt64(offset, value, le ?? this.littleEndian);
 		},
 	});
@@ -324,12 +324,12 @@ export function structU64<T extends typeof Struct>(
 	offset: number,
 	field: KeyofType<T['prototype'], bigint>,
 	le: boolean | null = null,
-) {
+): number {
 	Object.defineProperty(StructT.prototype, field, {
-		get(this: T['prototype']) {
+		get(this: T['prototype']): bigint {
 			return this.dataView.getBigUint64(offset, le ?? this.littleEndian);
 		},
-		set(this: T['prototype'], value: bigint) {
+		set(this: T['prototype'], value: bigint): void {
 			this.dataView.setBigUint64(offset, value, le ?? this.littleEndian);
 		},
 	});
@@ -350,9 +350,9 @@ export function structI8A<T extends typeof Struct>(
 	offset: number,
 	field: ReadonlyKeyofType<T['prototype'], Int8Array>,
 	count: number,
-) {
+): number {
 	Object.defineProperty(StructT.prototype, field, {
-		get(this: T['prototype']) {
+		get(this: T['prototype']): Int8Array {
 			return new Int8Array(this.buffer, this.byteOffset + offset, count);
 		},
 	});
@@ -373,9 +373,9 @@ export function structU8A<T extends typeof Struct>(
 	offset: number,
 	field: ReadonlyKeyofType<T['prototype'], Uint8Array>,
 	count: number,
-) {
+): number {
 	Object.defineProperty(StructT.prototype, field, {
-		get(this: T['prototype']) {
+		get(this: T['prototype']): Uint8Array {
 			return new Uint8Array(this.buffer, this.byteOffset + offset, count);
 		},
 	});
@@ -402,10 +402,10 @@ export function structT<
 		T[U] extends typeof Struct ? T[U]['prototype'] : never
 	>,
 	Type: U,
-) {
+): number {
 	const StructC = StructT[Type] as typeof Struct;
 	Object.defineProperty(StructT.prototype, field, {
-		get(this: T['prototype']) {
+		get(this: T['prototype']): T['prototype'] {
 			return new StructC(this.buffer, this.byteOffset + offset);
 		},
 	});

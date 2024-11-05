@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { Struct, structU32 } from '../struct.ts';
 
 /**
@@ -15,7 +14,7 @@ export class LcStr extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static override readonly BYTE_LENGTH = ((o) => {
+	public static override readonly BYTE_LENGTH: number = ((o) => {
 		o += structU32(this, o, 'offset');
 		// Union because there was a 32-bit char *ptr.
 		return o;

@@ -33,7 +33,6 @@ for (const { kind, arch, file, archs } of fixtures) {
 			const message = (s: string) => `CD: ${arc}: ${s}`;
 			const thin = machoThin(macho, info.arch[0], info.arch[1]);
 
-			// eslint-disable-next-line no-await-in-loop
 			for await (
 				const cd of createCodeDirectories(
 					info,

@@ -20,7 +20,7 @@ export class SuperBlob extends Blob {
 	 * @param size Blob length.
 	 * @param count Number of blobs.
 	 */
-	public setup(size: number, count: number) {
+	public setup(size: number, count: number): void {
 		this.initialize2(size);
 		this.mCount = count;
 	}
@@ -31,7 +31,7 @@ export class SuperBlob extends Blob {
 	 * @param index Index.
 	 * @returns Type.
 	 */
-	public type(index: number) {
+	public type(index: number): number {
 		return this.dataView.getUint32(12 + 8 * index);
 	}
 
@@ -41,7 +41,7 @@ export class SuperBlob extends Blob {
 	 * @param index Index.
 	 * @returns Blob or null if no offset in index.
 	 */
-	public blob(index: number) {
+	public blob(index: number): BlobCore | null {
 		const offset = this.dataView.getUint32(16 + 8 * index);
 		return offset ? this.at(BlobCore, offset) : null;
 	}
@@ -52,7 +52,7 @@ export class SuperBlob extends Blob {
 	 * @param type Index type.
 	 * @returns First match or null.
 	 */
-	public find(type: number) {
+	public find(type: number): BlobCore | null {
 		const count = this.mCount;
 		for (let i = 0; i < count; i++) {
 			if (this.type(i) === type) {
@@ -67,14 +67,14 @@ export class SuperBlob extends Blob {
 	 *
 	 * @returns Blobs count.
 	 */
-	public get count() {
+	public get count(): number {
 		return this.mCount;
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public static override readonly BYTE_LENGTH = ((o) => {
+	public static override readonly BYTE_LENGTH: number = ((o) => {
 		o += structU32(this, o, 'mCount' as never, false);
 		return o;
 	})(super.BYTE_LENGTH);

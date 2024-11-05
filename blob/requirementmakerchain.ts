@@ -43,14 +43,14 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	 *
 	 * @returns Maker reference.
 	 */
-	public get maker() {
+	public get maker(): RequirementMaker {
 		return this.#maker;
 	}
 
 	/**
 	 * Add an element to the chain.
 	 */
-	public add() {
+	public add(): void {
 		if (this.#count++) {
 			this.maker.insert(this).setUint32(0, this.#joiner);
 		}
@@ -61,7 +61,7 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	 *
 	 * @returns True if empty.
 	 */
-	public get empty() {
+	public get empty(): boolean {
 		return this.#count === 0;
 	}
 }

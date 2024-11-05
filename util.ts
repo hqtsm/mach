@@ -5,7 +5,7 @@
  * @param alignment Alignment.
  * @returns Aligned number.
  */
-export function alignUp(value: number, alignment: number) {
+export function alignUp(value: number, alignment: number): number {
 	const over = value % alignment;
 	return over ? value + alignment - over : value;
 }
@@ -17,7 +17,7 @@ export function alignUp(value: number, alignment: number) {
  * @param l Lower limit.
  * @param h Higher limit.
  */
-export function ranged(i: number, l: number, h: number) {
+export function ranged(i: number, l: number, h: number): void {
 	if (!(i >= l && i <= h)) {
 		throw new RangeError(`Value ${i} out of range ${l}-${h}`);
 	}
@@ -35,8 +35,7 @@ export function getInt24(
 	dataView: DataView,
 	offset: number,
 	littleEndian: boolean,
-) {
-	// eslint-disable-next-line no-bitwise
+): number {
 	return (getUint24(dataView, offset, littleEndian) << 8) >> 8;
 }
 
@@ -52,11 +51,10 @@ export function getUint24(
 	dataView: DataView,
 	offset: number,
 	littleEndian: boolean,
-) {
+): number {
 	const c = dataView.getUint8(offset + 2);
 	const b = dataView.getUint8(offset + 1);
 	const a = dataView.getUint8(offset);
-	// eslint-disable-next-line no-bitwise
 	return littleEndian ? a | (b << 8) | (c << 16) : (a << 16) | (b << 8) | c;
 }
 
@@ -73,7 +71,7 @@ export function setInt24(
 	offset: number,
 	value: number,
 	littleEndian: boolean,
-) {
+): void {
 	setUint24(dataView, offset, value, littleEndian);
 }
 
@@ -90,23 +88,17 @@ export function setUint24(
 	offset: number,
 	value: number,
 	littleEndian: boolean,
-) {
+): void {
 	let c;
 	let b;
 	let a;
 	if (littleEndian) {
-		// eslint-disable-next-line no-bitwise
 		c = (value >>> 16) & 0xff;
-		// eslint-disable-next-line no-bitwise
 		b = (value >>> 8) & 0xff;
-		// eslint-disable-next-line no-bitwise
 		a = (value >>> 0) & 0xff;
 	} else {
-		// eslint-disable-next-line no-bitwise
 		c = (value >>> 0) & 0xff;
-		// eslint-disable-next-line no-bitwise
 		b = (value >>> 8) & 0xff;
-		// eslint-disable-next-line no-bitwise
 		a = (value >>> 16) & 0xff;
 	}
 	if (offset <= -1) {

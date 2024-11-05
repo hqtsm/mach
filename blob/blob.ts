@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import type { BufferView } from '../type.ts';
 
 import { BlobCore } from './blobcore.ts';
@@ -14,7 +13,7 @@ export class Blob extends BlobCore {
 	 *
 	 * @param size Length.
 	 */
-	public initialize2(size = 0) {
+	public initialize2(size = 0): void {
 		this.initialize(this.constructor.typeMagic, size);
 	}
 
@@ -31,7 +30,9 @@ export class Blob extends BlobCore {
 	 * @param content Data to wrap, or number of bytes.
 	 * @returns Blob.
 	 */
-	public static blobify(content: Readonly<BufferView> | number = 0) {
+	public static blobify(
+		content: Readonly<BufferView> | number = 0,
+	): DataView {
 		const { BYTE_LENGTH } = Blob;
 		let view;
 		let size = BYTE_LENGTH;

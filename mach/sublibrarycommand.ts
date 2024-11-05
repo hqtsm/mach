@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { Struct, structT, structU32 } from '../struct.ts';
 import { LcStr, LcStrBE } from './lcstr.ts';
 
@@ -21,7 +20,6 @@ export class SubLibraryCommand extends Struct {
 	/**
 	 * The sub_library name.
 	 */
-	// eslint-disable-next-line max-len
 	declare public readonly subLibrary:
 		this['constructor']['LcStr']['prototype'];
 
@@ -33,7 +31,7 @@ export class SubLibraryCommand extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static override readonly BYTE_LENGTH = ((o) => {
+	public static override readonly BYTE_LENGTH: number = ((o) => {
 		o += structU32(this, o, 'cmd');
 		o += structU32(this, o, 'cmdsize');
 		o += structT(this, o, 'subLibrary', 'LcStr');

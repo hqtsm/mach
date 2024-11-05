@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { Struct, structT, structU32 } from '../struct.ts';
 import { LcStr, LcStrBE } from './lcstr.ts';
 
@@ -31,7 +30,7 @@ export class SubClientCommand extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static override readonly BYTE_LENGTH = ((o) => {
+	public static override readonly BYTE_LENGTH: number = ((o) => {
 		o += structU32(this, o, 'cmd');
 		o += structU32(this, o, 'cmdsize');
 		o += structT(this, o, 'client', 'LcStr');

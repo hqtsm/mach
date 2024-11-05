@@ -129,7 +129,7 @@ export class CodeDirectory extends Blob {
 	 * @param preEncrypt Pre-encrypt version.
 	 * @returns Hash value, or null.
 	 */
-	public getSlot(slot: number, preEncrypt: boolean) {
+	public getSlot(slot: number, preEncrypt: boolean): Uint8Array | null {
 		let offset;
 		if (preEncrypt) {
 			if (
@@ -187,7 +187,7 @@ export class CodeDirectory extends Blob {
 	/**
 	 * @inheritdoc
 	 */
-	public static override readonly BYTE_LENGTH = ((o) => {
+	public static override readonly BYTE_LENGTH: number = ((o) => {
 		o += structU32(this, o, 'version', false);
 		o += structU32(this, o, 'flags', false);
 		o += structU32(this, o, 'hashOffset', false);

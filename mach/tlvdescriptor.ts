@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { Struct, structU32 } from '../struct.ts';
 
 /**
@@ -25,7 +24,7 @@ export class TlvDescriptor extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static override readonly BYTE_LENGTH = ((o) => {
+	public static override readonly BYTE_LENGTH: number = ((o) => {
 		o += structU32(this, o, 'thunk');
 		o += structU32(this, o, 'key');
 		o += structU32(this, o, 'offset');

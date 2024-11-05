@@ -47,6 +47,7 @@ export class MemoryFile implements FileLike {
 	/**
 	 * @inheritdoc
 	 */
+	// deno-lint-ignore require-await
 	public async stat(): Promise<FileLikeStat> {
 		return {
 			blocks: this.#blocks.length,
@@ -58,6 +59,7 @@ export class MemoryFile implements FileLike {
 	/**
 	 * @inheritdoc
 	 */
+	// deno-lint-ignore require-await
 	public async truncate(size: number): Promise<void> {
 		ranged(size, 0, INT_LIMIT);
 		const s = this.#size;
@@ -82,6 +84,7 @@ export class MemoryFile implements FileLike {
 	/**
 	 * @inheritdoc
 	 */
+	// deno-lint-ignore require-await
 	public async read(
 		buffer: BufferView,
 		offset: number,
@@ -129,6 +132,7 @@ export class MemoryFile implements FileLike {
 	/**
 	 * @inheritdoc
 	 */
+	// deno-lint-ignore require-await
 	public async write(
 		buffer: Readonly<BufferView>,
 		offset: number,

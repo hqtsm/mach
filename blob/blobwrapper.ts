@@ -20,7 +20,7 @@ export class BlobWrapper extends Blob {
 	 *
 	 * @inheritdoc
 	 */
-	public override get data() {
+	public override get data(): DataView {
 		// Overridden to point to payload (only).
 		const { dataArea } = this;
 		return new DataView(dataArea.buffer, dataArea.byteOffset);
@@ -31,7 +31,7 @@ export class BlobWrapper extends Blob {
 	 *
 	 * @inheritdoc
 	 */
-	public override get length() {
+	public override get length(): number {
 		// Overridden to get length of payload (only).
 		return super.length - 8;
 	}
@@ -61,7 +61,7 @@ export class BlobWrapper extends Blob {
 	public static alloc(
 		content: Readonly<BufferView> | number = 0,
 		magic = BlobWrapper.typeMagic,
-	) {
+	): BlobWrapper {
 		const { BYTE_LENGTH } = BlobWrapper;
 		let view;
 		let size = BYTE_LENGTH;
@@ -87,7 +87,7 @@ export class BlobWrapper extends Blob {
 	/**
 	 * @inheritdoc
 	 */
-	public static override readonly BYTE_LENGTH = ((o) => {
+	public static override readonly BYTE_LENGTH: number = ((o) => {
 		o += structU8A(this, o, 'dataArea', 0);
 		return o;
 	})(super.BYTE_LENGTH);

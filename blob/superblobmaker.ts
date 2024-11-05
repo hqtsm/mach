@@ -18,7 +18,7 @@ export class SuperBlobMaker {
 	 * @param type Index type.
 	 * @param blob Blob.
 	 */
-	public add(type: number, blob: BlobCore) {
+	public add(type: number, blob: BlobCore): void {
 		this.#pieces.set(type, new BlobCore(blob.buffer, blob.byteOffset));
 	}
 
@@ -28,7 +28,7 @@ export class SuperBlobMaker {
 	 * @param type Index type.
 	 * @returns Is contained.
 	 */
-	public contains(type: number) {
+	public contains(type: number): boolean {
 		return this.#pieces.has(type);
 	}
 
@@ -38,7 +38,7 @@ export class SuperBlobMaker {
 	 * @param type Index type.
 	 * @returns Blob or null if not found.
 	 */
-	public get(type: number) {
+	public get(type: number): BlobCore | null {
 		return this.#pieces.get(type) || null;
 	}
 
@@ -47,7 +47,7 @@ export class SuperBlobMaker {
 	 *
 	 * @returns Byte length.
 	 */
-	public size() {
+	public size(): number {
 		let size = SuperBlob.BYTE_LENGTH;
 		for (const [, blob] of this.#pieces) {
 			size += 8 + blob.length;
@@ -60,7 +60,7 @@ export class SuperBlobMaker {
 	 *
 	 * @returns SuperBlob.
 	 */
-	public make() {
+	public make(): SuperBlob {
 		const pieces = this.#pieces;
 		const count = pieces.size;
 		const size = this.size();

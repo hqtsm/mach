@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { Struct, structT, structU32 } from '../struct.ts';
 import { LcStr, LcStrBE, LcStrLE } from './lcstr.ts';
 
@@ -36,7 +35,7 @@ export class Dylib extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static override readonly BYTE_LENGTH = ((o) => {
+	public static override readonly BYTE_LENGTH: number = ((o) => {
 		o += structT(this, o, 'name', 'LcStr');
 		o += structU32(this, o, 'timestamp');
 		o += structU32(this, o, 'currentVersion');

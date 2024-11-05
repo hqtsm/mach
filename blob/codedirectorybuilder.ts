@@ -63,12 +63,12 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Identifier.
 	 */
-	public identifier = new Int8Array();
+	public identifier: Int8Array = new Int8Array();
 
 	/**
 	 * Team ID.
 	 */
-	public teamID = new Int8Array();
+	public teamID: Int8Array = new Int8Array();
 
 	/**
 	 * Code slots.
@@ -121,7 +121,7 @@ export class CodeDirectoryBuilder {
 	 *
 	 * @returns Hash type.
 	 */
-	public get hashType() {
+	public get hashType(): number {
 		return this.#hashType;
 	}
 
@@ -130,7 +130,7 @@ export class CodeDirectoryBuilder {
 	 *
 	 * @returns Byte length.
 	 */
-	public get digestLength() {
+	public get digestLength(): number {
 		return this.#digestLength;
 	}
 
@@ -139,7 +139,7 @@ export class CodeDirectoryBuilder {
 	 *
 	 * @returns Total used.
 	 */
-	public get specialSlots() {
+	public get specialSlots(): number {
 		return this.#specialSlots;
 	}
 
@@ -149,7 +149,7 @@ export class CodeDirectoryBuilder {
 	 *
 	 * @returns The number of slots.
 	 */
-	public get codeSlots() {
+	public get codeSlots(): number {
 		const { execLength } = this;
 		if (execLength <= 0) {
 			return 0;
@@ -169,7 +169,7 @@ export class CodeDirectoryBuilder {
 	 * @param limit Limit.
 	 * @param flags Flags.
 	 */
-	public execSeg(base: bigint, limit: bigint, flags: bigint) {
+	public execSeg(base: bigint, limit: bigint, flags: bigint): void {
 		this.execSegOffset = base;
 		this.execSegLimit = limit;
 		this.execSegFlags = flags;
@@ -180,8 +180,7 @@ export class CodeDirectoryBuilder {
 	 *
 	 * @param flags Flags.
 	 */
-	public addExecSegFlags(flags: bigint) {
-		// eslint-disable-next-line no-bitwise
+	public addExecSegFlags(flags: bigint): void {
 		this.execSegFlags |= flags;
 	}
 
@@ -191,7 +190,7 @@ export class CodeDirectoryBuilder {
 	 * @param slot Slot index, 1 indexed.
 	 * @returns Hash data, or null.
 	 */
-	public getSpecialSlot(slot: number) {
+	public getSpecialSlot(slot: number): Uint8Array | null {
 		return this.#special.get(slot) || null;
 	}
 
@@ -201,7 +200,7 @@ export class CodeDirectoryBuilder {
 	 * @param slot Slot index, 1 indexed.
 	 * @param hash Hash data.
 	 */
-	public setSpecialSlot(slot: number, hash: Readonly<BufferView>) {
+	public setSpecialSlot(slot: number, hash: Readonly<BufferView>): void {
 		const slots = this.#special;
 		const { digestLength } = this;
 		const digest = slots.get(slot) || new Uint8Array(digestLength);
@@ -222,7 +221,7 @@ export class CodeDirectoryBuilder {
 	 * @param slot Slot index, 0 indexed.
 	 * @returns Hash data, or null.
 	 */
-	public getCodeSlot(slot: number) {
+	public getCodeSlot(slot: number): Uint8Array | null {
 		const slots = this.#code;
 		slots.length = this.codeSlots;
 		return slots[slot] || null;
@@ -234,7 +233,7 @@ export class CodeDirectoryBuilder {
 	 * @param slot Slot index, 0 indexed.
 	 * @param hash Hash data.
 	 */
-	public setCodeSlot(slot: number, hash: Readonly<BufferView>) {
+	public setCodeSlot(slot: number, hash: Readonly<BufferView>): void {
 		const slots = this.#code;
 		const { codeSlots } = this;
 		if (!(slot < codeSlots)) {
@@ -257,7 +256,7 @@ export class CodeDirectoryBuilder {
 	 * @param count Number of slots, excluding sentinel.
 	 * @returns Scatter vector.
 	 */
-	public createScatter(count: number) {
+	public createScatter(count: number): CodeDirectoryScatter[] {
 		const { BYTE_LENGTH } = CodeDirectoryScatter;
 		const vector: typeof this.scatter = [];
 		const total = count + 1;
@@ -273,7 +272,7 @@ export class CodeDirectoryBuilder {
 	 *
 	 * @returns Byte size.
 	 */
-	public get scatterSize() {
+	public get scatterSize(): number {
 		let size = 0;
 		const { scatter } = this;
 		if (scatter) {
@@ -289,7 +288,7 @@ export class CodeDirectoryBuilder {
 	 *
 	 * @returns Compatibility version.
 	 */
-	public get version() {
+	public get version(): number {
 		if (this.generatePreEncryptHashes || this.runtimeVersion) {
 			return CodeDirectory.supportsPreEncrypt;
 		}
@@ -314,7 +313,7 @@ export class CodeDirectoryBuilder {
 	 * @param version Compatibility version or null for minimum.
 	 * @returns Byte size.
 	 */
-	public size(version: number | null = null) {
+	public size(version: number | null = null): number {
 		version ??= this.version;
 		const {
 			constructor: Static,
@@ -349,7 +348,7 @@ export class CodeDirectoryBuilder {
 	 * @param version Compatibility version or null for minimum.
 	 * @returns CodeDirectory instance.
 	 */
-	public build(version: number | null = null) {
+	public build(version: number | null = null): CodeDirectory {
 		version ??= this.version;
 		const {
 			constructor: Static,
@@ -456,7 +455,7 @@ export class CodeDirectoryBuilder {
 	 * @param version Compatibility version.
 	 * @returns Byte size.
 	 */
-	public static fixedSize(version: number) {
+	public static fixedSize(version: number): number {
 		let size = CodeDirectory.BYTE_LENGTH;
 		if (version < CodeDirectory.supportsPreEncrypt) {
 			size -= 8;
@@ -482,7 +481,7 @@ export class CodeDirectoryBuilder {
 	 * @param hashType Hash algorithm (kSecCodeSignatureHash* constants).
 	 * @returns Digest size.
 	 */
-	public static digestLength(hashType: number) {
+	public static digestLength(hashType: number): number {
 		switch (hashType) {
 			case kSecCodeSignatureHashSHA1:
 			case kSecCodeSignatureHashSHA256Truncated: {

@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { Struct, structI32, structU32 } from '../struct.ts';
 
 /**
@@ -45,7 +44,7 @@ export class MachHeader extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static override readonly BYTE_LENGTH = ((o) => {
+	public static override readonly BYTE_LENGTH: number = ((o) => {
 		o += structU32(this, o, 'magic');
 		o += structI32(this, o, 'cputype');
 		o += structI32(this, o, 'cpusubtype');

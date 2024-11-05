@@ -29,7 +29,7 @@ export class CodeDirectoryScatter extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static override readonly BYTE_LENGTH = ((o) => {
+	public static override readonly BYTE_LENGTH: number = ((o) => {
 		o += structU32(this, o, 'count', false);
 		o += structU32(this, o, 'base', false);
 		o += structU64(this, o, 'targetOffset', false);

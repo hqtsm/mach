@@ -13,7 +13,7 @@ export class LaunchConstraintBlob extends Blob {
 	 *
 	 * @returns View starting from DER.
 	 */
-	public get der() {
+	public get der(): Uint8Array {
 		return new Uint8Array(this.buffer, this.byteOffset + 8);
 	}
 
@@ -22,7 +22,7 @@ export class LaunchConstraintBlob extends Blob {
 	 *
 	 * @returns Byte length.
 	 */
-	public get derLength() {
+	public get derLength(): number {
 		return this.length - 8;
 	}
 

@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { Struct, structI8A, structU32, structU64 } from '../struct.ts';
 
 /**
@@ -35,7 +34,7 @@ export class NoteCommand extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static override readonly BYTE_LENGTH = ((o) => {
+	public static override readonly BYTE_LENGTH: number = ((o) => {
 		o += structU32(this, o, 'cmd');
 		o += structU32(this, o, 'cmdsize');
 		o += structI8A(this, o, 'dataOwner', 16);

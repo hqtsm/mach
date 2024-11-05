@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { Struct, structU64 } from '../struct.ts';
 
 /**
@@ -25,7 +24,7 @@ export class TlvDescriptor64 extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static override readonly BYTE_LENGTH = ((o) => {
+	public static override readonly BYTE_LENGTH: number = ((o) => {
 		o += structU64(this, o, 'thunk');
 		o += structU64(this, o, 'key');
 		o += structU64(this, o, 'offset');

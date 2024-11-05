@@ -55,7 +55,7 @@ export class RequirementMaker {
 	 * @param size Size in bytes.
 	 * @returns View of allocated bytes.
 	 */
-	public alloc(size: number) {
+	public alloc(size: number): Uint8Array {
 		const usedSize = alignUp(size, Requirement.baseAlignment);
 		this.require(usedSize);
 		const a = new Uint8Array(this.#buffer, this.#pc, size);
@@ -68,7 +68,7 @@ export class RequirementMaker {
 	 *
 	 * @param data Buffer view, or uint32.
 	 */
-	public put(data: Readonly<BufferView> | number) {
+	public put(data: Readonly<BufferView> | number): void {
 		if (typeof data === 'number') {
 			const a = this.alloc(4);
 			new DataView(a.buffer, a.byteOffset, 4).setUint32(0, data);
@@ -88,7 +88,10 @@ export class RequirementMaker {
 	 * @param data Buffer view.
 	 * @param length Length in bytes, null for view byte length.
 	 */
-	public putData(data: Readonly<BufferView>, length: number | null = null) {
+	public putData(
+		data: Readonly<BufferView>,
+		length: number | null = null,
+	): void {
 		const a = new Uint8Array(
 			data.buffer,
 			data.byteOffset,
@@ -101,14 +104,14 @@ export class RequirementMaker {
 	/**
 	 * Anchor Apple.
 	 */
-	public anchor() {
+	public anchor(): void {
 		this.put(opAppleAnchor);
 	}
 
 	/**
 	 * Anchor Apple generic.
 	 */
-	public anchorGeneric() {
+	public anchorGeneric(): void {
 		this.put(opAppleGenericAnchor);
 	}
 
@@ -118,7 +121,7 @@ export class RequirementMaker {
 	 * @param slot Slot index.
 	 * @param digest SHA1 digest.
 	 */
-	public anchorDigest(slot: number, digest: Readonly<BufferView>) {
+	public anchorDigest(slot: number, digest: Readonly<BufferView>): void {
 		this.put(opAnchorHash);
 		this.put(slot);
 		// SHA1 digest length:
@@ -130,7 +133,7 @@ export class RequirementMaker {
 	 *
 	 * @param slot Slot index or null.
 	 */
-	public trustedAnchor(slot: number | null = null) {
+	public trustedAnchor(slot: number | null = null): void {
 		if (slot === null) {
 			this.put(opTrustedCerts);
 		} else {
@@ -145,7 +148,10 @@ export class RequirementMaker {
 	 * @param key Key string.
 	 * @param value Value string.
 	 */
-	public infoKey(key: Readonly<Uint8Array>, value: Readonly<Uint8Array>) {
+	public infoKey(
+		key: Readonly<Uint8Array>,
+		value: Readonly<Uint8Array>,
+	): void {
 		this.put(opInfoKeyValue);
 		this.putData(key);
 		this.putData(value);
@@ -156,7 +162,7 @@ export class RequirementMaker {
 	 *
 	 * @param identifier Identifier string.
 	 */
-	public ident(identifier: Readonly<Uint8Array>) {
+	public ident(identifier: Readonly<Uint8Array>): void {
 		this.put(opIdent);
 		this.putData(identifier);
 	}
@@ -166,7 +172,7 @@ export class RequirementMaker {
 	 *
 	 * @param digest Hash digest.
 	 */
-	public cdhash(digest: Readonly<BufferView>) {
+	public cdhash(digest: Readonly<BufferView>): void {
 		this.put(opCDHash);
 		this.putData(digest);
 	}
@@ -176,7 +182,7 @@ export class RequirementMaker {
 	 *
 	 * @param platformIdentifier Platform identifier.
 	 */
-	public platform(platformIdentifier: number) {
+	public platform(platformIdentifier: number): void {
 		this.put(opPlatform);
 		this.put(platformIdentifier);
 	}
@@ -187,7 +193,10 @@ export class RequirementMaker {
 	 * @param data Buffer view.
 	 * @param length Length in bytes, null for view byte length.
 	 */
-	public copy(data: Readonly<BufferView>, length: number | null = null) {
+	public copy(
+		data: Readonly<BufferView>,
+		length: number | null = null,
+	): void {
 		const d = new Uint8Array(
 			data.buffer,
 			data.byteOffset,
@@ -201,7 +210,7 @@ export class RequirementMaker {
 	 *
 	 * @param req Requirement.
 	 */
-	public copyRequirement(req: Requirement) {
+	public copyRequirement(req: Requirement): void {
 		const { constructor: Requirement, kind } = req;
 		if (kind !== Requirement.exprForm) {
 			throw new Error(`Unsupported requirement kind: ${kind}`);
@@ -217,7 +226,10 @@ export class RequirementMaker {
 	 * @param length Byte length.
 	 * @returns View of source data.
 	 */
-	public insert(label: Readonly<RequirementMakerLabel>, length = 4) {
+	public insert(
+		label: Readonly<RequirementMakerLabel>,
+		length = 4,
+	): DataView {
 		const { pos } = label;
 		const req = new Requirement(this.#buffer);
 		this.require(length);
@@ -236,7 +248,7 @@ export class RequirementMaker {
 	 *
 	 * @param kind Requirement kind.
 	 */
-	public kind(kind: number) {
+	public kind(kind: number): void {
 		new Requirement(this.#buffer).kind = kind;
 	}
 
@@ -245,7 +257,7 @@ export class RequirementMaker {
 	 *
 	 * @returns Byte length.
 	 */
-	public get length() {
+	public get length(): number {
 		return this.#pc;
 	}
 
@@ -254,7 +266,7 @@ export class RequirementMaker {
 	 *
 	 * @returns Requirement instance.
 	 */
-	public make() {
+	public make(): Requirement {
 		const r = new Requirement(this.#buffer);
 		r.length = this.#pc;
 		return r;
@@ -265,7 +277,7 @@ export class RequirementMaker {
 	 *
 	 * @param size Number of bytes required.
 	 */
-	protected require(size: number) {
+	protected require(size: number): void {
 		const data = this.#buffer;
 		const pc = this.#pc;
 		let total = data.byteLength;
