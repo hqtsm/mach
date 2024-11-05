@@ -205,7 +205,11 @@ Deno.test('truncate bigger', async () => {
 
 			// deno-lint-ignore no-await-in-loop
 			await m.read(dm, 0, more, size);
-			assertEquals(dm, new Uint8Array(more));
+			for (let i = 0; i < more; i++) {
+				if (dm[i] !== 0) {
+					throw new Error(`[${i}] = ${dm[i]}`);
+				}
+			}
 		}
 	}
 });
@@ -243,7 +247,11 @@ Deno.test('truncate smaller', async () => {
 			const drLost = new Uint8Array(more);
 			// deno-lint-ignore no-await-in-loop
 			await m.read(drLost, 0, more, size);
-			assertEquals(drLost, new Uint8Array(more));
+			for (let i = 0; i < more; i++) {
+				if (drLost[i] !== 0) {
+					throw new Error(`[${i}] = ${drLost[i]}`);
+				}
+			}
 		}
 	}
 });
