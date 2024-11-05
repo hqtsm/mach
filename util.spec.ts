@@ -86,7 +86,10 @@ export async function hash(
 			throw new Error(`Unknown hash type: ${hashType}`);
 		}
 	}
-	const h = await crypto.subtle.digest(algo, data);
+	const { subtle } = typeof crypto === 'undefined'
+		? await import('node:crypto')
+		: crypto;
+	const h = await subtle.digest(algo, data);
 	return new Uint8Array(limit < 0 ? h : h.slice(0, limit));
 }
 
@@ -235,6 +238,30 @@ export async function* zipped(file: string): AsyncGenerator<
 	}
 }
 
+let fixturesCache: string | null = null;
+
+function fixtures(): string {
+	if (fixturesCache) {
+		return fixturesCache;
+	}
+	for (
+		const s of [
+			'spec/fixtures',
+			'../spec/fixtures',
+			'../../spec/fixtures',
+		]
+	) {
+		try {
+			Deno.statSync(s);
+			fixturesCache = s;
+			return s;
+		} catch (_) {
+			// Ignore.
+		}
+	}
+	throw new Error('Could not find fixtures');
+}
+
 export interface FixtureMachoSignatureInfo {
 	arch: [number, number | null];
 	offset: number;
@@ -274,7 +301,7 @@ function fixtureMachosRead(): {
 		ppc970: [CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_970],
 		ppc: [CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_ALL],
 	};
-	const lines = Deno.readTextFileSync('spec/fixtures/macho.txt')
+	const lines = Deno.readTextFileSync(`${fixtures()}/macho.txt`)
 		.split('\n');
 	const all = new Map<
 		string,
@@ -392,7 +419,7 @@ export async function fixtureMacho(
 	const datas: Uint8Array[] = [];
 	for await (
 		const [name, read] of zipped(
-			`spec/fixtures/macho/${kind}/dist/${arch}.zip`,
+			`${fixtures()}/macho/${kind}/dist/${arch}.zip`,
 		)
 	) {
 		const i = m.get(name) ?? -1;
