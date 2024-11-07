@@ -1,9 +1,9 @@
 import type {
 	BufferView,
-	FileLike,
-	FileLikeRead,
-	FileLikeStat,
-	FileLikeWritten,
+	File,
+	FileReadStats,
+	FileStats,
+	FileWriteStats,
 } from './type.ts';
 import { BLK_LIMIT, INT_LIMIT } from './const.ts';
 import { ranged } from './util.ts';
@@ -11,7 +11,7 @@ import { ranged } from './util.ts';
 /**
  * In-memory file-like object.
  */
-export class MemoryFile implements FileLike {
+export class MemoryFile implements File {
 	declare public readonly ['constructor']: Omit<typeof MemoryFile, 'new'>;
 
 	/**
@@ -48,7 +48,7 @@ export class MemoryFile implements FileLike {
 	 * @inheritdoc
 	 */
 	// deno-lint-ignore require-await
-	public async stat(): Promise<FileLikeStat> {
+	public async stat(): Promise<FileStats> {
 		return {
 			blocks: this.#blocks.length,
 			blksize: this.#blksize,
@@ -90,7 +90,7 @@ export class MemoryFile implements FileLike {
 		offset: number,
 		length: number,
 		position: number,
-	): Promise<FileLikeRead> {
+	): Promise<FileReadStats> {
 		const { buffer: bd, byteOffset: bo, byteLength: bl } = buffer;
 		ranged(offset, 0, bl);
 		ranged(length, 0, bl - offset);
@@ -138,7 +138,7 @@ export class MemoryFile implements FileLike {
 		offset: number,
 		length: number,
 		position: number,
-	): Promise<FileLikeWritten> {
+	): Promise<FileWriteStats> {
 		const { buffer: bd, byteOffset: bo, byteLength: bl } = buffer;
 		ranged(offset, 0, bl);
 		ranged(length, 0, bl - offset);

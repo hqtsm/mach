@@ -70,7 +70,7 @@ export interface Cast<T> {
 /**
  * File stat.
  */
-export interface FileLikeStat {
+export interface FileStats {
 	/**
 	 * Number of blocks.
 	 */
@@ -88,9 +88,9 @@ export interface FileLikeStat {
 }
 
 /**
- * File read status.
+ * File read stats.
  */
-export interface FileLikeRead {
+export interface FileReadStats {
 	/**
 	 * Number of bytes read.
 	 */
@@ -98,9 +98,9 @@ export interface FileLikeRead {
 }
 
 /**
- * File written status.
+ * File write stats.
  */
-export interface FileLikeWritten {
+export interface FileWriteStats {
 	/**
 	 * Number of bytes written.
 	 */
@@ -108,23 +108,33 @@ export interface FileLikeWritten {
 }
 
 /**
- * File interface.
+ * File statable.
  */
-export interface FileLike {
-	/**
-	 * Stat file.
-	 *
-	 * @returns Stat result.
-	 */
-	stat(): Promise<FileLikeStat>;
-
+export interface FileStatable {
 	/**
 	 * Truncate file to size.
 	 *
 	 * @param size New size.
 	 */
 	truncate(size: number): Promise<void>;
+}
 
+/**
+ * File truncatable.
+ */
+export interface FileTruncatable {
+	/**
+	 * Truncate file to size.
+	 *
+	 * @param size New size.
+	 */
+	truncate(size: number): Promise<void>;
+}
+
+/**
+ * File readable.
+ */
+export interface FileReadable {
 	/**
 	 * Read from file.
 	 *
@@ -139,8 +149,13 @@ export interface FileLike {
 		offset: number,
 		length: number,
 		position: number,
-	): Promise<FileLikeRead>;
+	): Promise<FileReadStats>;
+}
 
+/**
+ * File writable.
+ */
+export interface FileWritable {
 	/**
 	 * Write to file.
 	 *
@@ -155,5 +170,12 @@ export interface FileLike {
 		offset: number,
 		length: number,
 		position: number,
-	): Promise<FileLikeWritten>;
+	): Promise<FileWriteStats>;
+}
+
+/**
+ * File interface.
+ */
+export interface File
+	extends FileStatable, FileReadable, FileWritable, FileTruncatable {
 }
