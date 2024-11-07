@@ -3,15 +3,15 @@ import { assert, assertEquals } from '@std/assert';
 import { HOST_LE } from '../const.ts';
 import { Struct } from '../struct.ts';
 
-import * as index from './index.ts';
+import * as mod from './mod.ts';
 
 Deno.test('endians', () => {
-	for (const name of Object.keys(index)) {
+	for (const name of Object.keys(mod)) {
 		if (name.endsWith('LE') || name.endsWith('BE')) {
 			continue;
 		}
 
-		const all = index as {
+		const all = mod as {
 			[name: string]: typeof Struct | unknown;
 		};
 		const St = all[name] as typeof Struct | undefined;

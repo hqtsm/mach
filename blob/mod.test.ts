@@ -3,14 +3,14 @@ import { assert } from '@std/assert';
 import { Blob } from './blob.ts';
 import { SuperBlobMaker } from './superblobmaker.ts';
 
-import * as index from './index.ts';
+import * as mod from './mod.ts';
 
 Deno.test('typeMagic', () => {
-	for (const name of Object.keys(index)) {
+	for (const name of Object.keys(mod)) {
 		if (name === 'SuperBlob') {
 			continue;
 		}
-		const all = index as {
+		const all = mod as {
 			[name: string]: typeof Blob | unknown;
 		};
 		const Bl = all[name] as typeof Blob | undefined;
@@ -21,8 +21,8 @@ Deno.test('typeMagic', () => {
 });
 
 Deno.test('SuperBlob', () => {
-	for (const name of Object.keys(index)) {
-		const all = index as {
+	for (const name of Object.keys(mod)) {
+		const all = mod as {
 			[name: string]: typeof SuperBlobMaker | unknown;
 		};
 		const Maker = all[name] as typeof SuperBlobMaker | undefined;
