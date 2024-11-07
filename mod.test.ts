@@ -10,6 +10,8 @@ interface Exports {
 	[k: string]: unknown;
 }
 
+declare const module: { require: (name: string) => Exports } | undefined;
+
 function getFilename(): string {
 	let trace;
 	let original;
@@ -33,16 +35,12 @@ function getFilename(): string {
 }
 
 function getImport(): (name: string) => Promise<Exports> {
-	const m = typeof (module as unknown) !== 'undefined'
-		// deno-lint-ignore no-undef
-		? (module as unknown as { require: (name: string) => Exports })
-		: null;
-	if (m) {
+	const m = typeof module !== 'undefined' ? module : null;
+	return m
 		// deno-lint-ignore require-await
-		return async (name: string) => m.require(name);
-	}
-	// deno-lint-ignore require-await
-	return async (name: string) => import(name);
+		? async (name: string) => m.require(name)
+		// deno-lint-ignore require-await
+		: async (name: string) => import(name);
 }
 
 async function* findModules(
