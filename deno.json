@@ -54,14 +54,15 @@
 		"coverage",
 		"docs",
 		"vendor",
-		"npm"
+		"npm",
+		"spec"
 	],
 	"publish": {
 		"exclude": [
 			"deno.lock",
 			"**/*.test.ts",
-			"scripts",
-			"spec"
+			"**/*.spec.ts",
+			"scripts"
 		]
 	},
 	"tasks": {
