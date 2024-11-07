@@ -51,11 +51,7 @@ async function* findModules(
 		const path = q.shift()!;
 		for await (const e of Deno.readDir(path ? `${dir}/${path}` : dir)) {
 			const { name } = e;
-			if (
-				name.startsWith('.') ||
-				name.startsWith('_dnt.') ||
-				name === 'test_runner.js'
-			) {
+			if (name.startsWith('.') || name.startsWith('_dnt.')) {
 				continue;
 			}
 			const p = `${path}/${name}`;
@@ -108,13 +104,14 @@ Deno.test('public', async () => {
 		const uri of findModules(
 			dir,
 			new Set([
-				'./node_modules',
-				'./deps',
 				'./scripts',
 				'./spec',
-				'./npm',
 				'./docs',
 				'./coverage',
+				'./npm',
+				'./node_modules',
+				'./deps',
+				'./test_runner.js',
 			]),
 		)
 	) {
@@ -131,6 +128,7 @@ Deno.test('public', async () => {
 			if (!isClass(Class)) {
 				continue;
 			}
+
 			assertEquals(
 				name.replace(/[BL]E$/, '').toLowerCase(),
 				file,
