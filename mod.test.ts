@@ -33,8 +33,10 @@ function getFilename(): string {
 }
 
 function getImport(): (name: string) => Promise<Exports> {
-	// deno-lint-ignore no-undef
-	const m = typeof module === 'undefined' ? null : module;
+	const m = typeof (module as unknown) !== 'undefined'
+		// deno-lint-ignore no-undef
+		? (module as unknown as { require: (name: string) => Exports })
+		: null;
 	if (m) {
 		// deno-lint-ignore require-await
 		return async (name: string) => m.require(name);
