@@ -1,8 +1,3 @@
-// import { describe, it } from 'node:test';
-// import { strictEqual } from 'node:assert';
-// import { dirname, resolve } from 'node:path';
-// import { readdir, readFile } from 'node:fs/promises';
-
 import { assertEquals } from '@std/assert';
 import * as mod from './mod.ts';
 
@@ -128,7 +123,6 @@ Deno.test('public', async () => {
 			if (!isClass(Class)) {
 				continue;
 			}
-
 			assertEquals(
 				name.replace(/[BL]E$/, '').toLowerCase(),
 				file,
