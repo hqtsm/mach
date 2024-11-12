@@ -18,6 +18,9 @@ export class Struct implements BufferView {
 	 */
 	readonly #data: DataView;
 
+	/**
+	 * Little endian, or not.
+	 */
 	readonly #littleEndian: boolean;
 
 	/**
@@ -67,7 +70,7 @@ export class Struct implements BufferView {
 	}
 
 	/**
-	 * Use little endian or big endian for host-defined endian fields.
+	 * Using little endian or big endian for host-defined endian fields.
 	 * Defaults to match the host architecture.
 	 *
 	 * @returns True for little endian, false for big endian.
