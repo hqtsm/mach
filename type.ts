@@ -58,16 +58,6 @@ export interface BufferView {
 }
 
 /**
- * Cast type sized constructor.
- */
-export interface Cast<T> {
-	/**
-	 * Cast new instance from existing memory.
-	 */
-	new (buffer: ArrayBufferReal, byteOffset?: number): T;
-}
-
-/**
  * File stat.
  */
 export interface FileStats {
