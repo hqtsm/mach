@@ -1,5 +1,3 @@
-# Mach Sign
-
-Package for creating and removing Mach-O code signatures
+# HQTSM: Mach
 
 A work in progress.
