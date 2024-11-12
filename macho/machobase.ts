@@ -31,10 +31,17 @@ export class MachOBase {
 	}
 
 	/**
-	 * If endian does not matches the host endian.
+	 * If binary is little endian.
+	 */
+	public get isLittleEndian(): boolean {
+		return this.mHeader.littleEndian;
+	}
+
+	/**
+	 * If binary endian does not matches the host endian.
 	 */
 	public get isFlipped(): boolean {
-		return this.mHeader.littleEndian !== HOST_LE;
+		return this.isLittleEndian !== HOST_LE;
 	}
 
 	/**
