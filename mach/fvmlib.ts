@@ -1,5 +1,5 @@
 import { Struct, structT, structU32 } from '../struct.ts';
-import { LcStr, LcStrBE, LcStrLE } from './lcstr.ts';
+import { LcStr } from './lcstr.ts';
 
 /**
  * Fixed virtual memory shared library.
@@ -36,38 +36,4 @@ export class Fvmlib extends Struct {
 		o += structU32(this, o, 'headerAddr');
 		return o;
 	})(super.BYTE_LENGTH);
-}
-
-/**
- * Fixed virtual memory shared library, big endian.
- */
-export class FvmlibBE extends Fvmlib {
-	declare public readonly ['constructor']: typeof FvmlibBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrBE;
-}
-
-/**
- * Fixed virtual memory shared library, little endian.
- */
-export class FvmlibLE extends Fvmlib {
-	declare public readonly ['constructor']: typeof FvmlibLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrLE;
 }

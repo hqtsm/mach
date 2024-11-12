@@ -49,27 +49,3 @@ export class FatArch64 extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Fat architecture, 64-bit, big endian.
- */
-export class FatArch64BE extends FatArch64 {
-	declare public readonly ['constructor']: typeof FatArch64BE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Fat architecture, 64-bit, little endian.
- */
-export class FatArch64LE extends FatArch64 {
-	declare public readonly ['constructor']: typeof FatArch64LE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

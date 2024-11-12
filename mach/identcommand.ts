@@ -25,27 +25,3 @@ export class IdentCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Ident command, big endian.
- */
-export class IdentCommandBE extends IdentCommand {
-	declare public readonly ['constructor']: typeof IdentCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Ident command, little endian.
- */
-export class IdentCommandLE extends IdentCommand {
-	declare public readonly ['constructor']: typeof IdentCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

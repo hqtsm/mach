@@ -43,27 +43,3 @@ export class NoteCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Note command, big endian.
- */
-export class NoteCommandBE extends NoteCommand {
-	declare public readonly ['constructor']: typeof NoteCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Note command, little endian.
- */
-export class NoteCommandLE extends NoteCommand {
-	declare public readonly ['constructor']: typeof NoteCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

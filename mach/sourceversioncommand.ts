@@ -31,27 +31,3 @@ export class SourceVersionCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Source version command, big endian.
- */
-export class SourceVersionCommandBE extends SourceVersionCommand {
-	declare public readonly ['constructor']: typeof SourceVersionCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Source version command, little endian.
- */
-export class SourceVersionCommandLE extends SourceVersionCommand {
-	declare public readonly ['constructor']: typeof SourceVersionCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

@@ -49,27 +49,3 @@ export class EncryptionInfoCommand64 extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Encryption info command, 64-bit, big endian.
- */
-export class EncryptionInfoCommand64BE extends EncryptionInfoCommand64 {
-	declare public readonly ['constructor']: typeof EncryptionInfoCommand64BE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Encryption info command, 64-bit, little endian.
- */
-export class EncryptionInfoCommand64LE extends EncryptionInfoCommand64 {
-	declare public readonly ['constructor']: typeof EncryptionInfoCommand64LE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

@@ -25,27 +25,3 @@ export class LoadCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Load command, big endian.
- */
-export class LoadCommandBE extends LoadCommand {
-	declare public readonly ['constructor']: typeof LoadCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Load command, little endian.
- */
-export class LoadCommandLE extends LoadCommand {
-	declare public readonly ['constructor']: typeof LoadCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

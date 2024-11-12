@@ -79,27 +79,3 @@ export class SegmentCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Segment command, 32-bit, big endian.
- */
-export class SegmentCommandBE extends SegmentCommand {
-	declare public readonly ['constructor']: typeof SegmentCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Segment command, 32-bit, little endian.
- */
-export class SegmentCommandLE extends SegmentCommand {
-	declare public readonly ['constructor']: typeof SegmentCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

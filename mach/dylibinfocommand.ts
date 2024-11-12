@@ -85,27 +85,3 @@ export class DylibInfoCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Dylib info command, big endian.
- */
-export class DylibInfoCommandBE extends DylibInfoCommand {
-	declare public readonly ['constructor']: typeof DylibInfoCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Dylib info command, little endian.
- */
-export class DylibInfoCommandLE extends DylibInfoCommand {
-	declare public readonly ['constructor']: typeof DylibInfoCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

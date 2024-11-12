@@ -5,12 +5,8 @@ import {
 	MH_MAGIC,
 	MH_MAGIC_64,
 } from '../const.ts';
-import { MachHeader, MachHeaderBE, MachHeaderLE } from '../mach/machheader.ts';
-import {
-	MachHeader64,
-	MachHeader64BE,
-	MachHeader64LE,
-} from '../mach/machheader64.ts';
+import { MachHeader } from '../mach/machheader.ts';
+import { MachHeader64 } from '../mach/machheader64.ts';
 import type { BufferView } from '../type.ts';
 
 /**
@@ -54,25 +50,36 @@ export class MachOBase {
 	 * @param header Mach-O header data.
 	 */
 	protected initHeader(header: BufferView): void {
-		const { MachHeaderBE, MachHeaderLE, MachHeader64BE, MachHeader64LE } =
-			this.constructor;
+		const { MachHeader, MachHeader64 } = this.constructor;
 		const { buffer, byteOffset } = header;
-		const mhbe = new MachHeaderBE(buffer, byteOffset);
+		const mhbe = new MachHeader(buffer, byteOffset);
 		switch (mhbe.magic) {
 			case MH_MAGIC: {
 				this.mHeader = mhbe;
 				break;
 			}
 			case MH_CIGAM: {
-				this.mHeader = new MachHeaderLE(buffer, byteOffset);
+				this.mHeader = new MachHeader(
+					buffer,
+					byteOffset,
+					!mhbe.littleEndian,
+				);
 				break;
 			}
 			case MH_MAGIC_64: {
-				this.mHeader = new MachHeader64BE(buffer, byteOffset);
+				this.mHeader = new MachHeader64(
+					buffer,
+					byteOffset,
+					mhbe.littleEndian,
+				);
 				break;
 			}
 			case MH_CIGAM_64: {
-				this.mHeader = new MachHeader64LE(buffer, byteOffset);
+				this.mHeader = new MachHeader64(
+					buffer,
+					byteOffset,
+					!mhbe.littleEndian,
+				);
 				break;
 			}
 			default: {
@@ -117,27 +124,7 @@ export class MachOBase {
 	public static readonly MachHeader = MachHeader;
 
 	/**
-	 * MachHeaderBE reference.
-	 */
-	public static readonly MachHeaderBE = MachHeaderBE;
-
-	/**
-	 * MachHeaderLE reference.
-	 */
-	public static readonly MachHeaderLE = MachHeaderLE;
-
-	/**
 	 * MachHeader64 reference.
 	 */
 	public static readonly MachHeader64 = MachHeader64;
-
-	/**
-	 * MachHeader64BE reference.
-	 */
-	public static readonly MachHeader64BE = MachHeader64BE;
-
-	/**
-	 * MachHeader64LE reference.
-	 */
-	public static readonly MachHeader64LE = MachHeader64LE;
 }

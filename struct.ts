@@ -18,14 +18,22 @@ export class Struct implements BufferView {
 	 */
 	readonly #data: DataView;
 
+	readonly #littleEndian: boolean;
+
 	/**
 	 * Blob constructor.
 	 *
 	 * @param buffer Buffer data.
 	 * @param byteOffset Byte offset into buffer.
+	 * @param littleEndian Host endian, little endian, big endian.
 	 */
-	constructor(buffer: ArrayBufferReal, byteOffset = 0) {
+	constructor(
+		buffer: ArrayBufferReal,
+		byteOffset = 0,
+		littleEndian: boolean | null = null,
+	) {
 		this.#data = new DataView(buffer, byteOffset);
+		this.#littleEndian = littleEndian ?? HOST_LE;
 	}
 
 	/**
@@ -64,20 +72,14 @@ export class Struct implements BufferView {
 	 *
 	 * @returns True for little endian, false for big endian.
 	 */
-	public get littleEndian(): this['constructor']['LITTLE_ENDIAN'] {
-		return this.constructor.LITTLE_ENDIAN;
+	public get littleEndian(): boolean {
+		return this.#littleEndian;
 	}
 
 	/**
 	 * Size of new instance.
 	 */
 	public static readonly BYTE_LENGTH: number = 0;
-
-	/**
-	 * Use little endian or big endian for host-defined endian fields.
-	 * Defaults to match the host architecture.
-	 */
-	public static readonly LITTLE_ENDIAN = HOST_LE;
 }
 
 /**
@@ -406,7 +408,11 @@ export function structT<
 	const StructC = StructT[Type] as typeof Struct;
 	Object.defineProperty(StructT.prototype, field, {
 		get(this: T['prototype']): T['prototype'] {
-			return new StructC(this.buffer, this.byteOffset + offset);
+			return new StructC(
+				this.buffer,
+				this.byteOffset + offset,
+				this.littleEndian,
+			);
 		},
 	});
 	return StructC.BYTE_LENGTH;

@@ -37,27 +37,3 @@ export class TwolevelHintsCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Two-level namespace lookup hints table command, big endian.
- */
-export class TwolevelHintsCommandBE extends TwolevelHintsCommand {
-	declare public readonly ['constructor']: typeof TwolevelHintsCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Two-level namespace lookup hints table command, little endian.
- */
-export class TwolevelHintsCommandLE extends TwolevelHintsCommand {
-	declare public readonly ['constructor']: typeof TwolevelHintsCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

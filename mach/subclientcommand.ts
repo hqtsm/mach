@@ -1,5 +1,5 @@
 import { Struct, structT, structU32 } from '../struct.ts';
-import { LcStr, LcStrBE } from './lcstr.ts';
+import { LcStr } from './lcstr.ts';
 
 /**
  * Sub client command.
@@ -36,38 +36,4 @@ export class SubClientCommand extends Struct {
 		o += structT(this, o, 'client', 'LcStr');
 		return o;
 	})(super.BYTE_LENGTH);
-}
-
-/**
- * Sub client command, big endian.
- */
-export class SubClientCommandBE extends SubClientCommand {
-	declare public readonly ['constructor']: typeof SubClientCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrBE;
-}
-
-/**
- * Sub client command, little endian.
- */
-export class SubClientCommandLE extends SubClientCommand {
-	declare public readonly ['constructor']: typeof SubClientCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrBE;
 }

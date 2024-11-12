@@ -37,27 +37,3 @@ export class SymsegCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Symbol table, big endian.
- */
-export class SymsegCommandBE extends SymsegCommand {
-	declare public readonly ['constructor']: typeof SymsegCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Symbol table, little endian.
- */
-export class SymsegCommandLE extends SymsegCommand {
-	declare public readonly ['constructor']: typeof SymsegCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

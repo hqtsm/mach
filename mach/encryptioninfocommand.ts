@@ -43,27 +43,3 @@ export class EncryptionInfoCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Encryption info command, 32-bit, big endian.
- */
-export class EncryptionInfoCommandBE extends EncryptionInfoCommand {
-	declare public readonly ['constructor']: typeof EncryptionInfoCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Encryption info command, 32-bit, little endian.
- */
-export class EncryptionInfoCommandLE extends EncryptionInfoCommand {
-	declare public readonly ['constructor']: typeof EncryptionInfoCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

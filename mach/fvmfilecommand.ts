@@ -1,5 +1,5 @@
 import { Struct, structT, structU32 } from '../struct.ts';
-import { LcStr, LcStrBE, LcStrLE } from './lcstr.ts';
+import { LcStr } from './lcstr.ts';
 
 /**
  * Fixed virtual memory file command.
@@ -42,38 +42,4 @@ export class FvmfileCommand extends Struct {
 		o += structU32(this, o, 'headerAddr');
 		return o;
 	})(super.BYTE_LENGTH);
-}
-
-/**
- * Fixed virtual memory file command, big endian.
- */
-export class FvmfileCommandBE extends FvmfileCommand {
-	declare public readonly ['constructor']: typeof FvmfileCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrBE;
-}
-
-/**
- * Fixed virtual memory file command, little endian.
- */
-export class FvmfileCommandLE extends FvmfileCommand {
-	declare public readonly ['constructor']: typeof FvmfileCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrLE;
 }

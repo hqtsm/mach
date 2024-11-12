@@ -25,27 +25,3 @@ export class FatHeader extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Fat header, big endian.
- */
-export class FatHeaderBE extends FatHeader {
-	declare public readonly ['constructor']: typeof FatHeaderBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Fat header, little endian.
- */
-export class FatHeaderLE extends FatHeader {
-	declare public readonly ['constructor']: typeof FatHeaderLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

@@ -1,5 +1,5 @@
 import { Struct, structT, structU32 } from '../struct.ts';
-import { LcStr, LcStrBE } from './lcstr.ts';
+import { LcStr } from './lcstr.ts';
 
 /**
  * Preload dylib command.
@@ -49,38 +49,4 @@ export class PreloadDylibCommand extends Struct {
 		o += structT(this, o, 'linkedModules', 'LcStr');
 		return o;
 	})(super.BYTE_LENGTH);
-}
-
-/**
- * Preload dylib command, big endian.
- */
-export class PreloadDylibCommandBE extends PreloadDylibCommand {
-	declare public readonly ['constructor']: typeof PreloadDylibCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrBE;
-}
-
-/**
- * Preload dylib command, little endian.
- */
-export class PreloadDylibCommandLE extends PreloadDylibCommand {
-	declare public readonly ['constructor']: typeof PreloadDylibCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrBE;
 }

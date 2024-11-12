@@ -31,27 +31,3 @@ export class DataInCodeEntry extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Data in code entry, big endian.
- */
-export class DataInCodeEntryBE extends DataInCodeEntry {
-	declare public readonly ['constructor']: typeof DataInCodeEntryBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Data in code entry, little endian.
- */
-export class DataInCodeEntryLE extends DataInCodeEntry {
-	declare public readonly ['constructor']: typeof DataInCodeEntryLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

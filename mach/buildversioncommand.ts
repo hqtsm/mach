@@ -49,27 +49,3 @@ export class BuildVersionCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Minimum OS build version command, big endian.
- */
-export class BuildVersionCommandBE extends BuildVersionCommand {
-	declare public readonly ['constructor']: typeof BuildVersionCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Minimum OS build version command, little endian.
- */
-export class BuildVersionCommandLE extends BuildVersionCommand {
-	declare public readonly ['constructor']: typeof BuildVersionCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

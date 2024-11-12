@@ -43,27 +43,3 @@ export class FatArch extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Fat architecture, 32-bit, big endian.
- */
-export class FatArchBE extends FatArch {
-	declare public readonly ['constructor']: typeof FatArchBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Fat architecture, 32-bit, little endian.
- */
-export class FatArchLE extends FatArch {
-	declare public readonly ['constructor']: typeof FatArchLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

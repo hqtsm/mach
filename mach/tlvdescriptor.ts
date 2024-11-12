@@ -31,27 +31,3 @@ export class TlvDescriptor extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Thread local variable entry, 64-bit, big endian.
- */
-export class TlvDescriptorBE extends TlvDescriptor {
-	declare public readonly ['constructor']: typeof TlvDescriptorBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Thread local variable entry, 64-bit, little endian.
- */
-export class TlvDescriptorLE extends TlvDescriptor {
-	declare public readonly ['constructor']: typeof TlvDescriptorLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

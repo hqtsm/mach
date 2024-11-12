@@ -1,5 +1,5 @@
 import { Struct, structT, structU32 } from '../struct.ts';
-import { LcStr, LcStrBE, LcStrLE } from './lcstr.ts';
+import { LcStr } from './lcstr.ts';
 
 /**
  * Dynamically linked shared library.
@@ -42,38 +42,4 @@ export class Dylib extends Struct {
 		o += structU32(this, o, 'compatibilityVersion');
 		return o;
 	})(super.BYTE_LENGTH);
-}
-
-/**
- * Dynamically linked shared library, big endian.
- */
-export class DylibBE extends Dylib {
-	declare public readonly ['constructor']: typeof DylibBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrBE;
-}
-
-/**
- * Dynamically linked shared library, little endian.
- */
-export class DylibLE extends Dylib {
-	declare public readonly ['constructor']: typeof DylibLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrLE;
 }

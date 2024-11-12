@@ -1,5 +1,5 @@
 import { Struct, structT, structU32 } from '../struct.ts';
-import { LcStr, LcStrBE } from './lcstr.ts';
+import { LcStr } from './lcstr.ts';
 
 /**
  * Sub umbrella command.
@@ -37,38 +37,4 @@ export class SubUmbrellaCommand extends Struct {
 		o += structT(this, o, 'subUmbrella', 'LcStr');
 		return o;
 	})(super.BYTE_LENGTH);
-}
-
-/**
- * Sub umbrella command, big endian.
- */
-export class SubUmbrellaCommandBE extends SubUmbrellaCommand {
-	declare public readonly ['constructor']: typeof SubUmbrellaCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrBE;
-}
-
-/**
- * Sub umbrella command, little endian.
- */
-export class SubUmbrellaCommandLE extends SubUmbrellaCommand {
-	declare public readonly ['constructor']: typeof SubUmbrellaCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrBE;
 }

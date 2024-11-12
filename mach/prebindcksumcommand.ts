@@ -31,27 +31,3 @@ export class PrebindCksumCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Prebind checksum command, big endian.
- */
-export class PrebindCksumCommandBE extends PrebindCksumCommand {
-	declare public readonly ['constructor']: typeof PrebindCksumCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Prebind checksum command, little endian.
- */
-export class PrebindCksumCommandLE extends PrebindCksumCommand {
-	declare public readonly ['constructor']: typeof PrebindCksumCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

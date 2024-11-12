@@ -55,27 +55,3 @@ export class MachHeader extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Mach-O header, 32-bit, big endian.
- */
-export class MachHeaderBE extends MachHeader {
-	declare public readonly ['constructor']: typeof MachHeaderBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Mach-O header, 32-bit, little endian.
- */
-export class MachHeaderLE extends MachHeader {
-	declare public readonly ['constructor']: typeof MachHeaderLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override LITTLE_ENDIAN = true;
-}

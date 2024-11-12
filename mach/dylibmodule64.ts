@@ -93,27 +93,3 @@ export class DylibModule64 extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Dylib module table entry, 64-bit, big endian.
- */
-export class DylibModule64BE extends DylibModule64 {
-	declare public readonly ['constructor']: typeof DylibModule64BE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Dylib module table entry, 64-bit, little endian.
- */
-export class DylibModule64LE extends DylibModule64 {
-	declare public readonly ['constructor']: typeof DylibModule64LE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

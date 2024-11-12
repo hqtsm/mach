@@ -79,27 +79,3 @@ export class Section extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Section, 32-bit, big endian.
- */
-export class SectionBE extends Section {
-	declare public readonly ['constructor']: typeof SectionBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Section, 32-bit, little endian.
- */
-export class SectionLE extends Section {
-	declare public readonly ['constructor']: typeof SectionLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

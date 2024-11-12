@@ -49,27 +49,3 @@ export class SymtabCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Symtab command, big endian.
- */
-export class SymtabCommandBE extends SymtabCommand {
-	declare public readonly ['constructor']: typeof SymtabCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Symtab command, little endian.
- */
-export class SymtabCommandLE extends SymtabCommand {
-	declare public readonly ['constructor']: typeof SymtabCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

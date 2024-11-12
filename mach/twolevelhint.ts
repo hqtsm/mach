@@ -25,27 +25,3 @@ export class TwolevelHint extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Two-level namespace lookup hints table entry, big endian.
- */
-export class TwolevelHintBE extends TwolevelHint {
-	declare public readonly ['constructor']: typeof TwolevelHintBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Two-level namespace lookup hints table entry, little endian.
- */
-export class TwolevelHintLE extends TwolevelHint {
-	declare public readonly ['constructor']: typeof TwolevelHintLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

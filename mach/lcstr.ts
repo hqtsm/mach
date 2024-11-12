@@ -20,27 +20,3 @@ export class LcStr extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Load command string union, big endian.
- */
-export class LcStrBE extends LcStr {
-	declare public readonly ['constructor']: typeof LcStrBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Load command string union, little endian.
- */
-export class LcStrLE extends LcStr {
-	declare public readonly ['constructor']: typeof LcStrLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

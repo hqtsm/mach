@@ -30,27 +30,3 @@ export class ThreadCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Thread command, big endian.
- */
-export class ThreadCommandBE extends ThreadCommand {
-	declare public readonly ['constructor']: typeof ThreadCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Thread command, little endian.
- */
-export class ThreadCommandLE extends ThreadCommand {
-	declare public readonly ['constructor']: typeof ThreadCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

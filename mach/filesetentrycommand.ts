@@ -1,5 +1,5 @@
 import { Struct, structT, structU32, structU64 } from '../struct.ts';
-import { LcStr, LcStrBE, LcStrLE } from './lcstr.ts';
+import { LcStr } from './lcstr.ts';
 
 /**
  * Fileset entry command.
@@ -54,38 +54,4 @@ export class FilesetEntryCommand extends Struct {
 		o += structU32(this, o, 'reserved');
 		return o;
 	})(super.BYTE_LENGTH);
-}
-
-/**
- * Fileset entry command, big endian.
- */
-export class FilesetEntryCommandBE extends FilesetEntryCommand {
-	declare public readonly ['constructor']: typeof FilesetEntryCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrBE;
-}
-
-/**
- * Fileset entry command, little endian.
- */
-export class FilesetEntryCommandLE extends FilesetEntryCommand {
-	declare public readonly ['constructor']: typeof FilesetEntryCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrLE;
 }

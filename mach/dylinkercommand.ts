@@ -1,5 +1,5 @@
 import { Struct, structT, structU32 } from '../struct.ts';
-import { LcStr, LcStrBE } from './lcstr.ts';
+import { LcStr } from './lcstr.ts';
 
 /**
  * Dynamic linker command.
@@ -36,38 +36,4 @@ export class DylinkerCommand extends Struct {
 		o += structT(this, o, 'name', 'LcStr');
 		return o;
 	})(super.BYTE_LENGTH);
-}
-
-/**
- * Dynamic linker command, big endian.
- */
-export class DylinkerCommandBE extends DylinkerCommand {
-	declare public readonly ['constructor']: typeof DylinkerCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrBE;
-}
-
-/**
- * Dynamic linker command, little endian.
- */
-export class DylinkerCommandLE extends DylinkerCommand {
-	declare public readonly ['constructor']: typeof DylinkerCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrBE;
 }

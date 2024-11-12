@@ -89,8 +89,46 @@ export class BlobCore extends Struct {
 	public at<T>(
 		Type: new (buffer: ArrayBufferReal, byteOffset?: number) => T,
 		offset: number,
+	): T;
+
+	/**
+	 * Get view of data at offset, with endian.
+	 *
+	 * @param Type Constructor function.
+	 * @param offset Byte offset.
+	 * @param littleEndian Host endian, little endian, big endian.
+	 * @returns Data view.
+	 */
+	public at<T>(
+		Type: new (
+			buffer: ArrayBufferReal,
+			byteOffset?: number,
+			littleEndian?: boolean | null,
+		) => T,
+		offset: number,
+		littleEndian?: boolean | null,
+	): T;
+
+	/**
+	 * Get view of data at offset, with endian.
+	 *
+	 * @param Type Constructor function.
+	 * @param offset Byte offset.
+	 * @param littleEndian Host endian, little endian, big endian.
+	 * @returns Data view.
+	 */
+	public at<T>(
+		Type: new (
+			buffer: ArrayBufferReal,
+			byteOffset?: number,
+			littleEndian?: boolean | null,
+		) => T,
+		offset: number,
+		littleEndian?: boolean | null,
 	): T {
-		return new Type(this.buffer, this.byteOffset + offset);
+		return littleEndian === undefined
+			? new Type(this.buffer, this.byteOffset + offset)
+			: new Type(this.buffer, this.byteOffset + offset, littleEndian);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 import { Struct, structT, structU32 } from '../struct.ts';
-import { LcStr, LcStrBE } from './lcstr.ts';
+import { LcStr } from './lcstr.ts';
 
 /**
  * Rpath command.
@@ -36,38 +36,4 @@ export class RpathCommand extends Struct {
 		o += structT(this, o, 'path', 'LcStr');
 		return o;
 	})(super.BYTE_LENGTH);
-}
-
-/**
- * Rpath command, big endian.
- */
-export class RpathCommandBE extends RpathCommand {
-	declare public readonly ['constructor']: typeof RpathCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrBE;
-}
-
-/**
- * Rpath command, little endian.
- */
-export class RpathCommandLE extends RpathCommand {
-	declare public readonly ['constructor']: typeof RpathCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrBE;
 }

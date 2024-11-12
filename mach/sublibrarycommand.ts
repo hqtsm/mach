@@ -1,5 +1,5 @@
 import { Struct, structT, structU32 } from '../struct.ts';
-import { LcStr, LcStrBE } from './lcstr.ts';
+import { LcStr } from './lcstr.ts';
 
 /**
  * Sub library command.
@@ -37,38 +37,4 @@ export class SubLibraryCommand extends Struct {
 		o += structT(this, o, 'subLibrary', 'LcStr');
 		return o;
 	})(super.BYTE_LENGTH);
-}
-
-/**
- * Sub library command, big endian.
- */
-export class SubLibraryCommandBE extends SubLibraryCommand {
-	declare public readonly ['constructor']: typeof SubLibraryCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrBE;
-}
-
-/**
- * Sub library command, little endian.
- */
-export class SubLibraryCommandLE extends SubLibraryCommand {
-	declare public readonly ['constructor']: typeof SubLibraryCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LcStr = LcStrBE;
 }

@@ -31,27 +31,3 @@ export class LinkerOptionCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Linker option, big endian.
- */
-export class LinkerOptionCommandBE extends LinkerOptionCommand {
-	declare public readonly ['constructor']: typeof LinkerOptionCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Linker option, little endian.
- */
-export class LinkerOptionCommandLE extends LinkerOptionCommand {
-	declare public readonly ['constructor']: typeof LinkerOptionCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

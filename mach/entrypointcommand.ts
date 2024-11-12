@@ -37,27 +37,3 @@ export class EntryPointCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Entry point command, big endian.
- */
-export class EntryPointCommandBE extends EntryPointCommand {
-	declare public readonly ['constructor']: typeof EntryPointCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Entry point command, little endian.
- */
-export class EntryPointCommandLE extends EntryPointCommand {
-	declare public readonly ['constructor']: typeof EntryPointCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

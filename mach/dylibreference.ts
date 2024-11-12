@@ -25,27 +25,3 @@ export class DylibReference extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Reference symbol table entry, big endian.
- */
-export class DylibReferenceBE extends DylibReference {
-	declare public readonly ['constructor']: typeof DylibReferenceBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Reference symbol table entry, little endian.
- */
-export class DylibReferenceLE extends DylibReference {
-	declare public readonly ['constructor']: typeof DylibReferenceLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

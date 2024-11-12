@@ -37,27 +37,3 @@ export class LinkeditDataCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Linkedit data command, big endian.
- */
-export class LinkeditDataCommandBE extends LinkeditDataCommand {
-	declare public readonly ['constructor']: typeof LinkeditDataCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Linkedit data command, little endian.
- */
-export class LinkeditDataCommandLE extends LinkeditDataCommand {
-	declare public readonly ['constructor']: typeof LinkeditDataCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

@@ -24,25 +24,25 @@ export class Architecture {
 	constructor();
 
 	/**
-	 * Create architecture.
+	 * Create architecture with CPU type and subtype.
 	 *
 	 * @param type CPU type.
-	 * @param sub CPU subtype.
+	 * @param sub CPU subtype, defaults to `CPU_SUBTYPE_MULTIPLE`.
 	 */
-	constructor(type: number, sub?: number);
+	constructor(type: number, sub?: number | null);
 
 	/**
-	 * Create architecture.
+	 * Create architecture from fat architecture struct.
 	 *
 	 * @param archInFile FatArch|FatArch64 struct.
 	 */
 	constructor(archInFile: Readonly<FatArch | FatArch64>);
 
 	/**
-	 * Create architecture.
+	 * Create architecture from types or fat architecture struct.
 	 *
 	 * @param type CPU type or FatArch|FatArch64 struct.
-	 * @param sub CPU subtype.
+	 * @param sub CPU subtype if type is number.
 	 */
 	constructor(
 		type?: number | Readonly<FatArch | FatArch64>,

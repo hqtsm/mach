@@ -73,27 +73,3 @@ export class RoutinesCommand64 extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Routines command, 64-bit, big endian.
- */
-export class RoutinesCommand64BE extends RoutinesCommand64 {
-	declare public readonly ['constructor']: typeof RoutinesCommand64BE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Routines command, 64-bit, little endian.
- */
-export class RoutinesCommand64LE extends RoutinesCommand64 {
-	declare public readonly ['constructor']: typeof RoutinesCommand64LE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

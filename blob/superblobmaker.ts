@@ -19,7 +19,10 @@ export class SuperBlobMaker {
 	 * @param blob Blob.
 	 */
 	public add(type: number, blob: BlobCore): void {
-		this.#pieces.set(type, new BlobCore(blob.buffer, blob.byteOffset));
+		this.#pieces.set(
+			type,
+			new BlobCore(blob.buffer, blob.byteOffset, blob.littleEndian),
+		);
 	}
 
 	/**

@@ -31,27 +31,3 @@ export class UuidCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * UUID command, big endian.
- */
-export class UuidCommandBE extends UuidCommand {
-	declare public readonly ['constructor']: typeof UuidCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * UUID command, little endian.
- */
-export class UuidCommandLE extends UuidCommand {
-	declare public readonly ['constructor']: typeof UuidCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

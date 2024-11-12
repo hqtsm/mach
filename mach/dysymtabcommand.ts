@@ -133,27 +133,3 @@ export class DysymtabCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Dysymtab command, big endian.
- */
-export class DysymtabCommandBE extends DysymtabCommand {
-	declare public readonly ['constructor']: typeof DysymtabCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Dysymtab command, little endian.
- */
-export class DysymtabCommandLE extends DysymtabCommand {
-	declare public readonly ['constructor']: typeof DysymtabCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}

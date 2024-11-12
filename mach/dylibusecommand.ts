@@ -55,27 +55,3 @@ export class DylibUseCommand extends Struct {
 		return o;
 	})(super.BYTE_LENGTH);
 }
-
-/**
- * Dynamically linked shared library use command, big endian.
- */
-export class DylibUseCommandBE extends DylibUseCommand {
-	declare public readonly ['constructor']: typeof DylibUseCommandBE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = false;
-}
-
-/**
- * Dynamically linked shared library use command, little endian.
- */
-export class DylibUseCommandLE extends DylibUseCommand {
-	declare public readonly ['constructor']: typeof DylibUseCommandLE;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly LITTLE_ENDIAN = true;
-}
