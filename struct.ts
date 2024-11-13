@@ -312,7 +312,7 @@ export function structI64<T extends typeof Struct>(
 			this.dataView.setBigInt64(offset, value, le ?? this.littleEndian);
 		},
 	});
-	return 4;
+	return 8;
 }
 
 /**
