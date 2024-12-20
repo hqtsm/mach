@@ -18,15 +18,12 @@ export class MachOBase {
 	/**
 	 * Mach-O header.
 	 */
-	private mHeader:
-		| this['constructor']['MachHeader']['prototype']
-		| this['constructor']['MachHeader64']['prototype'];
+	private mHeader: MachHeader | MachHeader64;
 
 	/**
 	 * Create Mach-O base instance.
 	 */
 	constructor() {
-		const { MachHeader } = this.constructor;
 		this.mHeader = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
 	}
 
@@ -57,7 +54,6 @@ export class MachOBase {
 	 * @param header Mach-O header data.
 	 */
 	protected initHeader(header: BufferView): void {
-		const { MachHeader, MachHeader64 } = this.constructor;
 		const { buffer, byteOffset } = header;
 		const mhbe = new MachHeader(buffer, byteOffset);
 		switch (mhbe.magic) {
@@ -124,14 +120,4 @@ export class MachOBase {
 	protected get commandSize(): number {
 		return this.mHeader.sizeofcmds;
 	}
-
-	/**
-	 * MachHeader reference.
-	 */
-	public static readonly MachHeader = MachHeader;
-
-	/**
-	 * MachHeader64 reference.
-	 */
-	public static readonly MachHeader64 = MachHeader64;
 }
