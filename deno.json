@@ -67,7 +67,7 @@
 		]
 	},
 	"tasks": {
-		"test": "deno test --doc --parallel --shuffle --trace-leaks --coverage --clean --allow-read --unstable",
+		"test": "deno test --doc --parallel --shuffle --trace-leaks --coverage --clean --allow-read",
 		"docs": "deno doc --html mod.ts",
 		"lint": "deno lint --fix",
 		"linted": "deno lint",
