@@ -6,7 +6,7 @@
     "jsr:@deno/dnt@~0.41.3": "0.41.3",
     "jsr:@std/assert@0.223": "0.223.0",
     "jsr:@std/assert@0.226": "0.226.0",
-    "jsr:@std/assert@^1.0.7": "1.0.7",
+    "jsr:@std/assert@^1.0.10": "1.0.10",
     "jsr:@std/bytes@0.223": "0.223.0",
     "jsr:@std/fmt@0.223": "0.223.0",
     "jsr:@std/fmt@1": "1.0.3",
@@ -54,8 +54,8 @@
     "@std/assert@0.226.0": {
       "integrity": "0dfb5f7c7723c18cec118e080fec76ce15b4c31154b15ad2bd74822603ef75b3"
     },
-    "@std/assert@1.0.7": {
-      "integrity": "64ce9fac879e0b9f3042a89b3c3f8ccfc9c984391af19e2087513a79d73e28c3",
+    "@std/assert@1.0.10": {
+      "integrity": "59b5cbac5bd55459a19045d95cc7c2ff787b4f8527c0dd195078ff6f9481fbb3",
       "dependencies": [
         "jsr:@std/internal"
       ]
@@ -140,7 +140,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@deno/dnt@~0.41.3",
-      "jsr:@std/assert@^1.0.7"
+      "jsr:@std/assert@^1.0.10"
     ]
   }
 }
