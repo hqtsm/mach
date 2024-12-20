@@ -2,7 +2,6 @@ import { LITTLE_ENDIAN } from '@hqtsm/struct';
 import { MH_CIGAM, MH_CIGAM_64, MH_MAGIC, MH_MAGIC_64 } from '../const.ts';
 import { MachHeader } from '../mach/machheader.ts';
 import { MachHeader64 } from '../mach/machheader64.ts';
-import type { BufferView } from '../type.ts';
 
 /**
  * Common interface of Mach-O binaries features.
@@ -48,7 +47,7 @@ export class MachOBase {
 	 *
 	 * @param header Mach-O header data.
 	 */
-	protected initHeader(header: BufferView): void {
+	protected initHeader(header: ArrayBufferView): void {
 		const { buffer, byteOffset } = header;
 		const mhbe = new MachHeader(buffer, byteOffset);
 		switch (mhbe.magic) {
@@ -93,7 +92,7 @@ export class MachOBase {
 	 *
 	 * @param commands Mach-O commands data.
 	 */
-	protected initCommands(commands: BufferView): void {
+	protected initCommands(commands: ArrayBufferView): void {
 		// TODO
 		void commands;
 	}

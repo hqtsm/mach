@@ -1,6 +1,5 @@
 import { array, member, Uint8Ptr } from '@hqtsm/struct';
 import { CSMAGIC_BLOBWRAPPER } from '../const.ts';
-import type { BufferView } from '../type.ts';
 import { Blob } from './blob.ts';
 
 /**
@@ -55,7 +54,7 @@ export class BlobWrapper extends Blob {
 	 * @returns Blob.
 	 */
 	public static alloc(
-		content: Readonly<BufferView> | number = 0,
+		content: Readonly<ArrayBufferView> | number = 0,
 		magic = BlobWrapper.typeMagic,
 	): BlobWrapper {
 		const { BYTE_LENGTH } = BlobWrapper;

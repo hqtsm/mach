@@ -1,4 +1,3 @@
-import type { BufferView } from './type.ts';
 import {
 	CPU_SUBTYPE_POWERPC_7400,
 	CPU_SUBTYPE_POWERPC_970,
@@ -56,7 +55,7 @@ export function unhex(...hex: string[]): Uint8Array {
 
 export async function hash(
 	hashType: number,
-	data: Readonly<BufferView>,
+	data: Readonly<ArrayBufferView>,
 ): Promise<Uint8Array> {
 	let limit = -1;
 	let algo = '';
@@ -96,7 +95,7 @@ export async function hash(
 // deno-lint-ignore require-await
 export async function chunkedHashes(
 	hashType: number,
-	data: Readonly<BufferView>,
+	data: Readonly<ArrayBufferView>,
 	chunk: number,
 	offset = 0,
 	length = -1,
@@ -472,7 +471,7 @@ export async function readMachoFiles(
 }
 
 export function machoThin(
-	data: Readonly<BufferView>,
+	data: Readonly<ArrayBufferView>,
 	type: number,
 	subtype: number | null = null,
 ): Uint8Array {

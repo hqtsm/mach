@@ -1,4 +1,3 @@
-import type { BufferView } from '../type.ts';
 import { BlobCore } from './blobcore.ts';
 
 /**
@@ -30,7 +29,7 @@ export class Blob extends BlobCore {
 	 * @returns Blob.
 	 */
 	public static blobify(
-		content: Readonly<BufferView> | number = 0,
+		content: Readonly<ArrayBufferView> | number = 0,
 	): DataView {
 		const { BYTE_LENGTH } = Blob;
 		let view;

@@ -1,10 +1,4 @@
-import type {
-	BufferView,
-	File,
-	FileReadStats,
-	FileStats,
-	FileWriteStats,
-} from './type.ts';
+import type { File, FileReadStats, FileStats, FileWriteStats } from './type.ts';
 import { BLK_LIMIT, INT_LIMIT } from './const.ts';
 import { ranged } from './util.ts';
 
@@ -77,7 +71,7 @@ export class MemoryFile implements File {
 
 	// deno-lint-ignore require-await
 	public async read(
-		buffer: BufferView,
+		buffer: ArrayBufferView,
 		offset: number,
 		length: number,
 		position: number,
@@ -122,7 +116,7 @@ export class MemoryFile implements File {
 
 	// deno-lint-ignore require-await
 	public async write(
-		buffer: Readonly<BufferView>,
+		buffer: Readonly<ArrayBufferView>,
 		offset: number,
 		length: number,
 		position: number,

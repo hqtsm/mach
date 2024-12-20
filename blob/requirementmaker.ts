@@ -9,7 +9,6 @@ import {
 	opTrustedCert,
 	opTrustedCerts,
 } from '../const.ts';
-import type { BufferView } from '../type.ts';
 import { alignUp } from '../util.ts';
 import { Requirement } from './requirement.ts';
 import type { RequirementMakerLabel } from './requirementmakerlabel.ts';
@@ -67,7 +66,7 @@ export class RequirementMaker {
 	 *
 	 * @param data Buffer view, or uint32.
 	 */
-	public put(data: Readonly<BufferView> | number): void {
+	public put(data: Readonly<ArrayBufferView> | number): void {
 		if (typeof data === 'number') {
 			const a = this.alloc(4);
 			new DataView(a.buffer, a.byteOffset, 4).setUint32(0, data);
@@ -88,7 +87,7 @@ export class RequirementMaker {
 	 * @param length Length in bytes, null for view byte length.
 	 */
 	public putData(
-		data: Readonly<BufferView>,
+		data: Readonly<ArrayBufferView>,
 		length: number | null = null,
 	): void {
 		const a = new Uint8Array(
@@ -120,7 +119,7 @@ export class RequirementMaker {
 	 * @param slot Slot index.
 	 * @param digest SHA1 digest.
 	 */
-	public anchorDigest(slot: number, digest: Readonly<BufferView>): void {
+	public anchorDigest(slot: number, digest: Readonly<ArrayBufferView>): void {
 		this.put(opAnchorHash);
 		this.put(slot);
 		// SHA1 digest length:
@@ -171,7 +170,7 @@ export class RequirementMaker {
 	 *
 	 * @param digest Hash digest.
 	 */
-	public cdhash(digest: Readonly<BufferView>): void {
+	public cdhash(digest: Readonly<ArrayBufferView>): void {
 		this.put(opCDHash);
 		this.putData(digest);
 	}
@@ -193,7 +192,7 @@ export class RequirementMaker {
 	 * @param length Length in bytes, null for view byte length.
 	 */
 	public copy(
-		data: Readonly<BufferView>,
+		data: Readonly<ArrayBufferView>,
 		length: number | null = null,
 	): void {
 		const d = new Uint8Array(

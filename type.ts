@@ -1,29 +1,4 @@
 /**
- * Array buffer type, excluding similar incompatible types like typed arrays.
- */
-export type ArrayBufferReal = ArrayBufferLike & { BYTES_PER_ELEMENT?: never };
-
-/**
- * Buffer view.
- */
-export interface BufferView {
-	/**
-	 * Array buffer.
-	 */
-	readonly buffer: ArrayBufferReal;
-
-	/**
-	 * Byte length.
-	 */
-	readonly byteLength: number;
-
-	/**
-	 * Byte offset.
-	 */
-	readonly byteOffset: number;
-}
-
-/**
  * File stat.
  */
 export interface FileStats {
@@ -101,7 +76,7 @@ export interface FileReadable {
 	 * @returns Object with the number of bytes read.
 	 */
 	read(
-		buffer: Readonly<BufferView>,
+		buffer: ArrayBufferView,
 		offset: number,
 		length: number,
 		position: number,
@@ -122,7 +97,7 @@ export interface FileWritable {
 	 * @returns Object with the number of bytes written.
 	 */
 	write(
-		buffer: BufferView,
+		buffer: Readonly<ArrayBufferView>,
 		offset: number,
 		length: number,
 		position: number,

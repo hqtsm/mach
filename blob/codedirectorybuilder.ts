@@ -6,7 +6,6 @@ import {
 	kSecCodeSignatureHashSHA512,
 	UINT32_MAX,
 } from '../const.ts';
-import type { BufferView } from '../type.ts';
 import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
 
@@ -199,7 +198,7 @@ export class CodeDirectoryBuilder {
 	 * @param slot Slot index, 1 indexed.
 	 * @param hash Hash data.
 	 */
-	public setSpecialSlot(slot: number, hash: Readonly<BufferView>): void {
+	public setSpecialSlot(slot: number, hash: Readonly<ArrayBufferView>): void {
 		const slots = this.#special;
 		const { digestLength } = this;
 		const digest = slots.get(slot) || new Uint8Array(digestLength);
@@ -232,7 +231,7 @@ export class CodeDirectoryBuilder {
 	 * @param slot Slot index, 0 indexed.
 	 * @param hash Hash data.
 	 */
-	public setCodeSlot(slot: number, hash: Readonly<BufferView>): void {
+	public setCodeSlot(slot: number, hash: Readonly<ArrayBufferView>): void {
 		const slots = this.#code;
 		const { codeSlots } = this;
 		if (!(slot < codeSlots)) {
