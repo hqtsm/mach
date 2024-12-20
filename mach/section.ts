@@ -1,4 +1,11 @@
-import { Struct, structI8A, structU32 } from '../struct.ts';
+import {
+	type Arr,
+	array,
+	Int8Ptr,
+	member,
+	Struct,
+	uint32,
+} from '@hqtsm/struct';
 
 /**
  * Section, 32-bit.
@@ -9,12 +16,12 @@ export class Section extends Struct {
 	/**
 	 * Section name.
 	 */
-	declare public readonly sectname: Int8Array;
+	declare public sectname: Arr<number>;
 
 	/**
 	 * Segment name.
 	 */
-	declare public readonly segname: Int8Array;
+	declare public segname: Arr<number>;
 
 	/**
 	 * Memory address.
@@ -61,21 +68,17 @@ export class Section extends Struct {
 	 */
 	declare public reserved2: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structI8A(this, o, 'sectname', 16);
-		o += structI8A(this, o, 'segname', 16);
-		o += structU32(this, o, 'addr');
-		o += structU32(this, o, 'size');
-		o += structU32(this, o, 'offset');
-		o += structU32(this, o, 'align');
-		o += structU32(this, o, 'reloff');
-		o += structU32(this, o, 'nreloc');
-		o += structU32(this, o, 'flags');
-		o += structU32(this, o, 'reserved1');
-		o += structU32(this, o, 'reserved2');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		member(array(Int8Ptr, 16), this, 'sectname');
+		member(array(Int8Ptr, 16), this, 'segname');
+		uint32(this, 'addr');
+		uint32(this, 'size');
+		uint32(this, 'offset');
+		uint32(this, 'align');
+		uint32(this, 'reloff');
+		uint32(this, 'nreloc');
+		uint32(this, 'flags');
+		uint32(this, 'reserved1');
+		uint32(this, 'reserved2');
+	}
 }

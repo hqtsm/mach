@@ -1,5 +1,4 @@
 import type { BufferView } from '../type.ts';
-
 import { BlobCore } from './blobcore.ts';
 
 /**

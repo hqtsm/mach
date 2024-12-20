@@ -1,5 +1,4 @@
-import { Struct, structU32 } from '../struct.ts';
-import type { ArrayBufferReal } from '../type.ts';
+import { type ArrayBufferReal, Struct, uint32BE } from '@hqtsm/struct';
 
 /**
  * Polymorphic memory blobs with magics numbers.
@@ -131,12 +130,8 @@ export class BlobCore extends Struct {
 			: new Type(this.buffer, this.byteOffset + offset, littleEndian);
 	}
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'mMagic' as never, false);
-		o += structU32(this, o, 'mLength' as never, false);
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32BE(this, 'mMagic' as never);
+		uint32BE(this, 'mLength' as never);
+	}
 }

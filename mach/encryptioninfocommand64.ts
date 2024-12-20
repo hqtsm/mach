@@ -1,4 +1,4 @@
-import { Struct, structU32 } from '../struct.ts';
+import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Encryption info command, 64-bit.
@@ -36,16 +36,12 @@ export class EncryptionInfoCommand64 extends Struct {
 	 */
 	declare public pad: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'cmd');
-		o += structU32(this, o, 'cmdsize');
-		o += structU32(this, o, 'cryptoff');
-		o += structU32(this, o, 'cryptsize');
-		o += structU32(this, o, 'cryptid');
-		o += structU32(this, o, 'pad');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
+		uint32(this, 'cryptoff');
+		uint32(this, 'cryptsize');
+		uint32(this, 'cryptid');
+		uint32(this, 'pad');
+	}
 }

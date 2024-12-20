@@ -1,5 +1,4 @@
 import { kSecCodeMagicDRList } from '../const.ts';
-
 import { SuperBlob } from './superblob.ts';
 
 /**

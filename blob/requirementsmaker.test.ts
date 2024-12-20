@@ -1,11 +1,9 @@
 import { assertEquals } from '@std/assert';
-
 import {
 	kSecDesignatedRequirementType,
 	kSecHostRequirementType,
 } from '../const.ts';
 import { unhex } from '../util.spec.ts';
-
 import { Requirement } from './requirement.ts';
 import { RequirementsMaker } from './requirementsmaker.ts';
 

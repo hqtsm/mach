@@ -1,4 +1,4 @@
-import { Struct, structU16, structU32 } from '../struct.ts';
+import { Struct, uint16, uint32 } from '@hqtsm/struct';
 
 /**
  * Data in code entry.
@@ -21,13 +21,9 @@ export class DataInCodeEntry extends Struct {
 	 */
 	declare public kind: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'offset');
-		o += structU16(this, o, 'length');
-		o += structU16(this, o, 'kind');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'offset');
+		uint16(this, 'length');
+		uint16(this, 'kind');
+	}
 }

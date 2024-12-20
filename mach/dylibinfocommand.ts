@@ -1,4 +1,4 @@
-import { Struct, structU32 } from '../struct.ts';
+import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Dylib info command.
@@ -66,22 +66,18 @@ export class DylibInfoCommand extends Struct {
 	 */
 	declare public exportSize: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'cmd');
-		o += structU32(this, o, 'cmdsize');
-		o += structU32(this, o, 'rebaseOff');
-		o += structU32(this, o, 'rebaseSize');
-		o += structU32(this, o, 'bindOff');
-		o += structU32(this, o, 'bindSize');
-		o += structU32(this, o, 'weakBindOff');
-		o += structU32(this, o, 'weakBindSize');
-		o += structU32(this, o, 'lazyBindOff');
-		o += structU32(this, o, 'lazyBindSize');
-		o += structU32(this, o, 'exportOff');
-		o += structU32(this, o, 'exportSize');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
+		uint32(this, 'rebaseOff');
+		uint32(this, 'rebaseSize');
+		uint32(this, 'bindOff');
+		uint32(this, 'bindSize');
+		uint32(this, 'weakBindOff');
+		uint32(this, 'weakBindSize');
+		uint32(this, 'lazyBindOff');
+		uint32(this, 'lazyBindSize');
+		uint32(this, 'exportOff');
+		uint32(this, 'exportSize');
+	}
 }

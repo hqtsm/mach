@@ -1,5 +1,4 @@
 import { assertEquals } from '@std/assert';
-
 import { DylibUseCommand } from './dylibusecommand.ts';
 
 Deno.test('BYTE_LENGTH', () => {

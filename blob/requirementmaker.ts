@@ -11,7 +11,6 @@ import {
 } from '../const.ts';
 import type { BufferView } from '../type.ts';
 import { alignUp } from '../util.ts';
-
 import { Requirement } from './requirement.ts';
 import type { RequirementMakerLabel } from './requirementmakerlabel.ts';
 

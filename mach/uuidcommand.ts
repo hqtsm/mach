@@ -1,4 +1,11 @@
-import { Struct, structU32, structU8A } from '../struct.ts';
+import {
+	type Arr,
+	array,
+	member,
+	Struct,
+	uint32,
+	Uint8Ptr,
+} from '@hqtsm/struct';
 
 /**
  * UUID command.
@@ -19,15 +26,11 @@ export class UuidCommand extends Struct {
 	/**
 	 * 128-bit UUID.
 	 */
-	declare public readonly uuid: Uint8Array;
+	declare public uuid: Arr<number>;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'cmd');
-		o += structU32(this, o, 'cmdsize');
-		o += structU8A(this, o, 'uuid', 16);
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
+		member(array(Uint8Ptr, 16), this, 'uuid');
+	}
 }

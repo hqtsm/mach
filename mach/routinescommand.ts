@@ -1,4 +1,4 @@
-import { Struct, structU32 } from '../struct.ts';
+import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Routines command, 32-bit.
@@ -56,20 +56,16 @@ export class RoutinesCommand extends Struct {
 	 */
 	declare public reserved6: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'cmd');
-		o += structU32(this, o, 'cmdsize');
-		o += structU32(this, o, 'initAddress');
-		o += structU32(this, o, 'initModule');
-		o += structU32(this, o, 'reserved1');
-		o += structU32(this, o, 'reserved2');
-		o += structU32(this, o, 'reserved3');
-		o += structU32(this, o, 'reserved4');
-		o += structU32(this, o, 'reserved5');
-		o += structU32(this, o, 'reserved6');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
+		uint32(this, 'initAddress');
+		uint32(this, 'initModule');
+		uint32(this, 'reserved1');
+		uint32(this, 'reserved2');
+		uint32(this, 'reserved3');
+		uint32(this, 'reserved4');
+		uint32(this, 'reserved5');
+		uint32(this, 'reserved6');
+	}
 }

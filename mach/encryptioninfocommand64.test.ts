@@ -1,5 +1,4 @@
 import { assertEquals } from '@std/assert';
-
 import { EncryptionInfoCommand64 } from './encryptioninfocommand64.ts';
 
 Deno.test('BYTE_LENGTH', () => {

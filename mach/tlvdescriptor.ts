@@ -1,4 +1,4 @@
-import { Struct, structU32 } from '../struct.ts';
+import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Thread local variable entry, 64-bit.
@@ -21,13 +21,9 @@ export class TlvDescriptor extends Struct {
 	 */
 	declare public offset: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'thunk');
-		o += structU32(this, o, 'key');
-		o += structU32(this, o, 'offset');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'thunk');
+		uint32(this, 'key');
+		uint32(this, 'offset');
+	}
 }

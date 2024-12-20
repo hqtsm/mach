@@ -1,4 +1,12 @@
-import { Struct, structI8A, structU32, structU64 } from '../struct.ts';
+import {
+	type Arr,
+	array,
+	Int8Ptr,
+	member,
+	Struct,
+	uint32,
+	uint64,
+} from '@hqtsm/struct';
 
 /**
  * Note command.
@@ -19,7 +27,7 @@ export class NoteCommand extends Struct {
 	/**
 	 * Owner name.
 	 */
-	declare public readonly dataOwner: Int8Array;
+	declare public dataOwner: Arr<number>;
 
 	/**
 	 * File offset.
@@ -31,15 +39,11 @@ export class NoteCommand extends Struct {
 	 */
 	declare public size: bigint;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'cmd');
-		o += structU32(this, o, 'cmdsize');
-		o += structI8A(this, o, 'dataOwner', 16);
-		o += structU64(this, o, 'offset');
-		o += structU64(this, o, 'size');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
+		member(array(Int8Ptr, 16), this, 'dataOwner');
+		uint64(this, 'offset');
+		uint64(this, 'size');
+	}
 }

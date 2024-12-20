@@ -1,5 +1,4 @@
-import { structU32 } from '../struct.ts';
-
+import { dataView, uint32BE } from '@hqtsm/struct';
 import { Blob } from './blob.ts';
 import { BlobCore } from './blobcore.ts';
 
@@ -32,7 +31,9 @@ export class SuperBlob extends Blob {
 	 * @returns Type.
 	 */
 	public type(index: number): number {
-		return this.dataView.getUint32(12 + 8 * index);
+		return dataView(this.buffer).getUint32(
+			this.byteOffset + 12 + 8 * index,
+		);
 	}
 
 	/**
@@ -42,7 +43,9 @@ export class SuperBlob extends Blob {
 	 * @returns Blob or null if no offset in index.
 	 */
 	public blob(index: number): BlobCore | null {
-		const offset = this.dataView.getUint32(16 + 8 * index);
+		const offset = dataView(this.buffer).getUint32(
+			this.byteOffset + 16 + 8 * index,
+		);
 		return offset ? this.at(BlobCore, offset) : null;
 	}
 
@@ -71,11 +74,7 @@ export class SuperBlob extends Blob {
 		return this.mCount;
 	}
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'mCount' as never, false);
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32BE(this, 'mCount' as never);
+	}
 }

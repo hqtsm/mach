@@ -1,4 +1,4 @@
-import { Struct, structU32 } from '../struct.ts';
+import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Fat header.
@@ -16,12 +16,8 @@ export class FatHeader extends Struct {
 	 */
 	declare public nfatArch: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'magic');
-		o += structU32(this, o, 'nfatArch');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'magic');
+		uint32(this, 'nfatArch');
+	}
 }

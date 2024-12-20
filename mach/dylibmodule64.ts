@@ -1,4 +1,4 @@
-import { Struct, structU32, structU64 } from '../struct.ts';
+import { Struct, uint32, uint64 } from '@hqtsm/struct';
 
 /**
  * Dylib module table entry, 64-bit.
@@ -73,23 +73,19 @@ export class DylibModule64 extends Struct {
 	 */
 	declare public objcModuleInfoAddr: bigint;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'moduleName');
-		o += structU32(this, o, 'iextdefsym');
-		o += structU32(this, o, 'nextdefsym');
-		o += structU32(this, o, 'irefsym');
-		o += structU32(this, o, 'nrefsym');
-		o += structU32(this, o, 'ilocalsym');
-		o += structU32(this, o, 'nlocalsym');
-		o += structU32(this, o, 'iextrel');
-		o += structU32(this, o, 'nextrel');
-		o += structU32(this, o, 'iinitIterm');
-		o += structU32(this, o, 'ninitNterm');
-		o += structU32(this, o, 'objcModuleInfoSize');
-		o += structU64(this, o, 'objcModuleInfoAddr');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'moduleName');
+		uint32(this, 'iextdefsym');
+		uint32(this, 'nextdefsym');
+		uint32(this, 'irefsym');
+		uint32(this, 'nrefsym');
+		uint32(this, 'ilocalsym');
+		uint32(this, 'nlocalsym');
+		uint32(this, 'iextrel');
+		uint32(this, 'nextrel');
+		uint32(this, 'iinitIterm');
+		uint32(this, 'ninitNterm');
+		uint32(this, 'objcModuleInfoSize');
+		uint64(this, 'objcModuleInfoAddr');
+	}
 }

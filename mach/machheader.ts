@@ -1,4 +1,4 @@
-import { Struct, structI32, structU32 } from '../struct.ts';
+import { int32, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Mach-O header, 32-bit.
@@ -41,17 +41,13 @@ export class MachHeader extends Struct {
 	 */
 	declare public flags: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'magic');
-		o += structI32(this, o, 'cputype');
-		o += structI32(this, o, 'cpusubtype');
-		o += structU32(this, o, 'filetype');
-		o += structU32(this, o, 'ncmds');
-		o += structU32(this, o, 'sizeofcmds');
-		o += structU32(this, o, 'flags');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'magic');
+		int32(this, 'cputype');
+		int32(this, 'cpusubtype');
+		uint32(this, 'filetype');
+		uint32(this, 'ncmds');
+		uint32(this, 'sizeofcmds');
+		uint32(this, 'flags');
+	}
 }

@@ -1,4 +1,4 @@
-import { Struct, structT, structU32 } from '../struct.ts';
+import { member, Struct, uint32 } from '@hqtsm/struct';
 import { LcStr } from './lcstr.ts';
 
 /**
@@ -20,20 +20,11 @@ export class RpathCommand extends Struct {
 	/**
 	 * Path to add to run path.
 	 */
-	declare public readonly path: this['constructor']['LcStr']['prototype'];
+	declare public path: LcStr;
 
-	/**
-	 * LcStr reference.
-	 */
-	public static readonly LcStr = LcStr;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'cmd');
-		o += structU32(this, o, 'cmdsize');
-		o += structT(this, o, 'path', 'LcStr');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
+		member(LcStr, this, 'path');
+	}
 }

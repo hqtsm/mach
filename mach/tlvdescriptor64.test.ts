@@ -1,5 +1,4 @@
 import { assertEquals } from '@std/assert';
-
 import { TlvDescriptor64 } from './tlvdescriptor64.ts';
 
 Deno.test('BYTE_LENGTH', () => {

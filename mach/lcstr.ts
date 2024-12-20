@@ -1,9 +1,9 @@
-import { Struct, structU32 } from '../struct.ts';
+import { uint32, Union } from '@hqtsm/struct';
 
 /**
  * Load command string union.
  */
-export class LcStr extends Struct {
+export class LcStr extends Union {
 	declare public readonly ['constructor']: typeof LcStr;
 
 	/**
@@ -11,12 +11,8 @@ export class LcStr extends Struct {
 	 */
 	declare public offset: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'offset');
+	static {
+		uint32(this, 'offset');
 		// Union because there was a 32-bit char *ptr.
-		return o;
-	})(super.BYTE_LENGTH);
+	}
 }

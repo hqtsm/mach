@@ -1,4 +1,4 @@
-import { Struct, structU32 } from '../struct.ts';
+import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Minimum OS build version command.
@@ -39,13 +39,12 @@ export class BuildVersionCommand extends Struct {
 	/**
 	 * @inheritdoc
 	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'cmd');
-		o += structU32(this, o, 'cmdsize');
-		o += structU32(this, o, 'platform');
-		o += structU32(this, o, 'version');
-		o += structU32(this, o, 'sdk');
-		o += structU32(this, o, 'ntools');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
+		uint32(this, 'platform');
+		uint32(this, 'version');
+		uint32(this, 'sdk');
+		uint32(this, 'ntools');
+	}
 }

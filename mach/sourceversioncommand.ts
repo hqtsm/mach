@@ -1,4 +1,4 @@
-import { Struct, structU32, structU64 } from '../struct.ts';
+import { Struct, uint32, uint64 } from '@hqtsm/struct';
 
 /**
  * Source version command.
@@ -21,13 +21,9 @@ export class SourceVersionCommand extends Struct {
 	 */
 	declare public version: bigint;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'cmd');
-		o += structU32(this, o, 'cmdsize');
-		o += structU64(this, o, 'version');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
+		uint64(this, 'version');
+	}
 }

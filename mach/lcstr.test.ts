@@ -1,5 +1,4 @@
 import { assertEquals } from '@std/assert';
-
 import { LcStr } from './lcstr.ts';
 
 Deno.test('BYTE_LENGTH', () => {

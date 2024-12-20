@@ -1,4 +1,4 @@
-import { Struct, structT, structU32 } from '../struct.ts';
+import { member, Struct, uint32 } from '@hqtsm/struct';
 import { LcStr } from './lcstr.ts';
 
 /**
@@ -20,7 +20,7 @@ export class PreloadDylibCommand extends Struct {
 	/**
 	 * Path name.
 	 */
-	declare public readonly name: this['constructor']['LcStr']['prototype'];
+	declare public name: LcStr;
 
 	/**
 	 * Number of modules.
@@ -30,23 +30,13 @@ export class PreloadDylibCommand extends Struct {
 	/**
 	 * Bit vector of linked modules.
 	 */
-	declare public readonly linkedModules:
-		this['constructor']['LcStr']['prototype'];
+	declare public linkedModules: LcStr;
 
-	/**
-	 * LcStr reference.
-	 */
-	public static readonly LcStr = LcStr;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'cmd');
-		o += structU32(this, o, 'cmdsize');
-		o += structT(this, o, 'name', 'LcStr');
-		o += structU32(this, o, 'nmodules');
-		o += structT(this, o, 'linkedModules', 'LcStr');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
+		member(LcStr, this, 'name');
+		uint32(this, 'nmodules');
+		member(LcStr, this, 'linkedModules');
+	}
 }

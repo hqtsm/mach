@@ -1,8 +1,6 @@
 import { assertEquals } from '@std/assert';
-
 import { unhex } from '../util.spec.ts';
 import { CSMAGIC_BLOBWRAPPER } from '../const.ts';
-
 import { BlobWrapper } from './blobwrapper.ts';
 
 Deno.test('BYTE_LENGTH', () => {

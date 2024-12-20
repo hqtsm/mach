@@ -1,4 +1,4 @@
-import { Struct, structU32 } from '../struct.ts';
+import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Symtab command.
@@ -36,16 +36,12 @@ export class SymtabCommand extends Struct {
 	 */
 	declare public strsize: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'cmd');
-		o += structU32(this, o, 'cmdsize');
-		o += structU32(this, o, 'symoff');
-		o += structU32(this, o, 'nsyms');
-		o += structU32(this, o, 'stroff');
-		o += structU32(this, o, 'strsize');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
+		uint32(this, 'symoff');
+		uint32(this, 'nsyms');
+		uint32(this, 'stroff');
+		uint32(this, 'strsize');
+	}
 }

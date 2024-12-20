@@ -1,5 +1,4 @@
 import { kSecCodeMagicRequirementSet } from '../const.ts';
-
 import { SuperBlob } from './superblob.ts';
 
 /**

@@ -1,4 +1,4 @@
-import { Struct, structU32 } from '../struct.ts';
+import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Dynamically linked shared library use command.
@@ -41,17 +41,13 @@ export class DylibUseCommand extends Struct {
 	 */
 	declare public flags: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'cmd');
-		o += structU32(this, o, 'cmdsize');
-		o += structU32(this, o, 'nameoff');
-		o += structU32(this, o, 'marker');
-		o += structU32(this, o, 'currentVersion');
-		o += structU32(this, o, 'compatVersion');
-		o += structU32(this, o, 'flags');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
+		uint32(this, 'nameoff');
+		uint32(this, 'marker');
+		uint32(this, 'currentVersion');
+		uint32(this, 'compatVersion');
+		uint32(this, 'flags');
+	}
 }

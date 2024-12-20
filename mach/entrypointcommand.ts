@@ -1,4 +1,4 @@
-import { Struct, structU32, structU64 } from '../struct.ts';
+import { Struct, uint32, uint64 } from '@hqtsm/struct';
 
 /**
  * Entry point command.
@@ -26,14 +26,10 @@ export class EntryPointCommand extends Struct {
 	 */
 	declare public stacksize: bigint;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'cmd');
-		o += structU32(this, o, 'cmdsize');
-		o += structU64(this, o, 'entryoff');
-		o += structU64(this, o, 'stacksize');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
+		uint64(this, 'entryoff');
+		uint64(this, 'stacksize');
+	}
 }

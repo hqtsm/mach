@@ -1,4 +1,12 @@
-import { Struct, structI32, structI8A, structU32 } from '../struct.ts';
+import {
+	type Arr,
+	array,
+	int32,
+	Int8Ptr,
+	member,
+	Struct,
+	uint32,
+} from '@hqtsm/struct';
 
 /**
  * Segment command, 32-bit.
@@ -19,7 +27,7 @@ export class SegmentCommand extends Struct {
 	/**
 	 * Segment name.
 	 */
-	declare public readonly segname: Int8Array;
+	declare public segname: Arr<number>;
 
 	/**
 	 * Virtual memory address.
@@ -61,21 +69,17 @@ export class SegmentCommand extends Struct {
 	 */
 	declare public flags: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'cmd');
-		o += structU32(this, o, 'cmdsize');
-		o += structI8A(this, o, 'segname', 16);
-		o += structU32(this, o, 'vmaddr');
-		o += structU32(this, o, 'vmsize');
-		o += structU32(this, o, 'fileoff');
-		o += structU32(this, o, 'filesize');
-		o += structI32(this, o, 'maxprot');
-		o += structI32(this, o, 'initprot');
-		o += structU32(this, o, 'nsects');
-		o += structU32(this, o, 'flags');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
+		member(array(Int8Ptr, 16), this, 'segname');
+		uint32(this, 'vmaddr');
+		uint32(this, 'vmsize');
+		uint32(this, 'fileoff');
+		uint32(this, 'filesize');
+		int32(this, 'maxprot');
+		int32(this, 'initprot');
+		uint32(this, 'nsects');
+		uint32(this, 'flags');
+	}
 }

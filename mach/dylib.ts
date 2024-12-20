@@ -1,4 +1,4 @@
-import { Struct, structT, structU32 } from '../struct.ts';
+import { member, Struct, uint32 } from '@hqtsm/struct';
 import { LcStr } from './lcstr.ts';
 
 /**
@@ -10,7 +10,7 @@ export class Dylib extends Struct {
 	/**
 	 * Pathname.
 	 */
-	declare public readonly name: this['constructor']['LcStr']['prototype'];
+	declare public name: LcStr;
 
 	/**
 	 * Build timestamp.
@@ -27,19 +27,10 @@ export class Dylib extends Struct {
 	 */
 	declare public compatibilityVersion: number;
 
-	/**
-	 * LcStr reference.
-	 */
-	public static readonly LcStr = LcStr;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structT(this, o, 'name', 'LcStr');
-		o += structU32(this, o, 'timestamp');
-		o += structU32(this, o, 'currentVersion');
-		o += structU32(this, o, 'compatibilityVersion');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		member(LcStr, this, 'name');
+		uint32(this, 'timestamp');
+		uint32(this, 'currentVersion');
+		uint32(this, 'compatibilityVersion');
+	}
 }

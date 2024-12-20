@@ -1,8 +1,6 @@
 import { assertEquals } from '@std/assert';
-
 import { kSecCodeMagicRequirement, opAnd, opOr } from '../const.ts';
 import { unhex } from '../util.spec.ts';
-
 import { Requirement } from './requirement.ts';
 import { RequirementMaker } from './requirementmaker.ts';
 import { RequirementMakerChain } from './requirementmakerchain.ts';

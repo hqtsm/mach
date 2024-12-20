@@ -1,4 +1,4 @@
-import { Struct, structU24, structU8 } from '../struct.ts';
+import { Struct, uint24, uint8 } from '@hqtsm/struct';
 
 /**
  * Reference symbol table entry.
@@ -16,12 +16,8 @@ export class DylibReference extends Struct {
 	 */
 	declare public flags: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU24(this, o, 'isym');
-		o += structU8(this, o, 'flags');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint24(this, 'isym');
+		uint8(this, 'flags');
+	}
 }

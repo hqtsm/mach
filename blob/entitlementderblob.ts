@@ -1,5 +1,4 @@
 import { kSecCodeMagicEntitlementDER } from '../const.ts';
-
 import { Blob } from './blob.ts';
 
 /**

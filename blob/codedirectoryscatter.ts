@@ -1,4 +1,4 @@
-import { Struct, structU32, structU64 } from '../struct.ts';
+import { Struct, uint32BE, uint64BE } from '@hqtsm/struct';
 
 /**
  * CodeDirectory scatter vector element.
@@ -26,14 +26,10 @@ export class CodeDirectoryScatter extends Struct {
 	 */
 	declare public spare: bigint;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'count', false);
-		o += structU32(this, o, 'base', false);
-		o += structU64(this, o, 'targetOffset', false);
-		o += structU64(this, o, 'spare', false);
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32BE(this, 'count');
+		uint32BE(this, 'base');
+		uint64BE(this, 'targetOffset');
+		uint64BE(this, 'spare');
+	}
 }

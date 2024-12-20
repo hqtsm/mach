@@ -7,7 +7,6 @@ import {
 	UINT32_MAX,
 } from '../const.ts';
 import type { BufferView } from '../type.ts';
-
 import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
 

@@ -1,5 +1,4 @@
 import { assertEquals } from '@std/assert';
-
 import { SegmentCommand64 } from './segmentcommand64.ts';
 
 Deno.test('BYTE_LENGTH', () => {

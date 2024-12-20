@@ -1,4 +1,4 @@
-import { Struct, structU32 } from '../struct.ts';
+import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Two-level namespace lookup hints table command.
@@ -26,14 +26,10 @@ export class TwolevelHintsCommand extends Struct {
 	 */
 	declare public nhints: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'cmd');
-		o += structU32(this, o, 'cmdsize');
-		o += structU32(this, o, 'offset');
-		o += structU32(this, o, 'nhints');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
+		uint32(this, 'offset');
+		uint32(this, 'nhints');
+	}
 }

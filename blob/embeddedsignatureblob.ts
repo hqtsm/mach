@@ -1,5 +1,4 @@
 import { kSecCodeMagicEmbeddedSignature } from '../const.ts';
-
 import { SuperBlob } from './superblob.ts';
 
 /**

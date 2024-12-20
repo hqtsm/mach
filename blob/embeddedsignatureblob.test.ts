@@ -1,5 +1,4 @@
 import { assertEquals } from '@std/assert';
-
 import { fixtureMachos, machoThin, readMachoFiles } from '../util.spec.ts';
 import {
 	cdAlternateCodeDirectorySlots,
@@ -9,7 +8,6 @@ import {
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureLinkerSigned,
 } from '../const.ts';
-
 import { createCodeDirectories } from './codedirectorybuilder.spec.ts';
 import type { CodeDirectory } from './codedirectory.ts';
 import { EmbeddedSignatureBlobMaker } from './embeddedsignatureblobmaker.ts';

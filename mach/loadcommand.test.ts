@@ -1,5 +1,4 @@
 import { assertEquals } from '@std/assert';
-
 import { LoadCommand } from './loadcommand.ts';
 
 Deno.test('BYTE_LENGTH', () => {

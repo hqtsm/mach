@@ -1,5 +1,4 @@
 import { assertEquals } from '@std/assert';
-
 import { RoutinesCommand } from './routinescommand.ts';
 
 Deno.test('BYTE_LENGTH', () => {

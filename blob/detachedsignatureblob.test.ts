@@ -1,5 +1,4 @@
 import { assertEquals } from '@std/assert';
-
 import { DetachedSignatureBlob } from './detachedsignatureblob.ts';
 
 Deno.test('BYTE_LENGTH', () => {

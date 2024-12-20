@@ -1,8 +1,6 @@
 import { assertEquals } from '@std/assert';
-
 import { unhex } from '../util.spec.ts';
 import { kSecCodeMagicEntitlementDER } from '../const.ts';
-
 import { EntitlementDERBlob } from './entitlementderblob.ts';
 
 Deno.test('BYTE_LENGTH', () => {

@@ -1,6 +1,5 @@
+import { uint32BE } from '@hqtsm/struct';
 import { kSecCodeMagicRequirement } from '../const.ts';
-import { structU32 } from '../struct.ts';
-
 import { Blob } from './blob.ts';
 
 /**
@@ -34,11 +33,7 @@ export class Requirement extends Blob {
 	 */
 	public static readonly lwcrForm = 2;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'kind', false);
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32BE(this, 'kind');
+	}
 }

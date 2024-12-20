@@ -1,8 +1,6 @@
 import { assert } from '@std/assert';
-
 import { Blob } from './blob.ts';
 import { SuperBlobMaker } from './superblobmaker.ts';
-
 import * as mod from './mod.ts';
 
 Deno.test('typeMagic', () => {

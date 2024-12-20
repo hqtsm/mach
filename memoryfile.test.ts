@@ -1,7 +1,5 @@
 // import { open } from 'node:fs/promises';
-
 import { assertEquals } from '@std/assert';
-
 import { MemoryFile } from './memoryfile.ts';
 // import type { FileLike } from './type.ts';
 

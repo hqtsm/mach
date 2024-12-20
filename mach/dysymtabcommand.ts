@@ -1,4 +1,4 @@
-import { Struct, structU32 } from '../struct.ts';
+import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Dysymtab command.
@@ -106,30 +106,26 @@ export class DysymtabCommand extends Struct {
 	 */
 	declare public nlocrel: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'cmd');
-		o += structU32(this, o, 'cmdsize');
-		o += structU32(this, o, 'ilocalsym');
-		o += structU32(this, o, 'nlocalsym');
-		o += structU32(this, o, 'iextdefsym');
-		o += structU32(this, o, 'nextdefsym');
-		o += structU32(this, o, 'iundefsym');
-		o += structU32(this, o, 'nundefsym');
-		o += structU32(this, o, 'tocoff');
-		o += structU32(this, o, 'ntoc');
-		o += structU32(this, o, 'modtaboff');
-		o += structU32(this, o, 'nmodtab');
-		o += structU32(this, o, 'extrefsymoff');
-		o += structU32(this, o, 'nextrefsyms');
-		o += structU32(this, o, 'indirectsymoff');
-		o += structU32(this, o, 'nindirectsyms');
-		o += structU32(this, o, 'extreloff');
-		o += structU32(this, o, 'nextrel');
-		o += structU32(this, o, 'locreloff');
-		o += structU32(this, o, 'nlocrel');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
+		uint32(this, 'ilocalsym');
+		uint32(this, 'nlocalsym');
+		uint32(this, 'iextdefsym');
+		uint32(this, 'nextdefsym');
+		uint32(this, 'iundefsym');
+		uint32(this, 'nundefsym');
+		uint32(this, 'tocoff');
+		uint32(this, 'ntoc');
+		uint32(this, 'modtaboff');
+		uint32(this, 'nmodtab');
+		uint32(this, 'extrefsymoff');
+		uint32(this, 'nextrefsyms');
+		uint32(this, 'indirectsymoff');
+		uint32(this, 'nindirectsyms');
+		uint32(this, 'extreloff');
+		uint32(this, 'nextrel');
+		uint32(this, 'locreloff');
+		uint32(this, 'nlocrel');
+	}
 }

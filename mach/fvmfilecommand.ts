@@ -1,4 +1,4 @@
-import { Struct, structT, structU32 } from '../struct.ts';
+import { member, Struct, uint32 } from '@hqtsm/struct';
 import { LcStr } from './lcstr.ts';
 
 /**
@@ -20,26 +20,17 @@ export class FvmfileCommand extends Struct {
 	/**
 	 * File pathname.
 	 */
-	declare public readonly name: this['constructor']['LcStr']['prototype'];
+	declare public name: LcStr;
 
 	/**
 	 * File virtual address.
 	 */
 	declare public headerAddr: number;
 
-	/**
-	 * LcStr reference.
-	 */
-	public static readonly LcStr = LcStr;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'cmd');
-		o += structU32(this, o, 'cmdsize');
-		o += structT(this, o, 'name', 'LcStr');
-		o += structU32(this, o, 'headerAddr');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
+		member(LcStr, this, 'name');
+		uint32(this, 'headerAddr');
+	}
 }

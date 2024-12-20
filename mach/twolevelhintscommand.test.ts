@@ -1,5 +1,4 @@
 import { assertEquals } from '@std/assert';
-
 import { TwolevelHintsCommand } from './twolevelhintscommand.ts';
 
 Deno.test('BYTE_LENGTH', () => {

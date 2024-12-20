@@ -1,4 +1,4 @@
-import { Struct, structU32 } from '../struct.ts';
+import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Thread command.
@@ -16,17 +16,13 @@ export class ThreadCommand extends Struct {
 	 */
 	declare public cmdsize: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'cmd');
-		o += structU32(this, o, 'cmdsize');
+	static {
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
 		// Contains machine specific data.
 		// uint32_t flavor
 		// uint32_t count
 		// struct XXX_thread_state state
 		// ...
-		return o;
-	})(super.BYTE_LENGTH);
+	}
 }

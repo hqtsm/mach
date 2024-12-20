@@ -1,4 +1,4 @@
-import { Struct, structT, structU32 } from '../struct.ts';
+import { member, Struct, uint32 } from '@hqtsm/struct';
 import { Fvmlib } from './fvmlib.ts';
 
 /**
@@ -20,20 +20,11 @@ export class FvmlibCommand extends Struct {
 	/**
 	 * Library identification.
 	 */
-	declare public readonly fvmlib: this['constructor']['Fvmlib']['prototype'];
+	declare public fvmlib: Fvmlib;
 
-	/**
-	 * Fvmlib reference.
-	 */
-	public static readonly Fvmlib = Fvmlib;
-
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'cmd');
-		o += structU32(this, o, 'cmdsize');
-		o += structT(this, o, 'fvmlib', 'Fvmlib');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
+		member(Fvmlib, this, 'fvmlib');
+	}
 }

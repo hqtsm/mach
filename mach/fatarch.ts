@@ -1,4 +1,4 @@
-import { Struct, structI32, structU32 } from '../struct.ts';
+import { int32, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Fat architecture, 32-bit.
@@ -31,15 +31,11 @@ export class FatArch extends Struct {
 	 */
 	declare public align: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structI32(this, o, 'cputype');
-		o += structI32(this, o, 'cpusubtype');
-		o += structU32(this, o, 'offset');
-		o += structU32(this, o, 'size');
-		o += structU32(this, o, 'align');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		int32(this, 'cputype');
+		int32(this, 'cpusubtype');
+		uint32(this, 'offset');
+		uint32(this, 'size');
+		uint32(this, 'align');
+	}
 }

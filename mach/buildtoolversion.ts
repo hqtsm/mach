@@ -1,4 +1,4 @@
-import { Struct, structU32 } from '../struct.ts';
+import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Build tool version.
@@ -16,12 +16,8 @@ export class BuildToolVersion extends Struct {
 	 */
 	declare public version: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'tool');
-		o += structU32(this, o, 'version');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'tool');
+		uint32(this, 'version');
+	}
 }

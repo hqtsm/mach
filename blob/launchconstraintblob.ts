@@ -1,5 +1,4 @@
 import { kSecCodeMagicLaunchConstraint } from '../const.ts';
-
 import { Blob } from './blob.ts';
 
 /**

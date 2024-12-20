@@ -1,6 +1,5 @@
+import { uint32BE, uint64BE, uint8 } from '@hqtsm/struct';
 import { kSecCodeMagicCodeDirectory } from '../const.ts';
-import { structU32, structU64, structU8 } from '../struct.ts';
-
 import { Blob } from './blob.ts';
 
 /**
@@ -184,31 +183,27 @@ export class CodeDirectory extends Blob {
 	 */
 	public static readonly supportsPreEncrypt = 0x20500;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'version', false);
-		o += structU32(this, o, 'flags', false);
-		o += structU32(this, o, 'hashOffset', false);
-		o += structU32(this, o, 'identOffset', false);
-		o += structU32(this, o, 'nSpecialSlots', false);
-		o += structU32(this, o, 'nCodeSlots', false);
-		o += structU32(this, o, 'codeLimit', false);
-		o += structU8(this, o, 'hashSize');
-		o += structU8(this, o, 'hashType');
-		o += structU8(this, o, 'platform');
-		o += structU8(this, o, 'pageSize');
-		o += structU32(this, o, 'spare2', false);
-		o += structU32(this, o, 'scatterOffset', false);
-		o += structU32(this, o, 'teamIDOffset', false);
-		o += structU32(this, o, 'spare3', false);
-		o += structU64(this, o, 'codeLimit64', false);
-		o += structU64(this, o, 'execSegBase', false);
-		o += structU64(this, o, 'execSegLimit', false);
-		o += structU64(this, o, 'execSegFlags', false);
-		o += structU32(this, o, 'runtime', false);
-		o += structU32(this, o, 'preEncryptOffset', false);
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32BE(this, 'version');
+		uint32BE(this, 'flags');
+		uint32BE(this, 'hashOffset');
+		uint32BE(this, 'identOffset');
+		uint32BE(this, 'nSpecialSlots');
+		uint32BE(this, 'nCodeSlots');
+		uint32BE(this, 'codeLimit');
+		uint8(this, 'hashSize');
+		uint8(this, 'hashType');
+		uint8(this, 'platform');
+		uint8(this, 'pageSize');
+		uint32BE(this, 'spare2');
+		uint32BE(this, 'scatterOffset');
+		uint32BE(this, 'teamIDOffset');
+		uint32BE(this, 'spare3');
+		uint64BE(this, 'codeLimit64');
+		uint64BE(this, 'execSegBase');
+		uint64BE(this, 'execSegLimit');
+		uint64BE(this, 'execSegFlags');
+		uint32BE(this, 'runtime');
+		uint32BE(this, 'preEncryptOffset');
+	}
 }

@@ -1,5 +1,4 @@
 import { assertEquals } from '@std/assert';
-
 import { FilesetEntryCommand } from './filesetentrycommand.ts';
 
 Deno.test('BYTE_LENGTH', () => {

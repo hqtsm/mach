@@ -1,4 +1,4 @@
-import { Struct, structU24, structU8 } from '../struct.ts';
+import { Struct, uint24, uint8 } from '@hqtsm/struct';
 
 /**
  * Two-level namespace lookup hints table entry.
@@ -16,12 +16,8 @@ export class TwolevelHint extends Struct {
 	 */
 	declare public itoc: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU8(this, o, 'isubImage');
-		o += structU24(this, o, 'itoc');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint8(this, 'isubImage');
+		uint24(this, 'itoc');
+	}
 }

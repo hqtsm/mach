@@ -1,4 +1,4 @@
-import { Struct, structU32 } from '../struct.ts';
+import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Dylib table of contents entry.
@@ -16,12 +16,8 @@ export class DylibTableOfContents extends Struct {
 	 */
 	declare public moduleIndex: number;
 
-	/**
-	 * @inheritdoc
-	 */
-	public static override readonly BYTE_LENGTH: number = ((o) => {
-		o += structU32(this, o, 'symbolIndex');
-		o += structU32(this, o, 'moduleIndex');
-		return o;
-	})(super.BYTE_LENGTH);
+	static {
+		uint32(this, 'symbolIndex');
+		uint32(this, 'moduleIndex');
+	}
 }

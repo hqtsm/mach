@@ -1,12 +1,10 @@
 import { assertNotEquals } from '@std/assert';
-
 import {
 	fixtureMachos,
 	indexOf,
 	machoThin,
 	readMachoFiles,
 } from '../util.spec.ts';
-
 import { createCodeDirectories } from './codedirectorybuilder.spec.ts';
 
 const fixtures = fixtureMachos();

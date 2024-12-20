@@ -1,5 +1,4 @@
 import { assertEquals } from '@std/assert';
-
 import { CodeDirectory } from './codedirectory.ts';
 
 Deno.test('BYTE_LENGTH', () => {

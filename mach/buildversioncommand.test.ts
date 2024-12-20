@@ -1,5 +1,4 @@
 import { assertEquals } from '@std/assert';
-
 import { BuildVersionCommand } from './buildversioncommand.ts';
 
 Deno.test('BYTE_LENGTH', () => {

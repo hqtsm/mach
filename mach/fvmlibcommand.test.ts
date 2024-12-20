@@ -1,5 +1,4 @@
 import { assertEquals } from '@std/assert';
-
 import { FvmlibCommand } from './fvmlibcommand.ts';
 
 Deno.test('BYTE_LENGTH', () => {
