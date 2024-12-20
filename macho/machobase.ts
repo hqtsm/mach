@@ -1,10 +1,5 @@
-import {
-	HOST_LE,
-	MH_CIGAM,
-	MH_CIGAM_64,
-	MH_MAGIC,
-	MH_MAGIC_64,
-} from '../const.ts';
+import { LITTLE_ENDIAN } from '@hqtsm/struct';
+import { MH_CIGAM, MH_CIGAM_64, MH_MAGIC, MH_MAGIC_64 } from '../const.ts';
 import { MachHeader } from '../mach/machheader.ts';
 import { MachHeader64 } from '../mach/machheader64.ts';
 import type { BufferView } from '../type.ts';
@@ -38,7 +33,7 @@ export class MachOBase {
 	 * If binary endian does not matches the host endian.
 	 */
 	public get isFlipped(): boolean {
-		return this.isLittleEndian !== HOST_LE;
+		return this.isLittleEndian !== LITTLE_ENDIAN;
 	}
 
 	/**
