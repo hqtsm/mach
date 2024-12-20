@@ -25,8 +25,5 @@ export class EntitlementDERBlob extends Blob {
 		return this.length - 8;
 	}
 
-	/**
-	 * @inheritdoc
-	 */
 	public static override readonly typeMagic = kSecCodeMagicEntitlementDER;
 }

@@ -36,9 +36,6 @@ export class BuildVersionCommand extends Struct {
 	 */
 	declare public ntools: number;
 
-	/**
-	 * @inheritdoc
-	 */
 	static {
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');

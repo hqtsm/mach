@@ -7,8 +7,5 @@ import { SuperBlob } from './superblob.ts';
 export class Requirements extends SuperBlob {
 	declare public readonly ['constructor']: typeof Requirements;
 
-	/**
-	 * @inheritdoc
-	 */
 	public static override readonly typeMagic = kSecCodeMagicRequirementSet;
 }

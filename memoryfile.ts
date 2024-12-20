@@ -44,9 +44,6 @@ export class MemoryFile implements File {
 		this.#blocks.length = (size - o) / blksize + (o ? 1 : 0);
 	}
 
-	/**
-	 * @inheritdoc
-	 */
 	// deno-lint-ignore require-await
 	public async stat(): Promise<FileStats> {
 		return {
@@ -56,9 +53,6 @@ export class MemoryFile implements File {
 		};
 	}
 
-	/**
-	 * @inheritdoc
-	 */
 	// deno-lint-ignore require-await
 	public async truncate(size: number): Promise<void> {
 		ranged(size, 0, INT_LIMIT);
@@ -81,9 +75,6 @@ export class MemoryFile implements File {
 		this.#size = size;
 	}
 
-	/**
-	 * @inheritdoc
-	 */
 	// deno-lint-ignore require-await
 	public async read(
 		buffer: BufferView,
@@ -129,9 +120,6 @@ export class MemoryFile implements File {
 		};
 	}
 
-	/**
-	 * @inheritdoc
-	 */
 	// deno-lint-ignore require-await
 	public async write(
 		buffer: Readonly<BufferView>,

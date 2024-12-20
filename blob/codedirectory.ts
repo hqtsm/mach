@@ -148,9 +148,6 @@ export class CodeDirectory extends Blob {
 		);
 	}
 
-	/**
-	 * @inheritdoc
-	 */
 	public static override readonly typeMagic = kSecCodeMagicCodeDirectory;
 
 	/**

@@ -45,9 +45,6 @@ export class BlobWrapper extends Blob {
 		super.length = value;
 	}
 
-	/**
-	 * @inheritdoc
-	 */
 	public static override readonly typeMagic = CSMAGIC_BLOBWRAPPER;
 
 	/**

@@ -8,8 +8,5 @@ import { SuperBlob } from './superblob.ts';
 export class EmbeddedSignatureBlob extends SuperBlob {
 	declare public readonly ['constructor']: typeof EmbeddedSignatureBlob;
 
-	/**
-	 * @inheritdoc
-	 */
 	public static override readonly typeMagic = kSecCodeMagicEmbeddedSignature;
 }

@@ -8,8 +8,5 @@ import { SuperBlob } from './superblob.ts';
 export class LibraryDependencyBlob extends SuperBlob {
 	declare public readonly ['constructor']: typeof LibraryDependencyBlob;
 
-	/**
-	 * @inheritdoc
-	 */
 	public static override readonly typeMagic = kSecCodeMagicDRList;
 }

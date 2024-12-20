@@ -13,9 +13,6 @@ export class Requirement extends Blob {
 	 */
 	declare public kind: number;
 
-	/**
-	 * @inheritdoc
-	 */
 	public static override readonly typeMagic = kSecCodeMagicRequirement;
 
 	/**

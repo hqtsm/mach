@@ -10,8 +10,5 @@ export class RequirementsMaker extends SuperBlobMaker {
 		'new'
 	>;
 
-	/**
-	 * @inheritdoc
-	 */
 	public static override readonly SuperBlob = Requirements;
 }

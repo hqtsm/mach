@@ -10,8 +10,5 @@ export class LibraryDependencyBlobMaker extends SuperBlobMaker {
 		'new'
 	>;
 
-	/**
-	 * @inheritdoc
-	 */
 	public static override readonly SuperBlob = LibraryDependencyBlob;
 }
