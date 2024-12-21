@@ -1,3 +1,4 @@
+import { dataView } from '@hqtsm/struct';
 import { BlobCore } from './blobcore.ts';
 import { SuperBlob } from './superblob.ts';
 
@@ -69,7 +70,7 @@ export class SuperBlobMaker {
 		const size = this.size();
 		const buffer = new ArrayBuffer(size);
 		const data = new Uint8Array(buffer);
-		const view = new DataView(buffer);
+		const view = dataView(buffer);
 		const sb = new this.constructor.SuperBlob(buffer);
 		sb.setup(size, count);
 		let o1 = SuperBlob.BYTE_LENGTH;

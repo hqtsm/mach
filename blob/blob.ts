@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/struct';
+import { constant, dataView } from '@hqtsm/struct';
 import { BlobCore } from './blobcore.ts';
 
 /**
@@ -53,7 +53,7 @@ export class Blob extends BlobCore {
 		if (view) {
 			new Uint8Array(buffer, BYTE_LENGTH).set(view);
 		}
-		return new DataView(buffer);
+		return dataView(buffer);
 	}
 
 	static {

@@ -1,4 +1,4 @@
-import { Ptr } from '@hqtsm/struct';
+import { dataView, Ptr } from '@hqtsm/struct';
 import {
 	opAnchorHash,
 	opAppleAnchor,
@@ -70,7 +70,7 @@ export class RequirementMaker {
 	public put(data: Readonly<ArrayBufferView> | number): void {
 		if (typeof data === 'number') {
 			const a = this.alloc(4);
-			new DataView(a.buffer, a.byteOffset).setUint32(0, data);
+			dataView(a.buffer).setUint32(a.byteOffset, data);
 		} else {
 			const d = new Uint8Array(
 				data.buffer,
