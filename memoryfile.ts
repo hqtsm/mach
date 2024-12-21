@@ -1,6 +1,8 @@
 import type { File, FileReadStats, FileStats, FileWriteStats } from './type.ts';
-import { BLK_LIMIT, INT_LIMIT } from './const.ts';
+import { INT_LIMIT } from './const.ts';
 import { ranged } from './util.ts';
+
+const BS = 4096;
 
 /**
  * In-memory file-like object.
@@ -14,35 +16,20 @@ export class MemoryFile implements File {
 	readonly #blocks: (Uint8Array | undefined)[] = [];
 
 	/**
-	 * Block size.
-	 */
-	readonly #blksize: number;
-
-	/**
 	 * Data size.
 	 */
-	#size: number;
+	#size = 0;
 
 	/**
-	 * Create file with optional initial size and custom block size.
-	 *
-	 * @param size File size.
-	 * @param blksize Block size.
+	 * Create in-memory file-like object.
 	 */
-	constructor(size = 0, blksize = 4096) {
-		ranged(size, 0, INT_LIMIT);
-		ranged(blksize, 1, BLK_LIMIT);
-		this.#size = size;
-		this.#blksize = blksize;
-		const o = size % blksize;
-		this.#blocks.length = (size - o) / blksize + (o ? 1 : 0);
-	}
+	constructor() {}
 
 	// deno-lint-ignore require-await
 	public async stat(): Promise<FileStats> {
 		return {
 			blocks: this.#blocks.length,
-			blksize: this.#blksize,
+			blksize: BS,
 			size: this.#size,
 		};
 	}
@@ -54,10 +41,9 @@ export class MemoryFile implements File {
 		if (s === size) {
 			return;
 		}
-		const blksize = this.#blksize;
 		const blocks = this.#blocks;
-		const o = size % blksize;
-		const b = (size - o) / blksize;
+		const o = size % BS;
+		const b = (size - o) / BS;
 		if (size > s) {
 			blocks.length = b + (o ? 1 : 0);
 		} else if (o) {
@@ -86,11 +72,10 @@ export class MemoryFile implements File {
 		}
 		if (length) {
 			const r = new Uint8Array(bd, bo + offset, length);
-			const blksize = this.#blksize;
 			const blocks = this.#blocks;
-			let o = position % blksize;
-			let b = (position - o) / blksize;
-			for (let i = 0, l = length, s = blksize - o;; b++) {
+			let o = position % BS;
+			let b = (position - o) / BS;
+			for (let i = 0, l = length, s = BS - o;; b++) {
 				if (l < s) {
 					s = l;
 				}
@@ -106,7 +91,7 @@ export class MemoryFile implements File {
 				}
 				i += s;
 				o = 0;
-				s = blksize;
+				s = BS;
 			}
 		}
 		return {
@@ -126,20 +111,19 @@ export class MemoryFile implements File {
 		ranged(length, 0, bl - offset);
 		ranged(position, 0, INT_LIMIT - bl);
 		if (length) {
-			const blksize = this.#blksize;
 			const blocks = this.#blocks;
 			const size = this.#size;
 			let p = position;
-			let o = p % blksize;
-			let b = (p - o) / blksize;
-			for (let i = bo, l = length, s = blksize - o;; b++) {
+			let o = p % BS;
+			let b = (p - o) / BS;
+			for (let i = bo, l = length, s = BS - o;; b++) {
 				if (l < s) {
 					s = l;
 				}
 				const w = new Uint8Array(bd, i, s);
 				let d = blocks[b];
 				if (!d) {
-					blocks[b] = d = new Uint8Array(blksize);
+					blocks[b] = d = new Uint8Array(BS);
 				}
 				d.set(w, o);
 				p += s;
@@ -152,7 +136,7 @@ export class MemoryFile implements File {
 				}
 				i += s;
 				o = 0;
-				s = blksize;
+				s = BS;
 			}
 		}
 		return {

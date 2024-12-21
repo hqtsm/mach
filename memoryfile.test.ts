@@ -5,37 +5,6 @@ import { MemoryFile } from './memoryfile.ts';
 
 const BS = 4096;
 
-Deno.test('stat two blocks', async () => {
-	const size = BS * 2;
-	const m = new MemoryFile(size);
-
-	const r = await m.stat();
-	assertEquals(r.size, size);
-	assertEquals(r.blocks, 2);
-	assertEquals(r.blksize, BS);
-});
-
-Deno.test('stat two blocks plus one', async () => {
-	const size = BS * 2;
-	const m = new MemoryFile(size + 1);
-
-	const r = await m.stat();
-	assertEquals(r.size, size + 1);
-	assertEquals(r.blocks, 3);
-	assertEquals(r.blksize, BS);
-});
-
-Deno.test('stat custom blksize', async () => {
-	const CBS = 42;
-	const size = Math.round(CBS * 2.5);
-	const m = new MemoryFile(size, CBS);
-
-	const r = await m.stat();
-	assertEquals(r.size, size);
-	assertEquals(r.blocks, 3);
-	assertEquals(r.blksize, CBS);
-});
-
 Deno.test('write expand', async () => {
 	let r;
 	const d = new Uint8Array(1);
@@ -171,7 +140,9 @@ Deno.test('read multiple blocks', async () => {
 
 Deno.test('truncate bigger', async () => {
 	for (const size of [0, BS - 1, BS, BS + 1, BS * 2, BS * 3.5]) {
-		const m = new MemoryFile(size);
+		const m = new MemoryFile();
+		// deno-lint-ignore no-await-in-loop
+		await m.truncate(size);
 
 		const dw = new Uint8Array(size);
 		for (let i = dw.length; i--;) {
@@ -216,7 +187,9 @@ Deno.test('truncate smaller', async () => {
 	for (const size of [0, BS - 1, BS, BS + 1, BS * 2, BS * 3.5]) {
 		for (const more of [1, 22, 333, 4444, 55555, 666666]) {
 			const bigger = size + more;
-			const m = new MemoryFile(bigger);
+			const m = new MemoryFile();
+			// deno-lint-ignore no-await-in-loop
+			await m.truncate(bigger);
 
 			const dw = new Uint8Array(bigger);
 			for (let i = dw.length; i--;) {
@@ -252,6 +225,28 @@ Deno.test('truncate smaller', async () => {
 			}
 		}
 	}
+});
+
+Deno.test('stat two blocks', async () => {
+	const size = BS * 2;
+	const m = new MemoryFile();
+	m.truncate(size);
+
+	const r = await m.stat();
+	assertEquals(r.size, size);
+	assertEquals(r.blocks, 2);
+	assertEquals(r.blksize, BS);
+});
+
+Deno.test('stat two blocks plus one', async () => {
+	const size = BS * 2;
+	const m = new MemoryFile();
+	m.truncate(size + 1);
+
+	const r = await m.stat();
+	assertEquals(r.size, size + 1);
+	assertEquals(r.blocks, 3);
+	assertEquals(r.blksize, BS);
 });
 
 /*
