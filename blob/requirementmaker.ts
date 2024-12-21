@@ -70,7 +70,7 @@ export class RequirementMaker {
 	public put(data: Readonly<ArrayBufferView> | number): void {
 		if (typeof data === 'number') {
 			const a = this.alloc(4);
-			new DataView(a.buffer, a.byteOffset, 4).setUint32(0, data);
+			new DataView(a.buffer, a.byteOffset).setUint32(0, data);
 		} else {
 			const d = new Uint8Array(
 				data.buffer,
