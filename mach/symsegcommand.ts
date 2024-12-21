@@ -1,4 +1,4 @@
-import { Struct, uint32 } from '@hqtsm/struct';
+import { constant, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Symbol table command.
@@ -31,5 +31,6 @@ export class SymsegCommand extends Struct {
 		uint32(this, 'cmdsize');
 		uint32(this, 'offset');
 		uint32(this, 'size');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

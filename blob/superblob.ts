@@ -1,4 +1,4 @@
-import { dataView, uint32BE } from '@hqtsm/struct';
+import { constant, dataView, uint32BE } from '@hqtsm/struct';
 import { Blob } from './blob.ts';
 import { BlobCore } from './blobcore.ts';
 
@@ -76,5 +76,6 @@ export class SuperBlob extends Blob {
 
 	static {
 		uint32BE(this, 'mCount' as never);
+		constant(this, 'BYTE_LENGTH');
 	}
 }

@@ -1,6 +1,7 @@
 import {
 	type Arr,
 	array,
+	constant,
 	Int8Ptr,
 	member,
 	Struct,
@@ -80,5 +81,6 @@ export class Section extends Struct {
 		uint32(this, 'flags');
 		uint32(this, 'reserved1');
 		uint32(this, 'reserved2');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

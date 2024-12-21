@@ -1,6 +1,7 @@
 import {
 	type Arr,
 	array,
+	constant,
 	member,
 	Struct,
 	uint32,
@@ -32,5 +33,6 @@ export class UuidCommand extends Struct {
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		member(array(Uint8Ptr, 16), this, 'uuid');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

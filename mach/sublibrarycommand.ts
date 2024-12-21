@@ -1,4 +1,4 @@
-import { member, Struct, uint32 } from '@hqtsm/struct';
+import { constant, member, Struct, uint32 } from '@hqtsm/struct';
 import { LcStr } from './lcstr.ts';
 
 /**
@@ -26,5 +26,6 @@ export class SubLibraryCommand extends Struct {
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		member(LcStr, this, 'subLibrary');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

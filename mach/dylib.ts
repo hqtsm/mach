@@ -1,4 +1,4 @@
-import { member, Struct, uint32 } from '@hqtsm/struct';
+import { constant, member, Struct, uint32 } from '@hqtsm/struct';
 import { LcStr } from './lcstr.ts';
 
 /**
@@ -32,5 +32,6 @@ export class Dylib extends Struct {
 		uint32(this, 'timestamp');
 		uint32(this, 'currentVersion');
 		uint32(this, 'compatibilityVersion');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

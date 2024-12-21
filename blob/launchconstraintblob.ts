@@ -1,3 +1,4 @@
+import { constant } from '@hqtsm/struct';
 import { kSecCodeMagicLaunchConstraint } from '../const.ts';
 import { Blob } from './blob.ts';
 
@@ -26,4 +27,8 @@ export class LaunchConstraintBlob extends Blob {
 	}
 
 	public static override readonly typeMagic = kSecCodeMagicLaunchConstraint;
+
+	static {
+		constant(this, 'typeMagic');
+	}
 }

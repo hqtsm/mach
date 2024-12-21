@@ -1,4 +1,4 @@
-import { Struct, uint32 } from '@hqtsm/struct';
+import { constant, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Build tool version.
@@ -19,5 +19,6 @@ export class BuildToolVersion extends Struct {
 	static {
 		uint32(this, 'tool');
 		uint32(this, 'version');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

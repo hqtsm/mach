@@ -1,4 +1,4 @@
-import { uint32BE } from '@hqtsm/struct';
+import { constant, uint32BE } from '@hqtsm/struct';
 import { kSecCodeMagicRequirement } from '../const.ts';
 import { Blob } from './blob.ts';
 
@@ -32,5 +32,10 @@ export class Requirement extends Blob {
 
 	static {
 		uint32BE(this, 'kind');
+		constant(this, 'BYTE_LENGTH');
+		constant(this, 'typeMagic');
+		constant(this, 'baseAlignment');
+		constant(this, 'exprForm');
+		constant(this, 'lwcrForm');
 	}
 }

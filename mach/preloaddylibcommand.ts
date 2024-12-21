@@ -1,4 +1,4 @@
-import { member, Struct, uint32 } from '@hqtsm/struct';
+import { constant, member, Struct, uint32 } from '@hqtsm/struct';
 import { LcStr } from './lcstr.ts';
 
 /**
@@ -38,5 +38,6 @@ export class PreloadDylibCommand extends Struct {
 		member(LcStr, this, 'name');
 		uint32(this, 'nmodules');
 		member(LcStr, this, 'linkedModules');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

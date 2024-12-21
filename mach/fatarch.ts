@@ -1,4 +1,4 @@
-import { int32, Struct, uint32 } from '@hqtsm/struct';
+import { constant, int32, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Fat architecture, 32-bit.
@@ -37,5 +37,6 @@ export class FatArch extends Struct {
 		uint32(this, 'offset');
 		uint32(this, 'size');
 		uint32(this, 'align');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

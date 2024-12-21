@@ -1,4 +1,4 @@
-import { member, Struct, uint32 } from '@hqtsm/struct';
+import { constant, member, Struct, uint32 } from '@hqtsm/struct';
 import { Fvmlib } from './fvmlib.ts';
 
 /**
@@ -26,5 +26,6 @@ export class FvmlibCommand extends Struct {
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		member(Fvmlib, this, 'fvmlib');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

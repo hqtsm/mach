@@ -1,4 +1,4 @@
-import { Struct, uint32 } from '@hqtsm/struct';
+import { constant, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Linker option command.
@@ -25,5 +25,6 @@ export class LinkerOptionCommand extends Struct {
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		uint32(this, 'count');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

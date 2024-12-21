@@ -1,4 +1,4 @@
-import { Struct, uint32 } from '@hqtsm/struct';
+import { constant, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Prebind checksum command.
@@ -25,5 +25,6 @@ export class PrebindCksumCommand extends Struct {
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		uint32(this, 'cksum');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

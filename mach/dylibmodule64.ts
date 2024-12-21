@@ -1,4 +1,4 @@
-import { Struct, uint32, uint64 } from '@hqtsm/struct';
+import { constant, Struct, uint32, uint64 } from '@hqtsm/struct';
 
 /**
  * Dylib module table entry, 64-bit.
@@ -87,5 +87,6 @@ export class DylibModule64 extends Struct {
 		uint32(this, 'ninitNterm');
 		uint32(this, 'objcModuleInfoSize');
 		uint64(this, 'objcModuleInfoAddr');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

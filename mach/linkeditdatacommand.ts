@@ -1,4 +1,4 @@
-import { Struct, uint32 } from '@hqtsm/struct';
+import { constant, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Linkedit data command.
@@ -31,5 +31,6 @@ export class LinkeditDataCommand extends Struct {
 		uint32(this, 'cmdsize');
 		uint32(this, 'dataoff');
 		uint32(this, 'datasize');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

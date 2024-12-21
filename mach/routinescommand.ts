@@ -1,4 +1,4 @@
-import { Struct, uint32 } from '@hqtsm/struct';
+import { constant, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Routines command, 32-bit.
@@ -67,5 +67,6 @@ export class RoutinesCommand extends Struct {
 		uint32(this, 'reserved4');
 		uint32(this, 'reserved5');
 		uint32(this, 'reserved6');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

@@ -1,6 +1,7 @@
 import {
 	type Arr,
 	array,
+	constant,
 	Int8Ptr,
 	member,
 	Struct,
@@ -45,5 +46,6 @@ export class NoteCommand extends Struct {
 		member(array(Int8Ptr, 16), this, 'dataOwner');
 		uint64(this, 'offset');
 		uint64(this, 'size');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

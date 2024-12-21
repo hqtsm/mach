@@ -1,4 +1,4 @@
-import { Struct, uint32 } from '@hqtsm/struct';
+import { constant, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Fat header.
@@ -19,5 +19,6 @@ export class FatHeader extends Struct {
 	static {
 		uint32(this, 'magic');
 		uint32(this, 'nfatArch');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

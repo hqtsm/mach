@@ -131,3 +131,29 @@ Deno.test('public', async () => {
 		}
 	}
 });
+
+Deno.test('class constants', () => {
+	const defaultClassProperties = new Set<unknown>(
+		Object.getOwnPropertyNames(class {}),
+	);
+	for (const [k, v] of Object.entries(mod)) {
+		if (
+			typeof v !== 'function' ||
+			Object.getOwnPropertyDescriptor(v, 'prototype')?.writable
+		) {
+			continue;
+		}
+		for (const p of Object.getOwnPropertyNames(v) as (keyof typeof v)[]) {
+			if (
+				defaultClassProperties.has(p) ||
+				typeof v[p] === 'function'
+			) {
+				continue;
+			}
+			const desc = Object.getOwnPropertyDescriptor(v, p)!;
+			assertEquals(desc.writable ?? false, false, `${k}.${p}`);
+			assertEquals(desc.enumerable ?? false, false, `${k}.${p}`);
+			assertEquals(desc.configurable ?? false, false, `${k}.${p}`);
+		}
+	}
+});

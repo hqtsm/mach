@@ -1,4 +1,4 @@
-import { Struct, uint32 } from '@hqtsm/struct';
+import { constant, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Two-level namespace lookup hints table command.
@@ -31,5 +31,6 @@ export class TwolevelHintsCommand extends Struct {
 		uint32(this, 'cmdsize');
 		uint32(this, 'offset');
 		uint32(this, 'nhints');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

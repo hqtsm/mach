@@ -1,4 +1,4 @@
-import { Struct, uint32, uint64 } from '@hqtsm/struct';
+import { constant, Struct, uint32, uint64 } from '@hqtsm/struct';
 
 /**
  * Entry point command.
@@ -31,5 +31,6 @@ export class EntryPointCommand extends Struct {
 		uint32(this, 'cmdsize');
 		uint64(this, 'entryoff');
 		uint64(this, 'stacksize');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

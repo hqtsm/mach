@@ -1,4 +1,4 @@
-import { Struct, uint32, uint64 } from '@hqtsm/struct';
+import { constant, Struct, uint32, uint64 } from '@hqtsm/struct';
 
 /**
  * Routines command, 64-bit.
@@ -67,5 +67,6 @@ export class RoutinesCommand64 extends Struct {
 		uint64(this, 'reserved4');
 		uint64(this, 'reserved5');
 		uint64(this, 'reserved6');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

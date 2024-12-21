@@ -1,4 +1,4 @@
-import { Struct, uint64 } from '@hqtsm/struct';
+import { constant, Struct, uint64 } from '@hqtsm/struct';
 
 /**
  * Thread local variable entry, 64-bit.
@@ -25,5 +25,6 @@ export class TlvDescriptor64 extends Struct {
 		uint64(this, 'thunk');
 		uint64(this, 'key');
 		uint64(this, 'offset');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

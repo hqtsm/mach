@@ -1,4 +1,4 @@
-import { Struct, uint24, uint8 } from '@hqtsm/struct';
+import { constant, Struct, uint24, uint8 } from '@hqtsm/struct';
 
 /**
  * Reference symbol table entry.
@@ -19,5 +19,6 @@ export class DylibReference extends Struct {
 	static {
 		uint24(this, 'isym');
 		uint8(this, 'flags');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

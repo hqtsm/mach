@@ -1,4 +1,4 @@
-import { Struct, uint32 } from '@hqtsm/struct';
+import { constant, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Minimum OS version command.
@@ -31,5 +31,6 @@ export class VersionMinCommand extends Struct {
 		uint32(this, 'cmdsize');
 		uint32(this, 'version');
 		uint32(this, 'sdk');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

@@ -1,4 +1,4 @@
-import { int32, Struct, uint32 } from '@hqtsm/struct';
+import { constant, int32, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Mach-O header, 64-bit.
@@ -55,5 +55,6 @@ export class MachHeader64 extends Struct {
 		uint32(this, 'sizeofcmds');
 		uint32(this, 'flags');
 		uint32(this, 'reserved');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

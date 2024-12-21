@@ -1,4 +1,4 @@
-import { Struct, uint32BE, uint64BE } from '@hqtsm/struct';
+import { constant, Struct, uint32BE, uint64BE } from '@hqtsm/struct';
 
 /**
  * CodeDirectory scatter vector element.
@@ -31,5 +31,6 @@ export class CodeDirectoryScatter extends Struct {
 		uint32BE(this, 'base');
 		uint64BE(this, 'targetOffset');
 		uint64BE(this, 'spare');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

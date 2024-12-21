@@ -1,4 +1,4 @@
-import { Struct, uint32 } from '@hqtsm/struct';
+import { constant, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Dylib table of contents entry.
@@ -19,5 +19,6 @@ export class DylibTableOfContents extends Struct {
 	static {
 		uint32(this, 'symbolIndex');
 		uint32(this, 'moduleIndex');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

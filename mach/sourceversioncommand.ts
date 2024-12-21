@@ -1,4 +1,4 @@
-import { Struct, uint32, uint64 } from '@hqtsm/struct';
+import { constant, Struct, uint32, uint64 } from '@hqtsm/struct';
 
 /**
  * Source version command.
@@ -25,5 +25,6 @@ export class SourceVersionCommand extends Struct {
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		uint64(this, 'version');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

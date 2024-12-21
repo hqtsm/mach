@@ -1,6 +1,7 @@
 import {
 	type Arr,
 	array,
+	constant,
 	int32,
 	Int8Ptr,
 	member,
@@ -82,5 +83,6 @@ export class SegmentCommand64 extends Struct {
 		int32(this, 'initprot');
 		uint32(this, 'nsects');
 		uint32(this, 'flags');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

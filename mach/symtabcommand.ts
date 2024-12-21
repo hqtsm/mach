@@ -1,4 +1,4 @@
-import { Struct, uint32 } from '@hqtsm/struct';
+import { constant, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Symtab command.
@@ -43,5 +43,6 @@ export class SymtabCommand extends Struct {
 		uint32(this, 'nsyms');
 		uint32(this, 'stroff');
 		uint32(this, 'strsize');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

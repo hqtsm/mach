@@ -1,3 +1,4 @@
+import { constant } from '@hqtsm/struct';
 import { BlobCore } from './blobcore.ts';
 
 /**
@@ -53,5 +54,9 @@ export class Blob extends BlobCore {
 			new Uint8Array(buffer, BYTE_LENGTH).set(view);
 		}
 		return new DataView(buffer);
+	}
+
+	static {
+		constant(this, 'typeMagic');
 	}
 }

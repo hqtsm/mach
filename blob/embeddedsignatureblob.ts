@@ -1,3 +1,4 @@
+import { constant } from '@hqtsm/struct';
 import { kSecCodeMagicEmbeddedSignature } from '../const.ts';
 import { SuperBlob } from './superblob.ts';
 
@@ -9,4 +10,8 @@ export class EmbeddedSignatureBlob extends SuperBlob {
 	declare public readonly ['constructor']: typeof EmbeddedSignatureBlob;
 
 	public static override readonly typeMagic = kSecCodeMagicEmbeddedSignature;
+
+	static {
+		constant(this, 'typeMagic');
+	}
 }

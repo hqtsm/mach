@@ -1,4 +1,4 @@
-import { Struct, uint32 } from '@hqtsm/struct';
+import { constant, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Dylib info command.
@@ -79,5 +79,6 @@ export class DylibInfoCommand extends Struct {
 		uint32(this, 'lazyBindSize');
 		uint32(this, 'exportOff');
 		uint32(this, 'exportSize');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

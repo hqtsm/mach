@@ -1,4 +1,4 @@
-import { Struct, uint32 } from '@hqtsm/struct';
+import { constant, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Dynamically linked shared library use command.
@@ -49,5 +49,6 @@ export class DylibUseCommand extends Struct {
 		uint32(this, 'currentVersion');
 		uint32(this, 'compatVersion');
 		uint32(this, 'flags');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

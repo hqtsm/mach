@@ -1,4 +1,4 @@
-import { Struct, uint32 } from '@hqtsm/struct';
+import { constant, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Dysymtab command.
@@ -127,5 +127,6 @@ export class DysymtabCommand extends Struct {
 		uint32(this, 'nextrel');
 		uint32(this, 'locreloff');
 		uint32(this, 'nlocrel');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

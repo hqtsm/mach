@@ -1,3 +1,4 @@
+import { constant } from '@hqtsm/struct';
 import { kSecCodeMagicRequirementSet } from '../const.ts';
 import { SuperBlob } from './superblob.ts';
 
@@ -8,4 +9,8 @@ export class Requirements extends SuperBlob {
 	declare public readonly ['constructor']: typeof Requirements;
 
 	public static override readonly typeMagic = kSecCodeMagicRequirementSet;
+
+	static {
+		constant(this, 'typeMagic');
+	}
 }

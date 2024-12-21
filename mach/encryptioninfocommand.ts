@@ -1,4 +1,4 @@
-import { Struct, uint32 } from '@hqtsm/struct';
+import { constant, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Encryption info command, 32-bit.
@@ -37,5 +37,6 @@ export class EncryptionInfoCommand extends Struct {
 		uint32(this, 'cryptoff');
 		uint32(this, 'cryptsize');
 		uint32(this, 'cryptid');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

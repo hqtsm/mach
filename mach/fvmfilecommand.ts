@@ -1,4 +1,4 @@
-import { member, Struct, uint32 } from '@hqtsm/struct';
+import { constant, member, Struct, uint32 } from '@hqtsm/struct';
 import { LcStr } from './lcstr.ts';
 
 /**
@@ -32,5 +32,6 @@ export class FvmfileCommand extends Struct {
 		uint32(this, 'cmdsize');
 		member(LcStr, this, 'name');
 		uint32(this, 'headerAddr');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

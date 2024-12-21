@@ -1,3 +1,4 @@
+import { constant } from '@hqtsm/struct';
 import { kSecCodeMagicEntitlement } from '../const.ts';
 import { Blob } from './blob.ts';
 
@@ -26,4 +27,8 @@ export class EntitlementBlob extends Blob {
 	}
 
 	public static override readonly typeMagic = kSecCodeMagicEntitlement;
+
+	static {
+		constant(this, 'typeMagic');
+	}
 }

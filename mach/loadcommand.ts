@@ -1,4 +1,4 @@
-import { Struct, uint32 } from '@hqtsm/struct';
+import { constant, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Load command.
@@ -19,5 +19,6 @@ export class LoadCommand extends Struct {
 	static {
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
+		constant(this, 'BYTE_LENGTH');
 	}
 }

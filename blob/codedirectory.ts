@@ -1,4 +1,4 @@
-import { uint32BE, uint64BE, uint8 } from '@hqtsm/struct';
+import { constant, uint32BE, uint64BE, uint8 } from '@hqtsm/struct';
 import { kSecCodeMagicCodeDirectory } from '../const.ts';
 import { Blob } from './blob.ts';
 
@@ -202,5 +202,13 @@ export class CodeDirectory extends Blob {
 		uint64BE(this, 'execSegFlags');
 		uint32BE(this, 'runtime');
 		uint32BE(this, 'preEncryptOffset');
+		constant(this, 'BYTE_LENGTH');
+		constant(this, 'typeMagic');
+		constant(this, 'earliestVersion');
+		constant(this, 'supportsScatter');
+		constant(this, 'supportsTeamID');
+		constant(this, 'supportsCodeLimit64');
+		constant(this, 'supportsExecSegment');
+		constant(this, 'supportsPreEncrypt');
 	}
 }

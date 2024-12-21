@@ -1,4 +1,4 @@
-import { Struct, uint32 } from '@hqtsm/struct';
+import { constant, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Thread command.
@@ -24,5 +24,6 @@ export class ThreadCommand extends Struct {
 		// uint32_t count
 		// struct XXX_thread_state state
 		// ...
+		constant(this, 'BYTE_LENGTH');
 	}
 }

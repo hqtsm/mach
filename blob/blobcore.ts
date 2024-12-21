@@ -1,4 +1,9 @@
-import { type ArrayBufferReal, Struct, uint32BE } from '@hqtsm/struct';
+import {
+	type ArrayBufferReal,
+	constant,
+	Struct,
+	uint32BE,
+} from '@hqtsm/struct';
 
 /**
  * Polymorphic memory blobs with magics numbers.
@@ -133,5 +138,6 @@ export class BlobCore extends Struct {
 	static {
 		uint32BE(this, 'mMagic' as never);
 		uint32BE(this, 'mLength' as never);
+		constant(this, 'BYTE_LENGTH');
 	}
 }

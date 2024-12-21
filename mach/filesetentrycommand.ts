@@ -1,4 +1,4 @@
-import { member, Struct, uint32, uint64 } from '@hqtsm/struct';
+import { constant, member, Struct, uint32, uint64 } from '@hqtsm/struct';
 import { LcStr } from './lcstr.ts';
 
 /**
@@ -44,5 +44,6 @@ export class FilesetEntryCommand extends Struct {
 		uint64(this, 'fileoff');
 		member(LcStr, this, 'entryId');
 		uint32(this, 'reserved');
+		constant(this, 'BYTE_LENGTH');
 	}
 }
