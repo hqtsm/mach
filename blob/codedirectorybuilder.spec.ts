@@ -45,16 +45,8 @@ export async function* createCodeDirectories(
 		builder.execSegOffset = BigInt(info.execsegbase);
 		builder.execSegLimit = BigInt(info.execseglimit);
 		builder.execSegFlags = BigInt(info.execsegflags);
-		builder.identifier = new Int8Array(
-			identifier.buffer,
-			identifier.byteOffset,
-			identifier.byteLength,
-		);
-		builder.teamID = new Int8Array(
-			teamID.buffer,
-			teamID.byteOffset,
-			teamID.byteLength,
-		);
+		builder.identifier = identifier;
+		builder.teamID = teamID;
 		if (infoPlist) {
 			builder.setSpecialSlot(
 				cdInfoSlot,

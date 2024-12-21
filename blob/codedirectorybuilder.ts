@@ -62,12 +62,12 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Identifier.
 	 */
-	public identifier: Int8Array = new Int8Array();
+	public identifier: BufferView = new Int8Array();
 
 	/**
 	 * Team ID.
 	 */
-	public teamID: Int8Array = new Int8Array();
+	public teamID: BufferView = new Int8Array();
 
 	/**
 	 * Code slots.
