@@ -5,7 +5,7 @@ import { LcStr } from './lcstr.ts';
  * Dynamically linked shared library.
  */
 export class Dylib extends Struct {
-	declare public readonly ['constructor']: typeof Dylib;
+	declare public readonly ['constructor']: Omit<typeof Dylib, 'new'>;
 
 	/**
 	 * Pathname.

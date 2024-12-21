@@ -4,7 +4,7 @@ import { constant, Struct, uint24, uint8 } from '@hqtsm/struct';
  * Two-level namespace lookup hints table entry.
  */
 export class TwolevelHint extends Struct {
-	declare public readonly ['constructor']: typeof TwolevelHint;
+	declare public readonly ['constructor']: Omit<typeof TwolevelHint, 'new'>;
 
 	/**
 	 * Index in symbol table.

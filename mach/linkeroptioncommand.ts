@@ -4,7 +4,10 @@ import { constant, Struct, uint32 } from '@hqtsm/struct';
  * Linker option command.
  */
 export class LinkerOptionCommand extends Struct {
-	declare public readonly ['constructor']: typeof LinkerOptionCommand;
+	declare public readonly ['constructor']: Omit<
+		typeof LinkerOptionCommand,
+		'new'
+	>;
 
 	/**
 	 * Command type.

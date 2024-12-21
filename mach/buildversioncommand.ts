@@ -4,7 +4,10 @@ import { constant, Struct, uint32 } from '@hqtsm/struct';
  * Minimum OS build version command.
  */
 export class BuildVersionCommand extends Struct {
-	declare public readonly ['constructor']: typeof BuildVersionCommand;
+	declare public readonly ['constructor']: Omit<
+		typeof BuildVersionCommand,
+		'new'
+	>;
 
 	/**
 	 * Command type.

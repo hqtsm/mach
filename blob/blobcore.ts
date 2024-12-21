@@ -10,7 +10,7 @@ import {
  * Polymorphic memory blobs with magics numbers.
  */
 export class BlobCore extends Struct {
-	declare public readonly ['constructor']: typeof BlobCore;
+	declare public readonly ['constructor']: Omit<typeof BlobCore, 'new'>;
 
 	/**
 	 * Magic number.

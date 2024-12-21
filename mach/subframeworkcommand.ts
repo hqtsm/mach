@@ -5,7 +5,10 @@ import { LcStr } from './lcstr.ts';
  * Sub framework command.
  */
 export class SubFrameworkCommand extends Struct {
-	declare public readonly ['constructor']: typeof SubFrameworkCommand;
+	declare public readonly ['constructor']: Omit<
+		typeof SubFrameworkCommand,
+		'new'
+	>;
 
 	/**
 	 * Command type.

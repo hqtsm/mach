@@ -4,7 +4,10 @@ import { constant, Struct, uint32 } from '@hqtsm/struct';
  * Two-level namespace lookup hints table command.
  */
 export class TwolevelHintsCommand extends Struct {
-	declare public readonly ['constructor']: typeof TwolevelHintsCommand;
+	declare public readonly ['constructor']: Omit<
+		typeof TwolevelHintsCommand,
+		'new'
+	>;
 
 	/**
 	 * Command type.

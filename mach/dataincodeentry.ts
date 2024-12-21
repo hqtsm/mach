@@ -4,7 +4,10 @@ import { constant, Struct, uint16, uint32 } from '@hqtsm/struct';
  * Data in code entry.
  */
 export class DataInCodeEntry extends Struct {
-	declare public readonly ['constructor']: typeof DataInCodeEntry;
+	declare public readonly ['constructor']: Omit<
+		typeof DataInCodeEntry,
+		'new'
+	>;
 
 	/**
 	 * Offset from mach_header to start of data range.

@@ -5,7 +5,10 @@ import { LcStr } from './lcstr.ts';
  * Fileset entry command.
  */
 export class FilesetEntryCommand extends Struct {
-	declare public readonly ['constructor']: typeof FilesetEntryCommand;
+	declare public readonly ['constructor']: Omit<
+		typeof FilesetEntryCommand,
+		'new'
+	>;
 
 	/**
 	 * Command type.

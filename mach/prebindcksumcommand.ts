@@ -4,7 +4,10 @@ import { constant, Struct, uint32 } from '@hqtsm/struct';
  * Prebind checksum command.
  */
 export class PrebindCksumCommand extends Struct {
-	declare public readonly ['constructor']: typeof PrebindCksumCommand;
+	declare public readonly ['constructor']: Omit<
+		typeof PrebindCksumCommand,
+		'new'
+	>;
 
 	/**
 	 * Command type.

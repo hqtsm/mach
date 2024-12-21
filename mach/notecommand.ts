@@ -13,7 +13,7 @@ import {
  * Note command.
  */
 export class NoteCommand extends Struct {
-	declare public readonly ['constructor']: typeof NoteCommand;
+	declare public readonly ['constructor']: Omit<typeof NoteCommand, 'new'>;
 
 	/**
 	 * Command type.

@@ -4,7 +4,10 @@ import { constant, Struct, uint32 } from '@hqtsm/struct';
  * Dysymtab command.
  */
 export class DysymtabCommand extends Struct {
-	declare public readonly ['constructor']: typeof DysymtabCommand;
+	declare public readonly ['constructor']: Omit<
+		typeof DysymtabCommand,
+		'new'
+	>;
 
 	/**
 	 * Command type.

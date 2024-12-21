@@ -4,7 +4,10 @@ import { constant, Struct, uint32 } from '@hqtsm/struct';
  * Routines command, 32-bit.
  */
 export class RoutinesCommand extends Struct {
-	declare public readonly ['constructor']: typeof RoutinesCommand;
+	declare public readonly ['constructor']: Omit<
+		typeof RoutinesCommand,
+		'new'
+	>;
 
 	/**
 	 * Command type.

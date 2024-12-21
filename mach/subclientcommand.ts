@@ -5,7 +5,10 @@ import { LcStr } from './lcstr.ts';
  * Sub client command.
  */
 export class SubClientCommand extends Struct {
-	declare public readonly ['constructor']: typeof SubClientCommand;
+	declare public readonly ['constructor']: Omit<
+		typeof SubClientCommand,
+		'new'
+	>;
 
 	/**
 	 * Command type.

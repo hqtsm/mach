@@ -5,7 +5,7 @@ import { LcStr } from './lcstr.ts';
  * Rpath command.
  */
 export class RpathCommand extends Struct {
-	declare public readonly ['constructor']: typeof RpathCommand;
+	declare public readonly ['constructor']: Omit<typeof RpathCommand, 'new'>;
 
 	/**
 	 * Command type.

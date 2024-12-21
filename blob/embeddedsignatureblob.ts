@@ -7,7 +7,10 @@ import { SuperBlob } from './superblob.ts';
  * For embedded Mach-O signatures and detached non-Mach-O binaries.
  */
 export class EmbeddedSignatureBlob extends SuperBlob {
-	declare public readonly ['constructor']: typeof EmbeddedSignatureBlob;
+	declare public readonly ['constructor']: Omit<
+		typeof EmbeddedSignatureBlob,
+		'new'
+	>;
 
 	public static override readonly typeMagic = kSecCodeMagicEmbeddedSignature;
 

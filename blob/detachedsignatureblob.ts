@@ -7,7 +7,10 @@ import { SuperBlob } from './superblob.ts';
  * Indexed by main architecture.
  */
 export class DetachedSignatureBlob extends SuperBlob {
-	declare public readonly ['constructor']: typeof DetachedSignatureBlob;
+	declare public readonly ['constructor']: Omit<
+		typeof DetachedSignatureBlob,
+		'new'
+	>;
 
 	public static override readonly typeMagic = kSecCodeMagicDetachedSignature;
 

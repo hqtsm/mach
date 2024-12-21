@@ -13,7 +13,7 @@ import { Blob } from './blob.ts';
  * Generic blob wrapping arbitrary binary data.
  */
 export class BlobWrapper extends Blob {
-	declare public readonly ['constructor']: typeof BlobWrapper;
+	declare public readonly ['constructor']: Omit<typeof BlobWrapper, 'new'>;
 
 	/**
 	 * Data of payload (only).

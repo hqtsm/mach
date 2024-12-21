@@ -4,7 +4,10 @@ import { constant, Struct, uint64 } from '@hqtsm/struct';
  * Thread local variable entry, 64-bit.
  */
 export class TlvDescriptor64 extends Struct {
-	declare public readonly ['constructor']: typeof TlvDescriptor64;
+	declare public readonly ['constructor']: Omit<
+		typeof TlvDescriptor64,
+		'new'
+	>;
 
 	/**
 	 * A pointer.

@@ -5,7 +5,7 @@ import { Dylib } from './dylib.ts';
  * Dynamically linked shared library command.
  */
 export class DylibCommand extends Struct {
-	declare public readonly ['constructor']: typeof DylibCommand;
+	declare public readonly ['constructor']: Omit<typeof DylibCommand, 'new'>;
 
 	/**
 	 * Command type.

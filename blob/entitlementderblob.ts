@@ -6,7 +6,10 @@ import { Blob } from './blob.ts';
  * For embedding entitlement configuration data, in DER format.
  */
 export class EntitlementDERBlob extends Blob {
-	declare public readonly ['constructor']: typeof EntitlementDERBlob;
+	declare public readonly ['constructor']: Omit<
+		typeof EntitlementDERBlob,
+		'new'
+	>;
 
 	/**
 	 * DER data.

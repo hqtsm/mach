@@ -13,7 +13,7 @@ import {
  * Section, 64-bit.
  */
 export class Section64 extends Struct {
-	declare public readonly ['constructor']: typeof Section64;
+	declare public readonly ['constructor']: Omit<typeof Section64, 'new'>;
 
 	/**
 	 * Section name.

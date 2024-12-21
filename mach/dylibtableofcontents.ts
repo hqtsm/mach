@@ -4,7 +4,10 @@ import { constant, Struct, uint32 } from '@hqtsm/struct';
  * Dylib table of contents entry.
  */
 export class DylibTableOfContents extends Struct {
-	declare public readonly ['constructor']: typeof DylibTableOfContents;
+	declare public readonly ['constructor']: Omit<
+		typeof DylibTableOfContents,
+		'new'
+	>;
 
 	/**
 	 * External symbol index in symbol table.

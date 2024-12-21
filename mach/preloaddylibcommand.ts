@@ -5,7 +5,10 @@ import { LcStr } from './lcstr.ts';
  * Preload dylib command.
  */
 export class PreloadDylibCommand extends Struct {
-	declare public readonly ['constructor']: typeof PreloadDylibCommand;
+	declare public readonly ['constructor']: Omit<
+		typeof PreloadDylibCommand,
+		'new'
+	>;
 
 	/**
 	 * Command type.

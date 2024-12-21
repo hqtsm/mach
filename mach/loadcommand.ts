@@ -4,7 +4,7 @@ import { constant, Struct, uint32 } from '@hqtsm/struct';
  * Load command.
  */
 export class LoadCommand extends Struct {
-	declare public readonly ['constructor']: typeof LoadCommand;
+	declare public readonly ['constructor']: Omit<typeof LoadCommand, 'new'>;
 
 	/**
 	 * Command type.

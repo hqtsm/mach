@@ -4,7 +4,10 @@ import { constant, Struct, uint32BE, uint64BE } from '@hqtsm/struct';
  * CodeDirectory scatter vector element.
  */
 export class CodeDirectoryScatter extends Struct {
-	declare public readonly ['constructor']: typeof CodeDirectoryScatter;
+	declare public readonly ['constructor']: Omit<
+		typeof CodeDirectoryScatter,
+		'new'
+	>;
 
 	/**
 	 * Page count; zero for sentinel (only).

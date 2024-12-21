@@ -4,7 +4,7 @@ import { constant, Struct, uint24, uint8 } from '@hqtsm/struct';
  * Reference symbol table entry.
  */
 export class DylibReference extends Struct {
-	declare public readonly ['constructor']: typeof DylibReference;
+	declare public readonly ['constructor']: Omit<typeof DylibReference, 'new'>;
 
 	/**
 	 * Index in symbol table.

@@ -7,7 +7,10 @@ import { SuperBlob } from './superblob.ts';
  * Indexed sequentially from 0.
  */
 export class LibraryDependencyBlob extends SuperBlob {
-	declare public readonly ['constructor']: typeof LibraryDependencyBlob;
+	declare public readonly ['constructor']: Omit<
+		typeof LibraryDependencyBlob,
+		'new'
+	>;
 
 	public static override readonly typeMagic = kSecCodeMagicDRList;
 

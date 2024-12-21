@@ -5,7 +5,10 @@ import { LcStr } from './lcstr.ts';
  * Dynamic linker command.
  */
 export class DylinkerCommand extends Struct {
-	declare public readonly ['constructor']: typeof DylinkerCommand;
+	declare public readonly ['constructor']: Omit<
+		typeof DylinkerCommand,
+		'new'
+	>;
 
 	/**
 	 * Command type.

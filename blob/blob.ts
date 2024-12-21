@@ -5,7 +5,7 @@ import { BlobCore } from './blobcore.ts';
  * Polymorphic memory blob for magic number.
  */
 export class Blob extends BlobCore {
-	declare public readonly ['constructor']: typeof Blob;
+	declare public readonly ['constructor']: Omit<typeof Blob, 'new'>;
 
 	/**
 	 * Initialize blob with length.

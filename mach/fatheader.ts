@@ -4,7 +4,7 @@ import { constant, Struct, uint32 } from '@hqtsm/struct';
  * Fat header.
  */
 export class FatHeader extends Struct {
-	declare public readonly ['constructor']: typeof FatHeader;
+	declare public readonly ['constructor']: Omit<typeof FatHeader, 'new'>;
 
 	/**
 	 * Fat magic.

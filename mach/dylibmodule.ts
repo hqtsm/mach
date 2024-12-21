@@ -4,7 +4,7 @@ import { constant, Struct, uint32 } from '@hqtsm/struct';
  * Dylib module table entry, 32-bit.
  */
 export class DylibModule extends Struct {
-	declare public readonly ['constructor']: typeof DylibModule;
+	declare public readonly ['constructor']: Omit<typeof DylibModule, 'new'>;
 
 	/**
 	 * Module name index in string table.

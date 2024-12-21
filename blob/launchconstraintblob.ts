@@ -6,7 +6,10 @@ import { Blob } from './blob.ts';
  * Launch constraint in DER format.
  */
 export class LaunchConstraintBlob extends Blob {
-	declare public readonly ['constructor']: typeof LaunchConstraintBlob;
+	declare public readonly ['constructor']: Omit<
+		typeof LaunchConstraintBlob,
+		'new'
+	>;
 
 	/**
 	 * DER data.

@@ -4,7 +4,7 @@ import { constant, int32, Struct, uint32, uint64 } from '@hqtsm/struct';
  * Fat architecture, 64-bit.
  */
 export class FatArch64 extends Struct {
-	declare public readonly ['constructor']: typeof FatArch64;
+	declare public readonly ['constructor']: Omit<typeof FatArch64, 'new'>;
 
 	/**
 	 * CPU type.

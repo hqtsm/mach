@@ -5,7 +5,10 @@ import { LcStr } from './lcstr.ts';
  * Sub umbrella command.
  */
 export class SubUmbrellaCommand extends Struct {
-	declare public readonly ['constructor']: typeof SubUmbrellaCommand;
+	declare public readonly ['constructor']: Omit<
+		typeof SubUmbrellaCommand,
+		'new'
+	>;
 
 	/**
 	 * Command type.

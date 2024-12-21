@@ -5,7 +5,7 @@ import { LcStr } from './lcstr.ts';
  * Fixed virtual memory shared library.
  */
 export class Fvmlib extends Struct {
-	declare public readonly ['constructor']: typeof Fvmlib;
+	declare public readonly ['constructor']: Omit<typeof Fvmlib, 'new'>;
 
 	/**
 	 * Target pathname.

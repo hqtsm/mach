@@ -12,7 +12,7 @@ import {
  * UUID command.
  */
 export class UuidCommand extends Struct {
-	declare public readonly ['constructor']: typeof UuidCommand;
+	declare public readonly ['constructor']: Omit<typeof UuidCommand, 'new'>;
 
 	/**
 	 * Command type.

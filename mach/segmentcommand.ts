@@ -13,7 +13,7 @@ import {
  * Segment command, 32-bit.
  */
 export class SegmentCommand extends Struct {
-	declare public readonly ['constructor']: typeof SegmentCommand;
+	declare public readonly ['constructor']: Omit<typeof SegmentCommand, 'new'>;
 
 	/**
 	 * Command type.

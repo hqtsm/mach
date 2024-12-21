@@ -4,7 +4,10 @@ import { constant, Struct, uint32 } from '@hqtsm/struct';
  * Dynamically linked shared library use command.
  */
 export class DylibUseCommand extends Struct {
-	declare public readonly ['constructor']: typeof DylibUseCommand;
+	declare public readonly ['constructor']: Omit<
+		typeof DylibUseCommand,
+		'new'
+	>;
 
 	/**
 	 * Command type.

@@ -4,7 +4,10 @@ import { constant, Struct, uint32 } from '@hqtsm/struct';
  * Encryption info command, 32-bit.
  */
 export class EncryptionInfoCommand extends Struct {
-	declare public readonly ['constructor']: typeof EncryptionInfoCommand;
+	declare public readonly ['constructor']: Omit<
+		typeof EncryptionInfoCommand,
+		'new'
+	>;
 
 	/**
 	 * Command type.

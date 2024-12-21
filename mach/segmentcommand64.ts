@@ -14,7 +14,10 @@ import {
  * Segment command, 64-bit.
  */
 export class SegmentCommand64 extends Struct {
-	declare public readonly ['constructor']: typeof SegmentCommand64;
+	declare public readonly ['constructor']: Omit<
+		typeof SegmentCommand64,
+		'new'
+	>;
 
 	/**
 	 * Command type.

@@ -4,7 +4,7 @@ import { constant, uint32, Union } from '@hqtsm/struct';
  * Load command string union.
  */
 export class LcStr extends Union {
-	declare public readonly ['constructor']: typeof LcStr;
+	declare public readonly ['constructor']: Omit<typeof LcStr, 'new'>;
 
 	/**
 	 * String offset.

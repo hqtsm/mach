@@ -4,7 +4,10 @@ import { constant, Struct, uint32 } from '@hqtsm/struct';
  * Dylib info command.
  */
 export class DylibInfoCommand extends Struct {
-	declare public readonly ['constructor']: typeof DylibInfoCommand;
+	declare public readonly ['constructor']: Omit<
+		typeof DylibInfoCommand,
+		'new'
+	>;
 
 	/**
 	 * Command type.

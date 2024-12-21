@@ -4,7 +4,7 @@ import { constant, int32, Struct, uint32 } from '@hqtsm/struct';
  * Mach-O header, 64-bit.
  */
 export class MachHeader64 extends Struct {
-	declare public readonly ['constructor']: typeof MachHeader64;
+	declare public readonly ['constructor']: Omit<typeof MachHeader64, 'new'>;
 
 	/**
 	 * Mach magic.

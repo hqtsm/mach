@@ -5,7 +5,7 @@ import { LcStr } from './lcstr.ts';
  * Fixed virtual memory file command.
  */
 export class FvmfileCommand extends Struct {
-	declare public readonly ['constructor']: typeof FvmfileCommand;
+	declare public readonly ['constructor']: Omit<typeof FvmfileCommand, 'new'>;
 
 	/**
 	 * Command type.

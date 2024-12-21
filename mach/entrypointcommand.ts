@@ -4,7 +4,10 @@ import { constant, Struct, uint32, uint64 } from '@hqtsm/struct';
  * Entry point command.
  */
 export class EntryPointCommand extends Struct {
-	declare public readonly ['constructor']: typeof EntryPointCommand;
+	declare public readonly ['constructor']: Omit<
+		typeof EntryPointCommand,
+		'new'
+	>;
 
 	/**
 	 * Command type.

@@ -6,7 +6,10 @@ import { Blob } from './blob.ts';
  * For embedding entitlement configuration data.
  */
 export class EntitlementBlob extends Blob {
-	declare public readonly ['constructor']: typeof EntitlementBlob;
+	declare public readonly ['constructor']: Omit<
+		typeof EntitlementBlob,
+		'new'
+	>;
 
 	/**
 	 * Entitlements data.

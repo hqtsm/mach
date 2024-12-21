@@ -6,7 +6,7 @@ import { Blob } from './blob.ts';
  * Single requirement.
  */
 export class Requirement extends Blob {
-	declare public readonly ['constructor']: typeof Requirement;
+	declare public readonly ['constructor']: Omit<typeof Requirement, 'new'>;
 
 	/**
 	 * Requirement kind.

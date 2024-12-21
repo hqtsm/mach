@@ -5,7 +5,7 @@ import { Fvmlib } from './fvmlib.ts';
  * Fixed virtual memory shared library command.
  */
 export class FvmlibCommand extends Struct {
-	declare public readonly ['constructor']: typeof FvmlibCommand;
+	declare public readonly ['constructor']: Omit<typeof FvmlibCommand, 'new'>;
 
 	/**
 	 * Command type.

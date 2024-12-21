@@ -4,7 +4,7 @@ import { constant, Struct, uint32 } from '@hqtsm/struct';
  * Symbol table command.
  */
 export class SymsegCommand extends Struct {
-	declare public readonly ['constructor']: typeof SymsegCommand;
+	declare public readonly ['constructor']: Omit<typeof SymsegCommand, 'new'>;
 
 	/**
 	 * Command type.

@@ -4,7 +4,10 @@ import { constant, Struct, uint32, uint64 } from '@hqtsm/struct';
  * Source version command.
  */
 export class SourceVersionCommand extends Struct {
-	declare public readonly ['constructor']: typeof SourceVersionCommand;
+	declare public readonly ['constructor']: Omit<
+		typeof SourceVersionCommand,
+		'new'
+	>;
 
 	/**
 	 * Command type.

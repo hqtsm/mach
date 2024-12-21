@@ -6,7 +6,7 @@ import { Blob } from './blob.ts';
  * Describes secured pieces of a program.
  */
 export class CodeDirectory extends Blob {
-	declare public readonly ['constructor']: typeof CodeDirectory;
+	declare public readonly ['constructor']: Omit<typeof CodeDirectory, 'new'>;
 
 	/**
 	 * Compatibility version.

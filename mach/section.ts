@@ -12,7 +12,7 @@ import {
  * Section, 32-bit.
  */
 export class Section extends Struct {
-	declare public readonly ['constructor']: typeof Section;
+	declare public readonly ['constructor']: Omit<typeof Section, 'new'>;
 
 	/**
 	 * Section name.

@@ -4,7 +4,7 @@ import { constant, Struct, uint32 } from '@hqtsm/struct';
  * Thread command.
  */
 export class ThreadCommand extends Struct {
-	declare public readonly ['constructor']: typeof ThreadCommand;
+	declare public readonly ['constructor']: Omit<typeof ThreadCommand, 'new'>;
 
 	/**
 	 * Command type.

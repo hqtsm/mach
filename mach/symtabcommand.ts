@@ -4,7 +4,7 @@ import { constant, Struct, uint32 } from '@hqtsm/struct';
  * Symtab command.
  */
 export class SymtabCommand extends Struct {
-	declare public readonly ['constructor']: typeof SymtabCommand;
+	declare public readonly ['constructor']: Omit<typeof SymtabCommand, 'new'>;
 
 	/**
 	 * Command type.
