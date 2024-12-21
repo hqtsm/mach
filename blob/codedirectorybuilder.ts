@@ -1,3 +1,4 @@
+import type { BufferView } from '@hqtsm/struct';
 import {
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
@@ -198,7 +199,7 @@ export class CodeDirectoryBuilder {
 	 * @param slot Slot index, 1 indexed.
 	 * @param hash Hash data.
 	 */
-	public setSpecialSlot(slot: number, hash: Readonly<ArrayBufferView>): void {
+	public setSpecialSlot(slot: number, hash: BufferView): void {
 		const slots = this.#special;
 		const { digestLength } = this;
 		const digest = slots.get(slot) || new Uint8Array(digestLength);
@@ -231,7 +232,7 @@ export class CodeDirectoryBuilder {
 	 * @param slot Slot index, 0 indexed.
 	 * @param hash Hash data.
 	 */
-	public setCodeSlot(slot: number, hash: Readonly<ArrayBufferView>): void {
+	public setCodeSlot(slot: number, hash: BufferView): void {
 		const slots = this.#code;
 		const { codeSlots } = this;
 		if (!(slot < codeSlots)) {

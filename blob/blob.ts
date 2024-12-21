@@ -1,4 +1,4 @@
-import { constant, dataView } from '@hqtsm/struct';
+import { type BufferView, constant, dataView } from '@hqtsm/struct';
 import { BlobCore } from './blobcore.ts';
 
 /**
@@ -29,9 +29,7 @@ export class Blob extends BlobCore {
 	 * @param content Data to wrap, or number of bytes.
 	 * @returns Blob.
 	 */
-	public static blobify(
-		content: Readonly<ArrayBufferView> | number = 0,
-	): DataView {
+	public static blobify(content: BufferView | number = 0): DataView {
 		const { BYTE_LENGTH } = Blob;
 		let view;
 		let size = BYTE_LENGTH;

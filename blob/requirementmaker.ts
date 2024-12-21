@@ -1,4 +1,9 @@
-import { type BufferPointer, dataView, Ptr } from '@hqtsm/struct';
+import {
+	type BufferPointer,
+	type BufferView,
+	dataView,
+	Ptr,
+} from '@hqtsm/struct';
 import {
 	opAnchorHash,
 	opAppleAnchor,
@@ -67,7 +72,7 @@ export class RequirementMaker {
 	 *
 	 * @param data Buffer view, or uint32.
 	 */
-	public put(data: Readonly<ArrayBufferView> | number): void {
+	public put(data: BufferView | number): void {
 		if (typeof data === 'number') {
 			const a = this.alloc(4);
 			dataView(a.buffer).setUint32(a.byteOffset, data);
@@ -87,23 +92,20 @@ export class RequirementMaker {
 	 * @param data Buffer pointer.
 	 * @param length Length in bytes, null for view byte length.
 	 */
-	public putData(data: Readonly<BufferPointer>, length: number): void;
+	public putData(data: BufferPointer, length: number): void;
 
 	/**
 	 * Put data with length.
 	 *
 	 * @param data Buffer view.
 	 */
-	public putData(data: Readonly<ArrayBufferView>): void;
+	public putData(data: BufferView): void;
 
-	public putData(
-		data: Readonly<BufferPointer | ArrayBufferView>,
-		length?: number,
-	): void {
+	public putData(data: BufferPointer | BufferView, length?: number): void {
 		const a = new Uint8Array(
 			data.buffer,
 			data.byteOffset,
-			length ?? (data as Readonly<ArrayBufferView>).byteLength,
+			length ?? (data as BufferView).byteLength,
 		);
 		this.put(a.byteLength);
 		this.put(a);
@@ -129,7 +131,7 @@ export class RequirementMaker {
 	 * @param slot Slot index.
 	 * @param digest SHA1 digest.
 	 */
-	public anchorDigest(slot: number, digest: Readonly<ArrayBufferView>): void {
+	public anchorDigest(slot: number, digest: BufferPointer): void {
 		this.put(opAnchorHash);
 		this.put(slot);
 		// SHA1 digest length:
@@ -180,7 +182,7 @@ export class RequirementMaker {
 	 *
 	 * @param digest Hash digest.
 	 */
-	public cdhash(digest: Readonly<ArrayBufferView>): void {
+	public cdhash(digest: BufferView): void {
 		this.put(opCDHash);
 		this.putData(digest);
 	}
@@ -201,23 +203,20 @@ export class RequirementMaker {
 	 * @param data Buffer pointer.
 	 * @param length Length in bytes.
 	 */
-	public copy(data: Readonly<BufferPointer>, length: number): void;
+	public copy(data: BufferPointer, length: number): void;
 
 	/**
 	 * Copy data.
 	 *
 	 * @param data Buffer view.
 	 */
-	public copy(data: Readonly<ArrayBufferView>): void;
+	public copy(data: BufferView): void;
 
-	public copy(
-		data: Readonly<BufferPointer | ArrayBufferView>,
-		length?: number,
-	): void {
+	public copy(data: BufferPointer | BufferView, length?: number): void {
 		const d = new Uint8Array(
 			data.buffer,
 			data.byteOffset,
-			length ?? (data as Readonly<ArrayBufferView>).byteLength,
+			length ?? (data as BufferView).byteLength,
 		);
 		this.alloc(d.byteLength).set(d);
 	}
