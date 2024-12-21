@@ -1,3 +1,4 @@
+import { Ptr } from '@hqtsm/struct';
 import {
 	opAnchorHash,
 	opAppleAnchor,
@@ -188,17 +189,23 @@ export class RequirementMaker {
 	/**
 	 * Copy data.
 	 *
-	 * @param data Buffer view.
-	 * @param length Length in bytes, null for view byte length.
+	 * @param data Buffer pointer.
+	 * @param length Length in bytes.
 	 */
-	public copy(
-		data: Readonly<ArrayBufferView>,
-		length: number | null = null,
-	): void {
+	public copy(data: Readonly<Ptr>, length: number): void;
+
+	/**
+	 * Copy data.
+	 *
+	 * @param data Buffer view.
+	 */
+	public copy(data: Readonly<ArrayBufferView>): void;
+
+	public copy(data: Readonly<Ptr | ArrayBufferView>, length?: number): void {
 		const d = new Uint8Array(
 			data.buffer,
 			data.byteOffset,
-			length ?? data.byteLength,
+			length ?? (data as Readonly<ArrayBufferView>).byteLength,
 		);
 		this.alloc(d.byteLength).set(d);
 	}
@@ -214,7 +221,7 @@ export class RequirementMaker {
 			throw new Error(`Unsupported requirement kind: ${kind}`);
 		}
 		const { BYTE_LENGTH } = Requirement;
-		this.copy(req.at(DataView, BYTE_LENGTH), req.length - BYTE_LENGTH);
+		this.copy(req.at(Ptr, BYTE_LENGTH), req.length - BYTE_LENGTH);
 	}
 
 	/**
