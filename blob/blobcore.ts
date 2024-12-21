@@ -67,7 +67,7 @@ export class BlobCore extends Struct {
 	 * By default includes magic and length.
 	 * Child classes may redefine this to be a smaller area.
 	 *
-	 * @returns View starting from blob data start.
+	 * @returns Pointer to start of blob data.
 	 */
 	public get data(): Ptr {
 		return new Ptr(this.buffer, this.byteOffset);

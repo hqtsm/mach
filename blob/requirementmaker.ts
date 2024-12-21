@@ -237,7 +237,7 @@ export class RequirementMaker {
 	 *
 	 * @param label Label instance.
 	 * @param length Byte length.
-	 * @returns View of source data.
+	 * @returns Pointer to source data.
 	 */
 	public insert(label: Readonly<RequirementMakerLabel>, length = 4): Ptr {
 		const { pos } = label;

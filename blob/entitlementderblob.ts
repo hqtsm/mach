@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/struct';
+import { constant, type Ptr, Uint8Ptr } from '@hqtsm/struct';
 import { kSecCodeMagicEntitlementDER } from '../const.ts';
 import { Blob } from './blob.ts';
 
@@ -11,10 +11,10 @@ export class EntitlementDERBlob extends Blob {
 	/**
 	 * DER data.
 	 *
-	 * @returns View starting from DER.
+	 * @returns Pointer starting from DER.
 	 */
-	public get der(): Uint8Array {
-		return new Uint8Array(this.buffer, this.byteOffset + 8);
+	public get der(): Ptr<number> {
+		return new Uint8Ptr(this.buffer, this.byteOffset + 8);
 	}
 
 	/**

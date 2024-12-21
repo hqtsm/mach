@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/struct';
+import { constant, type Ptr, Uint8Ptr } from '@hqtsm/struct';
 import { kSecCodeMagicEntitlement } from '../const.ts';
 import { Blob } from './blob.ts';
 
@@ -11,10 +11,10 @@ export class EntitlementBlob extends Blob {
 	/**
 	 * Entitlements data.
 	 *
-	 * @returns View starting from entitlements.
+	 * @returns Pointer starting from entitlements.
 	 */
-	public get body(): Uint8Array {
-		return new Uint8Array(this.buffer, this.byteOffset + 8);
+	public get body(): Ptr<number> {
+		return new Uint8Ptr(this.buffer, this.byteOffset + 8);
 	}
 
 	/**
