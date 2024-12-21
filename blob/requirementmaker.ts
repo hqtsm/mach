@@ -1,4 +1,4 @@
-import { dataView, Ptr } from '@hqtsm/struct';
+import { type BufferPointer, dataView, Ptr } from '@hqtsm/struct';
 import {
 	opAnchorHash,
 	opAppleAnchor,
@@ -84,20 +84,29 @@ export class RequirementMaker {
 	/**
 	 * Put data with length.
 	 *
-	 * @param data Buffer view.
+	 * @param data Buffer pointer.
 	 * @param length Length in bytes, null for view byte length.
 	 */
+	public putData(data: Readonly<BufferPointer>, length: number): void;
+
+	/**
+	 * Put data with length.
+	 *
+	 * @param data Buffer view.
+	 */
+	public putData(data: Readonly<ArrayBufferView>): void;
+
 	public putData(
-		data: Readonly<ArrayBufferView>,
-		length: number | null = null,
+		data: Readonly<BufferPointer | ArrayBufferView>,
+		length?: number,
 	): void {
 		const a = new Uint8Array(
 			data.buffer,
 			data.byteOffset,
-			length ?? data.byteLength,
+			length ?? (data as Readonly<ArrayBufferView>).byteLength,
 		);
 		this.put(a.byteLength);
-		this.put(data);
+		this.put(a);
 	}
 
 	/**
@@ -192,7 +201,7 @@ export class RequirementMaker {
 	 * @param data Buffer pointer.
 	 * @param length Length in bytes.
 	 */
-	public copy(data: Readonly<Ptr>, length: number): void;
+	public copy(data: Readonly<BufferPointer>, length: number): void;
 
 	/**
 	 * Copy data.
@@ -201,7 +210,10 @@ export class RequirementMaker {
 	 */
 	public copy(data: Readonly<ArrayBufferView>): void;
 
-	public copy(data: Readonly<Ptr | ArrayBufferView>, length?: number): void {
+	public copy(
+		data: Readonly<BufferPointer | ArrayBufferView>,
+		length?: number,
+	): void {
 		const d = new Uint8Array(
 			data.buffer,
 			data.byteOffset,
@@ -231,10 +243,7 @@ export class RequirementMaker {
 	 * @param length Byte length.
 	 * @returns View of source data.
 	 */
-	public insert(
-		label: Readonly<RequirementMakerLabel>,
-		length = 4,
-	): Ptr {
+	public insert(label: Readonly<RequirementMakerLabel>, length = 4): Ptr {
 		const { pos } = label;
 		const req = new Requirement(this.#buffer);
 		this.require(length);
