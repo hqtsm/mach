@@ -1,3 +1,4 @@
+import { dataView } from '@hqtsm/struct';
 import type { RequirementMaker } from './requirementmaker.ts';
 import { RequirementMakerLabel } from './requirementmakerlabel.ts';
 
@@ -53,7 +54,7 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	public add(): void {
 		if (this.#count++) {
 			const p = this.maker.insert(this);
-			new DataView(p.buffer, p.byteOffset).setUint32(0, this.#joiner);
+			dataView(p.buffer).setUint32(p.byteOffset, this.#joiner);
 		}
 	}
 
