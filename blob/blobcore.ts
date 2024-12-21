@@ -1,6 +1,7 @@
 import {
 	type ArrayBufferReal,
 	constant,
+	Ptr,
 	Struct,
 	uint32BE,
 } from '@hqtsm/struct';
@@ -68,8 +69,8 @@ export class BlobCore extends Struct {
 	 *
 	 * @returns View starting from blob data start.
 	 */
-	public get data(): DataView {
-		return new DataView(this.buffer, this.byteOffset);
+	public get data(): Ptr {
+		return new Ptr(this.buffer, this.byteOffset);
 	}
 
 	/**

@@ -1,4 +1,4 @@
-import { array, constant, member, Uint8Ptr } from '@hqtsm/struct';
+import { array, constant, member, Ptr, Uint8Ptr } from '@hqtsm/struct';
 import { CSMAGIC_BLOBWRAPPER } from '../const.ts';
 import { Blob } from './blob.ts';
 
@@ -18,10 +18,10 @@ export class BlobWrapper extends Blob {
 	 *
 	 * @inheritdoc
 	 */
-	public override get data(): DataView {
+	public override get data(): Ptr {
 		// Overridden to point to payload (only).
 		const { dataArea } = this;
-		return new DataView(dataArea.buffer, dataArea.byteOffset);
+		return new Ptr(dataArea.buffer, dataArea.byteOffset);
 	}
 
 	/**
