@@ -158,10 +158,7 @@ export class RequirementMaker {
 	 * @param key Key string.
 	 * @param value Value string.
 	 */
-	public infoKey(
-		key: Readonly<Uint8Array>,
-		value: Readonly<Uint8Array>,
-	): void {
+	public infoKey(key: BufferView, value: BufferView): void {
 		this.put(opInfoKeyValue);
 		this.putData(key);
 		this.putData(value);
@@ -172,7 +169,7 @@ export class RequirementMaker {
 	 *
 	 * @param identifier Identifier string.
 	 */
-	public ident(identifier: Readonly<Uint8Array>): void {
+	public ident(identifier: BufferView): void {
 		this.put(opIdent);
 		this.putData(identifier);
 	}
