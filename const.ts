@@ -3,9 +3,6 @@
 // Highest number value before approximation, 2^53-1.
 export const INT_LIMIT = 0x1fffffffffffff;
 
-// A very large but still compatible upper block size limit.
-export const BLK_LIMIT = 0x100000000;
-
 export const UINT32_MAX = 0xffffffff;
 
 // FAT mach magic numbers:
