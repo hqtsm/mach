@@ -234,13 +234,13 @@ export class RequirementMaker {
 	public insert(
 		label: Readonly<RequirementMakerLabel>,
 		length = 4,
-	): DataView {
+	): Ptr {
 		const { pos } = label;
 		const req = new Requirement(this.#buffer);
 		this.require(length);
 		const len = this.#pc - pos;
-		const reqDest = req.at(DataView, pos + length);
-		const reqSrc = req.at(DataView, pos);
+		const reqDest = req.at(Ptr, pos + length);
+		const reqSrc = req.at(Ptr, pos);
 		new Uint8Array(reqDest.buffer, reqDest.byteOffset, len).set(
 			new Uint8Array(reqSrc.buffer, reqSrc.byteOffset, len),
 		);

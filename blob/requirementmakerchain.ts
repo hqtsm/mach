@@ -52,7 +52,8 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	 */
 	public add(): void {
 		if (this.#count++) {
-			this.maker.insert(this).setUint32(0, this.#joiner);
+			const p = this.maker.insert(this);
+			new DataView(p.buffer, p.byteOffset).setUint32(0, this.#joiner);
 		}
 	}
 
