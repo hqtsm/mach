@@ -40,9 +40,7 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	}
 
 	/**
-	 * Get maker.
-	 *
-	 * @returns Maker reference.
+	 * Maker reference.
 	 */
 	public get maker(): RequirementMaker {
 		return this.#maker;
@@ -60,8 +58,6 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 
 	/**
 	 * Check if the chain has no elements.
-	 *
-	 * @returns True if empty.
 	 */
 	public get empty(): boolean {
 		return this.#count === 0;

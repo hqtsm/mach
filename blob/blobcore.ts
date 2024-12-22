@@ -24,18 +24,11 @@ export class BlobCore extends Struct {
 
 	/**
 	 * Magic number.
-	 *
-	 * @returns Magic number.
 	 */
 	public get magic(): number {
 		return this.mMagic;
 	}
 
-	/**
-	 * Magic number.
-	 *
-	 * @param value Magic number.
-	 */
 	public set magic(value: number) {
 		this.mMagic = value;
 	}
@@ -44,20 +37,11 @@ export class BlobCore extends Struct {
 	 * Blob length.
 	 * By default includes magic and length.
 	 * Child classes may redefine this to be a smaller area.
-	 *
-	 * @returns Blob length.
 	 */
 	public get length(): number {
 		return this.mLength;
 	}
 
-	/**
-	 * Blob length.
-	 * By default includes magic and length.
-	 * Child classes may redefine this to be a smaller area.
-	 *
-	 * @param value Blob length.
-	 */
 	public set length(value: number) {
 		this.mLength = value;
 	}
@@ -66,8 +50,6 @@ export class BlobCore extends Struct {
 	 * Blob data.
 	 * By default includes magic and length.
 	 * Child classes may redefine this to be a smaller area.
-	 *
-	 * @returns Pointer to start of blob data.
 	 */
 	public get data(): Ptr {
 		return new Ptr(this.buffer, this.byteOffset, this.littleEndian);

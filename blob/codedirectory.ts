@@ -132,8 +132,6 @@ export class CodeDirectory extends Blob {
 
 	/**
 	 * Pointer to identifier string.
-	 *
-	 * @returns Character pointer or null.
 	 */
 	public get identifier(): Int8Ptr {
 		return new Int8Ptr(
@@ -144,9 +142,7 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
-	 * Get signed code limit.
-	 *
-	 * @returns The codeLimit64 or codeLimit.
+	 * Get signed code limit, from codeLimit64 or codeLimit.
 	 */
 	public get signingLimit(): bigint {
 		if (this.version >= this.constructor.supportsCodeLimit64) {
@@ -160,8 +156,6 @@ export class CodeDirectory extends Blob {
 
 	/**
 	 * Pointer to scatter vector.
-	 *
-	 * @returns Scatter head or null.
 	 */
 	public get scatterVector(): Ptr<CodeDirectoryScatter> | null {
 		if (this.version >= this.constructor.supportsScatter) {
@@ -179,8 +173,6 @@ export class CodeDirectory extends Blob {
 
 	/**
 	 * Pointer to team identifier string.
-	 *
-	 * @returns Character pointer.
 	 */
 	public get teamID(): Int8Ptr | null {
 		if (this.version >= this.constructor.supportsTeamID) {

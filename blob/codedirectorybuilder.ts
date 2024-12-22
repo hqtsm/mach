@@ -116,27 +116,21 @@ export class CodeDirectoryBuilder {
 	}
 
 	/**
-	 * Get the hash type.
-	 *
-	 * @returns Hash type.
+	 * Hash type.
 	 */
 	public get hashType(): number {
 		return this.#hashType;
 	}
 
 	/**
-	 * Get hash digest length.
-	 *
-	 * @returns Byte length.
+	 * Hash digest length.
 	 */
 	public get digestLength(): number {
 		return this.#digestLength;
 	}
 
 	/**
-	 * Get special slots count.
-	 *
-	 * @returns Total used.
+	 * Special slots count.
 	 */
 	public get specialSlots(): number {
 		return this.#specialSlots;
@@ -145,8 +139,6 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Get number of code slots.
 	 * Based on execLength and pageSize.
-	 *
-	 * @returns The number of slots.
 	 */
 	public get codeSlots(): number {
 		const { execLength } = this;
@@ -268,8 +260,6 @@ export class CodeDirectoryBuilder {
 
 	/**
 	 * Size of scatter vector.
-	 *
-	 * @returns Byte size.
 	 */
 	public get scatterSize(): number {
 		let size = 0;
@@ -284,8 +274,6 @@ export class CodeDirectoryBuilder {
 
 	/**
 	 * Get compatibility version of described CodeDirectory.
-	 *
-	 * @returns Compatibility version.
 	 */
 	public get version(): number {
 		if (this.generatePreEncryptHashes || this.runtimeVersion) {

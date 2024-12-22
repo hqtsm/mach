@@ -22,8 +22,6 @@ export class BlobWrapper extends Blob {
 
 	/**
 	 * Data of payload (only).
-	 *
-	 * @inheritdoc
 	 */
 	public override get data(): Ptr {
 		// Overridden to point to payload (only).
@@ -33,19 +31,12 @@ export class BlobWrapper extends Blob {
 
 	/**
 	 * Get length of payload (only), set length for full blob.
-	 *
-	 * @inheritdoc
 	 */
 	public override get length(): number {
 		// Overridden to get length of payload (only).
 		return super.length - 8;
 	}
 
-	/**
-	 * Get length of payload (only), set length for full blob.
-	 *
-	 * @inheritdoc
-	 */
 	public override set length(value: number) {
 		// No change, needed to keep setter.
 		super.length = value;

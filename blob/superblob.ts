@@ -67,8 +67,6 @@ export class SuperBlob extends Blob {
 
 	/**
 	 * Number of blobs in super blob.
-	 *
-	 * @returns Blobs count.
 	 */
 	public get count(): number {
 		return this.mCount;

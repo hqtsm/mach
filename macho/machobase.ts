@@ -99,8 +99,6 @@ export class MachOBase {
 
 	/**
 	 * Size of header.
-	 *
-	 * @returns Header size.
 	 */
 	protected get headerSize(): number {
 		return this.mHeader.byteLength;
@@ -108,8 +106,6 @@ export class MachOBase {
 
 	/**
 	 * Size of commands.
-	 *
-	 * @returns Commands size.
 	 */
 	protected get commandSize(): number {
 		return this.mHeader.sizeofcmds;

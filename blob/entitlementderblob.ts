@@ -13,8 +13,6 @@ export class EntitlementDERBlob extends Blob {
 
 	/**
 	 * DER data.
-	 *
-	 * @returns Pointer starting from DER.
 	 */
 	public get der(): Ptr<number> {
 		return new Uint8Ptr(
@@ -26,8 +24,6 @@ export class EntitlementDERBlob extends Blob {
 
 	/**
 	 * DER length.
-	 *
-	 * @returns Byte length.
 	 */
 	public get derLength(): number {
 		return this.length - 8;
