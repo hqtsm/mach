@@ -26,7 +26,7 @@ export class Blob extends BlobCore {
 	/**
 	 * Wrap data into a new blob.
 	 *
-	 * @param content Data to wrap, or number of bytes.
+	 * @param content Data to wrap, or number of content bytes.
 	 * @returns Blob data.
 	 */
 	public static blobify(content: BufferView | number = 0): Uint8Array {
