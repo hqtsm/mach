@@ -197,6 +197,36 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
+	 * Executable segment base, zero if not supported.
+	 */
+	public get execSegmentBase(): bigint {
+		if (this.version >= this.constructor.supportsExecSegment) {
+			return this.execSegBase;
+		}
+		return 0n;
+	}
+
+	/**
+	 * Executable segment limit, zero if not supported.
+	 */
+	public get execSegmentLimit(): bigint {
+		if (this.version >= this.constructor.supportsExecSegment) {
+			return this.execSegLimit;
+		}
+		return 0n;
+	}
+
+	/**
+	 * Executable segment flags, zero if not supported.
+	 */
+	public get execSegmentFlags(): bigint {
+		if (this.version >= this.constructor.supportsExecSegment) {
+			return this.execSegFlags;
+		}
+		return 0n;
+	}
+
+	/**
 	 * Get slot data view.
 	 *
 	 * @param slot Slot index.
