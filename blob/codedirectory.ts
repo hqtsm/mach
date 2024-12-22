@@ -1,4 +1,13 @@
-import { constant, Int8Ptr, uint32BE, uint64BE, uint8 } from '@hqtsm/struct';
+import {
+	constant,
+	Int8Ptr,
+	pointer,
+	type Ptr,
+	uint32BE,
+	uint64BE,
+	uint8,
+} from '@hqtsm/struct';
+import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
 import { kSecCodeMagicCodeDirectory } from '../const.ts';
 import { Blob } from './blob.ts';
 
@@ -124,7 +133,7 @@ export class CodeDirectory extends Blob {
 	/**
 	 * Pointer to identifier string.
 	 *
-	 * @returns Character pointer.
+	 * @returns Character pointer or null.
 	 */
 	public get identifier(): Int8Ptr {
 		return new Int8Ptr(
@@ -132,6 +141,25 @@ export class CodeDirectory extends Blob {
 			this.byteOffset + this.identOffset,
 			this.littleEndian,
 		);
+	}
+
+	/**
+	 * Pointer to scatter vector.
+	 *
+	 * @returns Scatter head or null.
+	 */
+	public get scatterVector(): Ptr<CodeDirectoryScatter> | null {
+		if (this.version >= this.constructor.supportsScatter) {
+			const { scatterOffset } = this;
+			if (scatterOffset) {
+				return new (pointer(CodeDirectoryScatter))(
+					this.buffer,
+					this.byteOffset + scatterOffset,
+					this.littleEndian,
+				);
+			}
+		}
+		return null;
 	}
 
 	/**
