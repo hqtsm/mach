@@ -227,6 +227,16 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
+	 * Runtime version, zero if not supported.
+	 */
+	public get runtimeVersion(): number {
+		if (this.version >= this.constructor.supportsPreEncrypt) {
+			return this.runtime;
+		}
+		return 0;
+	}
+
+	/**
 	 * Get slot data view.
 	 *
 	 * @param slot Slot index.
