@@ -144,6 +144,21 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
+	 * Get signed code limit.
+	 *
+	 * @returns The codeLimit64 or codeLimit.
+	 */
+	public get signingLimit(): bigint {
+		if (this.version >= this.constructor.supportsCodeLimit64) {
+			const { codeLimit64 } = this;
+			if (codeLimit64) {
+				return codeLimit64;
+			}
+		}
+		return BigInt(this.codeLimit);
+	}
+
+	/**
 	 * Pointer to scatter vector.
 	 *
 	 * @returns Scatter head or null.
