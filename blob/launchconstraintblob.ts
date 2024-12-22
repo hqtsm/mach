@@ -17,7 +17,11 @@ export class LaunchConstraintBlob extends Blob {
 	 * @returns Pointer starting from DER.
 	 */
 	public get der(): Ptr<number> {
-		return new Uint8Ptr(this.buffer, this.byteOffset + 8);
+		return new Uint8Ptr(
+			this.buffer,
+			this.byteOffset + 8,
+			this.littleEndian,
+		);
 	}
 
 	/**

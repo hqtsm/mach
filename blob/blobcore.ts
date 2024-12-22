@@ -70,7 +70,7 @@ export class BlobCore extends Struct {
 	 * @returns Pointer to start of blob data.
 	 */
 	public get data(): Ptr {
-		return new Ptr(this.buffer, this.byteOffset);
+		return new Ptr(this.buffer, this.byteOffset, this.littleEndian);
 	}
 
 	/**

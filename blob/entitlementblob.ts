@@ -17,7 +17,11 @@ export class EntitlementBlob extends Blob {
 	 * @returns Pointer starting from entitlements.
 	 */
 	public get body(): Ptr<number> {
-		return new Uint8Ptr(this.buffer, this.byteOffset + 8);
+		return new Uint8Ptr(
+			this.buffer,
+			this.byteOffset + 8,
+			this.littleEndian,
+		);
 	}
 
 	/**
