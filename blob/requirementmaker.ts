@@ -263,7 +263,7 @@ export class RequirementMaker {
 	}
 
 	/**
-	 * Get length of Requirement currently defined.
+	 * Length of Requirement currently defined.
 	 */
 	public get length(): number {
 		return this.#pc;

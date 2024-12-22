@@ -137,7 +137,7 @@ export class CodeDirectoryBuilder {
 	}
 
 	/**
-	 * Get number of code slots.
+	 * Number of code slots.
 	 * Based on execLength and pageSize.
 	 */
 	public get codeSlots(): number {
@@ -273,7 +273,7 @@ export class CodeDirectoryBuilder {
 	}
 
 	/**
-	 * Get compatibility version of described CodeDirectory.
+	 * Compatibility version of described CodeDirectory.
 	 */
 	public get version(): number {
 		if (this.generatePreEncryptHashes || this.runtimeVersion) {

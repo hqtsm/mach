@@ -65,21 +65,21 @@ export class Architecture {
 	}
 
 	/**
-	 * Get CPU type.
+	 * CPU type.
 	 */
 	public get cpuType(): number {
 		return this.first;
 	}
 
 	/**
-	 * Get CPU subtype.
+	 * CPU subtype.
 	 */
 	public get cpuSubType(): number {
 		return this.second & ~CPU_SUBTYPE_MASK;
 	}
 
 	/**
-	 * Get full CPU subtype.
+	 * Full CPU subtype.
 	 */
 	public get cpuSubtypeFull(): number {
 		return this.second;

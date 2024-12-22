@@ -47,7 +47,7 @@ export class SuperBlobMaker {
 	}
 
 	/**
-	 * Get the size of super blob.
+	 * Size of super blob.
 	 *
 	 * @returns Byte length.
 	 */

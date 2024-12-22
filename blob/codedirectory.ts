@@ -142,7 +142,7 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
-	 * Get signed code limit, from codeLimit64 or codeLimit.
+	 * Signed code limit, from codeLimit64 or codeLimit.
 	 */
 	public get signingLimit(): bigint {
 		if (this.version >= this.constructor.supportsCodeLimit64) {

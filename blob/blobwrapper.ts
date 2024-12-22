@@ -30,7 +30,7 @@ export class BlobWrapper extends Blob {
 	}
 
 	/**
-	 * Get length of payload (only), set length for full blob.
+	 * Length of payload (only), set length for full blob.
 	 */
 	public override get length(): number {
 		// Overridden to get length of payload (only).
