@@ -7,8 +7,8 @@ import {
 	uint64BE,
 	uint8,
 } from '@hqtsm/struct';
-import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
 import { kSecCodeMagicCodeDirectory } from '../const.ts';
+import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
 import { Blob } from './blob.ts';
 
 /**

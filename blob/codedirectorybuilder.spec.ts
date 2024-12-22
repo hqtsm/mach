@@ -1,11 +1,11 @@
 import { assertEquals } from '@std/assert';
+import { cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot } from '../const.ts';
 import {
 	chunkedHashes,
 	type FixtureMachoSignatureInfo,
 	hash,
 	unhex,
 } from '../util.spec.ts';
-import { cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot } from '../const.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import { CodeDirectory } from './codedirectory.ts';
 
