@@ -1,4 +1,4 @@
-import { constant, uint32BE, uint64BE, uint8 } from '@hqtsm/struct';
+import { constant, Int8Ptr, uint32BE, uint64BE, uint8 } from '@hqtsm/struct';
 import { kSecCodeMagicCodeDirectory } from '../const.ts';
 import { Blob } from './blob.ts';
 
@@ -120,6 +120,38 @@ export class CodeDirectory extends Blob {
 	 * Assumes supportsPreEncrypt.
 	 */
 	declare public preEncryptOffset: number;
+
+	/**
+	 * Pointer to identifier string.
+	 *
+	 * @returns Character pointer.
+	 */
+	public get identifier(): Int8Ptr {
+		return new Int8Ptr(
+			this.buffer,
+			this.byteOffset + this.identOffset,
+			this.littleEndian,
+		);
+	}
+
+	/**
+	 * Pointer to team identifier string.
+	 *
+	 * @returns Character pointer.
+	 */
+	public get teamID(): Int8Ptr | null {
+		if (this.version >= this.constructor.supportsTeamID) {
+			const { teamIDOffset } = this;
+			if (teamIDOffset) {
+				return new Int8Ptr(
+					this.buffer,
+					this.byteOffset + teamIDOffset,
+					this.littleEndian,
+				);
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Get slot data view.
