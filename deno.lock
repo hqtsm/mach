@@ -6,7 +6,7 @@
     "jsr:@deno/dnt@~0.41.3": "0.41.3",
     "jsr:@hqtsm/dataview@^1.0.5": "1.0.5",
     "jsr:@hqtsm/meek@^1.0.5": "1.0.5",
-    "jsr:@hqtsm/struct@^1.0.0-rc1": "1.0.0-rc1",
+    "jsr:@hqtsm/struct@1": "1.0.0",
     "jsr:@std/assert@0.223": "0.223.0",
     "jsr:@std/assert@0.226": "0.226.0",
     "jsr:@std/assert@^1.0.10": "1.0.10",
@@ -57,8 +57,8 @@
     "@hqtsm/meek@1.0.5": {
       "integrity": "54f297a3e2fa90e2ddcf0a90527ff2690a149cd7d680ef19ff2853adf7196e2d"
     },
-    "@hqtsm/struct@1.0.0-rc1": {
-      "integrity": "a45c42425d063d5e3026b36f45ceb396b9ce171a4fce3fc9195d940fe17e4687",
+    "@hqtsm/struct@1.0.0": {
+      "integrity": "ca23ce438ab1f978619d0d54d888a0ca5dea54a817e1abff4243bfb6948efd51",
       "dependencies": [
         "jsr:@hqtsm/dataview",
         "jsr:@hqtsm/meek"
@@ -156,7 +156,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@deno/dnt@~0.41.3",
-      "jsr:@hqtsm/struct@^1.0.0-rc1",
+      "jsr:@hqtsm/struct@1",
       "jsr:@std/assert@^1.0.10"
     ]
   }
