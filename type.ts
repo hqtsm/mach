@@ -47,7 +47,7 @@ export interface FileStatable {
 	 *
 	 * @param size New size.
 	 */
-	truncate(size: number): Promise<void>;
+	truncate(size: number): void | Promise<void>;
 }
 
 /**
@@ -59,7 +59,7 @@ export interface FileTruncatable {
 	 *
 	 * @param size New size.
 	 */
-	truncate(size: number): Promise<void>;
+	truncate(size: number): void | Promise<void>;
 }
 
 /**
@@ -80,7 +80,7 @@ export interface FileReadable {
 		offset: number,
 		length: number,
 		position: number,
-	): Promise<FileReadStats>;
+	): FileReadStats | Promise<FileReadStats>;
 }
 
 /**
@@ -101,7 +101,7 @@ export interface FileWritable {
 		offset: number,
 		length: number,
 		position: number,
-	): Promise<FileWriteStats>;
+	): FileWriteStats | Promise<FileWriteStats>;
 }
 
 /**

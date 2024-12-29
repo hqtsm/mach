@@ -25,8 +25,7 @@ export class MemoryFile implements File {
 	 */
 	constructor() {}
 
-	// deno-lint-ignore require-await
-	public async stat(): Promise<FileStats> {
+	public stat(): FileStats {
 		return {
 			blocks: this.#blocks.length,
 			blksize: BS,
@@ -34,8 +33,7 @@ export class MemoryFile implements File {
 		};
 	}
 
-	// deno-lint-ignore require-await
-	public async truncate(size: number): Promise<void> {
+	public truncate(size: number): void {
 		ranged(size, 0, INT_LIMIT);
 		const s = this.#size;
 		if (s === size) {
@@ -55,13 +53,12 @@ export class MemoryFile implements File {
 		this.#size = size;
 	}
 
-	// deno-lint-ignore require-await
-	public async read(
+	public read(
 		buffer: ArrayBufferView,
 		offset: number,
 		length: number,
 		position: number,
-	): Promise<FileReadStats> {
+	): FileReadStats {
 		const { buffer: bd, byteOffset: bo, byteLength: bl } = buffer;
 		ranged(offset, 0, bl);
 		ranged(length, 0, bl - offset);
@@ -99,13 +96,12 @@ export class MemoryFile implements File {
 		};
 	}
 
-	// deno-lint-ignore require-await
-	public async write(
+	public write(
 		buffer: Readonly<ArrayBufferView>,
 		offset: number,
 		length: number,
 		position: number,
-	): Promise<FileWriteStats> {
+	): FileWriteStats {
 		const { buffer: bd, byteOffset: bo, byteLength: bl } = buffer;
 		ranged(offset, 0, bl);
 		ranged(length, 0, bl - offset);
