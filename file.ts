@@ -1,7 +1,12 @@
 import { INT_LIMIT } from './const.ts';
-import { ranged } from './util.ts';
 
 const BS = 4096;
+
+export function ranged(i: number, l: number, h: number): void {
+	if (!(i >= l && i <= h)) {
+		throw new RangeError(`Value ${i} out of range ${l}-${h}`);
+	}
+}
 
 /**
  * File stat.
