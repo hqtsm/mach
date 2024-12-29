@@ -1,7 +1,8 @@
-// import { open } from 'node:fs/promises';
+// deno-lint-ignore no-external-import
+import { open, stat } from 'node:fs/promises';
 import { assertEquals } from '@std/assert';
 import { MemoryFile } from './memoryfile.ts';
-// import type { FileLike } from './type.ts';
+import type { File } from './type.ts';
 
 const BS = 4096;
 
@@ -234,15 +235,24 @@ Deno.test('stat two blocks plus one', () => {
 	assertEquals(r.blksize, BS);
 });
 
-/*
 Deno.test('like node', async () => {
-	const m = new MemoryFile();
-	const f = await open('LICENSE.txt', 'r');
+	let size = 0;
+	let file = '';
+	for (const f of ['LICENSE.txt', '../LICENSE.txt']) {
+		// deno-lint-ignore no-await-in-loop
+		const st = await stat(f).catch(() => null);
+		if (st) {
+			file = f;
+			size = st.size;
+			break;
+		}
+	}
+	const m: File = new MemoryFile();
+	const f = await open(file, 'r');
 	try {
-		const n: FileLike = f;
+		const n: File = f;
 		let d;
 		{
-			const { size } = await n.stat();
 			d = new Uint8Array(size);
 			await n.read(d, 0, d.length, 0);
 			await m.write(d, 0, d.length, 0);
@@ -270,4 +280,3 @@ Deno.test('like node', async () => {
 		await f.close();
 	}
 });
-*/
