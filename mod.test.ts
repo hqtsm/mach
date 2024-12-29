@@ -120,14 +120,10 @@ Deno.test('public', async () => {
 
 		for (const name of Object.keys(m)) {
 			const Class = m[name];
-			if (!isClass(Class)) {
+			if (name === 'MemoryFile' || !isClass(Class)) {
 				continue;
 			}
-			assertEquals(
-				name.replace(/[BL]E$/, '').toLowerCase(),
-				file,
-				`${file}: ${uri}`,
-			);
+			assertEquals(name.toLowerCase(), file, `${file}: ${uri}`);
 		}
 	}
 });

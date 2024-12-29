@@ -1,8 +1,7 @@
 // deno-lint-ignore no-external-import
 import { open, stat } from 'node:fs/promises';
 import { assertEquals } from '@std/assert';
-import { MemoryFile } from './memoryfile.ts';
-import type { File } from './type.ts';
+import { type File, MemoryFile } from './file.ts';
 
 const BS = 4096;
 
