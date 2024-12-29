@@ -20,6 +20,8 @@ function getFilename(): string {
 	} finally {
 		if (original) {
 			E.prepareStackTrace = original;
+		} else {
+			delete E.prepareStackTrace;
 		}
 	}
 	const m = trace?.match(/\((file:\/\/)?(.*):\d+:\d+\)/i);
