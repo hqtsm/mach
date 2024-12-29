@@ -95,6 +95,9 @@ const dir = file.replace(/[\\\/][^/]+$/, '');
 const impire = getImport();
 
 Deno.test('public', async () => {
+	const named = new Map([
+		['MemoryFile', 'file'],
+	]);
 	for await (
 		const uri of findModules(
 			dir,
@@ -120,10 +123,14 @@ Deno.test('public', async () => {
 
 		for (const name of Object.keys(m)) {
 			const Class = m[name];
-			if (name === 'MemoryFile' || !isClass(Class)) {
+			if (!isClass(Class)) {
 				continue;
 			}
-			assertEquals(name.toLowerCase(), file, `${file}: ${uri}`);
+			assertEquals(
+				named.get(name) ?? name.toLowerCase(),
+				file,
+				`${file}: ${uri}`,
+			);
 		}
 	}
 });
