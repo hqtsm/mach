@@ -11,14 +11,15 @@ function getFilename(): string {
 	let trace;
 	let original;
 	const E = Error as unknown as { prepareStackTrace: unknown };
-	if (Object.hasOwn(E, 'prepareStackTrace')) {
+	const own = Object.hasOwn(E, 'prepareStackTrace');
+	if (own) {
 		original = E.prepareStackTrace;
 		E.prepareStackTrace = (s: { stack: string }) => s.stack;
 	}
 	try {
 		trace = new Error('.').stack;
 	} finally {
-		if (original) {
+		if (own) {
 			E.prepareStackTrace = original;
 		} else {
 			delete E.prepareStackTrace;
