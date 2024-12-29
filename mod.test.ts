@@ -95,7 +95,7 @@ const dir = file.replace(/[\\\/][^/]+$/, '');
 const impire = getImport();
 
 Deno.test('public', async () => {
-	const named = new Map([
+	const filed = new Map([
 		['MemoryFile', 'file'],
 	]);
 	for await (
@@ -127,7 +127,7 @@ Deno.test('public', async () => {
 				continue;
 			}
 			assertEquals(
-				named.get(name) ?? name.toLowerCase(),
+				filed.get(name) ?? name.toLowerCase(),
 				file,
 				`${file}: ${uri}`,
 			);
