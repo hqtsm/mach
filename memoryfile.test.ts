@@ -256,6 +256,7 @@ Deno.test('like node', async () => {
 			d = new Uint8Array(size);
 			await n.read(d, 0, d.length, 0);
 			await m.write(d, 0, d.length, 0);
+			assertEquals((await m.stat()).size, size);
 		}
 
 		for (let i = 0, o = 0, l = 0; o < d.length; i++) {

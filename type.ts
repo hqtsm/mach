@@ -43,11 +43,9 @@ export interface FileWriteStats {
  */
 export interface FileStatable {
 	/**
-	 * Truncate file to size.
-	 *
-	 * @param size New size.
+	 * Stat file.
 	 */
-	truncate(size: number): void | Promise<void>;
+	stat(): FileStats | Promise<FileStats>;
 }
 
 /**
