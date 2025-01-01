@@ -67,3 +67,16 @@ Deno.test('find', () => {
 	);
 	assertEquals(get3, null);
 });
+
+Deno.test('count', () => {
+	const maker = new SuperBlobMaker();
+	const data1 = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
+	const data2 = new Uint8Array([2, 3, 4, 5, 6, 7, 8, 9]);
+	const blob1 = BlobWrapper.alloc(data1);
+	const blob2 = BlobWrapper.alloc(data2);
+	maker.add(1, blob1);
+	maker.add(2, blob1);
+	maker.add(2, blob2);
+	const sb = maker.make();
+	assertEquals(sb.count, 2);
+});
