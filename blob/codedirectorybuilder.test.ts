@@ -1,4 +1,9 @@
-import { assertEquals, assertNotEquals, assertThrows } from '@std/assert';
+import {
+	assertEquals,
+	assertGreater,
+	assertNotEquals,
+	assertThrows,
+} from '@std/assert';
 import {
 	fixtureMachos,
 	indexOf,
@@ -8,6 +13,8 @@ import {
 import { createCodeDirectories } from './codedirectorybuilder.spec.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import { kSecCodeSignatureHashSHA1 } from '../const.ts';
+import { CodeDirectory } from './codedirectory.ts';
+import { UINT32_MAX } from '../const.ts';
 
 const fixtures = fixtureMachos();
 
@@ -78,6 +85,46 @@ Deno.test('createScatter', () => {
 	scatter[0].count = 1;
 	scatter[1].count = 2;
 	assertEquals(scatter.length, 3);
+	builder.build();
+});
+
+Deno.test('version and size', () => {
+	let size = 0;
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+
+	assertEquals(builder.version, CodeDirectory.earliestVersion);
+	assertGreater(builder.size(), size);
+	size = builder.size();
+
+	builder.createScatter(1);
+	assertEquals(builder.version, CodeDirectory.supportsScatter);
+	assertGreater(builder.size(), size);
+	size = builder.size();
+
+	builder.teamID = new TextEncoder().encode('TEAM');
+	assertEquals(builder.version, CodeDirectory.supportsTeamID);
+	assertGreater(builder.size(), size);
+	size = builder.size();
+
+	builder.execLength = UINT32_MAX + 1;
+	assertEquals(builder.version, CodeDirectory.supportsCodeLimit64);
+	assertGreater(builder.size(), size);
+	size = builder.size();
+
+	builder.execSegLimit = 1n;
+	assertEquals(builder.version, CodeDirectory.supportsExecSegment);
+	assertGreater(builder.size(), size);
+	size = builder.size();
+
+	builder.generatePreEncryptHashes = true;
+	assertEquals(builder.version, CodeDirectory.supportsPreEncrypt);
+	assertGreater(builder.size(), size);
+
+	builder.generatePreEncryptHashes = false;
+	builder.runtimeVersion = 1;
+	assertEquals(builder.version, CodeDirectory.supportsPreEncrypt);
+	assertGreater(builder.size(), size);
+
 	builder.build();
 });
 
