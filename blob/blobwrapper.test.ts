@@ -18,9 +18,9 @@ Deno.test('empty', () => {
 	);
 });
 
-Deno.test('data', () => {
+Deno.test('alloc data', () => {
 	const data = unhex('09 AB CD EF 01 02 03 04 05 06 07 08 09 0A 0B 0C');
-	const bw = new BlobWrapper(BlobWrapper.blobify(data).buffer);
+	const bw = BlobWrapper.alloc(data);
 	const dv = new DataView(bw.buffer, bw.byteOffset, 8);
 	assertEquals(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
 	assertEquals(dv.getUint32(4), bw.length + 8);
@@ -30,7 +30,7 @@ Deno.test('data', () => {
 	);
 });
 
-Deno.test('data', () => {
+Deno.test('alloc length', () => {
 	const data = unhex('09 AB CD EF 01 02 03 04 05 06 07 08 09 0A 0B 0C');
 	const bw = BlobWrapper.alloc(data.length);
 	new Uint8Array(bw.data.buffer, bw.data.byteOffset).set(data);
