@@ -51,7 +51,7 @@ export class SuperBlobMaker {
 	 *
 	 * @returns Byte length.
 	 */
-	public size(): number {
+	public get size(): number {
 		let size = SuperBlob.BYTE_LENGTH;
 		for (const [, blob] of this.#pieces) {
 			size += 8 + blob.length;
@@ -67,7 +67,7 @@ export class SuperBlobMaker {
 	public make(): SuperBlob {
 		const pieces = this.#pieces;
 		const count = pieces.size;
-		const size = this.size();
+		const { size } = this;
 		const buffer = new ArrayBuffer(size);
 		const data = new Uint8Array(buffer);
 		const view = dataView(buffer);
