@@ -1,5 +1,5 @@
 import { assert, assertEquals, assertRejects } from '@std/assert';
-import { getCrypto, hash, hex, indexOf } from './util.spec.ts';
+import { fixtureMacho, getCrypto, hash, hex, indexOf } from './util.spec.ts';
 import { alignUp } from './util.ts';
 import {
 	kSecCodeSignatureHashSHA1,
@@ -67,6 +67,13 @@ Deno.test('hash', async () => {
 		assertEquals(hashes.get(hashType), hash, `hashType: ${hashType}`);
 	}
 	assertRejects(async () => await hash(0, new Uint8Array(0)));
+});
+
+Deno.test('fixtureMacho', async () => {
+	await fixtureMacho('app', 'arm64', [
+		'u/Sample.app/Contents/Info.plist',
+		'u/Sample.app/Contents/Frameworks/Sample.framework/Versions/Current',
+	]);
 });
 
 Deno.test('alignUp unsigned', () => {

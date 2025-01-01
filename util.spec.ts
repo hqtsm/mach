@@ -207,9 +207,6 @@ export async function* zipped(file: string): AsyncGenerator<
 				`Unknown compression type: ${compression}`,
 			);
 			const inflater = compression ? inflate : null;
-			if (!uSize) {
-				return new Uint8Array();
-			}
 
 			let i = 0;
 			i += 4;
