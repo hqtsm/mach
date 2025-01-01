@@ -377,7 +377,7 @@ function fixtureMachosRead(): {
 					.split(',')
 					.map((s) => s.trim())
 					.filter(Boolean)
-					.map((s) => hashTypes[s] as number);
+					.map((s) => hashTypes[s]);
 				break;
 			}
 		}
