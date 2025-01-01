@@ -31,7 +31,7 @@ export class SuperBlob extends Blob {
 	 * @returns Type.
 	 */
 	public type(index: number): number {
-		index = index - (index % 1) || 0;
+		index = (+index || 0) - (index % 1 || 0);
 		return dataView(this.buffer).getUint32(
 			this.byteOffset + 12 + 8 * index,
 		);
@@ -44,7 +44,7 @@ export class SuperBlob extends Blob {
 	 * @returns Blob or null if no offset in index.
 	 */
 	public blob(index: number): BlobCore | null {
-		index = index - (index % 1) || 0;
+		index = (+index || 0) - (index % 1 || 0);
 		const offset = dataView(this.buffer).getUint32(
 			this.byteOffset + 16 + 8 * index,
 		);

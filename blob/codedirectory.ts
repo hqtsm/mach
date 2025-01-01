@@ -236,7 +236,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Hash value, or null.
 	 */
 	public getSlot(slot: number, preEncrypt: boolean): Uint8Array | null {
-		slot = slot - (slot % 1) || 0;
+		slot = (+slot || 0) - (slot % 1 || 0);
 		let offset;
 		if (preEncrypt) {
 			if (
