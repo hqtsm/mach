@@ -1,4 +1,4 @@
-import { assertEquals } from '@std/assert';
+import { assert, assertEquals } from '@std/assert';
 import { cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot } from '../const.ts';
 import {
 	chunkedHashes,
@@ -54,9 +54,11 @@ export async function* createCodeDirectories(
 				await hash(hashType, infoPlist),
 			);
 		}
+		let reqs = false;
 		switch (requirements) {
 			case '': {
 				// No requirements.
+				reqs = true;
 				break;
 			}
 			case 'count=0 size=12': {
@@ -65,12 +67,11 @@ export async function* createCodeDirectories(
 					// deno-lint-ignore no-await-in-loop
 					await hash(hashType, emptyRequirements),
 				);
+				reqs = true;
 				break;
 			}
-			default: {
-				throw new Error(`Unknown requirements: ${requirements}`);
-			}
 		}
+		assert(reqs, `Unknown requirements: ${requirements}`);
 		if (codeResources) {
 			builder.setSpecialSlot(
 				cdResourceDirSlot,
