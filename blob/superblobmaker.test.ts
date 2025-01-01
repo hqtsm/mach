@@ -1,4 +1,4 @@
-import { assertEquals } from '@std/assert';
+import { assert, assertEquals } from '@std/assert';
 import { SuperBlobMaker } from './superblobmaker.ts';
 import { BlobWrapper } from './blobwrapper.ts';
 
@@ -18,4 +18,13 @@ Deno.test('contains', () => {
 	assertEquals(maker.contains(0x01020304), false);
 	maker.add(0x01020304, blob);
 	assertEquals(maker.contains(0x01020304), true);
+});
+
+Deno.test('get', () => {
+	const maker = new SuperBlobMaker();
+	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
+	const blob = BlobWrapper.alloc(data);
+	assertEquals(maker.get(0x01020304), null);
+	maker.add(0x01020304, blob);
+	assert(maker.get(0x01020304));
 });
