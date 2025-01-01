@@ -72,7 +72,9 @@ Deno.test('codeSlot', () => {
 
 Deno.test('createScatter', () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	const scatter = builder.createScatter(2);
+	let scatter = builder.createScatter(NaN);
+	assertEquals(scatter.length, 1);
+	scatter = builder.createScatter(2);
 	scatter[0].count = 1;
 	scatter[1].count = 2;
 	assertEquals(scatter.length, 3);
