@@ -1,4 +1,5 @@
-import { INT_LIMIT } from './const.ts';
+// Highest number value before approximation, 2^53-1.
+export const INT_LIMIT = 0x1fffffffffffff;
 
 const BS = 4096;
 

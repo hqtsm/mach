@@ -1,8 +1,5 @@
 // deno-lint-ignore-file camelcase
 
-// Highest number value before approximation, 2^53-1.
-export const INT_LIMIT = 0x1fffffffffffff;
-
 export const UINT32_MAX = 0xffffffff;
 
 // FAT mach magic numbers:
