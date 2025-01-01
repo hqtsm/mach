@@ -70,6 +70,15 @@ Deno.test('codeSlot', () => {
 	assertEquals(builder.getCodeSlot(0), hash);
 });
 
+Deno.test('createScatter', () => {
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	const scatter = builder.createScatter(2);
+	scatter[0].count = 1;
+	scatter[1].count = 2;
+	assertEquals(scatter.length, 3);
+	builder.build();
+});
+
 for (const { kind, arch, file, archs } of fixtures) {
 	// Skip binaries with no signed architectures.
 	if (![...archs.values()].filter(Boolean).length) {
