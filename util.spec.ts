@@ -43,6 +43,10 @@ export function indexOf(
 	return -1;
 }
 
+export function hex(data: Readonly<Uint8Array>): string {
+	return [...data].map((x) => x.toString(16).padStart(2, '0')).join('');
+}
+
 export function unhex(...hex: string[]): Uint8Array {
 	return new Uint8Array(
 		hex
@@ -51,6 +55,12 @@ export function unhex(...hex: string[]): Uint8Array {
 			.match(/.{1,2}/g)!
 			.map((x) => +`0x${x}`),
 	);
+}
+
+export function getCrypto(): Promise<typeof crypto> {
+	return typeof crypto === 'undefined'
+		? import('node:crypto')
+		: Promise.resolve(crypto);
 }
 
 export async function hash(
@@ -85,9 +95,7 @@ export async function hash(
 			throw new Error(`Unknown hash type: ${hashType}`);
 		}
 	}
-	const { subtle } = typeof crypto === 'undefined'
-		? await import('node:crypto')
-		: crypto;
+	const { subtle } = await getCrypto();
 	const h = await subtle.digest(algo, data);
 	return new Uint8Array(limit < 0 ? h : h.slice(0, limit));
 }
