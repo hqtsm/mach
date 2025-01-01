@@ -14,31 +14,31 @@ Deno.test('write expand', () => {
 
 	r = m.write(d, 0, 1, 10);
 	assertEquals(r.bytesWritten, 1);
-	assertEquals((m.stat()).size, 11);
+	assertEquals(m.stat().size, 11);
 
 	r = m.write(d, 0, 1, 99);
 	assertEquals(r.bytesWritten, 1);
-	assertEquals((m.stat()).size, 100);
+	assertEquals(m.stat().size, 100);
 
 	r = m.write(d, 0, 1, 100);
 	assertEquals(r.bytesWritten, 1);
-	assertEquals((m.stat()).size, 101);
+	assertEquals(m.stat().size, 101);
 
 	r = m.write(d, 0, 1, 99);
 	assertEquals(r.bytesWritten, 1);
-	assertEquals((m.stat()).size, 101);
+	assertEquals(m.stat().size, 101);
 
 	r = m.write(d, 0, 1, BS - 1);
 	assertEquals(r.bytesWritten, 1);
-	assertEquals((m.stat()).size, BS);
+	assertEquals(m.stat().size, BS);
 
 	r = m.write(d, 0, 1, BS);
 	assertEquals(r.bytesWritten, 1);
-	assertEquals((m.stat()).size, BS + 1);
+	assertEquals(m.stat().size, BS + 1);
 
 	r = m.write(d, 0, 1, BS * 2);
 	assertEquals(r.bytesWritten, 1);
-	assertEquals((m.stat()).size, BS * 2 + 1);
+	assertEquals(m.stat().size, BS * 2 + 1);
 });
 
 Deno.test('sparse', () => {
@@ -48,17 +48,17 @@ Deno.test('sparse', () => {
 
 	r = m.write(d, 0, 1, 10000);
 	assertEquals(r.bytesWritten, 1);
-	assertEquals((m.stat()).size, 10001);
+	assertEquals(m.stat().size, 10001);
 
 	d[0] = 123;
 	r = m.read(d, 0, 1, 0);
 	assertEquals(r.bytesRead, 1);
-	assertEquals((m.stat()).size, 10001);
+	assertEquals(m.stat().size, 10001);
 	assertEquals(d[0], 0);
 
 	r = m.write(d, 0, 1, 0);
 	assertEquals(r.bytesWritten, 1);
-	assertEquals((m.stat()).size, 10001);
+	assertEquals(m.stat().size, 10001);
 });
 
 Deno.test('write many pieces overlapping', () => {
@@ -73,7 +73,7 @@ Deno.test('write many pieces overlapping', () => {
 
 		offset += l - sub;
 
-		assertEquals((m.stat()).size, offset);
+		assertEquals(m.stat().size, offset);
 	}
 });
 
