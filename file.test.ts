@@ -1,7 +1,9 @@
 // deno-lint-ignore no-external-import
 import { open, stat } from 'node:fs/promises';
-import { assertEquals } from '@std/assert';
+import { assertEquals, assertThrows } from '@std/assert';
 import { type File, MemoryFile } from './file.ts';
+
+export const INT_LIMIT = 0x1fffffffffffff;
 
 const BS = 4096;
 
@@ -210,6 +212,13 @@ Deno.test('truncate smaller', () => {
 			}
 		}
 	}
+});
+
+Deno.test('truncate bad', () => {
+	assertThrows(() => {
+		const m = new MemoryFile();
+		m.truncate(INT_LIMIT + 1);
+	});
 });
 
 Deno.test('stat two blocks', () => {
