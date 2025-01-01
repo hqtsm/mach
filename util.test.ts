@@ -6,6 +6,7 @@ import {
 	assertThrows,
 } from '@std/assert';
 import {
+	chunkedHashes,
 	fixtureMacho,
 	getCrypto,
 	graceful,
@@ -92,6 +93,15 @@ Deno.test('hash', async () => {
 		assertEquals(hashes.get(hashType), hash, `hashType: ${hashType}`);
 	}
 	assertRejects(async () => await hash(0, new Uint8Array(0)));
+});
+
+Deno.test('chunkedHashes', async () => {
+	const chunkes = await chunkedHashes(
+		kSecCodeSignatureHashSHA1,
+		new Uint8Array(1),
+		0,
+	);
+	assertEquals(chunkes, [unhex('5ba93c9db0cff93f52b521d7420e43f6eda2784f')]);
 });
 
 Deno.test('fixtureMacho', async () => {

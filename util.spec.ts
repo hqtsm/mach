@@ -113,7 +113,9 @@ export async function chunkedHashes(
 	offset = 0,
 	length = -1,
 ): Promise<Uint8Array[]> {
-	const d = new Uint8Array(data.buffer, data.byteOffset + offset, length);
+	const d = length < 0
+		? new Uint8Array(data.buffer, data.byteOffset + offset)
+		: new Uint8Array(data.buffer, data.byteOffset + offset, length);
 	const l = d.length;
 	chunk = chunk || l;
 	const slices = [];
