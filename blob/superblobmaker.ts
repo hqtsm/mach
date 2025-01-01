@@ -48,8 +48,6 @@ export class SuperBlobMaker {
 
 	/**
 	 * Size of super blob.
-	 *
-	 * @returns Byte length.
 	 */
 	public get size(): number {
 		let size = SuperBlob.BYTE_LENGTH;
