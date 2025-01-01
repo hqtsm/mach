@@ -1,4 +1,4 @@
-import { assertNotEquals } from '@std/assert';
+import { assertEquals, assertNotEquals } from '@std/assert';
 import {
 	fixtureMachos,
 	indexOf,
@@ -6,8 +6,22 @@ import {
 	readMachoFiles,
 } from '../util.spec.ts';
 import { createCodeDirectories } from './codedirectorybuilder.spec.ts';
+import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
+import { kSecCodeSignatureHashSHA1 } from '../const.ts';
 
 const fixtures = fixtureMachos();
+
+Deno.test('codeSlots', () => {
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	assertEquals(builder.codeSlots, 0);
+	builder.execLength = 1;
+	assertEquals(builder.codeSlots, 1);
+	builder.pageSize = 1024;
+	builder.execLength = 1024;
+	assertEquals(builder.codeSlots, 1);
+	builder.execLength = 1025;
+	assertEquals(builder.codeSlots, 2);
+});
 
 for (const { kind, arch, file, archs } of fixtures) {
 	// Skip binaries with no signed architectures.
