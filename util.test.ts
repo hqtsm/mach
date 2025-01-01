@@ -1,5 +1,17 @@
-import { assert, assertEquals, assertRejects } from '@std/assert';
-import { fixtureMacho, getCrypto, hash, hex, indexOf } from './util.spec.ts';
+import {
+	assert,
+	assertEquals,
+	assertRejects,
+	assertStrictEquals,
+} from '@std/assert';
+import {
+	fixtureMacho,
+	getCrypto,
+	graceful,
+	hash,
+	hex,
+	indexOf,
+} from './util.spec.ts';
 import { alignUp } from './util.ts';
 import {
 	kSecCodeSignatureHashSHA1,
@@ -8,6 +20,16 @@ import {
 	kSecCodeSignatureHashSHA384,
 	kSecCodeSignatureHashSHA512,
 } from './const.ts';
+
+Deno.test('graceful', () => {
+	assertStrictEquals(graceful(() => 1), 1);
+	assertStrictEquals(
+		graceful(() => {
+			throw new Error('Test');
+		}),
+		null,
+	);
+});
 
 Deno.test('getCrypto', async () => {
 	const desc = Object.getOwnPropertyDescriptor(globalThis, 'crypto');

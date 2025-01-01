@@ -237,6 +237,14 @@ export async function* zipped(file: string): AsyncGenerator<
 
 let fixturesCache: string | null = null;
 
+export function graceful<T>(f: () => T): T | null {
+	try {
+		return f();
+	} catch (_) {
+		return null;
+	}
+}
+
 function fixtures(): string {
 	if (fixturesCache) {
 		return fixturesCache;
@@ -248,15 +256,13 @@ function fixtures(): string {
 			'../../spec/fixtures',
 		]
 	) {
-		try {
-			Deno.statSync(s);
-			fixturesCache = s;
-			return s;
-		} catch (_) {
-			// Ignore.
+		fixturesCache = graceful(() => Deno.realPathSync(s));
+		if (fixturesCache) {
+			break;
 		}
 	}
-	throw new Error('Could not find fixtures');
+	assert(fixturesCache, 'Could not find fixtures');
+	return fixturesCache;
 }
 
 export interface FixtureMachoSignatureInfo {
