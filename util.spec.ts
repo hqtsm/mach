@@ -1,3 +1,4 @@
+import { assert } from '@std/assert';
 import {
 	CPU_SUBTYPE_POWERPC_7400,
 	CPU_SUBTYPE_POWERPC_970,
@@ -201,23 +202,11 @@ export async function* zipped(file: string): AsyncGenerator<
 		i += commentSize;
 
 		yield [name, async () => {
-			let inflater: typeof inflate | null;
-			switch (compression) {
-				case 0: {
-					inflater = null;
-					break;
-				}
-				case 8: {
-					inflater = inflate;
-					break;
-				}
-				default: {
-					throw new Error(
-						`Unknown compression type: ${compression}`,
-					);
-				}
-			}
-
+			assert(
+				compression === 0 || compression === 8,
+				`Unknown compression type: ${compression}`,
+			);
+			const inflater = compression ? inflate : null;
 			if (!uSize) {
 				return new Uint8Array();
 			}
