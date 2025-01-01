@@ -44,8 +44,8 @@ export function indexOf(
 	return -1;
 }
 
-export function hex(data: Readonly<Uint8Array>): string {
-	return [...data].map((x) => x.toString(16).padStart(2, '0')).join('');
+export function hex(data: Readonly<Uint8Array>, delim = ''): string {
+	return [...data].map((x) => x.toString(16).padStart(2, '0')).join(delim);
 }
 
 export function unhex(...hex: string[]): Uint8Array {
