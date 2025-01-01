@@ -1,4 +1,4 @@
-import { assert } from '@std/assert';
+import { assert, assertEquals } from '@std/assert';
 import {
 	CPU_SUBTYPE_POWERPC_7400,
 	CPU_SUBTYPE_POWERPC_970,
@@ -320,6 +320,7 @@ function fixtureMachosRead(): {
 		const mg = line.match(/^(\t*)([^\t].*):$/);
 		if (mg) {
 			const indent = mg[1].length;
+			assert(indent < 2, `Bad line: ${line}`);
 			switch (indent) {
 				case 0: {
 					[, , group] = mg;
@@ -329,26 +330,20 @@ function fixtureMachosRead(): {
 				}
 				case 1: {
 					[, , arch] = mg;
-					const a = group ? all.get(group) : null;
-					if (!a) {
-						throw new Error(`Bad line: ${line}`);
-					}
+					assert(group, `Bad line: ${line}`);
+					const a = all.get(group);
+					assert(a, `Bad line: ${line}`);
 					a.set(arch, null);
 					break;
-				}
-				default: {
-					throw new Error(`Bad line: ${line}`);
 				}
 			}
 			continue;
 		}
 		const mv = line.match(/^\t\t([^=]+)=(.*)$/);
-		if (!mv || !group || !arch) {
-			throw new Error(`Bad line: ${line}`);
-		}
+		assert(mv && group && arch, `Bad line: ${line}`);
 		const [, k, v] = mv;
 		const a = all.get(group)!.get(arch)! || {
-			arch: cpus[arch] ?? [0, null],
+			arch: cpus[arch],
 			offset: 0,
 			version: 0,
 			flags: 0,
@@ -382,11 +377,8 @@ function fixtureMachosRead(): {
 					.split(',')
 					.map((s) => s.trim())
 					.filter(Boolean)
-					.map((s) => hashTypes[s] ?? 0);
+					.map((s) => hashTypes[s] as number);
 				break;
-			}
-			default: {
-				throw new Error(`Bad line: ${line}`);
 			}
 		}
 		all.get(group)!.set(arch, a);
@@ -432,9 +424,7 @@ export async function fixtureMacho(
 		datas[i] = await read();
 		m.delete(name);
 	}
-	if (m.size) {
-		throw new Error(`Missing files: ${[...m.keys()].join(' ')}`);
-	}
+	assertEquals(m.size, 0, `Missing files: ${[...m.keys()].join(' ')}`);
 	return datas;
 }
 
@@ -528,9 +518,10 @@ export function machoThin(
 	if (!f) {
 		const cputype = v.getInt32(4, e);
 		const cpusubtype = v.getInt32(8, e);
-		if (cputype !== type || (subtype && cpusubtype !== subtype)) {
-			throw new Error(`Wrong arch: ${cputype} ${cpusubtype}`);
-		}
+		assert(
+			!(cputype !== type || (subtype && cpusubtype !== subtype)),
+			`Wrong arch: ${cputype} ${cpusubtype}`,
+		);
 		return new Uint8Array(v.buffer, v.byteOffset, v.byteLength);
 	}
 	const count = v.getUint32(4, b);
@@ -551,9 +542,7 @@ export function machoThin(
 			slices.push([offset, size]);
 		}
 	}
-	if (slices.length !== 1) {
-		throw new Error(`Matching archs: ${slices.length}`);
-	}
+	assertEquals(slices.length, 1, `Matching archs: ${slices.length}`);
 	const [[offset, size]] = slices;
 	return new Uint8Array(data.buffer, data.byteOffset + offset, size);
 }
