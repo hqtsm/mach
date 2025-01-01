@@ -11,12 +11,12 @@ export class Architecture {
 	/**
 	 * CPU type.
 	 */
-	public first = 0;
+	public first: number;
 
 	/**
 	 * CPU subtype.
 	 */
-	public second = 0;
+	public second: number;
 
 	/**
 	 * Create architecture.
@@ -50,6 +50,8 @@ export class Architecture {
 	) {
 		switch (typeof type) {
 			case 'undefined': {
+				this.first = 0;
+				this.second = 0;
 				break;
 			}
 			case 'number': {

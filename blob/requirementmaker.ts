@@ -36,7 +36,7 @@ export class RequirementMaker {
 	/**
 	 * Current position in buffer.
 	 */
-	#pc = 0;
+	#pc: number;
 
 	/**
 	 * Maker constructor.
