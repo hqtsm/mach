@@ -44,13 +44,12 @@ export class RequirementMaker {
 	 * @param kind Kind.
 	 */
 	constructor(kind: number) {
-		const { BYTE_LENGTH } = Requirement;
-		const buffer = new ArrayBuffer(Math.max(BYTE_LENGTH, 1024));
+		const buffer = new ArrayBuffer(1024);
 		const r = new Requirement(buffer);
 		r.initialize2();
 		r.kind = kind;
 		this.#buffer = buffer;
-		this.#pc = BYTE_LENGTH;
+		this.#pc = r.byteLength;
 	}
 
 	/**
