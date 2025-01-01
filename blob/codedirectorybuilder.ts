@@ -196,11 +196,11 @@ export class CodeDirectoryBuilder {
 		slot = slot - (slot % 1) || 0;
 		const slots = this.#special;
 		const { digestLength } = this;
-		const digest = slots.get(slot) || new Uint8Array(digestLength);
 		const { byteLength } = hash;
 		if (byteLength !== digestLength) {
 			throw new Error(`Invalid hash size: ${byteLength}`);
 		}
+		const digest = slots.get(slot) || new Uint8Array(digestLength);
 		digest.set(new Uint8Array(hash.buffer, hash.byteOffset, byteLength));
 		slots.set(slot, digest);
 		if (slot >= this.#specialSlots) {
