@@ -89,8 +89,15 @@ Deno.test('createScatter', () => {
 });
 
 Deno.test('version and size', () => {
+	const hash = new Uint8Array(
+		[1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4],
+	);
+
 	let size = 0;
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	builder.pageSize = 1024;
+	builder.execLength = 1024;
+	builder.setCodeSlot(0, hash);
 
 	assertEquals(builder.version, CodeDirectory.earliestVersion);
 	assertGreater(builder.size(), size);
@@ -125,6 +132,7 @@ Deno.test('version and size', () => {
 	assertEquals(builder.version, CodeDirectory.supportsPreEncrypt);
 	assertGreater(builder.size(), size);
 
+	builder.generatePreEncryptHashes = true;
 	builder.build();
 });
 
