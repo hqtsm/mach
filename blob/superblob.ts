@@ -32,7 +32,7 @@ export class SuperBlob extends Blob {
 	 */
 	public type(index: number): number {
 		return dataView(this.buffer).getUint32(
-			this.byteOffset + 12 + 8 * index,
+			this.byteOffset + 12 + 8 * (index - (index % 1) || 0),
 		);
 	}
 
@@ -44,7 +44,7 @@ export class SuperBlob extends Blob {
 	 */
 	public blob(index: number): BlobCore | null {
 		const offset = dataView(this.buffer).getUint32(
-			this.byteOffset + 16 + 8 * index,
+			this.byteOffset + 16 + 8 * (index - (index % 1) || 0),
 		);
 		return offset ? this.at(BlobCore, offset) : null;
 	}
