@@ -183,6 +183,9 @@ export class CodeDirectoryBuilder {
 	 */
 	public getSpecialSlot(slot: number): Uint8Array | null {
 		slot = slot - (slot % 1) || 0;
+		if (slot < 1) {
+			throw new Error(`Invalid slot index: ${slot}`);
+		}
 		return this.#special.get(slot) || null;
 	}
 
@@ -194,6 +197,9 @@ export class CodeDirectoryBuilder {
 	 */
 	public setSpecialSlot(slot: number, hash: BufferView): void {
 		slot = slot - (slot % 1) || 0;
+		if (slot < 1) {
+			throw new Error(`Invalid slot index: ${slot}`);
+		}
 		const slots = this.#special;
 		const { digestLength } = this;
 		const { byteLength } = hash;
@@ -216,6 +222,10 @@ export class CodeDirectoryBuilder {
 	 */
 	public getCodeSlot(slot: number): Uint8Array | null {
 		slot = slot - (slot % 1) || 0;
+		const { codeSlots } = this;
+		if (slot < 0 || slot >= codeSlots) {
+			throw new Error(`Invalid slot: ${slot}`);
+		}
 		const slots = this.#code;
 		slots.length = this.codeSlots;
 		return slots[slot] || null;
@@ -229,11 +239,11 @@ export class CodeDirectoryBuilder {
 	 */
 	public setCodeSlot(slot: number, hash: BufferView): void {
 		slot = slot - (slot % 1) || 0;
-		const slots = this.#code;
 		const { codeSlots } = this;
-		if (!(slot < codeSlots)) {
+		if (slot < 0 || slot >= codeSlots) {
 			throw new Error(`Invalid slot: ${slot}`);
 		}
+		const slots = this.#code;
 		slots.length = codeSlots;
 		const { digestLength } = this;
 		const digest = slots[slot] || new Uint8Array(digestLength);
