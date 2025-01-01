@@ -182,6 +182,7 @@ export class CodeDirectoryBuilder {
 	 * @returns Hash data, or null.
 	 */
 	public getSpecialSlot(slot: number): Uint8Array | null {
+		slot = slot - (slot % 1) || 0;
 		return this.#special.get(slot) || null;
 	}
 
@@ -192,6 +193,7 @@ export class CodeDirectoryBuilder {
 	 * @param hash Hash data.
 	 */
 	public setSpecialSlot(slot: number, hash: BufferView): void {
+		slot = slot - (slot % 1) || 0;
 		const slots = this.#special;
 		const { digestLength } = this;
 		const digest = slots.get(slot) || new Uint8Array(digestLength);
@@ -213,6 +215,7 @@ export class CodeDirectoryBuilder {
 	 * @returns Hash data, or null.
 	 */
 	public getCodeSlot(slot: number): Uint8Array | null {
+		slot = slot - (slot % 1) || 0;
 		const slots = this.#code;
 		slots.length = this.codeSlots;
 		return slots[slot] || null;
@@ -225,6 +228,7 @@ export class CodeDirectoryBuilder {
 	 * @param hash Hash data.
 	 */
 	public setCodeSlot(slot: number, hash: BufferView): void {
+		slot = slot - (slot % 1) || 0;
 		const slots = this.#code;
 		const { codeSlots } = this;
 		if (!(slot < codeSlots)) {
@@ -248,6 +252,7 @@ export class CodeDirectoryBuilder {
 	 * @returns Scatter vector.
 	 */
 	public createScatter(count: number): CodeDirectoryScatter[] {
+		count = count - (count % 1) || 0;
 		const { BYTE_LENGTH } = CodeDirectoryScatter;
 		const vector: typeof this.scatter = [];
 		const total = count + 1;
