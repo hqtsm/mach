@@ -10,3 +10,12 @@ Deno.test('add', () => {
 	const sb = maker.make();
 	assertEquals(new Uint8Array(sb.buffer, 20), new Uint8Array(blob.buffer));
 });
+
+Deno.test('contains', () => {
+	const maker = new SuperBlobMaker();
+	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
+	const blob = BlobWrapper.alloc(data);
+	assertEquals(maker.contains(0x01020304), false);
+	maker.add(0x01020304, blob);
+	assertEquals(maker.contains(0x01020304), true);
+});
