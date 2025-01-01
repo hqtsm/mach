@@ -524,7 +524,7 @@ export function machoThin(
 		);
 		return new Uint8Array(v.buffer, v.byteOffset, v.byteLength);
 	}
-	const count = v.getUint32(4, b);
+	const count = v.getUint32(4, e);
 	const slices: [number, number][] = [];
 	let o = 8;
 	for (let i = 0; i < count; i++) {

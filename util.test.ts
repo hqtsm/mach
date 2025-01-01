@@ -3,6 +3,7 @@ import {
 	assertEquals,
 	assertRejects,
 	assertStrictEquals,
+	assertThrows,
 } from '@std/assert';
 import {
 	fixtureMacho,
@@ -11,6 +12,8 @@ import {
 	hash,
 	hex,
 	indexOf,
+	machoThin,
+	unhex,
 } from './util.spec.ts';
 import { alignUp } from './util.ts';
 import {
@@ -96,6 +99,82 @@ Deno.test('fixtureMacho', async () => {
 		'u/Sample.app/Contents/Info.plist',
 		'u/Sample.app/Contents/Frameworks/Sample.framework/Versions/Current',
 	]);
+});
+
+Deno.test('machoThin', () => {
+	assertThrows(() => machoThin(new Uint8Array(4), 0));
+	assertEquals(
+		machoThin(
+			unhex(
+				[
+					'CA FE BA BE',
+					'00 00 00 01',
+					'00 00 00 01',
+					'00 00 00 00',
+					'00 00 00 00',
+					'00 00 00 00',
+					'00 00 00 00',
+				].join(' '),
+			),
+			1,
+		),
+		new Uint8Array(),
+	);
+	assertEquals(
+		machoThin(
+			unhex(
+				[
+					'BE BA FE CA',
+					'01 00 00 00',
+					'01 00 00 00',
+					'00 00 00 00',
+					'00 00 00 00',
+					'00 00 00 00',
+					'00 00 00 00',
+				].join(' '),
+			),
+			1,
+		),
+		new Uint8Array(),
+	);
+	assertEquals(
+		machoThin(
+			unhex(
+				[
+					'CA FE BA BF',
+					'00 00 00 01',
+					'00 00 00 01',
+					'00 00 00 00',
+					'00 00 00 00',
+					'00 00 00 00',
+					'00 00 00 00',
+					'00 00 00 00',
+					'00 00 00 00',
+				].join(' '),
+			),
+			1,
+		),
+		new Uint8Array(),
+	);
+	assertEquals(
+		machoThin(
+			unhex(
+				[
+					'BF BA FE CA',
+					'01 00 00 00',
+					'01 00 00 00',
+					'00 00 00 00',
+					'00 00 00 00',
+					'00 00 00 00',
+					'00 00 00 00',
+					'00 00 00 00',
+					'00 00 00 00',
+				].join(' '),
+			),
+			1,
+		),
+		new Uint8Array(),
+	);
 });
 
 Deno.test('alignUp unsigned', () => {
