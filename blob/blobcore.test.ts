@@ -1,6 +1,19 @@
 import { assertEquals } from '@std/assert';
-import { BlobWrapper } from './blobwrapper.ts';
+import { BlobCore } from './blobcore.ts';
 
 Deno.test('BYTE_LENGTH', () => {
-	assertEquals(BlobWrapper.BYTE_LENGTH, 8);
+	assertEquals(BlobCore.BYTE_LENGTH, 8);
+});
+
+Deno.test('magic', () => {
+	const data = new Uint8Array([0x12, 0x34, 0x56, 0x78]);
+	const blob = new BlobCore(data.buffer);
+	assertEquals(blob.magic, 0x12345678);
+});
+
+Deno.test('data', () => {
+	const data = new Uint8Array(12);
+	const blob = new BlobCore(data.buffer, 2);
+	const ptr = blob.data;
+	assertEquals(ptr.byteOffset, 2);
 });
