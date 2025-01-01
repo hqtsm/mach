@@ -57,7 +57,11 @@ export function unhex(...hex: string[]): Uint8Array {
 	);
 }
 
-export function getCrypto(): Promise<typeof crypto> {
+export function getCrypto(): Promise<{
+	subtle: {
+		digest(algo: string, data: ArrayBufferView): Promise<ArrayBuffer>;
+	};
+}> {
 	return typeof crypto === 'undefined'
 		? import('node:crypto')
 		: Promise.resolve(crypto);
