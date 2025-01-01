@@ -23,6 +23,16 @@ Deno.test('codeSlots', () => {
 	assertEquals(builder.codeSlots, 2);
 });
 
+Deno.test('addExecSegFlags', () => {
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	builder.addExecSegFlags(1n);
+	assertEquals(builder.execSegFlags, 1n);
+	builder.addExecSegFlags(2n);
+	assertEquals(builder.execSegFlags, 3n);
+	builder.addExecSegFlags(4n);
+	assertEquals(builder.execSegFlags, 7n);
+});
+
 for (const { kind, arch, file, archs } of fixtures) {
 	// Skip binaries with no signed architectures.
 	if (![...archs.values()].filter(Boolean).length) {
