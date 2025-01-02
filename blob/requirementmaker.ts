@@ -222,7 +222,7 @@ export class RequirementMaker {
 	 *
 	 * @param req Requirement.
 	 */
-	public copyRequirement(req: Requirement): void {
+	public copyRequirement(req: Readonly<Requirement>): void {
 		const { constructor: Requirement, kind } = req;
 		if (kind !== Requirement.exprForm) {
 			throw new Error(`Unsupported requirement kind: ${kind}`);

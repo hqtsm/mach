@@ -1,9 +1,11 @@
-import { assertEquals } from '@std/assert';
+import { assertEquals, assertThrows } from '@std/assert';
 import { kSecCodeMagicRequirement, opAnd, opOr } from '../const.ts';
 import { unhex } from '../util.spec.ts';
 import { Requirement } from './requirement.ts';
 import { RequirementMaker } from './requirementmaker.ts';
 import { RequirementMakerChain } from './requirementmakerchain.ts';
+import { PLATFORM_MACOS } from '../const.ts';
+import { Uint8Ptr } from '@hqtsm/struct';
 
 function fibinacci(n: number): number[] {
 	const fib = [1, 1];
@@ -206,4 +208,64 @@ Deno.test('(a or b) and (c or d)', () => {
 
 	const r = maker.make();
 	assertEquals(new Uint8Array(r.buffer, r.byteOffset, r.length), data);
+});
+
+Deno.test('anchorDigest', () => {
+	const hash = new Uint8Array(
+		[1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4],
+	);
+	const maker = new RequirementMaker(Requirement.exprForm);
+	maker.anchorDigest(1, hash);
+	maker.make();
+});
+
+Deno.test('trustedAnchor', () => {
+	const maker = new RequirementMaker(Requirement.exprForm);
+	maker.trustedAnchor(null);
+	maker.trustedAnchor(1);
+	maker.make();
+});
+
+Deno.test('infoKey', () => {
+	const maker = new RequirementMaker(Requirement.exprForm);
+	maker.infoKey(new Uint8Array([1, 2]), new Uint8Array([3, 4]));
+	maker.make();
+});
+
+Deno.test('cdhash', () => {
+	const maker = new RequirementMaker(Requirement.exprForm);
+	maker.cdhash(new Uint8Array([1, 2, 3, 4]));
+	maker.make();
+});
+
+Deno.test('platform', () => {
+	const maker = new RequirementMaker(Requirement.exprForm);
+	maker.platform(PLATFORM_MACOS);
+	maker.make();
+});
+
+Deno.test('copy', () => {
+	const maker = new RequirementMaker(Requirement.exprForm);
+	maker.copy(new Uint8Array([1, 2, 3, 4]));
+	const ptr = new Uint8Ptr(new Uint8Array([1, 2, 3, 4]).buffer);
+	maker.copy(ptr, 2);
+	maker.make();
+});
+
+Deno.test('copyRequirement', () => {
+	const a = new RequirementMaker(Requirement.exprForm);
+	const b = new RequirementMaker(Requirement.exprForm);
+	a.copyRequirement(b.make());
+	a.make();
+
+	const c = new RequirementMaker(Requirement.lwcrForm);
+	const d = new RequirementMaker(Requirement.lwcrForm);
+	const dr = d.make();
+	assertThrows(() => c.copyRequirement(dr));
+});
+
+Deno.test('kind', () => {
+	const maker = new RequirementMaker(Requirement.exprForm);
+	maker.kind(Requirement.lwcrForm);
+	assertEquals(maker.make().kind, Requirement.lwcrForm);
 });
