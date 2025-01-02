@@ -1,6 +1,55 @@
-import { assertEquals } from '@std/assert';
+import { assert, assertEquals } from '@std/assert';
 import { CodeDirectory } from './codedirectory.ts';
+import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
+import { kSecCodeSignatureHashSHA1, UINT32_MAX } from '../const.ts';
 
 Deno.test('BYTE_LENGTH', () => {
 	assertEquals(CodeDirectory.BYTE_LENGTH, 96);
+});
+
+Deno.test('identifier', () => {
+	const identifier = 'Identifier';
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	builder.identifier = new TextEncoder().encode(identifier);
+	const cd = builder.build();
+	const cstr = new TextEncoder().encode(`${identifier}\0`);
+	assertEquals(
+		new Uint8Array(
+			cd.identifier.buffer,
+			cd.identifier.byteOffset,
+			cstr.byteLength,
+		),
+		cstr,
+	);
+});
+
+Deno.test('signingLimit', () => {
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	builder.execLength = 1;
+	assertEquals(builder.build().signingLimit, 1n);
+	builder.execLength = UINT32_MAX + 1;
+	assertEquals(builder.build().signingLimit, BigInt(UINT32_MAX + 1));
+});
+
+Deno.test('scatterVector', () => {
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	builder.execLength = 1;
+	assertEquals(builder.build().scatterVector, null);
+	builder.createScatter(1);
+	assert(builder.build().scatterVector);
+});
+
+Deno.test('teamID', () => {
+	const identifier = 'Team-Identifier';
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	assertEquals(builder.build().teamID, null);
+	builder.teamID = new TextEncoder().encode(identifier);
+	const cd = builder.build();
+	const cstr = new TextEncoder().encode(`${identifier}\0`);
+	const { teamID } = cd;
+	assert(teamID);
+	assertEquals(
+		new Uint8Array(teamID.buffer, teamID.byteOffset, cstr.byteLength),
+		cstr,
+	);
 });

@@ -396,6 +396,7 @@ export class CodeDirectoryBuilder {
 		}
 		let offset = Static.fixedSize(version);
 		if (scatter && !(version < CodeDirectory.supportsScatter)) {
+			dir.scatterOffset = offset;
 			for (const s of scatter) {
 				const { byteLength } = s;
 				data.set(
@@ -416,6 +417,7 @@ export class CodeDirectoryBuilder {
 		);
 		offset += identifier.byteLength + 1;
 		if (teamID.byteLength && !(version < CodeDirectory.supportsTeamID)) {
+			dir.teamIDOffset = offset;
 			data.set(
 				new Uint8Array(
 					teamID.buffer,
