@@ -81,3 +81,9 @@ Deno.test('runtimeVersion', () => {
 	builder.runtimeVersion = 123;
 	assertEquals(builder.build().runtimeVersion, 123);
 });
+
+Deno.test('getSlot', () => {
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	const cd = builder.build(CodeDirectory.supportsPreEncrypt);
+	assertEquals(cd.getSlot(0, true), null);
+});
