@@ -53,3 +53,31 @@ Deno.test('teamID', () => {
 		cstr,
 	);
 });
+
+Deno.test('execSegmentBase', () => {
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	assertEquals(builder.build().execSegmentBase, 0n);
+	builder.execSeg(1n, 2n, 3n);
+	assertEquals(builder.build().execSegmentBase, 1n);
+});
+
+Deno.test('execSegmentLimit', () => {
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	assertEquals(builder.build().execSegmentLimit, 0n);
+	builder.execSeg(1n, 2n, 3n);
+	assertEquals(builder.build().execSegmentLimit, 2n);
+});
+
+Deno.test('execSegmentFlags', () => {
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	assertEquals(builder.build().execSegmentFlags, 0n);
+	builder.execSeg(1n, 2n, 3n);
+	assertEquals(builder.build().execSegmentFlags, 3n);
+});
+
+Deno.test('runtimeVersion', () => {
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	assertEquals(builder.build().runtimeVersion, 0);
+	builder.runtimeVersion = 123;
+	assertEquals(builder.build().runtimeVersion, 123);
+});
