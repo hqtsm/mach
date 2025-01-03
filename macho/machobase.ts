@@ -1,7 +1,15 @@
-import { type BufferPointer, LITTLE_ENDIAN } from '@hqtsm/struct';
+import {
+	type BufferPointer,
+	LITTLE_ENDIAN,
+	pointer,
+	type Ptr,
+} from '@hqtsm/struct';
 import { MH_CIGAM, MH_CIGAM_64, MH_MAGIC, MH_MAGIC_64 } from '../const.ts';
 import { MachHeader } from '../mach/machheader.ts';
 import { MachHeader64 } from '../mach/machheader64.ts';
+import { LoadCommand } from '../mach/loadcommand.ts';
+
+const LoadCommandPtr = pointer(LoadCommand);
 
 /**
  * Common interface of Mach-O binaries features.
@@ -12,20 +20,23 @@ export class MachOBase {
 	/**
 	 * Mach-O header.
 	 */
-	private mHeader: MachHeader | MachHeader64;
+	private mHeader: MachHeader | MachHeader64 | null = null;
+
+	/**
+	 * Mach-O commands.
+	 */
+	private mCommands: Ptr<LoadCommand> | null = null;
 
 	/**
 	 * Create Mach-O base instance.
 	 */
-	constructor() {
-		this.mHeader = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
-	}
+	constructor() {}
 
 	/**
 	 * If binary is little endian.
 	 */
 	public get isLittleEndian(): boolean {
-		return this.mHeader.littleEndian;
+		return this.mHeader!.littleEndian;
 	}
 
 	/**
@@ -39,7 +50,7 @@ export class MachOBase {
 	 * If binary is 64-bit.
 	 */
 	public get is64(): boolean {
-		return this.mHeader.magic === MH_MAGIC_64;
+		return this.mHeader!.magic === MH_MAGIC_64;
 	}
 
 	/**
@@ -93,21 +104,23 @@ export class MachOBase {
 	 * @param commands Mach-O commands data.
 	 */
 	protected initCommands(commands: BufferPointer): void {
-		// TODO
-		void commands;
+		this.mCommands = new LoadCommandPtr(
+			commands.buffer,
+			commands.byteOffset,
+		);
 	}
 
 	/**
 	 * Size of header.
 	 */
 	protected get headerSize(): number {
-		return this.mHeader.byteLength;
+		return this.mHeader!.byteLength;
 	}
 
 	/**
 	 * Size of commands.
 	 */
 	protected get commandSize(): number {
-		return this.mHeader.sizeofcmds;
+		return this.mHeader!.sizeofcmds;
 	}
 }

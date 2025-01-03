@@ -38,12 +38,6 @@ export class Architecture {
 	 */
 	constructor(archInFile: Readonly<FatArch | FatArch64>);
 
-	/**
-	 * Create architecture from types or fat architecture struct.
-	 *
-	 * @param type CPU type or FatArch|FatArch64 struct.
-	 * @param sub CPU subtype if type is number.
-	 */
 	constructor(
 		type?: number | Readonly<FatArch | FatArch64>,
 		sub?: number,
