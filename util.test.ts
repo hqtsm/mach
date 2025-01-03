@@ -1,5 +1,4 @@
 import {
-	assert,
 	assertEquals,
 	assertRejects,
 	assertStrictEquals,
@@ -8,7 +7,6 @@ import {
 import {
 	chunkedHashes,
 	fixtureMacho,
-	getCrypto,
 	graceful,
 	hash,
 	hex,
@@ -33,23 +31,6 @@ Deno.test('graceful', () => {
 		}),
 		null,
 	);
-});
-
-Deno.test('getCrypto', async () => {
-	const desc = Object.getOwnPropertyDescriptor(globalThis, 'crypto');
-	if (desc) {
-		Object.defineProperty(globalThis, 'crypto', {
-			value: undefined,
-			writable: false,
-			enumerable: true,
-			configurable: true,
-		});
-	}
-	const cp = getCrypto();
-	if (desc) {
-		Object.defineProperty(globalThis, 'crypto', desc);
-	}
-	assert(await cp);
 });
 
 Deno.test('indexOf', () => {

@@ -58,16 +58,6 @@ export function unhex(...hex: string[]): Uint8Array {
 	);
 }
 
-export function getCrypto(): Promise<{
-	subtle: {
-		digest(algo: string, data: ArrayBufferView): Promise<ArrayBuffer>;
-	};
-}> {
-	return typeof crypto === 'undefined'
-		? import('node:crypto')
-		: Promise.resolve(crypto);
-}
-
 export async function hash(
 	hashType: number,
 	data: Readonly<ArrayBufferView>,
@@ -100,8 +90,7 @@ export async function hash(
 			throw new Error(`Unknown hash type: ${hashType}`);
 		}
 	}
-	const { subtle } = await getCrypto();
-	const h = await subtle.digest(algo, data);
+	const h = await crypto.subtle.digest(algo, data);
 	return new Uint8Array(limit < 0 ? h : h.slice(0, limit));
 }
 
