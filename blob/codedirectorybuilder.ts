@@ -342,7 +342,7 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Size of scatter vector.
 	 */
-	public get scatterSize(): number {
+	private get mScatterSize(): number {
 		let size = 0;
 		const { mScatter } = this;
 		if (mScatter) {
@@ -369,7 +369,7 @@ export class CodeDirectoryBuilder {
 		if (this.mTeamID.byteLength) {
 			return CodeDirectory.supportsTeamID;
 		}
-		if (this.scatterSize) {
+		if (this.mScatterSize) {
 			return CodeDirectory.supportsScatter;
 		}
 		return CodeDirectory.earliestVersion;
@@ -394,7 +394,7 @@ export class CodeDirectoryBuilder {
 		} = this;
 		let size = Static.fixedSize(version);
 		if (!(version < CodeDirectory.supportsScatter)) {
-			size += this.scatterSize;
+			size += this.mScatterSize;
 		}
 		size += mIdentifier.byteLength + 1;
 		if (!(version < CodeDirectory.supportsTeamID) && mTeamID.byteLength) {
