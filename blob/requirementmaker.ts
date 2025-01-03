@@ -287,13 +287,13 @@ export class RequirementMaker {
 	protected require(size: number): void {
 		const { mBuffer } = this;
 		const end = this.mPC + size;
-		let total = mBuffer.byteLength;
-		if (end > total) {
-			total *= 2;
-			if (end > total) {
-				total = end;
+		let mSize = mBuffer.byteLength;
+		if (end > mSize) {
+			mSize *= 2;
+			if (end > mSize) {
+				mSize = end;
 			}
-			const d = new ArrayBuffer(total);
+			const d = new ArrayBuffer(mSize);
 			new Uint8Array(d).set(new Uint8Array(mBuffer));
 			this.mBuffer = d;
 		}
