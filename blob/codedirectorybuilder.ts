@@ -42,7 +42,7 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Flags.
 	 */
-	public flags = 0;
+	private mFlags = 0;
 
 	/**
 	 * Hash algorithm.
@@ -52,7 +52,7 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Platform.
 	 */
-	public platform = 0;
+	private mPlatform = 0;
 
 	/**
 	 * Hash digest length.
@@ -62,12 +62,12 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Identifier.
 	 */
-	public identifier: BufferView = new Int8Array();
+	private mIdentifier: BufferView = new Int8Array();
 
 	/**
 	 * Team ID.
 	 */
-	public teamID: BufferView = new Int8Array();
+	private mTeamID: BufferView = new Int8Array();
 
 	/**
 	 * Code slots.
@@ -77,32 +77,32 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Scatter vector.
 	 */
-	public scatter: CodeDirectoryScatter[] | null = null;
+	private mScatter: CodeDirectoryScatter[] | null = null;
 
 	/**
 	 * Exec segment offset.
 	 */
-	public execSegOffset = 0n;
+	private mExecSegOffset = 0n;
 
 	/**
 	 * Exec segment limit.
 	 */
-	public execSegLimit = 0n;
+	private mExecSegLimit = 0n;
 
 	/**
 	 * Exec segment flags.
 	 */
-	public execSegFlags = 0n;
+	private mExecSegFlags = 0n;
 
 	/**
 	 * Generate pre-encrypt hashes.
 	 */
-	public generatePreEncryptHashes = false;
+	private mGeneratePreEncryptHashes = false;
 
 	/**
 	 * Runtime version.
 	 */
-	public runtimeVersion = 0;
+	private mRuntimeVersion = 0;
 
 	/**
 	 * CodeDirectoryBuilder constructor.
@@ -154,6 +154,74 @@ export class CodeDirectoryBuilder {
 	}
 
 	/**
+	 * Set identifier.
+	 *
+	 * @param code Identifier.
+	 */
+	public identifier(code: BufferView): void {
+		this.mIdentifier = code;
+	}
+
+	/**
+	 * Set team ID.
+	 *
+	 * @param team Team ID.
+	 */
+	public teamID(team: BufferView): void {
+		this.mTeamID = team;
+	}
+
+	/**
+	 * Set flags.
+	 *
+	 * @param flags Flags.
+	 */
+	public flags(flags: number): void {
+		this.mFlags = flags;
+	}
+
+	/**
+	 * Set platform.
+	 *
+	 * @param platform Platform.
+	 */
+	public platform(platform: number): void {
+		this.mPlatform = platform;
+	}
+
+	/**
+	 * Create a scatter vector with count slots, plus sentinel.
+	 *
+	 * @param count Number of slots, excluding sentinel.
+	 * @returns Scatter vector.
+	 */
+	public scatter(count: number): CodeDirectoryScatter[];
+
+	/**
+	 * Get existing scatter vector.
+	 *
+	 * @returns Scatter vector.
+	 */
+	public scatter(): CodeDirectoryScatter[] | null;
+
+	public scatter(count?: number): CodeDirectoryScatter[] | null {
+		if (count !== undefined) {
+			count = (+count || 0) - (count % 1 || 0);
+			const { BYTE_LENGTH } = CodeDirectoryScatter;
+			const vector: typeof this.mScatter = [];
+			const total = count + 1;
+			for (let i = 0; i < total; i++) {
+				vector.push(
+					new CodeDirectoryScatter(new ArrayBuffer(BYTE_LENGTH)),
+				);
+			}
+			this.mScatter = vector;
+			return vector;
+		}
+		return this.mScatter;
+	}
+
+	/**
 	 * Set exec segment.
 	 *
 	 * @param base Base offset.
@@ -161,9 +229,9 @@ export class CodeDirectoryBuilder {
 	 * @param flags Flags.
 	 */
 	public execSeg(base: bigint, limit: bigint, flags: bigint): void {
-		this.execSegOffset = base;
-		this.execSegLimit = limit;
-		this.execSegFlags = flags;
+		this.mExecSegOffset = base;
+		this.mExecSegLimit = limit;
+		this.mExecSegFlags = flags;
 	}
 
 	/**
@@ -172,7 +240,25 @@ export class CodeDirectoryBuilder {
 	 * @param flags Flags.
 	 */
 	public addExecSegFlags(flags: bigint): void {
-		this.execSegFlags |= flags;
+		this.mExecSegFlags |= flags;
+	}
+
+	/**
+	 * Set generate pre-encrypt hashes.
+	 *
+	 * @param pre Generate pre-encrypt hashes.
+	 */
+	public generatePreEncryptHashes(pre: boolean): void {
+		this.mGeneratePreEncryptHashes = pre;
+	}
+
+	/**
+	 * Set the runtime version.
+	 *
+	 * @param runtime Runtime version.
+	 */
+	public runTimeVersion(runtime: number): void {
+		this.mRuntimeVersion = runtime;
 	}
 
 	/**
@@ -254,31 +340,13 @@ export class CodeDirectoryBuilder {
 	}
 
 	/**
-	 * Create a scatter vector with count slots, plus sentinel.
-	 *
-	 * @param count Number of slots, excluding sentinel.
-	 * @returns Scatter vector.
-	 */
-	public createScatter(count: number): CodeDirectoryScatter[] {
-		count = (+count || 0) - (count % 1 || 0);
-		const { BYTE_LENGTH } = CodeDirectoryScatter;
-		const vector: typeof this.scatter = [];
-		const total = count + 1;
-		for (let i = 0; i < total; i++) {
-			vector.push(new CodeDirectoryScatter(new ArrayBuffer(BYTE_LENGTH)));
-		}
-		this.scatter = vector;
-		return vector;
-	}
-
-	/**
 	 * Size of scatter vector.
 	 */
 	public get scatterSize(): number {
 		let size = 0;
-		const { scatter } = this;
-		if (scatter) {
-			for (const s of scatter) {
+		const { mScatter } = this;
+		if (mScatter) {
+			for (const s of mScatter) {
 				size += s.byteLength;
 			}
 		}
@@ -289,16 +357,16 @@ export class CodeDirectoryBuilder {
 	 * Compatibility version of described CodeDirectory.
 	 */
 	public get version(): number {
-		if (this.generatePreEncryptHashes || this.runtimeVersion) {
+		if (this.mGeneratePreEncryptHashes || this.mRuntimeVersion) {
 			return CodeDirectory.supportsPreEncrypt;
 		}
-		if (this.execSegLimit > 0) {
+		if (this.mExecSegLimit > 0) {
 			return CodeDirectory.supportsExecSegment;
 		}
 		if (this.execLength > UINT32_MAX) {
 			return CodeDirectory.supportsCodeLimit64;
 		}
-		if (this.teamID.byteLength) {
+		if (this.mTeamID.byteLength) {
 			return CodeDirectory.supportsTeamID;
 		}
 		if (this.scatterSize) {
@@ -317,25 +385,25 @@ export class CodeDirectoryBuilder {
 		version ??= this.version;
 		const {
 			constructor: Static,
-			identifier,
-			teamID,
+			mIdentifier,
+			mTeamID,
 			codeSlots,
 			specialSlots,
 			digestLength,
-			generatePreEncryptHashes,
+			mGeneratePreEncryptHashes,
 		} = this;
 		let size = Static.fixedSize(version);
 		if (!(version < CodeDirectory.supportsScatter)) {
 			size += this.scatterSize;
 		}
-		size += identifier.byteLength + 1;
-		if (!(version < CodeDirectory.supportsTeamID) && teamID.byteLength) {
-			size += teamID.byteLength + 1;
+		size += mIdentifier.byteLength + 1;
+		if (!(version < CodeDirectory.supportsTeamID) && mTeamID.byteLength) {
+			size += mTeamID.byteLength + 1;
 		}
 		size += (codeSlots + specialSlots) * digestLength;
 		if (
 			!(version < CodeDirectory.supportsPreEncrypt) &&
-			generatePreEncryptHashes
+			mGeneratePreEncryptHashes
 		) {
 			size += codeSlots * digestLength;
 		}
@@ -357,10 +425,10 @@ export class CodeDirectoryBuilder {
 			execLength,
 			digestLength,
 			pageSize,
-			scatter,
-			identifier,
-			teamID,
-			generatePreEncryptHashes,
+			mScatter,
+			mIdentifier,
+			mTeamID,
+			mGeneratePreEncryptHashes,
 		} = this;
 		const size = this.size(version);
 		const buffer = new ArrayBuffer(size);
@@ -368,7 +436,7 @@ export class CodeDirectoryBuilder {
 		const dir = new CodeDirectory(buffer);
 		dir.initialize2(size);
 		dir.version = version;
-		dir.flags = this.flags;
+		dir.flags = this.mFlags;
 		dir.nSpecialSlots = specialSlots;
 		dir.nCodeSlots = codeSlots;
 		if (
@@ -381,21 +449,21 @@ export class CodeDirectoryBuilder {
 			dir.codeLimit = execLength;
 		}
 		dir.hashType = this.hashType;
-		dir.platform = this.platform;
+		dir.platform = this.mPlatform;
 		dir.hashSize = digestLength;
 		dir.pageSize = pageSize ? Math.log2(pageSize) : 0;
 		if (!(version < CodeDirectory.supportsExecSegment)) {
-			dir.execSegBase = this.execSegOffset;
-			dir.execSegLimit = this.execSegLimit;
-			dir.execSegFlags = this.execSegFlags;
+			dir.execSegBase = this.mExecSegOffset;
+			dir.execSegLimit = this.mExecSegLimit;
+			dir.execSegFlags = this.mExecSegFlags;
 		}
 		if (!(version < CodeDirectory.supportsPreEncrypt)) {
-			dir.runtime = this.runtimeVersion;
+			dir.runtime = this.mRuntimeVersion;
 		}
 		let offset = Static.fixedSize(version);
-		if (scatter && !(version < CodeDirectory.supportsScatter)) {
+		if (mScatter && !(version < CodeDirectory.supportsScatter)) {
 			dir.scatterOffset = offset;
-			for (const s of scatter) {
+			for (const s of mScatter) {
 				const { byteLength } = s;
 				data.set(
 					new Uint8Array(s.buffer, s.byteOffset, byteLength),
@@ -407,27 +475,27 @@ export class CodeDirectoryBuilder {
 		dir.identOffset = offset;
 		data.set(
 			new Uint8Array(
-				identifier.buffer,
-				identifier.byteOffset,
-				identifier.byteLength,
+				mIdentifier.buffer,
+				mIdentifier.byteOffset,
+				mIdentifier.byteLength,
 			),
 			offset,
 		);
-		offset += identifier.byteLength + 1;
-		if (teamID.byteLength && !(version < CodeDirectory.supportsTeamID)) {
+		offset += mIdentifier.byteLength + 1;
+		if (mTeamID.byteLength && !(version < CodeDirectory.supportsTeamID)) {
 			dir.teamIDOffset = offset;
 			data.set(
 				new Uint8Array(
-					teamID.buffer,
-					teamID.byteOffset,
-					teamID.byteLength,
+					mTeamID.buffer,
+					mTeamID.byteOffset,
+					mTeamID.byteLength,
 				),
 				offset,
 			);
-			offset += teamID.byteLength + 1;
+			offset += mTeamID.byteLength + 1;
 		}
 		const spe = !(version < CodeDirectory.supportsPreEncrypt);
-		const gpec = spe && generatePreEncryptHashes;
+		const gpec = spe && mGeneratePreEncryptHashes;
 		if (gpec) {
 			dir.preEncryptOffset = offset;
 			offset += codeSlots * digestLength;

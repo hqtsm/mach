@@ -39,7 +39,7 @@ export async function* createCodeDirectories(
 		const identifier = new TextEncoder().encode(info.identifier);
 		const teamID = new TextEncoder().encode(info.teamid);
 		const builder = new CodeDirectoryBuilder(hashType);
-		builder.flags = info.flags;
+		builder.flags(info.flags);
 		builder.execLength = info.offset;
 		builder.pageSize = info.page;
 		builder.execSeg(
@@ -47,8 +47,8 @@ export async function* createCodeDirectories(
 			BigInt(info.execseglimit),
 			BigInt(info.execsegflags),
 		);
-		builder.identifier = identifier;
-		builder.teamID = teamID;
+		builder.identifier(identifier);
+		builder.teamID(teamID);
 		if (infoPlist) {
 			builder.setSpecialSlot(
 				cdInfoSlot,

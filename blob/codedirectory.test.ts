@@ -10,7 +10,7 @@ Deno.test('BYTE_LENGTH', () => {
 Deno.test('identifier', () => {
 	const identifier = 'Identifier';
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	builder.identifier = new TextEncoder().encode(identifier);
+	builder.identifier(new TextEncoder().encode(identifier));
 	const cd = builder.build();
 	const cstr = new TextEncoder().encode(`${identifier}\0`);
 	assertEquals(
@@ -35,7 +35,7 @@ Deno.test('scatterVector', () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	builder.execLength = 1;
 	assertEquals(builder.build().scatterVector, null);
-	builder.createScatter(1);
+	builder.scatter(1);
 	assert(builder.build().scatterVector);
 });
 
@@ -43,7 +43,7 @@ Deno.test('teamID', () => {
 	const identifier = 'Team-Identifier';
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	assertEquals(builder.build().teamID, null);
-	builder.teamID = new TextEncoder().encode(identifier);
+	builder.teamID(new TextEncoder().encode(identifier));
 	const cd = builder.build();
 	const cstr = new TextEncoder().encode(`${identifier}\0`);
 	const { teamID } = cd;
@@ -78,7 +78,7 @@ Deno.test('execSegmentFlags', () => {
 Deno.test('runtimeVersion', () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	assertEquals(builder.build().runtimeVersion, 0);
-	builder.runtimeVersion = 123;
+	builder.runTimeVersion(123);
 	assertEquals(builder.build().runtimeVersion, 123);
 });
 

@@ -12,7 +12,7 @@ import {
 } from '../util.spec.ts';
 import { createCodeDirectories } from './codedirectorybuilder.spec.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
-import { kSecCodeSignatureHashSHA1 } from '../const.ts';
+import { kSecCodeSignatureHashSHA1, PLATFORM_MACOS } from '../const.ts';
 import { CodeDirectory } from './codedirectory.ts';
 import { UINT32_MAX } from '../const.ts';
 import { kSecCodeSignatureHashSHA256 } from '../const.ts';
@@ -36,12 +36,13 @@ Deno.test('codeSlots', () => {
 
 Deno.test('addExecSegFlags', () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	builder.execSeg(1n, 2n, 0n);
 	builder.addExecSegFlags(1n);
-	assertEquals(builder.execSegFlags, 1n);
+	assertEquals(builder.build().execSegFlags, 1n);
 	builder.addExecSegFlags(2n);
-	assertEquals(builder.execSegFlags, 3n);
+	assertEquals(builder.build().execSegFlags, 3n);
 	builder.addExecSegFlags(4n);
-	assertEquals(builder.execSegFlags, 7n);
+	assertEquals(builder.build().execSegFlags, 7n);
 });
 
 Deno.test('specialSlot', () => {
@@ -83,9 +84,10 @@ Deno.test('codeSlot', () => {
 
 Deno.test('createScatter', () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	let scatter = builder.createScatter(NaN);
+	assertEquals(builder.scatter(), null);
+	let scatter = builder.scatter(NaN);
 	assertEquals(scatter.length, 1);
-	scatter = builder.createScatter(2);
+	scatter = builder.scatter(2);
 	scatter[0].count = 1;
 	scatter[1].count = 2;
 	assertEquals(scatter.length, 3);
@@ -107,12 +109,12 @@ Deno.test('version and size', () => {
 	assertGreater(builder.size(), size);
 	size = builder.size();
 
-	builder.createScatter(1);
+	builder.scatter(1);
 	assertEquals(builder.version, CodeDirectory.supportsScatter);
 	assertGreater(builder.size(), size);
 	size = builder.size();
 
-	builder.teamID = new TextEncoder().encode('TEAM');
+	builder.teamID(new TextEncoder().encode('TEAM'));
 	assertEquals(builder.version, CodeDirectory.supportsTeamID);
 	assertGreater(builder.size(), size);
 	size = builder.size();
@@ -122,22 +124,28 @@ Deno.test('version and size', () => {
 	assertGreater(builder.size(), size);
 	size = builder.size();
 
-	builder.execSegLimit = 1n;
+	builder.execSeg(0n, 1n, 0n);
 	assertEquals(builder.version, CodeDirectory.supportsExecSegment);
 	assertGreater(builder.size(), size);
 	size = builder.size();
 
-	builder.generatePreEncryptHashes = true;
+	builder.generatePreEncryptHashes(true);
 	assertEquals(builder.version, CodeDirectory.supportsPreEncrypt);
 	assertGreater(builder.size(), size);
 
-	builder.generatePreEncryptHashes = false;
-	builder.runtimeVersion = 1;
+	builder.generatePreEncryptHashes(false);
+	builder.runTimeVersion(1);
 	assertEquals(builder.version, CodeDirectory.supportsPreEncrypt);
 	assertGreater(builder.size(), size);
 
-	builder.generatePreEncryptHashes = true;
+	builder.generatePreEncryptHashes(true);
 	builder.build();
+});
+
+Deno.test('platform', () => {
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	builder.platform(PLATFORM_MACOS);
+	assertEquals(builder.build().platform, PLATFORM_MACOS);
 });
 
 Deno.test('digestLength', () => {
