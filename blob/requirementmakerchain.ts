@@ -14,17 +14,17 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	/**
 	 * Maker reference.
 	 */
-	readonly #maker: RequirementMaker;
+	maker: RequirementMaker;
 
 	/**
 	 * Joiner opcode.
 	 */
-	readonly #joiner: number;
+	private readonly mJoiner: number;
 
 	/**
 	 * Number of elements in the chain.
 	 */
-	#count: number;
+	private mCount: number;
 
 	/**
 	 * Chain constructor.
@@ -34,25 +34,18 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	 */
 	constructor(maker: RequirementMaker, op: number) {
 		super(maker);
-		this.#maker = maker;
-		this.#joiner = op;
-		this.#count = 0;
-	}
-
-	/**
-	 * Maker reference.
-	 */
-	public get maker(): RequirementMaker {
-		return this.#maker;
+		this.maker = maker;
+		this.mJoiner = op;
+		this.mCount = 0;
 	}
 
 	/**
 	 * Add an element to the chain.
 	 */
 	public add(): void {
-		if (this.#count++) {
+		if (this.mCount++) {
 			const p = this.maker.insert(this);
-			dataView(p.buffer).setUint32(p.byteOffset, this.#joiner);
+			dataView(p.buffer).setUint32(p.byteOffset, this.mJoiner);
 		}
 	}
 
@@ -60,6 +53,6 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	 * Check if the chain has no elements.
 	 */
 	public get empty(): boolean {
-		return this.#count === 0;
+		return this.mCount === 0;
 	}
 }

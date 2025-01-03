@@ -22,12 +22,12 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Special slots.
 	 */
-	readonly #special = new Map<number, Uint8Array>();
+	private readonly mSpecial = new Map<number, Uint8Array>();
 
 	/**
 	 * Highest special slot index.
 	 */
-	#specialSlots = 0;
+	private mSpecialSlots = 0;
 
 	/**
 	 * Executable length.
@@ -47,7 +47,7 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Hash algorithm.
 	 */
-	readonly #hashType: number;
+	private readonly mHashType: number;
 
 	/**
 	 * Platform.
@@ -57,7 +57,7 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Hash digest length.
 	 */
-	readonly #digestLength: number;
+	private readonly mDigestLength: number;
 
 	/**
 	 * Identifier.
@@ -72,7 +72,7 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Code slots.
 	 */
-	readonly #code: (Uint8Array | undefined)[] = [];
+	private readonly mCodeSlots: (Uint8Array | undefined)[] = [];
 
 	/**
 	 * Scatter vector.
@@ -111,29 +111,29 @@ export class CodeDirectoryBuilder {
 	 */
 	constructor(digestAlgorithm: number) {
 		const Static = this.constructor;
-		this.#hashType = digestAlgorithm;
-		this.#digestLength = Static.digestLength(digestAlgorithm);
+		this.mHashType = digestAlgorithm;
+		this.mDigestLength = Static.digestLength(digestAlgorithm);
 	}
 
 	/**
 	 * Hash type.
 	 */
 	public get hashType(): number {
-		return this.#hashType;
+		return this.mHashType;
 	}
 
 	/**
 	 * Hash digest length.
 	 */
 	public get digestLength(): number {
-		return this.#digestLength;
+		return this.mDigestLength;
 	}
 
 	/**
 	 * Special slots count.
 	 */
 	public get specialSlots(): number {
-		return this.#specialSlots;
+		return this.mSpecialSlots;
 	}
 
 	/**
@@ -186,7 +186,7 @@ export class CodeDirectoryBuilder {
 		if (slot < 1) {
 			throw new Error(`Invalid slot index: ${slot}`);
 		}
-		return this.#special.get(slot) || null;
+		return this.mSpecial.get(slot) || null;
 	}
 
 	/**
@@ -200,7 +200,7 @@ export class CodeDirectoryBuilder {
 		if (slot < 1) {
 			throw new Error(`Invalid slot index: ${slot}`);
 		}
-		const slots = this.#special;
+		const slots = this.mSpecial;
 		const { digestLength } = this;
 		const { byteLength } = hash;
 		if (byteLength !== digestLength) {
@@ -209,8 +209,8 @@ export class CodeDirectoryBuilder {
 		const digest = slots.get(slot) || new Uint8Array(digestLength);
 		digest.set(new Uint8Array(hash.buffer, hash.byteOffset, byteLength));
 		slots.set(slot, digest);
-		if (slot >= this.#specialSlots) {
-			this.#specialSlots = slot;
+		if (slot >= this.mSpecialSlots) {
+			this.mSpecialSlots = slot;
 		}
 	}
 
@@ -222,13 +222,12 @@ export class CodeDirectoryBuilder {
 	 */
 	public getCodeSlot(slot: number): Uint8Array | null {
 		slot = (+slot || 0) - (slot % 1 || 0);
-		const { codeSlots } = this;
+		const { codeSlots, mCodeSlots } = this;
 		if (slot < 0 || slot >= codeSlots) {
 			throw new Error(`Invalid slot: ${slot}`);
 		}
-		const slots = this.#code;
-		slots.length = this.codeSlots;
-		return slots[slot] || null;
+		mCodeSlots.length = this.codeSlots;
+		return mCodeSlots[slot] || null;
 	}
 
 	/**
@@ -239,20 +238,19 @@ export class CodeDirectoryBuilder {
 	 */
 	public setCodeSlot(slot: number, hash: BufferView): void {
 		slot = (+slot || 0) - (slot % 1 || 0);
-		const { codeSlots } = this;
+		const { codeSlots, mCodeSlots } = this;
 		if (slot < 0 || slot >= codeSlots) {
 			throw new Error(`Invalid slot: ${slot}`);
 		}
-		const slots = this.#code;
-		slots.length = codeSlots;
+		mCodeSlots.length = codeSlots;
 		const { digestLength } = this;
-		const digest = slots[slot] || new Uint8Array(digestLength);
+		const digest = mCodeSlots[slot] || new Uint8Array(digestLength);
 		const { byteLength } = hash;
 		if (byteLength !== digestLength) {
 			throw new Error(`Invalid hash size: ${byteLength}`);
 		}
 		digest.set(new Uint8Array(hash.buffer, hash.byteOffset, byteLength));
-		slots[slot] = digest;
+		mCodeSlots[slot] = digest;
 	}
 
 	/**

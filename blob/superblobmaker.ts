@@ -11,7 +11,7 @@ export class SuperBlobMaker {
 	/**
 	 * Blobs in super blob.
 	 */
-	readonly #pieces = new Map<number, BlobCore>();
+	private readonly mPieces = new Map<number, BlobCore>();
 
 	/**
 	 * Add blob to super blob.
@@ -20,7 +20,7 @@ export class SuperBlobMaker {
 	 * @param blob Blob.
 	 */
 	public add(type: number, blob: BlobCore): void {
-		this.#pieces.set(
+		this.mPieces.set(
 			type,
 			new BlobCore(blob.buffer, blob.byteOffset, blob.littleEndian),
 		);
@@ -33,7 +33,7 @@ export class SuperBlobMaker {
 	 * @returns Is contained.
 	 */
 	public contains(type: number): boolean {
-		return this.#pieces.has(type);
+		return this.mPieces.has(type);
 	}
 
 	/**
@@ -43,7 +43,7 @@ export class SuperBlobMaker {
 	 * @returns Blob or null if not found.
 	 */
 	public get(type: number): BlobCore | null {
-		return this.#pieces.get(type) || null;
+		return this.mPieces.get(type) || null;
 	}
 
 	/**
@@ -51,7 +51,7 @@ export class SuperBlobMaker {
 	 */
 	public get size(): number {
 		let size = SuperBlob.BYTE_LENGTH;
-		for (const [, blob] of this.#pieces) {
+		for (const [, blob] of this.mPieces) {
 			size += 8 + blob.length;
 		}
 		return size;
@@ -63,9 +63,8 @@ export class SuperBlobMaker {
 	 * @returns SuperBlob.
 	 */
 	public make(): SuperBlob {
-		const pieces = this.#pieces;
-		const count = pieces.size;
-		const { size } = this;
+		const { mPieces, size } = this;
+		const count = mPieces.size;
 		const buffer = new ArrayBuffer(size);
 		const data = new Uint8Array(buffer);
 		const view = dataView(buffer);
@@ -73,13 +72,13 @@ export class SuperBlobMaker {
 		sb.setup(size, count);
 		let o1 = SuperBlob.BYTE_LENGTH;
 		let o2 = o1 + count * 8;
-		const types = [...pieces.keys()].sort((a, b) => a - b);
+		const types = [...mPieces.keys()].sort((a, b) => a - b);
 		for (const type of types) {
 			view.setUint32(o1, type);
 			o1 += 4;
 			view.setUint32(o1, o2);
 			o1 += 4;
-			const { buffer, byteOffset, length } = pieces.get(type)!;
+			const { buffer, byteOffset, length } = mPieces.get(type)!;
 			data.set(new Uint8Array(buffer, byteOffset, length), o2);
 			o2 += length;
 		}

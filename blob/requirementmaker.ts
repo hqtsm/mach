@@ -31,12 +31,12 @@ export class RequirementMaker {
 	/**
 	 * Buffer of allocated bytes.
 	 */
-	#buffer: ArrayBuffer;
+	private mBuffer: ArrayBuffer;
 
 	/**
 	 * Current position in buffer.
 	 */
-	#pc: number;
+	private mPC: number;
 
 	/**
 	 * Maker constructor.
@@ -48,8 +48,8 @@ export class RequirementMaker {
 		const r = new Requirement(buffer);
 		r.initialize2();
 		r.kind = kind;
-		this.#buffer = buffer;
-		this.#pc = r.byteLength;
+		this.mBuffer = buffer;
+		this.mPC = r.byteLength;
 	}
 
 	/**
@@ -61,8 +61,8 @@ export class RequirementMaker {
 	public alloc(size: number): Uint8Array {
 		const usedSize = alignUp(size, Requirement.baseAlignment);
 		this.require(usedSize);
-		const a = new Uint8Array(this.#buffer, this.#pc, size);
-		this.#pc += usedSize;
+		const a = new Uint8Array(this.mBuffer, this.mPC, size);
+		this.mPC += usedSize;
 		return a;
 	}
 
@@ -240,15 +240,15 @@ export class RequirementMaker {
 	 */
 	public insert(label: Readonly<RequirementMakerLabel>, length = 4): Ptr {
 		const { pos } = label;
-		const req = new Requirement(this.#buffer);
+		const req = new Requirement(this.mBuffer);
 		this.require(length);
-		const len = this.#pc - pos;
+		const len = this.mPC - pos;
 		const reqDest = req.at(Ptr, pos + length);
 		const reqSrc = req.at(Ptr, pos);
 		new Uint8Array(reqDest.buffer, reqDest.byteOffset, len).set(
 			new Uint8Array(reqSrc.buffer, reqSrc.byteOffset, len),
 		);
-		this.#pc += length;
+		this.mPC += length;
 		return reqSrc;
 	}
 
@@ -258,14 +258,14 @@ export class RequirementMaker {
 	 * @param kind Requirement kind.
 	 */
 	public kind(kind: number): void {
-		new Requirement(this.#buffer).kind = kind;
+		new Requirement(this.mBuffer).kind = kind;
 	}
 
 	/**
 	 * Length of Requirement currently defined.
 	 */
 	public get length(): number {
-		return this.#pc;
+		return this.mPC;
 	}
 
 	/**
@@ -274,8 +274,8 @@ export class RequirementMaker {
 	 * @returns Requirement instance.
 	 */
 	public make(): Requirement {
-		const r = new Requirement(this.#buffer);
-		r.length = this.#pc;
+		const r = new Requirement(this.mBuffer);
+		r.length = this.mPC;
 		return r;
 	}
 
@@ -285,18 +285,17 @@ export class RequirementMaker {
 	 * @param size Number of bytes required.
 	 */
 	protected require(size: number): void {
-		const data = this.#buffer;
-		const pc = this.#pc;
-		const end = pc + size;
-		let total = data.byteLength;
+		const { mBuffer } = this;
+		const end = this.mPC + size;
+		let total = mBuffer.byteLength;
 		if (end > total) {
 			total *= 2;
 			if (end > total) {
 				total = end;
 			}
 			const d = new ArrayBuffer(total);
-			new Uint8Array(d).set(new Uint8Array(data));
-			this.#buffer = d;
+			new Uint8Array(d).set(new Uint8Array(mBuffer));
+			this.mBuffer = d;
 		}
 	}
 }
