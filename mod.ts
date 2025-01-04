@@ -3,4 +3,4 @@ export * from './const.ts';
 export * from './file.ts';
 export * from './mach/mod.ts';
 export * from './macho/mod.ts';
-export * from './util.ts';
+export * from './util/mod.ts';

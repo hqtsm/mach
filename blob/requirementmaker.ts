@@ -15,7 +15,7 @@ import {
 	opTrustedCert,
 	opTrustedCerts,
 } from '../const.ts';
-import { alignUp } from '../util.ts';
+import { alignUp } from '../util/memory.ts';
 import { Requirement } from './requirement.ts';
 import type { RequirementMakerLabel } from './requirementmakerlabel.ts';
 

@@ -1,5 +1,5 @@
 import { assertEquals } from '@std/assert';
-import { alignUp } from './util.ts';
+import { alignUp } from './memory.ts';
 
 Deno.test('alignUp unsigned', () => {
 	assertEquals(alignUp(0, 4), 0);
