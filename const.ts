@@ -659,3 +659,24 @@ export const matchAfter = 11;
 export const matchOnOrBefore = 12;
 export const matchOnOrAfter = 13;
 export const matchAbsent = 14;
+
+// CCDigestAlgorithm:
+export const kCCDigestNone = 0;
+export const kCCDigestMD2 = 1;
+export const kCCDigestMD4 = 2;
+export const kCCDigestMD5 = 3;
+export const kCCDigestRMD128 = 4;
+export const kCCDigestRMD160 = 5;
+export const kCCDigestRMD256 = 6;
+export const kCCDigestRMD320 = 7;
+export const kCCDigestSHA1 = 8;
+export const kCCDigestSHA224 = 9;
+export const kCCDigestSHA256 = 10;
+export const kCCDigestSHA384 = 11;
+export const kCCDigestSHA512 = 12;
+export const kCCDigestSkein128 = 13;
+export const kCCDigestSkein160 = 14;
+export const kCCDigestSkein224 = 16;
+export const kCCDigestSkein256 = 17;
+export const kCCDigestSkein384 = 18;
+export const kCCDigestSkein512 = 19;
