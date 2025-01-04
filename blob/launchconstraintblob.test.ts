@@ -1,6 +1,6 @@
 import { assertEquals } from '@std/assert';
-import { unhex } from '../util.spec.ts';
 import { kSecCodeMagicLaunchConstraint } from '../const.ts';
+import { unhex } from '../spec/hex.ts';
 import { LaunchConstraintBlob } from './launchconstraintblob.ts';
 
 /*

@@ -3,7 +3,7 @@ import {
 	kSecDesignatedRequirementType,
 	kSecHostRequirementType,
 } from '../const.ts';
-import { unhex } from '../util.spec.ts';
+import { unhex } from '../spec/hex.ts';
 import { Requirement } from './requirement.ts';
 import { RequirementsMaker } from './requirementsmaker.ts';
 

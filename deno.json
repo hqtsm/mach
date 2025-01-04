@@ -62,14 +62,14 @@
 		"docs",
 		"vendor",
 		"npm",
-		"spec"
+		"spec/fixtures"
 	],
 	"publish": {
 		"exclude": [
 			"deno.lock",
 			"**/*.test.ts",
-			"**/*.spec.ts",
-			"scripts"
+			"scripts",
+			"spec"
 		]
 	},
 	"tasks": {

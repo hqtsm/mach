@@ -4,12 +4,9 @@ import {
 	assertNotEquals,
 	assertThrows,
 } from '@std/assert';
-import {
-	fixtureMachos,
-	indexOf,
-	machoThin,
-	readMachoFiles,
-} from '../util.spec.ts';
+import { fixtureMachos, fixtureMachoSigned } from '../spec/fixture.ts';
+import { thin } from '../spec/macho.ts';
+import { indexOf } from '../spec/u8a.ts';
 import { createCodeDirectories } from './codedirectorybuilder.spec.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import { kSecCodeSignatureHashSHA1, PLATFORM_MACOS } from '../const.ts';
@@ -174,7 +171,7 @@ for (const { kind, arch, file, archs } of fixtures) {
 	}
 
 	Deno.test(`${kind}: ${arch}: ${file}`, async () => {
-		const { macho, infoPlist, codeResources } = await readMachoFiles(
+		const { macho, infoPlist, codeResources } = await fixtureMachoSigned(
 			kind,
 			arch,
 			file,
@@ -187,12 +184,12 @@ for (const { kind, arch, file, archs } of fixtures) {
 			}
 
 			const message = (s: string) => `CD: ${arc}: ${s}`;
-			const thin = machoThin(macho, info.arch[0], info.arch[1]);
+			const bin = thin(macho, info.arch[0], info.arch[1]);
 
 			for await (
 				const cd of createCodeDirectories(
 					info,
-					thin,
+					bin,
 					infoPlist,
 					codeResources,
 				)
@@ -203,9 +200,9 @@ for (const { kind, arch, file, archs } of fixtures) {
 					cd.length,
 				);
 				const expectedWithin = new Uint8Array(
-					thin.buffer,
-					thin.byteOffset + info.offset,
-					thin.byteLength - info.offset,
+					bin.buffer,
+					bin.byteOffset + info.offset,
+					bin.byteLength - info.offset,
 				);
 				assertNotEquals(
 					indexOf(expectedWithin, cdBuffer),

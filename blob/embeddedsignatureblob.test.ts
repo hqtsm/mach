@@ -1,5 +1,4 @@
 import { assertEquals } from '@std/assert';
-import { fixtureMachos, machoThin, readMachoFiles } from '../util.spec.ts';
 import {
 	cdAlternateCodeDirectorySlots,
 	cdCodeDirectorySlot,
@@ -8,6 +7,8 @@ import {
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureLinkerSigned,
 } from '../const.ts';
+import { fixtureMachos, fixtureMachoSigned } from '../spec/fixture.ts';
+import { thin } from '../spec/macho.ts';
 import { createCodeDirectories } from './codedirectorybuilder.spec.ts';
 import type { CodeDirectory } from './codedirectory.ts';
 import { EmbeddedSignatureBlobMaker } from './embeddedsignatureblobmaker.ts';
@@ -28,7 +29,7 @@ for (const { kind, arch, file, archs } of fixtures) {
 	}
 
 	Deno.test(`${kind}: ${arch}: ${file}`, async () => {
-		const { macho, infoPlist, codeResources } = await readMachoFiles(
+		const { macho, infoPlist, codeResources } = await fixtureMachoSigned(
 			kind,
 			arch,
 			file,
@@ -41,13 +42,13 @@ for (const { kind, arch, file, archs } of fixtures) {
 			}
 
 			const message = (s: string) => `CD: ${arc}: ${s}`;
-			const thin = machoThin(macho, info.arch[0], info.arch[1]);
+			const bin = thin(macho, info.arch[0], info.arch[1]);
 			const cds = [];
 
 			for await (
 				const cd of createCodeDirectories(
 					info,
-					thin,
+					bin,
 					infoPlist,
 					codeResources,
 				)
@@ -120,8 +121,8 @@ for (const { kind, arch, file, archs } of fixtures) {
 				cs.length,
 			);
 			const expected = new Uint8Array(
-				thin.buffer,
-				thin.byteOffset + info.offset,
+				bin.buffer,
+				bin.byteOffset + info.offset,
 				cs.length,
 			);
 			assertEquals(csBuffer, expected, message('compare'));

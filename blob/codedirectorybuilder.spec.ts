@@ -1,11 +1,8 @@
 import { assert, assertEquals } from '@std/assert';
 import { cdInfoSlot, cdRequirementsSlot, cdResourceDirSlot } from '../const.ts';
-import {
-	chunkedHashes,
-	type FixtureMachoSignatureInfo,
-	hash,
-	unhex,
-} from '../util.spec.ts';
+import type { FixtureMachoSignatureInfo } from '../spec/fixture.ts';
+import { unhex } from '../spec/hex.ts';
+import { chunkedHashes, hash } from '../spec/hash.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import { CodeDirectory } from './codedirectory.ts';
 

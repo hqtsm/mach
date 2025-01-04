@@ -1,5 +1,5 @@
 import { assertEquals } from '@std/assert';
-import { unhex } from '../util.spec.ts';
+import { unhex } from '../spec/hex.ts';
 import { Requirement } from './requirement.ts';
 
 Deno.test('BYTE_LENGTH', () => {
