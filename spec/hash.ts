@@ -42,7 +42,6 @@ export async function hash(
 	return new Uint8Array(limit < 0 ? h : h.slice(0, limit));
 }
 
-// deno-lint-ignore require-await
 export async function chunkedHashes(
 	hashType: number,
 	data: Readonly<ArrayBufferView>,
@@ -59,5 +58,5 @@ export async function chunkedHashes(
 	for (let i = 0; i < l; i += chunk) {
 		slices.push(d.subarray(i, Math.min(i + chunk, l)));
 	}
-	return Promise.all(slices.map((d) => hash(hashType, d)));
+	return await Promise.all(slices.map((d) => hash(hashType, d)));
 }
