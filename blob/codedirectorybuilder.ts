@@ -139,7 +139,7 @@ export class CodeDirectoryBuilder {
 	 * Number of code slots.
 	 * Based on execLength and pageSize.
 	 */
-	public get codeSlots(): number {
+	private get mCodeSlots(): number {
 		const { execLength } = this;
 		if (execLength <= 0) {
 			return 0;
@@ -297,11 +297,11 @@ export class CodeDirectoryBuilder {
 	 */
 	public getCodeSlot(slot: number): Uint8Array | null {
 		slot = (+slot || 0) - (slot % 1 || 0);
-		const { codeSlots, mCodeSlotHashes } = this;
-		if (slot < 0 || slot >= codeSlots) {
+		const { mCodeSlots, mCodeSlotHashes } = this;
+		if (slot < 0 || slot >= mCodeSlots) {
 			throw new Error(`Invalid slot: ${slot}`);
 		}
-		mCodeSlotHashes.length = this.codeSlots;
+		mCodeSlotHashes.length = this.mCodeSlots;
 		return mCodeSlotHashes[slot] || null;
 	}
 
@@ -313,11 +313,11 @@ export class CodeDirectoryBuilder {
 	 */
 	public setCodeSlot(slot: number, hash: BufferView): void {
 		slot = (+slot || 0) - (slot % 1 || 0);
-		const { codeSlots, mCodeSlotHashes } = this;
-		if (slot < 0 || slot >= codeSlots) {
+		const { mCodeSlots, mCodeSlotHashes } = this;
+		if (slot < 0 || slot >= mCodeSlots) {
 			throw new Error(`Invalid slot: ${slot}`);
 		}
-		mCodeSlotHashes.length = codeSlots;
+		mCodeSlotHashes.length = mCodeSlots;
 		const { digestLength } = this;
 		const digest = mCodeSlotHashes[slot] || new Uint8Array(digestLength);
 		const { byteLength } = hash;
@@ -339,7 +339,7 @@ export class CodeDirectoryBuilder {
 		const {
 			mIdentifier,
 			mTeamID,
-			codeSlots,
+			mCodeSlots,
 			specialSlots,
 			digestLength,
 			mGeneratePreEncryptHashes,
@@ -352,12 +352,12 @@ export class CodeDirectoryBuilder {
 		if (!(version < CodeDirectory.supportsTeamID) && mTeamID.byteLength) {
 			size += mTeamID.byteLength + 1;
 		}
-		size += (codeSlots + specialSlots) * digestLength;
+		size += (mCodeSlots + specialSlots) * digestLength;
 		if (
 			!(version < CodeDirectory.supportsPreEncrypt) &&
 			mGeneratePreEncryptHashes
 		) {
-			size += codeSlots * digestLength;
+			size += mCodeSlots * digestLength;
 		}
 		return size;
 	}
@@ -372,7 +372,7 @@ export class CodeDirectoryBuilder {
 		version ??= this.minVersion();
 		const {
 			specialSlots,
-			codeSlots,
+			mCodeSlots,
 			execLength,
 			digestLength,
 			pageSize,
@@ -389,7 +389,7 @@ export class CodeDirectoryBuilder {
 		dir.version = version;
 		dir.flags = this.mFlags;
 		dir.nSpecialSlots = specialSlots;
-		dir.nCodeSlots = codeSlots;
+		dir.nCodeSlots = mCodeSlots;
 		if (
 			execLength > UINT32_MAX &&
 			!(version < CodeDirectory.supportsCodeLimit64)
@@ -449,7 +449,7 @@ export class CodeDirectoryBuilder {
 		const gpec = spe && mGeneratePreEncryptHashes;
 		if (gpec) {
 			dir.preEncryptOffset = offset;
-			offset += codeSlots * digestLength;
+			offset += mCodeSlots * digestLength;
 		}
 		dir.hashOffset = offset + specialSlots * digestLength;
 		for (let i = 1; i <= specialSlots; i++) {
@@ -458,7 +458,7 @@ export class CodeDirectoryBuilder {
 				dir.getSlot(-i, false)!.set(new Uint8Array(hash));
 			}
 		}
-		for (let i = 0; i < codeSlots; i++) {
+		for (let i = 0; i < mCodeSlots; i++) {
 			const hash = this.getCodeSlot(i);
 			if (hash) {
 				dir.getSlot(i, false)!.set(hash);

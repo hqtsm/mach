@@ -3,17 +3,18 @@ import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import { kSecCodeSignatureHashSHA1, PLATFORM_MACOS } from '../const.ts';
 import { CodeDirectory } from './codedirectory.ts';
 import { UINT32_MAX } from '../const.ts';
+import { CS_SHA1_LEN } from '../const.ts';
 
 Deno.test('codeSlots', () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	assertEquals(builder.codeSlots, 0);
+	const zero = builder.build().length;
 	builder.execLength = 1;
-	assertEquals(builder.codeSlots, 1);
+	assertEquals(builder.build().length, zero + CS_SHA1_LEN * 1);
 	builder.pageSize = 1024;
 	builder.execLength = 1024;
-	assertEquals(builder.codeSlots, 1);
+	assertEquals(builder.build().length, zero + CS_SHA1_LEN * 1);
 	builder.execLength = 1025;
-	assertEquals(builder.codeSlots, 2);
+	assertEquals(builder.build().length, zero + CS_SHA1_LEN * 2);
 });
 
 Deno.test('addExecSegFlags', () => {
@@ -41,7 +42,6 @@ Deno.test('codeSlot', () => {
 		[1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4],
 	);
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	assertEquals(builder.codeSlots, 0);
 	assertThrows(() => builder.getCodeSlot(0));
 	assertThrows(() => builder.setCodeSlot(0, hash));
 	builder.pageSize = 1024;
@@ -49,11 +49,11 @@ Deno.test('codeSlot', () => {
 	assertEquals(builder.getCodeSlot(0), null);
 	builder.setCodeSlot(0, hash);
 	assertEquals(builder.getCodeSlot(0), hash);
-	assertEquals(builder.codeSlots, 1);
+	const beforeLength = builder.build().length;
 	assertThrows(() => builder.setCodeSlot(-1, hash));
 	assertThrows(() => builder.setCodeSlot(2, hash));
 	assertThrows(() => builder.setCodeSlot(0, new Uint8Array()));
-	assertEquals(builder.codeSlots, 1);
+	assertEquals(builder.build().length, beforeLength);
 	assertEquals(builder.getCodeSlot(0), hash);
 });
 
