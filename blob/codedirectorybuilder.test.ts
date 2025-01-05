@@ -3,10 +3,6 @@ import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import { kSecCodeSignatureHashSHA1, PLATFORM_MACOS } from '../const.ts';
 import { CodeDirectory } from './codedirectory.ts';
 import { UINT32_MAX } from '../const.ts';
-import { kSecCodeSignatureHashSHA256 } from '../const.ts';
-import { kSecCodeSignatureHashSHA384 } from '../const.ts';
-import { kSecCodeSignatureHashSHA512 } from '../const.ts';
-import { kSecCodeSignatureHashSHA256Truncated } from '../const.ts';
 
 Deno.test('codeSlots', () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
@@ -132,23 +128,4 @@ Deno.test('platform', () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	builder.platform(PLATFORM_MACOS);
 	assertEquals(builder.build().platform, PLATFORM_MACOS);
-});
-
-Deno.test('digestLength', () => {
-	for (
-		const [hashType, digestLength] of [
-			[kSecCodeSignatureHashSHA1, 20],
-			[kSecCodeSignatureHashSHA256Truncated, 20],
-			[kSecCodeSignatureHashSHA256, 32],
-			[kSecCodeSignatureHashSHA384, 48],
-			[kSecCodeSignatureHashSHA512, 64],
-		]
-	) {
-		assertEquals(
-			CodeDirectoryBuilder.digestLength(hashType),
-			digestLength,
-			`hashType: ${hashType}`,
-		);
-	}
-	assertThrows(() => CodeDirectoryBuilder.digestLength(0));
 });

@@ -1,12 +1,6 @@
 import type { BufferView } from '@hqtsm/struct';
-import {
-	kSecCodeSignatureHashSHA1,
-	kSecCodeSignatureHashSHA256,
-	kSecCodeSignatureHashSHA256Truncated,
-	kSecCodeSignatureHashSHA384,
-	kSecCodeSignatureHashSHA512,
-	UINT32_MAX,
-} from '../const.ts';
+import { UINT32_MAX } from '../const.ts';
+import type { DynamicHash } from '../hash/dynamichash.ts';
 import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
 
@@ -110,9 +104,8 @@ export class CodeDirectoryBuilder {
 	 * @param digestAlgorithm Hash algorithm (kSecCodeSignatureHash* constants).
 	 */
 	constructor(digestAlgorithm: number) {
-		const Static = this.constructor;
 		this.mHashType = digestAlgorithm;
-		this.mDigestLength = Static.digestLength(digestAlgorithm);
+		this.mDigestLength = this.getHash().digestLength();
 	}
 
 	/**
@@ -384,7 +377,6 @@ export class CodeDirectoryBuilder {
 	public size(version: number | null = null): number {
 		version ??= this.version;
 		const {
-			constructor: Static,
 			mIdentifier,
 			mTeamID,
 			codeSlots,
@@ -392,7 +384,7 @@ export class CodeDirectoryBuilder {
 			digestLength,
 			mGeneratePreEncryptHashes,
 		} = this;
-		let size = Static.fixedSize(version);
+		let size = this.fixedSize(version);
 		if (!(version < CodeDirectory.supportsScatter)) {
 			size += this.mScatterSize;
 		}
@@ -419,7 +411,6 @@ export class CodeDirectoryBuilder {
 	public build(version: number | null = null): CodeDirectory {
 		version ??= this.version;
 		const {
-			constructor: Static,
 			specialSlots,
 			codeSlots,
 			execLength,
@@ -460,7 +451,7 @@ export class CodeDirectoryBuilder {
 		if (!(version < CodeDirectory.supportsPreEncrypt)) {
 			dir.runtime = this.mRuntimeVersion;
 		}
-		let offset = Static.fixedSize(version);
+		let offset = this.fixedSize(version);
 		if (mScatter && !(version < CodeDirectory.supportsScatter)) {
 			dir.scatterOffset = offset;
 			for (const s of mScatter) {
@@ -525,7 +516,7 @@ export class CodeDirectoryBuilder {
 	 * @param version Compatibility version.
 	 * @returns Byte size.
 	 */
-	public static fixedSize(version: number): number {
+	public fixedSize(version: number): number {
 		let size = CodeDirectory.BYTE_LENGTH;
 		if (version < CodeDirectory.supportsPreEncrypt) {
 			size -= 8;
@@ -546,30 +537,11 @@ export class CodeDirectoryBuilder {
 	}
 
 	/**
-	 * Get digest length for hash algorithm.
+	 * Get hash creation instance.
 	 *
-	 * @param hashType Hash algorithm (kSecCodeSignatureHash* constants).
-	 * @returns Digest size.
+	 * @returns Hash instance.
 	 */
-	public static digestLength(hashType: number): number {
-		switch (hashType) {
-			case kSecCodeSignatureHashSHA1:
-			case kSecCodeSignatureHashSHA256Truncated: {
-				return 20;
-			}
-			case kSecCodeSignatureHashSHA256: {
-				return 32;
-			}
-			case kSecCodeSignatureHashSHA384: {
-				return 48;
-			}
-			case kSecCodeSignatureHashSHA512: {
-				return 64;
-			}
-			default: {
-				// Do nothing.
-			}
-		}
-		throw new Error(`Unknown hash type: ${hashType}`);
+	public getHash(): DynamicHash {
+		return CodeDirectory.hashFor(this.mHashType);
 	}
 }
