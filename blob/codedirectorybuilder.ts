@@ -74,6 +74,11 @@ export class CodeDirectoryBuilder {
 	private mScatter: CodeDirectoryScatter[] | null = null;
 
 	/**
+	 * Scatter vector byte size, include sentinel.
+	 */
+	private mScatterSize = 0;
+
+	/**
 	 * Exec segment offset.
 	 */
 	private mExecSegOffset = 0n;
@@ -201,6 +206,7 @@ export class CodeDirectoryBuilder {
 					new CodeDirectoryScatter(new ArrayBuffer(BYTE_LENGTH)),
 				);
 			}
+			this.mScatterSize = total * BYTE_LENGTH;
 			return this.mScatter = vector;
 		}
 		return this.mScatter;
@@ -322,20 +328,6 @@ export class CodeDirectoryBuilder {
 		}
 		digest.set(new Uint8Array(hash.buffer, hash.byteOffset, byteLength));
 		mCodeSlots[slot] = digest;
-	}
-
-	/**
-	 * Size of scatter vector.
-	 */
-	private get mScatterSize(): number {
-		let size = 0;
-		const { mScatter } = this;
-		if (mScatter) {
-			for (const s of mScatter) {
-				size += s.byteLength;
-			}
-		}
-		return size;
 	}
 
 	/**
