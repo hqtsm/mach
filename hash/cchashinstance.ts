@@ -82,6 +82,6 @@ export class CCHashInstance extends DynamicHash {
 			buffer.set(new Uint8Array(b = mData.shift()!), offset);
 		}
 		const digest = await crypto.subtle.digest(name, buffer);
-		return mTruncate ? digest.slice(0, this.mTruncate) : digest;
+		return mTruncate ? digest.slice(0, mTruncate) : digest;
 	}
 }
