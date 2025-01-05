@@ -16,7 +16,7 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Special slots.
 	 */
-	private readonly mSpecial = new Map<number, Uint8Array>();
+	private readonly mSpecial = new Map<number, ArrayBuffer>();
 
 	/**
 	 * Highest special slot index.
@@ -145,6 +145,44 @@ export class CodeDirectoryBuilder {
 	}
 
 	/**
+	 * Set special slot.
+	 *
+	 * @param slot Slot index, 1 indexed.
+	 * @param hash Hash data.
+	 */
+	public async specialSlot(slot: number, data: BufferView): Promise<void>;
+
+	/**
+	 * Get special slot.
+	 *
+	 * @param slot Slot index, 1 indexed.
+	 * @returns Hash data, or null.
+	 */
+	public specialSlot(slot: number): ArrayBuffer | null;
+
+	public specialSlot(
+		slot: number,
+		data?: BufferView,
+	): Promise<void> | ArrayBuffer | null {
+		if (data) {
+			slot = (+slot || 0) - (slot % 1 || 0);
+			if (slot < 1) {
+				throw new Error(`Invalid slot index: ${slot}`);
+			}
+			const slots = this.mSpecial;
+			const hash = this.getHash();
+			return (async () => {
+				await hash.update(data);
+				slots.set(slot, await hash.finish());
+				if (slot > this.mSpecialSlots) {
+					this.mSpecialSlots = slot;
+				}
+			})();
+		}
+		return this.mSpecial.get(slot) || null;
+	}
+
+	/**
 	 * Set identifier.
 	 *
 	 * @param code Identifier.
@@ -250,45 +288,6 @@ export class CodeDirectoryBuilder {
 	 */
 	public runTimeVersion(runtime: number): void {
 		this.mRuntimeVersion = runtime;
-	}
-
-	/**
-	 * Get special slot.
-	 *
-	 * @param slot Slot index, 1 indexed.
-	 * @returns Hash data, or null.
-	 */
-	public getSpecialSlot(slot: number): Uint8Array | null {
-		slot = (+slot || 0) - (slot % 1 || 0);
-		if (slot < 1) {
-			throw new Error(`Invalid slot index: ${slot}`);
-		}
-		return this.mSpecial.get(slot) || null;
-	}
-
-	/**
-	 * Set special slot.
-	 *
-	 * @param slot Slot index, 1 indexed.
-	 * @param hash Hash data.
-	 */
-	public setSpecialSlot(slot: number, hash: BufferView): void {
-		slot = (+slot || 0) - (slot % 1 || 0);
-		if (slot < 1) {
-			throw new Error(`Invalid slot index: ${slot}`);
-		}
-		const slots = this.mSpecial;
-		const { digestLength } = this;
-		const { byteLength } = hash;
-		if (byteLength !== digestLength) {
-			throw new Error(`Invalid hash size: ${byteLength}`);
-		}
-		const digest = slots.get(slot) || new Uint8Array(digestLength);
-		digest.set(new Uint8Array(hash.buffer, hash.byteOffset, byteLength));
-		slots.set(slot, digest);
-		if (slot >= this.mSpecialSlots) {
-			this.mSpecialSlots = slot;
-		}
 	}
 
 	/**
@@ -455,9 +454,9 @@ export class CodeDirectoryBuilder {
 		}
 		dir.hashOffset = offset + specialSlots * digestLength;
 		for (let i = 1; i <= specialSlots; i++) {
-			const hash = this.getSpecialSlot(i);
+			const hash = this.specialSlot(i);
 			if (hash) {
-				dir.getSlot(-i, false)!.set(hash);
+				dir.getSlot(-i, false)!.set(new Uint8Array(hash));
 			}
 		}
 		for (let i = 0; i < codeSlots; i++) {

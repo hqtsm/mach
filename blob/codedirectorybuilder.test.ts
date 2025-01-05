@@ -27,20 +27,13 @@ Deno.test('addExecSegFlags', () => {
 	assertEquals(builder.build().execSegFlags, 7n);
 });
 
-Deno.test('specialSlot', () => {
-	const hash = new Uint8Array(
-		[1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4],
-	);
+Deno.test('specialSlot', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	assertEquals(builder.specialSlots, 0);
-	builder.setSpecialSlot(1, hash);
+	assertThrows(() => builder.specialSlot(0, new Uint8Array()));
+	assertEquals(builder.specialSlots, 0);
+	await builder.specialSlot(1, new Uint8Array());
 	assertEquals(builder.specialSlots, 1);
-	assertThrows(() => builder.setSpecialSlot(0, hash));
-	assertThrows(() => builder.setSpecialSlot(1, new Uint8Array()));
-	assertEquals(builder.specialSlots, 1);
-	assertEquals(builder.getSpecialSlot(1), hash);
-	assertEquals(builder.getSpecialSlot(2), null);
-	assertThrows(() => builder.getSpecialSlot(0));
 });
 
 Deno.test('codeSlot', () => {

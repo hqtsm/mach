@@ -14,7 +14,7 @@ import {
 	type FixtureMachoSignatureInfo,
 	fixtureMachoSigned,
 } from '../spec/fixture.ts';
-import { chunkedHashes, hash } from '../spec/hash.ts';
+import { chunkedHashes } from '../spec/hash.ts';
 import { thin } from '../spec/macho.ts';
 import { BlobWrapper } from './blobwrapper.ts';
 import { CodeDirectory } from './codedirectory.ts';
@@ -67,11 +67,8 @@ export async function* createCodeDirectories(
 		builder.identifier(identifier);
 		builder.teamID(teamID);
 		if (infoPlist) {
-			builder.setSpecialSlot(
-				cdInfoSlot,
-				// deno-lint-ignore no-await-in-loop
-				await hash(hashType, infoPlist),
-			);
+			// deno-lint-ignore no-await-in-loop
+			await builder.specialSlot(cdInfoSlot, infoPlist);
 		}
 		switch (requirements) {
 			case '': {
@@ -79,10 +76,10 @@ export async function* createCodeDirectories(
 				break;
 			}
 			case 'count=0 size=12': {
-				builder.setSpecialSlot(
+				// deno-lint-ignore no-await-in-loop
+				await builder.specialSlot(
 					cdRequirementsSlot,
-					// deno-lint-ignore no-await-in-loop
-					await hash(hashType, emptyRequirementsData),
+					emptyRequirementsData,
 				);
 				break;
 			}
@@ -91,11 +88,8 @@ export async function* createCodeDirectories(
 			}
 		}
 		if (codeResources) {
-			builder.setSpecialSlot(
-				cdResourceDirSlot,
-				// deno-lint-ignore no-await-in-loop
-				await hash(hashType, codeResources),
-			);
+			// deno-lint-ignore no-await-in-loop
+			await builder.specialSlot(cdResourceDirSlot, codeResources);
 		}
 		// deno-lint-ignore no-await-in-loop
 		await addCodeHashes(builder, thin);
