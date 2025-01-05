@@ -4,6 +4,14 @@ import type { DynamicHash } from '../hash/dynamichash.ts';
 import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
 
+function specialSlot(slot: number): number {
+	slot = (+slot || 0) - (slot % 1 || 0);
+	if (slot < 1) {
+		throw new Error(`Invalid slot index: ${slot}`);
+	}
+	return slot;
+}
+
 /**
  * Builder for building CodeDirectories from pieces.
  */
@@ -150,7 +158,17 @@ export class CodeDirectoryBuilder {
 	 * @param slot Slot index, 1 indexed.
 	 * @param hash Hash data.
 	 */
-	public async specialSlot(slot: number, data: BufferView): Promise<void>;
+	public specialSlot(slot: number, data: BufferView): Promise<void> {
+		slot = specialSlot(slot);
+		const hash = this.getHash();
+		return (async () => {
+			await hash.update(data);
+			this.mSpecial.set(slot, await hash.finish());
+			if (slot > this.mSpecialSlots) {
+				this.mSpecialSlots = slot;
+			}
+		})();
+	}
 
 	/**
 	 * Get special slot.
@@ -158,27 +176,8 @@ export class CodeDirectoryBuilder {
 	 * @param slot Slot index, 1 indexed.
 	 * @returns Hash data, or null.
 	 */
-	public specialSlot(slot: number): ArrayBuffer | null;
-
-	public specialSlot(
-		slot: number,
-		data?: BufferView,
-	): Promise<void> | ArrayBuffer | null {
-		if (data) {
-			slot = (+slot || 0) - (slot % 1 || 0);
-			if (slot < 1) {
-				throw new Error(`Invalid slot index: ${slot}`);
-			}
-			const slots = this.mSpecial;
-			const hash = this.getHash();
-			return (async () => {
-				await hash.update(data);
-				slots.set(slot, await hash.finish());
-				if (slot > this.mSpecialSlots) {
-					this.mSpecialSlots = slot;
-				}
-			})();
-		}
+	private getSpecialSlot(slot: number): ArrayBuffer | null {
+		slot = specialSlot(slot);
 		return this.mSpecial.get(slot) || null;
 	}
 
@@ -454,7 +453,7 @@ export class CodeDirectoryBuilder {
 		}
 		dir.hashOffset = offset + specialSlots * digestLength;
 		for (let i = 1; i <= specialSlots; i++) {
-			const hash = this.specialSlot(i);
+			const hash = this.getSpecialSlot(i);
 			if (hash) {
 				dir.getSlot(-i, false)!.set(new Uint8Array(hash));
 			}
