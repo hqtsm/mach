@@ -1,4 +1,4 @@
-import { assert, assertEquals } from '@std/assert';
+import { assertEquals } from '@std/assert';
 import {
 	cdAlternateCodeDirectorySlots,
 	cdCodeDirectorySlot,
@@ -73,11 +73,9 @@ export async function* createCodeDirectories(
 				await hash(hashType, infoPlist),
 			);
 		}
-		let reqs = false;
 		switch (requirements) {
 			case '': {
 				// No requirements.
-				reqs = true;
 				break;
 			}
 			case 'count=0 size=12': {
@@ -86,11 +84,12 @@ export async function* createCodeDirectories(
 					// deno-lint-ignore no-await-in-loop
 					await hash(hashType, emptyRequirementsData),
 				);
-				reqs = true;
 				break;
 			}
+			default: {
+				throw new Error(`Unknown requirements: ${requirements}`);
+			}
 		}
-		assert(reqs, `Unknown requirements: ${requirements}`);
 		if (codeResources) {
 			builder.setSpecialSlot(
 				cdResourceDirSlot,
@@ -180,7 +179,6 @@ for (const { kind, arch, file, archs } of fixtures) {
 						break;
 					}
 					case 'count=0 size=12': {
-						// Empty requirements.
 						maker.add(cdRequirementsSlot, emptyRequirements);
 						break;
 					}
