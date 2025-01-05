@@ -208,8 +208,7 @@ export class CodeDirectoryBuilder {
 					new CodeDirectoryScatter(new ArrayBuffer(BYTE_LENGTH)),
 				);
 			}
-			this.mScatter = vector;
-			return vector;
+			return this.mScatter = vector;
 		}
 		return this.mScatter;
 	}
