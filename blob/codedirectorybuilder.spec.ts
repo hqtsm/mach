@@ -39,11 +39,7 @@ export async function* createCodeDirectories(
 		builder.flags(info.flags);
 		builder.execLength = info.offset;
 		builder.pageSize = info.page;
-		builder.execSeg(
-			BigInt(info.execsegbase),
-			BigInt(info.execseglimit),
-			BigInt(info.execsegflags),
-		);
+		builder.execSeg(info.execsegbase, info.execseglimit, info.execsegflags);
 		builder.identifier(identifier);
 		builder.teamID(teamID);
 		if (infoPlist) {

@@ -58,9 +58,9 @@ export interface FixtureMachoSignatureInfo {
 	hashes: number[];
 	page: number;
 	requirements: string;
-	execsegbase: number;
-	execseglimit: number;
-	execsegflags: number;
+	execsegbase: bigint;
+	execseglimit: bigint;
+	execsegflags: bigint;
 }
 
 function fixtureMachosRead(): {
@@ -142,11 +142,14 @@ function fixtureMachosRead(): {
 			case 'offset':
 			case 'version':
 			case 'flags':
-			case 'page':
+			case 'page': {
+				a[k] = +v;
+				break;
+			}
 			case 'execsegbase':
 			case 'execseglimit':
 			case 'execsegflags': {
-				a[k] = +v || 0;
+				a[k] = BigInt(v);
 				break;
 			}
 			case 'identifier':
