@@ -15,7 +15,6 @@ import {
 	fixtureMachoSigned,
 } from '../spec/fixture.ts';
 import { chunkedHashes, hash } from '../spec/hash.ts';
-import { unhex } from '../spec/hex.ts';
 import { thin } from '../spec/macho.ts';
 import { BlobWrapper } from './blobwrapper.ts';
 import { CodeDirectory } from './codedirectory.ts';
@@ -26,7 +25,12 @@ import { RequirementsMaker } from './requirementsmaker.ts';
 
 const fixtures = fixtureMachos();
 
-export const emptyRequirements = unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00');
+const emptyRequirements = new RequirementsMaker().make();
+const emptyRequirementsData = new Uint8Array(
+	emptyRequirements.buffer,
+	emptyRequirements.byteOffset,
+	emptyRequirements.length,
+);
 
 export async function addCodeHashes(
 	cd: CodeDirectoryBuilder,
@@ -80,7 +84,7 @@ export async function* createCodeDirectories(
 				builder.setSpecialSlot(
 					cdRequirementsSlot,
 					// deno-lint-ignore no-await-in-loop
-					await hash(hashType, emptyRequirements),
+					await hash(hashType, emptyRequirementsData),
 				);
 				reqs = true;
 				break;
@@ -177,17 +181,12 @@ for (const { kind, arch, file, archs } of fixtures) {
 					}
 					case 'count=0 size=12': {
 						// Empty requirements.
-						maker.add(
-							cdRequirementsSlot,
-							new RequirementsMaker().make(),
-						);
+						maker.add(cdRequirementsSlot, emptyRequirements);
 						break;
 					}
 					default: {
 						throw new Error(
-							message(
-								`Unknown requirements: ${requirements}`,
-							),
+							message(`Unknown requirements: ${requirements}`),
 						);
 					}
 				}
@@ -196,9 +195,7 @@ for (const { kind, arch, file, archs } of fixtures) {
 				maker.add(cdSignatureSlot, BlobWrapper.alloc());
 			} else if (cds.length) {
 				throw new Error(
-					message(
-						`Alt linker code directories: ${cds.length}`,
-					),
+					message(`Alt linker code directories: ${cds.length}`),
 				);
 			}
 
