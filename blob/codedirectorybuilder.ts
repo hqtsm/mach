@@ -331,35 +331,13 @@ export class CodeDirectoryBuilder {
 	}
 
 	/**
-	 * Compatibility version of described CodeDirectory.
-	 */
-	public get version(): number {
-		if (this.mGeneratePreEncryptHashes || this.mRuntimeVersion) {
-			return CodeDirectory.supportsPreEncrypt;
-		}
-		if (this.mExecSegLimit > 0) {
-			return CodeDirectory.supportsExecSegment;
-		}
-		if (this.execLength > UINT32_MAX) {
-			return CodeDirectory.supportsCodeLimit64;
-		}
-		if (this.mTeamID.byteLength) {
-			return CodeDirectory.supportsTeamID;
-		}
-		if (this.mScatterSize) {
-			return CodeDirectory.supportsScatter;
-		}
-		return CodeDirectory.earliestVersion;
-	}
-
-	/**
 	 * Caculate size for CodeDirectory currently described.
 	 *
 	 * @param version Compatibility version or null for minimum.
 	 * @returns Byte size.
 	 */
 	public size(version: number | null = null): number {
-		version ??= this.version;
+		version ??= this.minVersion();
 		const {
 			mIdentifier,
 			mTeamID,
@@ -393,7 +371,7 @@ export class CodeDirectoryBuilder {
 	 * @returns CodeDirectory instance.
 	 */
 	public build(version: number | null = null): CodeDirectory {
-		version ??= this.version;
+		version ??= this.minVersion();
 		const {
 			specialSlots,
 			codeSlots,
@@ -536,5 +514,27 @@ export class CodeDirectoryBuilder {
 	 */
 	public getHash(): DynamicHash {
 		return CodeDirectory.hashFor(this.mHashType);
+	}
+
+	/**
+	 * Compatibility version of described CodeDirectory.
+	 */
+	public minVersion(): number {
+		if (this.mGeneratePreEncryptHashes || this.mRuntimeVersion) {
+			return CodeDirectory.supportsPreEncrypt;
+		}
+		if (this.mExecSegLimit > 0) {
+			return CodeDirectory.supportsExecSegment;
+		}
+		if (this.execLength > UINT32_MAX) {
+			return CodeDirectory.supportsCodeLimit64;
+		}
+		if (this.mTeamID.byteLength) {
+			return CodeDirectory.supportsTeamID;
+		}
+		if (this.mScatterSize) {
+			return CodeDirectory.supportsScatter;
+		}
+		return CodeDirectory.earliestVersion;
 	}
 }

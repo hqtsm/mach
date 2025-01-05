@@ -87,37 +87,37 @@ Deno.test('version and size', () => {
 	builder.execLength = 1024;
 	builder.setCodeSlot(0, hash);
 
-	assertEquals(builder.version, CodeDirectory.earliestVersion);
+	assertEquals(builder.minVersion(), CodeDirectory.earliestVersion);
 	assertGreater(builder.size(), size);
 	size = builder.size();
 
 	builder.scatter(1);
-	assertEquals(builder.version, CodeDirectory.supportsScatter);
+	assertEquals(builder.minVersion(), CodeDirectory.supportsScatter);
 	assertGreater(builder.size(), size);
 	size = builder.size();
 
 	builder.teamID(new TextEncoder().encode('TEAM'));
-	assertEquals(builder.version, CodeDirectory.supportsTeamID);
+	assertEquals(builder.minVersion(), CodeDirectory.supportsTeamID);
 	assertGreater(builder.size(), size);
 	size = builder.size();
 
 	builder.execLength = UINT32_MAX + 1;
-	assertEquals(builder.version, CodeDirectory.supportsCodeLimit64);
+	assertEquals(builder.minVersion(), CodeDirectory.supportsCodeLimit64);
 	assertGreater(builder.size(), size);
 	size = builder.size();
 
 	builder.execSeg(0n, 1n, 0n);
-	assertEquals(builder.version, CodeDirectory.supportsExecSegment);
+	assertEquals(builder.minVersion(), CodeDirectory.supportsExecSegment);
 	assertGreater(builder.size(), size);
 	size = builder.size();
 
 	builder.generatePreEncryptHashes(true);
-	assertEquals(builder.version, CodeDirectory.supportsPreEncrypt);
+	assertEquals(builder.minVersion(), CodeDirectory.supportsPreEncrypt);
 	assertGreater(builder.size(), size);
 
 	builder.generatePreEncryptHashes(false);
 	builder.runTimeVersion(1);
-	assertEquals(builder.version, CodeDirectory.supportsPreEncrypt);
+	assertEquals(builder.minVersion(), CodeDirectory.supportsPreEncrypt);
 	assertGreater(builder.size(), size);
 
 	builder.generatePreEncryptHashes(true);

@@ -102,7 +102,7 @@ export async function* createCodeDirectories(
 
 		// Offical library always minimum supports scatter.
 		assertEquals(
-			Math.max(builder.version, CodeDirectory.supportsScatter),
+			Math.max(builder.minVersion(), CodeDirectory.supportsScatter),
 			info.version,
 		);
 
