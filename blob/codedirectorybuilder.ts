@@ -74,7 +74,7 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Code slots.
 	 */
-	private readonly mCodeSlots: (Uint8Array | undefined)[] = [];
+	private readonly mCodeSlotHashes: (Uint8Array | undefined)[] = [];
 
 	/**
 	 * Scatter vector.
@@ -297,12 +297,12 @@ export class CodeDirectoryBuilder {
 	 */
 	public getCodeSlot(slot: number): Uint8Array | null {
 		slot = (+slot || 0) - (slot % 1 || 0);
-		const { codeSlots, mCodeSlots } = this;
+		const { codeSlots, mCodeSlotHashes } = this;
 		if (slot < 0 || slot >= codeSlots) {
 			throw new Error(`Invalid slot: ${slot}`);
 		}
-		mCodeSlots.length = this.codeSlots;
-		return mCodeSlots[slot] || null;
+		mCodeSlotHashes.length = this.codeSlots;
+		return mCodeSlotHashes[slot] || null;
 	}
 
 	/**
@@ -313,19 +313,19 @@ export class CodeDirectoryBuilder {
 	 */
 	public setCodeSlot(slot: number, hash: BufferView): void {
 		slot = (+slot || 0) - (slot % 1 || 0);
-		const { codeSlots, mCodeSlots } = this;
+		const { codeSlots, mCodeSlotHashes } = this;
 		if (slot < 0 || slot >= codeSlots) {
 			throw new Error(`Invalid slot: ${slot}`);
 		}
-		mCodeSlots.length = codeSlots;
+		mCodeSlotHashes.length = codeSlots;
 		const { digestLength } = this;
-		const digest = mCodeSlots[slot] || new Uint8Array(digestLength);
+		const digest = mCodeSlotHashes[slot] || new Uint8Array(digestLength);
 		const { byteLength } = hash;
 		if (byteLength !== digestLength) {
 			throw new Error(`Invalid hash size: ${byteLength}`);
 		}
 		digest.set(new Uint8Array(hash.buffer, hash.byteOffset, byteLength));
-		mCodeSlots[slot] = digest;
+		mCodeSlotHashes[slot] = digest;
 	}
 
 	/**
