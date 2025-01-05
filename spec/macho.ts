@@ -1,4 +1,5 @@
 import { assert, assertEquals } from '@std/assert';
+import type { BufferView } from '@hqtsm/struct';
 import {
 	FAT_CIGAM,
 	FAT_CIGAM_64,
@@ -11,7 +12,7 @@ import {
 } from '../const.ts';
 
 export function thin(
-	data: Readonly<ArrayBufferView>,
+	data: BufferView,
 	type: number,
 	subtype: number | null = null,
 ): Uint8Array {

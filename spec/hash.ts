@@ -1,3 +1,4 @@
+import type { BufferView } from '@hqtsm/struct';
 import {
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
@@ -8,7 +9,7 @@ import {
 
 export async function hash(
 	hashType: number,
-	data: Readonly<ArrayBufferView>,
+	data: BufferView,
 ): Promise<Uint8Array> {
 	let limit = -1;
 	let algo = '';
@@ -44,7 +45,7 @@ export async function hash(
 
 export async function chunkedHashes(
 	hashType: number,
-	data: Readonly<ArrayBufferView>,
+	data: BufferView,
 	chunk: number,
 	offset = 0,
 	length = -1,
