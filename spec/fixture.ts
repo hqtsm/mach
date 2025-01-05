@@ -134,9 +134,9 @@ function fixtureMachosRead(): {
 			teamid: '',
 			hashes: [],
 			page: 0,
-			execsegbase: 0,
-			execseglimit: 0,
-			execsegflags: 0,
+			execsegbase: 0n,
+			execseglimit: 0n,
+			execsegflags: 0n,
 		};
 		switch (k) {
 			case 'offset':
