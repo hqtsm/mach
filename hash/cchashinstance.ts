@@ -7,6 +7,7 @@ import {
 } from '../const.ts';
 import { DynamicHash } from './dynamichash.ts';
 
+// Workaround for missing types.
 declare const crypto: {
 	subtle: {
 		digest: (alg: string, data: ArrayBuffer) => Promise<ArrayBuffer>;
@@ -64,14 +65,21 @@ export class CCHashInstance extends DynamicHash {
 
 	// deno-lint-ignore require-await
 	override async update(data: BufferView): Promise<void> {
+		const mData = this.mData;
+		if (!mData) {
+			throw new Error('Digest finished');
+		}
 		const { buffer, byteOffset, byteLength } = data;
-		this.mData!.push(buffer.slice(byteOffset, byteOffset + byteLength));
+		mData.push(buffer.slice(byteOffset, byteOffset + byteLength));
 	}
 
 	override async finish(): Promise<ArrayBuffer> {
 		const [name] = algorithims.get(this.mDigest)!;
 		const { mTruncate } = this;
-		const mData = this.mData!;
+		const mData = this.mData;
+		if (!mData) {
+			throw new Error('Digest finished');
+		}
 		let total = 0;
 		for (const data of mData) {
 			total += data.byteLength;
