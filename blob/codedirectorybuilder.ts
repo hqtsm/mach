@@ -27,11 +27,6 @@ export class CodeDirectoryBuilder {
 	private readonly mSpecial = new Map<number, ArrayBuffer>();
 
 	/**
-	 * Highest special slot index.
-	 */
-	private mSpecialSlots = 0;
-
-	/**
 	 * Executable length.
 	 */
 	public execLength = 0;
@@ -70,6 +65,11 @@ export class CodeDirectoryBuilder {
 	 * Team ID.
 	 */
 	private mTeamID: BufferView = new Int8Array();
+
+	/**
+	 * Highest special slot index.
+	 */
+	private mSpecialSlots = 0;
 
 	/**
 	 * Code slots.
