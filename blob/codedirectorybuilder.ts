@@ -517,7 +517,7 @@ export class CodeDirectoryBuilder {
 	}
 
 	/**
-	 * Compatibility version of described CodeDirectory.
+	 * Minimum compatibility version of described CodeDirectory.
 	 */
 	public minVersion(): number {
 		if (this.mGeneratePreEncryptHashes || this.mRuntimeVersion) {
