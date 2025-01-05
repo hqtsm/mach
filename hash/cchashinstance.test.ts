@@ -1,4 +1,4 @@
-import { assertEquals } from '@std/assert/equals';
+import { assertEquals, assertThrows } from '@std/assert';
 import {
 	kCCDigestMD2,
 	kCCDigestMD4,
@@ -19,9 +19,8 @@ import {
 	kCCDigestSkein384,
 	kCCDigestSkein512,
 } from '../const.ts';
-import { CCHashInstance } from './cchashinstance.ts';
 import { hex } from '../spec/hex.ts';
-import { assertThrows } from '@std/assert/throws';
+import { CCHashInstance } from './cchashinstance.ts';
 
 // 'ABCD':
 const expected = [
