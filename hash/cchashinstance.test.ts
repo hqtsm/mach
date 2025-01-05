@@ -80,17 +80,14 @@ Deno.test('CCHashInstance truncate', async () => {
 	const truncate = 8;
 	for (const [alg, expt] of expected) {
 		const tag = `alg=${alg} truncate=${truncate}`;
+		const exptHex = expt.slice(0, truncate * 2);
 		const hash = new CCHashInstance(alg, truncate);
 		// deno-lint-ignore no-await-in-loop
 		await hash.update(new TextEncoder().encode('ABCD'));
 		// deno-lint-ignore no-await-in-loop
 		const result = await hash.finish();
 		assertEquals(result.byteLength, truncate, tag);
-		assertEquals(
-			hex(new Uint8Array(result)),
-			expt.slice(0, truncate * 2),
-			tag,
-		);
+		assertEquals(hex(new Uint8Array(result)), exptHex, tag);
 	}
 });
 
