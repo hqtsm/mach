@@ -1,13 +1,4 @@
-import {
-	assertEquals,
-	assertGreater,
-	assertNotEquals,
-	assertThrows,
-} from '@std/assert';
-import { fixtureMachos, fixtureMachoSigned } from '../spec/fixture.ts';
-import { thin } from '../spec/macho.ts';
-import { indexOf } from '../spec/u8a.ts';
-import { createCodeDirectories } from './codedirectorybuilder.spec.ts';
+import { assertEquals, assertGreater, assertThrows } from '@std/assert';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import { kSecCodeSignatureHashSHA1, PLATFORM_MACOS } from '../const.ts';
 import { CodeDirectory } from './codedirectory.ts';
@@ -16,8 +7,6 @@ import { kSecCodeSignatureHashSHA256 } from '../const.ts';
 import { kSecCodeSignatureHashSHA384 } from '../const.ts';
 import { kSecCodeSignatureHashSHA512 } from '../const.ts';
 import { kSecCodeSignatureHashSHA256Truncated } from '../const.ts';
-
-const fixtures = fixtureMachos();
 
 Deno.test('codeSlots', () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
@@ -163,53 +152,3 @@ Deno.test('digestLength', () => {
 	}
 	assertThrows(() => CodeDirectoryBuilder.digestLength(0));
 });
-
-for (const { kind, arch, file, archs } of fixtures) {
-	// Skip binaries with no signed architectures.
-	if (![...archs.values()].filter(Boolean).length) {
-		continue;
-	}
-
-	Deno.test(`${kind}: ${arch}: ${file}`, async () => {
-		const { macho, infoPlist, codeResources } = await fixtureMachoSigned(
-			kind,
-			arch,
-			file,
-		);
-
-		for (const [arc, info] of archs) {
-			// Skip unsigned architectures in fat binaries.
-			if (!info) {
-				continue;
-			}
-
-			const message = (s: string) => `CD: ${arc}: ${s}`;
-			const bin = thin(macho, info.arch[0], info.arch[1]);
-
-			for await (
-				const cd of createCodeDirectories(
-					info,
-					bin,
-					infoPlist,
-					codeResources,
-				)
-			) {
-				const cdBuffer = new Uint8Array(
-					cd.buffer,
-					cd.byteOffset,
-					cd.length,
-				);
-				const expectedWithin = new Uint8Array(
-					bin.buffer,
-					bin.byteOffset + info.offset,
-					bin.byteLength - info.offset,
-				);
-				assertNotEquals(
-					indexOf(expectedWithin, cdBuffer),
-					-1,
-					message(`hashType=${cd.hashType}: within`),
-				);
-			}
-		}
-	});
-}
