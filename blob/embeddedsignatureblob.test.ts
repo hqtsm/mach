@@ -38,7 +38,7 @@ export async function addCodeHashes(
 ): Promise<void> {
 	const { pageSize } = cd;
 	const hashes = await chunkedHashes(
-		cd.hashType,
+		cd.hashType(),
 		macho,
 		pageSize,
 		0,

@@ -109,13 +109,6 @@ export class CodeDirectoryBuilder {
 	}
 
 	/**
-	 * Hash type.
-	 */
-	public get hashType(): number {
-		return this.mHashType;
-	}
-
-	/**
 	 * Hash digest length.
 	 */
 	public get digestLength(): number {
@@ -438,7 +431,7 @@ export class CodeDirectoryBuilder {
 		} else {
 			dir.codeLimit = execLength;
 		}
-		dir.hashType = this.hashType;
+		dir.hashType = this.mHashType;
 		dir.platform = this.mPlatform;
 		dir.hashSize = digestLength;
 		dir.pageSize = pageSize ? Math.log2(pageSize) : 0;
@@ -507,6 +500,15 @@ export class CodeDirectoryBuilder {
 			}
 		}
 		return dir;
+	}
+
+	/**
+	 * Hash type.
+	 *
+	 * @returns Hash type.
+	 */
+	public hashType(): number {
+		return this.mHashType;
 	}
 
 	/**
