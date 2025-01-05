@@ -7,7 +7,18 @@ import {
 	uint64BE,
 	uint8,
 } from '@hqtsm/struct';
-import { kSecCodeMagicCodeDirectory } from '../const.ts';
+import {
+	kCCDigestSHA1,
+	kCCDigestSHA256,
+	kCCDigestSHA384,
+	kSecCodeMagicCodeDirectory,
+	kSecCodeSignatureHashSHA1,
+	kSecCodeSignatureHashSHA256,
+	kSecCodeSignatureHashSHA256Truncated,
+	kSecCodeSignatureHashSHA384,
+} from '../const.ts';
+import { CCHashInstance } from '../hash/cchashinstance.ts';
+import type { DynamicHash } from '../hash/dynamichash.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
 import { Blob } from './blob.ts';
 
@@ -287,6 +298,30 @@ export class CodeDirectory extends Blob {
 	 * First version to support pre-encrypt hashes and runtime version.
 	 */
 	public static readonly supportsPreEncrypt = 0x20500;
+
+	/**
+	 * Get hash instance for hash type.
+	 *
+	 * @param hashType Hash type.
+	 * @returns Hash instance.
+	 */
+	public static hashFor(hashType: number): DynamicHash {
+		switch (hashType) {
+			case kSecCodeSignatureHashSHA1: {
+				return new CCHashInstance(kCCDigestSHA1);
+			}
+			case kSecCodeSignatureHashSHA256: {
+				return new CCHashInstance(kCCDigestSHA256);
+			}
+			case kSecCodeSignatureHashSHA384: {
+				return new CCHashInstance(kCCDigestSHA384);
+			}
+			case kSecCodeSignatureHashSHA256Truncated: {
+				return new CCHashInstance(kCCDigestSHA256, 20);
+			}
+		}
+		throw new Error(`Unsupported hash type: ${hashType}`);
+	}
 
 	static {
 		uint32BE(this, 'version');

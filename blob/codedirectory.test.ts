@@ -1,7 +1,14 @@
-import { assert, assertEquals } from '@std/assert';
+import { assert, assertEquals, assertThrows } from '@std/assert';
 import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
-import { kSecCodeSignatureHashSHA1, UINT32_MAX } from '../const.ts';
+import {
+	kSecCodeSignatureHashSHA1,
+	kSecCodeSignatureHashSHA256,
+	kSecCodeSignatureHashSHA256Truncated,
+	kSecCodeSignatureHashSHA384,
+	kSecCodeSignatureHashSHA512,
+	UINT32_MAX,
+} from '../const.ts';
 
 Deno.test('BYTE_LENGTH', () => {
 	assertEquals(CodeDirectory.BYTE_LENGTH, 96);
@@ -86,4 +93,27 @@ Deno.test('getSlot', () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	const cd = builder.build(CodeDirectory.supportsPreEncrypt);
 	assertEquals(cd.getSlot(0, true), null);
+});
+
+Deno.test('hashFor', () => {
+	assertEquals(
+		CodeDirectory.hashFor(kSecCodeSignatureHashSHA1).digestLength(),
+		20,
+	);
+	assertEquals(
+		CodeDirectory.hashFor(kSecCodeSignatureHashSHA256).digestLength(),
+		32,
+	);
+	assertEquals(
+		CodeDirectory.hashFor(kSecCodeSignatureHashSHA384).digestLength(),
+		48,
+	);
+	assertEquals(
+		CodeDirectory.hashFor(kSecCodeSignatureHashSHA256Truncated)
+			.digestLength(),
+		20,
+	);
+
+	// Not supported, intentional or an oversight?
+	assertThrows(() => CodeDirectory.hashFor(kSecCodeSignatureHashSHA512));
 });
