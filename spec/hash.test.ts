@@ -44,7 +44,7 @@ Deno.test('hash', async () => {
 	for (const [hashType, hash] of hashed) {
 		assertEquals(hashes.get(hashType), hash, `hashType: ${hashType}`);
 	}
-	assertRejects(async () => await hash(0, new Uint8Array(0)));
+	await assertRejects(async () => await hash(0, new Uint8Array(0)));
 });
 
 Deno.test('chunkedHashes', async () => {

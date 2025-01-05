@@ -103,11 +103,11 @@ Deno.test('CCHashInstance unsupported', () => {
 Deno.test('CCHashInstance finish finished', async () => {
 	const hash = new CCHashInstance(kCCDigestSHA1);
 	await hash.finish();
-	assertRejects(() => hash.finish());
+	await assertRejects(() => hash.finish());
 });
 
 Deno.test('CCHashInstance update finished', async () => {
 	const hash = new CCHashInstance(kCCDigestSHA1);
 	await hash.finish();
-	assertRejects(() => hash.update(new Uint8Array()));
+	await assertRejects(() => hash.update(new Uint8Array()));
 });
