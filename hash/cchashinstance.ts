@@ -7,6 +7,12 @@ import {
 } from '../const.ts';
 import { DynamicHash } from './dynamichash.ts';
 
+declare const crypto: {
+	subtle: {
+		digest: (alg: string, data: ArrayBuffer) => Promise<ArrayBuffer>;
+	};
+};
+
 // Supported hash algorithms with their Web Crypto names and lengths.
 const algorithims = new Map<number, [string, number]>([
 	[kCCDigestSHA1, ['SHA-1', 20]],
