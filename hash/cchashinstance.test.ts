@@ -1,4 +1,4 @@
-import { assertEquals, assertThrows } from '@std/assert';
+import { assertEquals, assertRejects, assertThrows } from '@std/assert';
 import {
 	kCCDigestMD2,
 	kCCDigestMD4,
@@ -96,4 +96,16 @@ Deno.test('CCHashInstance unsupported', () => {
 		const tag = `alg=${alg}`;
 		assertThrows(() => new CCHashInstance(alg), tag);
 	}
+});
+
+Deno.test('CCHashInstance finish finished', async () => {
+	const hash = new CCHashInstance(kCCDigestSHA1);
+	await hash.finish();
+	assertRejects(() => hash.finish());
+});
+
+Deno.test('CCHashInstance update finished', async () => {
+	const hash = new CCHashInstance(kCCDigestSHA1);
+	await hash.finish();
+	assertRejects(() => hash.update(new Uint8Array()));
 });
