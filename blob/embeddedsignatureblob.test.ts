@@ -1,22 +1,111 @@
-import { assertEquals } from '@std/assert';
+import { assert, assertEquals } from '@std/assert';
 import {
 	cdAlternateCodeDirectorySlots,
 	cdCodeDirectorySlot,
+	cdInfoSlot,
 	cdRequirementsSlot,
+	cdResourceDirSlot,
 	cdSignatureSlot,
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureLinkerSigned,
 } from '../const.ts';
-import { fixtureMachos, fixtureMachoSigned } from '../spec/fixture.ts';
+import {
+	fixtureMachos,
+	type FixtureMachoSignatureInfo,
+	fixtureMachoSigned,
+} from '../spec/fixture.ts';
+import { chunkedHashes, hash } from '../spec/hash.ts';
+import { unhex } from '../spec/hex.ts';
 import { thin } from '../spec/macho.ts';
-import { createCodeDirectories } from './codedirectorybuilder.spec.ts';
-import type { CodeDirectory } from './codedirectory.ts';
+import { BlobWrapper } from './blobwrapper.ts';
+import { CodeDirectory } from './codedirectory.ts';
+import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
+import { EmbeddedSignatureBlob } from './embeddedsignatureblob.ts';
 import { EmbeddedSignatureBlobMaker } from './embeddedsignatureblobmaker.ts';
 import { RequirementsMaker } from './requirementsmaker.ts';
-import { BlobWrapper } from './blobwrapper.ts';
-import { EmbeddedSignatureBlob } from './embeddedsignatureblob.ts';
 
 const fixtures = fixtureMachos();
+
+export const emptyRequirements = unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00');
+
+export async function addCodeHashes(
+	cd: CodeDirectoryBuilder,
+	macho: Readonly<Uint8Array>,
+): Promise<void> {
+	const { pageSize } = cd;
+	const hashes = await chunkedHashes(
+		cd.hashType,
+		macho,
+		pageSize,
+		0,
+		cd.execLength,
+	);
+	for (let i = hashes.length; i--;) {
+		cd.setCodeSlot(i, hashes[i]);
+	}
+}
+
+export async function* createCodeDirectories(
+	info: Readonly<FixtureMachoSignatureInfo>,
+	thin: Readonly<Uint8Array>,
+	infoPlist: Readonly<Uint8Array> | null,
+	codeResources: Readonly<Uint8Array> | null,
+): AsyncGenerator<CodeDirectory> {
+	const { requirements } = info;
+	for (const hashType of info.hashes) {
+		const identifier = new TextEncoder().encode(info.identifier);
+		const teamID = new TextEncoder().encode(info.teamid);
+		const builder = new CodeDirectoryBuilder(hashType);
+		builder.flags(info.flags);
+		builder.execLength = info.offset;
+		builder.pageSize = info.page;
+		builder.execSeg(info.execsegbase, info.execseglimit, info.execsegflags);
+		builder.identifier(identifier);
+		builder.teamID(teamID);
+		if (infoPlist) {
+			builder.setSpecialSlot(
+				cdInfoSlot,
+				// deno-lint-ignore no-await-in-loop
+				await hash(hashType, infoPlist),
+			);
+		}
+		let reqs = false;
+		switch (requirements) {
+			case '': {
+				// No requirements.
+				reqs = true;
+				break;
+			}
+			case 'count=0 size=12': {
+				builder.setSpecialSlot(
+					cdRequirementsSlot,
+					// deno-lint-ignore no-await-in-loop
+					await hash(hashType, emptyRequirements),
+				);
+				reqs = true;
+				break;
+			}
+		}
+		assert(reqs, `Unknown requirements: ${requirements}`);
+		if (codeResources) {
+			builder.setSpecialSlot(
+				cdResourceDirSlot,
+				// deno-lint-ignore no-await-in-loop
+				await hash(hashType, codeResources),
+			);
+		}
+		// deno-lint-ignore no-await-in-loop
+		await addCodeHashes(builder, thin);
+
+		// Offical library always minimum supports scatter.
+		assertEquals(
+			Math.max(builder.version, CodeDirectory.supportsScatter),
+			info.version,
+		);
+
+		yield builder.build(info.version);
+	}
+}
 
 Deno.test('BYTE_LENGTH', () => {
 	assertEquals(EmbeddedSignatureBlob.BYTE_LENGTH, 12);
