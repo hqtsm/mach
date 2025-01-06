@@ -20,8 +20,9 @@ async function generateHash(
 	length: number,
 ): Promise<ArrayBuffer> {
 	const data = await reader.slice(offset, offset + length).arrayBuffer();
-	if (data.byteLength !== length) {
-		throw new Error('Read error');
+	const { byteLength } = data;
+	if (byteLength !== length) {
+		throw new Error(`Read from ${offset}: ${byteLength} != ${length}`);
 	}
 	await hasher.update(new Uint8Array(data));
 	return await hasher.finish();
