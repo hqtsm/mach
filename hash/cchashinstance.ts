@@ -13,6 +13,12 @@ declare const crypto: {
 		digest: (alg: string, data: ArrayBuffer) => Promise<ArrayBuffer>;
 	};
 };
+declare function structuredClone<T>(
+	value: T,
+	options?: {
+		transfer?: ArrayBufferReal[];
+	},
+): T;
 
 // Supported hash algorithms with their Web Crypto names and lengths.
 const algorithims = new Map<number, [string, number]>([
@@ -72,16 +78,19 @@ export class CCHashInstance extends DynamicHash {
 		if (!mData) {
 			throw new Error('Digest finished');
 		}
-		let { buffer, byteOffset, byteLength } = data;
-		if (transfer) {
-			buffer = structuredClone(data.buffer, { transfer });
-			if (byteOffset || byteLength !== buffer.byteLength) {
-				buffer = buffer.slice(byteOffset, byteOffset + byteLength);
-			}
-		} else {
-			buffer = buffer.slice(byteOffset, byteOffset + byteLength);
+		const { buffer, byteOffset, byteLength } = data;
+		if (!byteLength) {
+			return;
 		}
-		mData.push(buffer);
+		if (!transfer || typeof structuredClone === 'undefined') {
+			mData.push(buffer.slice(byteOffset, byteOffset + byteLength));
+			return;
+		}
+		let b = structuredClone(buffer, { transfer });
+		if (byteOffset || byteLength !== b.byteLength || buffer.byteLength) {
+			b = b.slice(byteOffset, byteOffset + byteLength);
+		}
+		mData.push(b);
 	}
 
 	override async finish(): Promise<ArrayBuffer> {
