@@ -30,8 +30,10 @@ Deno.test('addExecSegFlags', async () => {
 	builder.execSeg(1n, 2n, 0n);
 	builder.addExecSegFlags(1n);
 	assertEquals((await builder.build()).execSegFlags, 1n);
+
 	builder.addExecSegFlags(2n);
 	assertEquals((await builder.build()).execSegFlags, 3n);
+
 	builder.addExecSegFlags(4n);
 	assertEquals((await builder.build()).execSegFlags, 7n);
 });
@@ -42,6 +44,7 @@ Deno.test('specialSlot', async () => {
 	const zero = (await builder.build()).length;
 	assertThrows(() => builder.specialSlot(0, new Uint8Array()));
 	assertEquals((await builder.build()).length, zero + CS_SHA1_LEN * 0);
+
 	await builder.specialSlot(1, new Uint8Array());
 	assertEquals((await builder.build()).length, zero + CS_SHA1_LEN * 1);
 });
@@ -50,8 +53,10 @@ Deno.test('createScatter', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	builder.executable(new Blob([]), 0, 0, 0);
 	assertEquals(builder.scatter(), null);
+
 	let scatter = builder.scatter(NaN);
 	assertEquals(scatter.length, 1);
+
 	scatter = builder.scatter(2);
 	scatter[0].count = 1;
 	scatter[1].count = 2;
