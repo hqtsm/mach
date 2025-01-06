@@ -70,12 +70,24 @@ export class CCHashInstance extends DynamicHash {
 	}
 
 	// deno-lint-ignore require-await
-	public async update(data: BufferView, transfer?: boolean): Promise<void> {
+	public async update(
+		data: ArrayBufferReal | BufferView,
+		transfer?: boolean,
+	): Promise<void> {
 		const mData = this.mData;
 		if (!mData) {
 			throw new Error('Digest finished');
 		}
-		const { buffer, byteOffset, byteLength } = data;
+		let buffer, byteOffset, byteLength;
+		if ('buffer' in data) {
+			buffer = data.buffer;
+			byteOffset = data.byteOffset;
+			byteLength = data.byteLength;
+		} else {
+			buffer = data;
+			byteOffset = 0;
+			byteLength = buffer.byteLength;
+		}
 		if (!transfer) {
 			mData.push(buffer.slice(byteOffset, byteOffset + byteLength));
 			return;
