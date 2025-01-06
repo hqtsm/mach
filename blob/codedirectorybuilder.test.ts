@@ -134,6 +134,16 @@ Deno.test('platform', async () => {
 	assertEquals((await builder.build()).platform, PLATFORM_MACOS);
 });
 
+Deno.test('generatePreEncryptHashes', async () => {
+	const version = CodeDirectory.supportsPreEncrypt;
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	builder.executable(new Blob([new Uint8Array(1)]), 0, 0, 1);
+	const zero = (await builder.build(version)).length;
+
+	builder.generatePreEncryptHashes(true);
+	assertEquals((await builder.build(version)).length, zero + CS_SHA1_LEN * 1);
+});
+
 Deno.test('Read valiation', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	builder.executable(new Blob([]), 1024, 0, UINT32_MAX + 1);
