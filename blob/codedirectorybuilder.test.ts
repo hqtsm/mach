@@ -125,8 +125,6 @@ Deno.test('version and size', () => {
 	builder.runTimeVersion(1);
 	assertEquals(builder.minVersion(), CodeDirectory.supportsPreEncrypt);
 	assertGreater(builder.size(), size);
-
-	builder.generatePreEncryptHashes(true);
 });
 
 Deno.test('platform', async () => {
