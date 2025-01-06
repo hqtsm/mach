@@ -79,9 +79,6 @@ export class CCHashInstance extends DynamicHash {
 			throw new Error('Digest finished');
 		}
 		const { buffer, byteOffset, byteLength } = data;
-		if (!byteLength) {
-			return;
-		}
 		if (!transfer || typeof structuredClone === 'undefined') {
 			mData.push(buffer.slice(byteOffset, byteOffset + byteLength));
 			return;
