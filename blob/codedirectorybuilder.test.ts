@@ -32,6 +32,46 @@ Deno.test('opened', async () => {
 	await assertRejects(() => builder.build(), Error, 'Executable not open');
 });
 
+Deno.test('identifier', async () => {
+	const expected = new TextEncoder().encode('IDENTIFIER');
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	builder.executable(new Blob([]), 0, 0, 0);
+	builder.identifier(new Uint8Array([1, ...expected, 1]).slice(1, -1));
+	{
+		const cd = await builder.build();
+		const ptr = cd.identifier;
+		const data = new Uint8Array(ptr.buffer, ptr.byteOffset);
+		assertEquals(data.slice(0, data.indexOf(0)), expected);
+	}
+	builder.identifier(expected.buffer);
+	{
+		const cd = await builder.build();
+		const ptr = cd.identifier;
+		const data = new Uint8Array(ptr.buffer, ptr.byteOffset);
+		assertEquals(data.slice(0, data.indexOf(0)), expected);
+	}
+});
+
+Deno.test('teamID', async () => {
+	const expected = new TextEncoder().encode('TEAMID');
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	builder.executable(new Blob([]), 0, 0, 0);
+	builder.teamID(new Uint8Array([1, ...expected, 1]).slice(1, -1));
+	{
+		const cd = await builder.build();
+		const ptr = cd.teamID!;
+		const data = new Uint8Array(ptr.buffer, ptr.byteOffset);
+		assertEquals(data.slice(0, data.indexOf(0)), expected);
+	}
+	builder.teamID(expected.buffer);
+	{
+		const cd = await builder.build();
+		const ptr = cd.teamID!;
+		const data = new Uint8Array(ptr.buffer, ptr.byteOffset);
+		assertEquals(data.slice(0, data.indexOf(0)), expected);
+	}
+});
+
 Deno.test('codeSlots', async () => {
 	let builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	builder.executable(new Blob([]), 0, 0, 0);

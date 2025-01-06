@@ -85,12 +85,12 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Identifier.
 	 */
-	private mIdentifier: BufferView = new Int8Array();
+	private mIdentifier: ArrayBufferReal | BufferView = new Int8Array();
 
 	/**
 	 * Team ID.
 	 */
-	private mTeamID: BufferView = new Int8Array();
+	private mTeamID: ArrayBufferReal | BufferView = new Int8Array();
 
 	/**
 	 * Highest special slot index.
@@ -246,7 +246,7 @@ export class CodeDirectoryBuilder {
 	 *
 	 * @param code Identifier.
 	 */
-	public identifier(code: BufferView): void {
+	public identifier(code: ArrayBufferReal | BufferView): void {
 		this.mIdentifier = code;
 	}
 
@@ -255,7 +255,7 @@ export class CodeDirectoryBuilder {
 	 *
 	 * @param team Team ID.
 	 */
-	public teamID(team: BufferView): void {
+	public teamID(team: ArrayBufferReal | BufferView): void {
 		this.mTeamID = team;
 	}
 
@@ -451,22 +451,26 @@ export class CodeDirectoryBuilder {
 		}
 		dir.identOffset = offset;
 		data.set(
-			new Uint8Array(
-				mIdentifier.buffer,
-				mIdentifier.byteOffset,
-				mIdentifier.byteLength,
-			),
+			'buffer' in mIdentifier
+				? new Uint8Array(
+					mIdentifier.buffer,
+					mIdentifier.byteOffset,
+					mIdentifier.byteLength,
+				)
+				: new Uint8Array(mIdentifier),
 			offset,
 		);
 		offset += mIdentifier.byteLength + 1;
 		if (mTeamID.byteLength && !(version < CodeDirectory.supportsTeamID)) {
 			dir.teamIDOffset = offset;
 			data.set(
-				new Uint8Array(
-					mTeamID.buffer,
-					mTeamID.byteOffset,
-					mTeamID.byteLength,
-				),
+				'buffer' in mTeamID
+					? new Uint8Array(
+						mTeamID.buffer,
+						mTeamID.byteOffset,
+						mTeamID.byteLength,
+					)
+					: new Uint8Array(mTeamID),
 				offset,
 			);
 			offset += mTeamID.byteLength + 1;
