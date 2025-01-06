@@ -8,7 +8,7 @@ import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
 function specialSlot(slot: number): number {
 	slot = (+slot || 0) - (slot % 1 || 0);
 	if (slot < 1) {
-		throw new Error(`Invalid slot index: ${slot}`);
+		throw new RangeError(`Invalid slot index: ${slot}`);
 	}
 	return slot;
 }
