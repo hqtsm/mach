@@ -1,6 +1,7 @@
 import type { BufferView } from '@hqtsm/struct';
 import { UINT32_MAX } from '../const.ts';
 import type { DynamicHash } from '../hash/dynamichash.ts';
+import type { Reader } from '../util/reader.ts';
 import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
 
@@ -10,6 +11,20 @@ function specialSlot(slot: number): number {
 		throw new Error(`Invalid slot index: ${slot}`);
 	}
 	return slot;
+}
+
+async function generateHash(
+	hasher: DynamicHash,
+	reader: Reader,
+	offset: number,
+	length: number,
+): Promise<ArrayBuffer> {
+	await hasher.update(
+		new Uint8Array(
+			await reader.slice(offset, offset + length).arrayBuffer(),
+		),
+	);
+	return await hasher.finish();
 }
 
 /**
@@ -27,14 +42,24 @@ export class CodeDirectoryBuilder {
 	private readonly mSpecial = new Map<number, ArrayBuffer>();
 
 	/**
-	 * Executable length.
+	 * Executable file.
 	 */
-	public execLength = 0;
+	private mExec: Reader | null = null;
+
+	/**
+	 * Starting offset inside mExec.
+	 */
+	private mExecOffset: number = 0;
+
+	/**
+	 * Total bytes to sign.
+	 */
+	private mExecLength: number = 0;
 
 	/**
 	 * Page size, must be a power of 2, or zero for infinite.
 	 */
-	public pageSize = 0;
+	private mPageSize = 0;
 
 	/**
 	 * Flags.
@@ -140,16 +165,61 @@ export class CodeDirectoryBuilder {
 	 * Based on execLength and pageSize.
 	 */
 	private get mCodeSlots(): number {
-		const { execLength } = this;
-		if (execLength <= 0) {
+		const { mExecLength } = this;
+		if (mExecLength <= 0) {
 			return 0;
 		}
-		const { pageSize } = this;
-		if (pageSize === 0) {
+		const { mPageSize } = this;
+		if (mPageSize === 0) {
 			return 1;
 		}
-		const o = execLength % pageSize;
-		return o ? (execLength - o) / pageSize + 1 : execLength / pageSize;
+		const o = mExecLength % mPageSize;
+		return o ? (mExecLength - o) / mPageSize + 1 : mExecLength / mPageSize;
+	}
+
+	/**
+	 * Open executable.
+	 *
+	 * @param file File reader.
+	 * @param pagesize Page size.
+	 * @param offset Offset in file.
+	 * @param length Length in file.
+	 */
+	public executable(
+		file: Reader,
+		pagesize: number,
+		offset: number,
+		length: number,
+	): void {
+		this.mExec = file;
+		this.mPageSize = pagesize;
+		this.mExecOffset = offset;
+		this.mExecLength = length;
+	}
+
+	/**
+	 * Reopen executable.
+	 *
+	 * @param file File reader.
+	 * @param offset Offset in file.
+	 * @param length Length in file.
+	 */
+	public reopen(file: Reader, offset: number, length: number): void {
+		if (!this.opened()) {
+			throw new Error('Executable not open');
+		}
+		this.mExec = file;
+		this.mExecOffset = offset;
+		this.mExecLength = length;
+	}
+
+	/**
+	 * Is an executable open.
+	 *
+	 * @returns Is open.
+	 */
+	public opened(): boolean {
+		return !!this.mExec;
 	}
 
 	/**
@@ -290,45 +360,6 @@ export class CodeDirectoryBuilder {
 	}
 
 	/**
-	 * Get code slot.
-	 *
-	 * @param slot Slot index, 0 indexed.
-	 * @returns Hash data, or null.
-	 */
-	public getCodeSlot(slot: number): Uint8Array | null {
-		slot = (+slot || 0) - (slot % 1 || 0);
-		const { mCodeSlots, mCodeSlotHashes } = this;
-		if (slot < 0 || slot >= mCodeSlots) {
-			throw new Error(`Invalid slot: ${slot}`);
-		}
-		mCodeSlotHashes.length = this.mCodeSlots;
-		return mCodeSlotHashes[slot] || null;
-	}
-
-	/**
-	 * Set code slot.
-	 *
-	 * @param slot Slot index, 0 indexed.
-	 * @param hash Hash data.
-	 */
-	public setCodeSlot(slot: number, hash: BufferView): void {
-		slot = (+slot || 0) - (slot % 1 || 0);
-		const { mCodeSlots, mCodeSlotHashes } = this;
-		if (slot < 0 || slot >= mCodeSlots) {
-			throw new Error(`Invalid slot: ${slot}`);
-		}
-		mCodeSlotHashes.length = mCodeSlots;
-		const { digestLength } = this;
-		const digest = mCodeSlotHashes[slot] || new Uint8Array(digestLength);
-		const { byteLength } = hash;
-		if (byteLength !== digestLength) {
-			throw new Error(`Invalid hash size: ${byteLength}`);
-		}
-		digest.set(new Uint8Array(hash.buffer, hash.byteOffset, byteLength));
-		mCodeSlotHashes[slot] = digest;
-	}
-
-	/**
 	 * Caculate size for CodeDirectory currently described.
 	 *
 	 * @param version Compatibility version or null for minimum.
@@ -368,19 +399,24 @@ export class CodeDirectoryBuilder {
 	 * @param version Compatibility version or null for minimum.
 	 * @returns CodeDirectory instance.
 	 */
-	public build(version: number | null = null): CodeDirectory {
+	public async build(version: number | null = null): Promise<CodeDirectory> {
 		version ??= this.minVersion();
 		const {
+			mExec,
+			mExecOffset,
+			mExecLength,
+			mPageSize,
 			specialSlots,
 			mCodeSlots,
-			execLength,
 			digestLength,
-			pageSize,
 			mScatter,
 			mIdentifier,
 			mTeamID,
 			mGeneratePreEncryptHashes,
 		} = this;
+		if (!mExec) {
+			throw new Error('Executable not open');
+		}
 		const size = this.size(version);
 		const buffer = new ArrayBuffer(size);
 		const data = new Uint8Array(buffer);
@@ -391,18 +427,18 @@ export class CodeDirectoryBuilder {
 		dir.nSpecialSlots = specialSlots;
 		dir.nCodeSlots = mCodeSlots;
 		if (
-			execLength > UINT32_MAX &&
+			mExecLength > UINT32_MAX &&
 			!(version < CodeDirectory.supportsCodeLimit64)
 		) {
 			dir.codeLimit = UINT32_MAX;
-			dir.codeLimit64 = BigInt(execLength);
+			dir.codeLimit64 = BigInt(mExecLength);
 		} else {
-			dir.codeLimit = execLength;
+			dir.codeLimit = mExecLength;
 		}
 		dir.hashType = this.mHashType;
 		dir.platform = this.mPlatform;
 		dir.hashSize = digestLength;
-		dir.pageSize = pageSize ? Math.log2(pageSize) : 0;
+		dir.pageSize = mPageSize ? Math.log2(mPageSize) : 0;
 		if (!(version < CodeDirectory.supportsExecSegment)) {
 			dir.execSegBase = this.mExecSegOffset;
 			dir.execSegLimit = this.mExecSegLimit;
@@ -458,14 +494,24 @@ export class CodeDirectoryBuilder {
 				dir.getSlot(-i, false)!.set(new Uint8Array(hash));
 			}
 		}
+
+		let position = mExecOffset;
+		let remaining = mExecLength;
 		for (let i = 0; i < mCodeSlots; i++) {
-			const hash = this.getCodeSlot(i);
-			if (hash) {
-				dir.getSlot(i, false)!.set(hash);
-				if (gpec) {
-					dir.getSlot(i, true)!.set(hash);
-				}
+			let thisPage = remaining;
+			if (mPageSize && thisPage > mPageSize) {
+				thisPage = mPageSize;
 			}
+			const hasher = this.getHash();
+			// deno-lint-ignore no-await-in-loop
+			const hash = await generateHash(hasher, mExec, position, thisPage);
+			const data = new Uint8Array(hash);
+			dir.getSlot(i, false)!.set(data);
+			if (gpec) {
+				dir.getSlot(i, true)!.set(data);
+			}
+			position += thisPage;
+			remaining -= thisPage;
 		}
 		return dir;
 	}
@@ -524,7 +570,7 @@ export class CodeDirectoryBuilder {
 		if (this.mExecSegLimit > 0) {
 			return CodeDirectory.supportsExecSegment;
 		}
-		if (this.execLength > UINT32_MAX) {
+		if (this.mExecLength > UINT32_MAX) {
 			return CodeDirectory.supportsCodeLimit64;
 		}
 		if (this.mTeamID.byteLength) {

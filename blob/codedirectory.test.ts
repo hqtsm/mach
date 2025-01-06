@@ -7,18 +7,18 @@ import {
 	kSecCodeSignatureHashSHA256Truncated,
 	kSecCodeSignatureHashSHA384,
 	kSecCodeSignatureHashSHA512,
-	UINT32_MAX,
 } from '../const.ts';
 
 Deno.test('BYTE_LENGTH', () => {
 	assertEquals(CodeDirectory.BYTE_LENGTH, 96);
 });
 
-Deno.test('identifier', () => {
+Deno.test('identifier', async () => {
 	const identifier = 'Identifier';
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	builder.executable(new Blob([]), 0, 0, 0);
 	builder.identifier(new TextEncoder().encode(identifier));
-	const cd = builder.build();
+	const cd = await builder.build();
 	const cstr = new TextEncoder().encode(`${identifier}\0`);
 	assertEquals(
 		new Uint8Array(
@@ -30,28 +30,27 @@ Deno.test('identifier', () => {
 	);
 });
 
-Deno.test('signingLimit', () => {
+Deno.test('signingLimit', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	builder.execLength = 1;
-	assertEquals(builder.build().signingLimit, 1n);
-	builder.execLength = UINT32_MAX + 1;
-	assertEquals(builder.build().signingLimit, BigInt(UINT32_MAX + 1));
+	builder.executable(new Blob([new Uint8Array(1)]), 1024, 0, 1);
+	assertEquals((await builder.build()).signingLimit, 1n);
 });
 
-Deno.test('scatterVector', () => {
+Deno.test('scatterVector', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	builder.execLength = 1;
-	assertEquals(builder.build().scatterVector, null);
+	builder.executable(new Blob([new Uint8Array(1)]), 0, 0, 1);
+	assertEquals((await builder.build()).scatterVector, null);
 	builder.scatter(1);
-	assert(builder.build().scatterVector);
+	assert((await builder.build()).scatterVector);
 });
 
-Deno.test('teamID', () => {
+Deno.test('teamID', async () => {
 	const identifier = 'Team-Identifier';
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	assertEquals(builder.build().teamID, null);
+	builder.executable(new Blob([]), 0, 0, 0);
+	assertEquals((await builder.build()).teamID, null);
 	builder.teamID(new TextEncoder().encode(identifier));
-	const cd = builder.build();
+	const cd = await builder.build();
 	const cstr = new TextEncoder().encode(`${identifier}\0`);
 	const { teamID } = cd;
 	assert(teamID);
@@ -61,37 +60,42 @@ Deno.test('teamID', () => {
 	);
 });
 
-Deno.test('execSegmentBase', () => {
+Deno.test('execSegmentBase', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	assertEquals(builder.build().execSegmentBase, 0n);
+	builder.executable(new Blob([]), 0, 0, 0);
+	assertEquals((await builder.build()).execSegmentBase, 0n);
 	builder.execSeg(1n, 2n, 3n);
-	assertEquals(builder.build().execSegmentBase, 1n);
+	assertEquals((await builder.build()).execSegmentBase, 1n);
 });
 
-Deno.test('execSegmentLimit', () => {
+Deno.test('execSegmentLimit', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	assertEquals(builder.build().execSegmentLimit, 0n);
+	builder.executable(new Blob([]), 0, 0, 0);
+	assertEquals((await builder.build()).execSegmentLimit, 0n);
 	builder.execSeg(1n, 2n, 3n);
-	assertEquals(builder.build().execSegmentLimit, 2n);
+	assertEquals((await builder.build()).execSegmentLimit, 2n);
 });
 
-Deno.test('execSegmentFlags', () => {
+Deno.test('execSegmentFlags', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	assertEquals(builder.build().execSegmentFlags, 0n);
+	builder.executable(new Blob([]), 0, 0, 0);
+	assertEquals((await builder.build()).execSegmentFlags, 0n);
 	builder.execSeg(1n, 2n, 3n);
-	assertEquals(builder.build().execSegmentFlags, 3n);
+	assertEquals((await builder.build()).execSegmentFlags, 3n);
 });
 
-Deno.test('runtimeVersion', () => {
+Deno.test('runtimeVersion', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	assertEquals(builder.build().runtimeVersion, 0);
+	builder.executable(new Blob([]), 0, 0, 0);
+	assertEquals((await builder.build()).runtimeVersion, 0);
 	builder.runTimeVersion(123);
-	assertEquals(builder.build().runtimeVersion, 123);
+	assertEquals((await builder.build()).runtimeVersion, 123);
 });
 
-Deno.test('getSlot', () => {
+Deno.test('getSlot', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	const cd = builder.build(CodeDirectory.supportsPreEncrypt);
+	builder.executable(new Blob([]), 0, 0, 0);
+	const cd = await builder.build(CodeDirectory.supportsPreEncrypt);
 	assertEquals(cd.getSlot(0, true), null);
 });
 

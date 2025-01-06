@@ -1,31 +1,39 @@
 import { assertEquals, assertGreater, assertThrows } from '@std/assert';
+import {
+	CS_SHA1_LEN,
+	kSecCodeSignatureHashSHA1,
+	PLATFORM_MACOS,
+	UINT32_MAX,
+} from '../const.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
-import { kSecCodeSignatureHashSHA1, PLATFORM_MACOS } from '../const.ts';
 import { CodeDirectory } from './codedirectory.ts';
-import { UINT32_MAX } from '../const.ts';
-import { CS_SHA1_LEN } from '../const.ts';
 
-Deno.test('codeSlots', () => {
-	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	const zero = builder.build().length;
-	builder.execLength = 1;
-	assertEquals(builder.build().length, zero + CS_SHA1_LEN * 1);
-	builder.pageSize = 1024;
-	builder.execLength = 1024;
-	assertEquals(builder.build().length, zero + CS_SHA1_LEN * 1);
-	builder.execLength = 1025;
-	assertEquals(builder.build().length, zero + CS_SHA1_LEN * 2);
+Deno.test('codeSlots', async () => {
+	let builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	builder.executable(new Blob([]), 0, 0, 0);
+	const zero = (await builder.build()).length;
+
+	builder.reopen(new Blob([new Uint8Array(1)]), 0, 1);
+	assertEquals((await builder.build()).length, zero + CS_SHA1_LEN * 1);
+
+	builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	builder.executable(new Blob([new Uint8Array(1024)]), 1024, 0, 1024);
+	assertEquals((await builder.build()).length, zero + CS_SHA1_LEN * 1);
+
+	builder.reopen(new Blob([new Uint8Array(1025)]), 0, 1025);
+	assertEquals((await builder.build()).length, zero + CS_SHA1_LEN * 2);
 });
 
-Deno.test('addExecSegFlags', () => {
+Deno.test('addExecSegFlags', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	builder.executable(new Blob([]), 0, 0, 0);
 	builder.execSeg(1n, 2n, 0n);
 	builder.addExecSegFlags(1n);
-	assertEquals(builder.build().execSegFlags, 1n);
+	assertEquals((await builder.build()).execSegFlags, 1n);
 	builder.addExecSegFlags(2n);
-	assertEquals(builder.build().execSegFlags, 3n);
+	assertEquals((await builder.build()).execSegFlags, 3n);
 	builder.addExecSegFlags(4n);
-	assertEquals(builder.build().execSegFlags, 7n);
+	assertEquals((await builder.build()).execSegFlags, 7n);
 });
 
 Deno.test('specialSlot', async () => {
@@ -37,28 +45,9 @@ Deno.test('specialSlot', async () => {
 	assertEquals(builder.specialSlots, 1);
 });
 
-Deno.test('codeSlot', () => {
-	const hash = new Uint8Array(
-		[1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4],
-	);
+Deno.test('createScatter', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	assertThrows(() => builder.getCodeSlot(0));
-	assertThrows(() => builder.setCodeSlot(0, hash));
-	builder.pageSize = 1024;
-	builder.execLength = 1024;
-	assertEquals(builder.getCodeSlot(0), null);
-	builder.setCodeSlot(0, hash);
-	assertEquals(builder.getCodeSlot(0), hash);
-	const beforeLength = builder.build().length;
-	assertThrows(() => builder.setCodeSlot(-1, hash));
-	assertThrows(() => builder.setCodeSlot(2, hash));
-	assertThrows(() => builder.setCodeSlot(0, new Uint8Array()));
-	assertEquals(builder.build().length, beforeLength);
-	assertEquals(builder.getCodeSlot(0), hash);
-});
-
-Deno.test('createScatter', () => {
-	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	builder.executable(new Blob([]), 0, 0, 0);
 	assertEquals(builder.scatter(), null);
 	let scatter = builder.scatter(NaN);
 	assertEquals(scatter.length, 1);
@@ -66,19 +55,13 @@ Deno.test('createScatter', () => {
 	scatter[0].count = 1;
 	scatter[1].count = 2;
 	assertEquals(scatter.length, 3);
-	builder.build();
+	await builder.build();
 });
 
 Deno.test('version and size', () => {
-	const hash = new Uint8Array(
-		[1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4],
-	);
-
 	let size = 0;
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	builder.pageSize = 1024;
-	builder.execLength = 1024;
-	builder.setCodeSlot(0, hash);
+	builder.executable(new Blob([new Uint8Array(1)]), 1024, 0, 1);
 
 	assertEquals(builder.minVersion(), CodeDirectory.earliestVersion);
 	assertGreater(builder.size(), size);
@@ -94,7 +77,7 @@ Deno.test('version and size', () => {
 	assertGreater(builder.size(), size);
 	size = builder.size();
 
-	builder.execLength = UINT32_MAX + 1;
+	builder.reopen(new Blob([]), 0, UINT32_MAX + 1);
 	assertEquals(builder.minVersion(), CodeDirectory.supportsCodeLimit64);
 	assertGreater(builder.size(), size);
 	size = builder.size();
@@ -114,11 +97,11 @@ Deno.test('version and size', () => {
 	assertGreater(builder.size(), size);
 
 	builder.generatePreEncryptHashes(true);
-	builder.build();
 });
 
-Deno.test('platform', () => {
+Deno.test('platform', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	builder.executable(new Blob([]), 0, 0, 0);
 	builder.platform(PLATFORM_MACOS);
-	assertEquals(builder.build().platform, PLATFORM_MACOS);
+	assertEquals((await builder.build()).platform, PLATFORM_MACOS);
 });

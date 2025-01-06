@@ -14,7 +14,6 @@ import {
 	type FixtureMachoSignatureInfo,
 	fixtureMachoSigned,
 } from '../spec/fixture.ts';
-import { chunkedHashes } from '../spec/hash.ts';
 import { thin } from '../spec/macho.ts';
 import { BlobWrapper } from './blobwrapper.ts';
 import { CodeDirectory } from './codedirectory.ts';
@@ -32,23 +31,6 @@ const emptyRequirementsData = new Uint8Array(
 	emptyRequirements.length,
 );
 
-export async function addCodeHashes(
-	cd: CodeDirectoryBuilder,
-	macho: Readonly<Uint8Array>,
-): Promise<void> {
-	const { pageSize } = cd;
-	const hashes = await chunkedHashes(
-		cd.hashType(),
-		macho,
-		pageSize,
-		0,
-		cd.execLength,
-	);
-	for (let i = hashes.length; i--;) {
-		cd.setCodeSlot(i, hashes[i]);
-	}
-}
-
 export async function* createCodeDirectories(
 	info: Readonly<FixtureMachoSignatureInfo>,
 	thin: Readonly<Uint8Array>,
@@ -60,9 +42,8 @@ export async function* createCodeDirectories(
 		const identifier = new TextEncoder().encode(info.identifier);
 		const teamID = new TextEncoder().encode(info.teamid);
 		const builder = new CodeDirectoryBuilder(hashType);
+		builder.executable(new Blob([thin]), info.page, 0, info.offset);
 		builder.flags(info.flags);
-		builder.execLength = info.offset;
-		builder.pageSize = info.page;
 		builder.execSeg(info.execsegbase, info.execseglimit, info.execsegflags);
 		builder.identifier(identifier);
 		builder.teamID(teamID);
@@ -91,8 +72,6 @@ export async function* createCodeDirectories(
 			// deno-lint-ignore no-await-in-loop
 			await builder.specialSlot(cdResourceDirSlot, codeResources);
 		}
-		// deno-lint-ignore no-await-in-loop
-		await addCodeHashes(builder, thin);
 
 		// Offical library always minimum supports scatter.
 		assertEquals(
