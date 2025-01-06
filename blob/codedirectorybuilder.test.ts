@@ -135,3 +135,9 @@ Deno.test('platform', async () => {
 	builder.platform(PLATFORM_MACOS);
 	assertEquals((await builder.build()).platform, PLATFORM_MACOS);
 });
+
+Deno.test('Read valiation', async () => {
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	builder.executable(new Blob([]), 1024, 0, UINT32_MAX + 1);
+	await assertRejects(() => builder.build(), Error, 'Read error');
+});
