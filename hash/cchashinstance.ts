@@ -1,4 +1,4 @@
-import type { BufferView } from '@hqtsm/struct';
+import type { ArrayBufferReal, BufferView } from '@hqtsm/struct';
 import {
 	kCCDigestSHA1,
 	kCCDigestSHA256,
@@ -66,7 +66,7 @@ export class CCHashInstance extends DynamicHash {
 	// deno-lint-ignore require-await
 	override async update(
 		data: BufferView,
-		transfer?: Transferable[],
+		transfer?: ArrayBufferReal[],
 	): Promise<void> {
 		const mData = this.mData;
 		if (!mData) {

@@ -1,4 +1,4 @@
-import type { BufferView } from '@hqtsm/struct';
+import type { ArrayBufferReal, BufferView } from '@hqtsm/struct';
 
 /**
  * Dynamic hash.
@@ -17,7 +17,10 @@ export abstract class DynamicHash {
 	 * @param data Data to be hashed.
 	 * @param transfer Transferable objects.
 	 */
-	abstract update(data: BufferView, transfer?: Transferable[]): Promise<void>;
+	abstract update(
+		data: BufferView,
+		transfer?: ArrayBufferReal[],
+	): Promise<void>;
 
 	/**
 	 * Finish digest.
