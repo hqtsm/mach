@@ -118,9 +118,9 @@ Deno.test('CCHashInstance transfer', async () => {
 	await hash.update(new Uint8Array(copied));
 	assertEquals(copied.byteLength, 4);
 	const transfered = new ArrayBuffer(4);
-	await hash.update(new Uint8Array(transfered), [transfered]);
+	await hash.update(new Uint8Array(transfered), true);
 	assertEquals(transfered.byteLength, 0);
 	const transferedSlice = new ArrayBuffer(8);
-	await hash.update(new Uint8Array(transferedSlice, 2, 4), [transferedSlice]);
+	await hash.update(new Uint8Array(transferedSlice, 2, 4), true);
 	assertEquals(transferedSlice.byteLength, 0);
 });

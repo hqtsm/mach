@@ -24,7 +24,7 @@ async function generateHash(
 	if (byteLength !== length) {
 		throw new Error(`Read from ${offset}: ${byteLength} != ${length}`);
 	}
-	await hasher.update(new Uint8Array(data), [data]);
+	await hasher.update(new Uint8Array(data), true);
 	return await hasher.finish();
 }
 
