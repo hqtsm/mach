@@ -15,8 +15,9 @@ export abstract class DynamicHash {
 	 * Update hash state with data chunk.
 	 *
 	 * @param data Data to be hashed.
+	 * @param transfer Transferable objects.
 	 */
-	abstract update(data: BufferView): Promise<void>;
+	abstract update(data: BufferView, transfer?: Transferable[]): Promise<void>;
 
 	/**
 	 * Finish digest.

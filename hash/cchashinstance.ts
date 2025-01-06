@@ -64,13 +64,24 @@ export class CCHashInstance extends DynamicHash {
 	}
 
 	// deno-lint-ignore require-await
-	override async update(data: BufferView): Promise<void> {
+	override async update(
+		data: BufferView,
+		transfer?: Transferable[],
+	): Promise<void> {
 		const mData = this.mData;
 		if (!mData) {
 			throw new Error('Digest finished');
 		}
-		const { buffer, byteOffset, byteLength } = data;
-		mData.push(buffer.slice(byteOffset, byteOffset + byteLength));
+		let { buffer, byteOffset, byteLength } = data;
+		if (transfer) {
+			buffer = structuredClone(data.buffer, { transfer });
+			if (byteOffset || byteLength !== buffer.byteLength) {
+				buffer = buffer.slice(byteOffset, byteOffset + byteLength);
+			}
+		} else {
+			buffer = buffer.slice(byteOffset, byteOffset + byteLength);
+		}
+		mData.push(buffer);
 	}
 
 	override async finish(): Promise<ArrayBuffer> {
