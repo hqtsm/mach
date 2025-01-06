@@ -147,13 +147,6 @@ export class CodeDirectoryBuilder {
 	}
 
 	/**
-	 * Hash digest length.
-	 */
-	public get digestLength(): number {
-		return this.mDigestLength;
-	}
-
-	/**
 	 * Special slots count.
 	 */
 	public get specialSlots(): number {
@@ -372,7 +365,7 @@ export class CodeDirectoryBuilder {
 			mTeamID,
 			mCodeSlots,
 			specialSlots,
-			digestLength,
+			mDigestLength,
 			mGeneratePreEncryptHashes,
 		} = this;
 		let size = this.fixedSize(version);
@@ -383,12 +376,12 @@ export class CodeDirectoryBuilder {
 		if (!(version < CodeDirectory.supportsTeamID) && mTeamID.byteLength) {
 			size += mTeamID.byteLength + 1;
 		}
-		size += (mCodeSlots + specialSlots) * digestLength;
+		size += (mCodeSlots + specialSlots) * mDigestLength;
 		if (
 			!(version < CodeDirectory.supportsPreEncrypt) &&
 			mGeneratePreEncryptHashes
 		) {
-			size += mCodeSlots * digestLength;
+			size += mCodeSlots * mDigestLength;
 		}
 		return size;
 	}
@@ -408,7 +401,7 @@ export class CodeDirectoryBuilder {
 			mPageSize,
 			specialSlots,
 			mCodeSlots,
-			digestLength,
+			mDigestLength,
 			mScatter,
 			mIdentifier,
 			mTeamID,
@@ -437,7 +430,7 @@ export class CodeDirectoryBuilder {
 		}
 		dir.hashType = this.mHashType;
 		dir.platform = this.mPlatform;
-		dir.hashSize = digestLength;
+		dir.hashSize = mDigestLength;
 		dir.pageSize = mPageSize ? Math.log2(mPageSize) : 0;
 		if (!(version < CodeDirectory.supportsExecSegment)) {
 			dir.execSegBase = this.mExecSegOffset;
@@ -485,9 +478,9 @@ export class CodeDirectoryBuilder {
 		const gpec = spe && mGeneratePreEncryptHashes;
 		if (gpec) {
 			dir.preEncryptOffset = offset;
-			offset += mCodeSlots * digestLength;
+			offset += mCodeSlots * mDigestLength;
 		}
-		dir.hashOffset = offset + specialSlots * digestLength;
+		dir.hashOffset = offset + specialSlots * mDigestLength;
 		for (let i = 1; i <= specialSlots; i++) {
 			const hash = this.getSpecialSlot(i);
 			if (hash) {
