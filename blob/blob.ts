@@ -1,4 +1,4 @@
-import { type BufferView, constant } from '@hqtsm/struct';
+import { type ArrayBufferReal, type BufferView, constant } from '@hqtsm/struct';
 import { BlobCore } from './blobcore.ts';
 
 /**
@@ -29,18 +29,22 @@ export class Blob extends BlobCore {
 	 * @param content Data to wrap, or number of content bytes.
 	 * @returns Blob data.
 	 */
-	public static blobify(content: BufferView | number = 0): Uint8Array {
+	public static blobify(
+		content: ArrayBufferReal | BufferView | number = 0,
+	): Uint8Array {
 		const { BYTE_LENGTH } = Blob;
 		let view;
 		let size = BYTE_LENGTH;
 		if (typeof content === 'number') {
 			size += content;
 		} else {
-			view = new Uint8Array(
-				content.buffer,
-				content.byteOffset,
-				content.byteLength,
-			);
+			view = 'buffer' in content
+				? new Uint8Array(
+					content.buffer,
+					content.byteOffset,
+					content.byteLength,
+				)
+				: new Uint8Array(content);
 			size += view.byteLength;
 		}
 		const buffer = new ArrayBuffer(size);

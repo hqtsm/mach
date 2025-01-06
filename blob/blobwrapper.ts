@@ -1,5 +1,6 @@
 import {
 	array,
+	type ArrayBufferReal,
 	type BufferView,
 	constant,
 	member,
@@ -52,7 +53,7 @@ export class BlobWrapper extends Blob {
 	 * @returns Blob.
 	 */
 	public static alloc(
-		content: BufferView | number = 0,
+		content: ArrayBufferReal | BufferView | number = 0,
 		magic = BlobWrapper.typeMagic,
 	): BlobWrapper {
 		const { BYTE_LENGTH } = BlobWrapper;
@@ -61,11 +62,13 @@ export class BlobWrapper extends Blob {
 		if (typeof content === 'number') {
 			size += content;
 		} else {
-			view = new Uint8Array(
-				content.buffer,
-				content.byteOffset,
-				content.byteLength,
-			);
+			view = 'buffer' in content
+				? new Uint8Array(
+					content.buffer,
+					content.byteOffset,
+					content.byteLength,
+				)
+				: new Uint8Array(content);
 			size += view.byteLength;
 		}
 		const buffer = new ArrayBuffer(size);
