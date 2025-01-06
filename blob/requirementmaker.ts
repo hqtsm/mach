@@ -1,4 +1,5 @@
 import {
+	type ArrayBufferReal,
 	type BufferPointer,
 	type BufferView,
 	dataView,
@@ -69,18 +70,20 @@ export class RequirementMaker {
 	/**
 	 * Put data without length.
 	 *
-	 * @param data Buffer view, or uint32.
+	 * @param data Data or uint32.
 	 */
-	public put(data: BufferView | number): void {
+	public put(data: ArrayBufferReal | BufferView | number): void {
 		if (typeof data === 'number') {
 			const a = this.alloc(4);
 			dataView(a.buffer).setUint32(a.byteOffset, data);
 		} else {
-			const d = new Uint8Array(
-				data.buffer,
-				data.byteOffset,
-				data.byteLength,
-			);
+			const d = 'buffer' in data
+				? new Uint8Array( // ?
+					data.buffer,
+					data.byteOffset,
+					data.byteLength,
+				)
+				: new Uint8Array(data);
 			this.alloc(d.byteLength).set(d);
 		}
 	}
@@ -96,18 +99,23 @@ export class RequirementMaker {
 	/**
 	 * Put data with length.
 	 *
-	 * @param data Buffer view.
+	 * @param data Data.
 	 */
-	public putData(data: BufferView): void;
+	public putData(data: ArrayBufferReal | BufferView): void;
 
-	public putData(data: BufferPointer | BufferView, length?: number): void {
-		const a = new Uint8Array(
-			data.buffer,
-			data.byteOffset,
-			length ?? (data as BufferView).byteLength,
-		);
-		this.put(a.byteLength);
-		this.put(a);
+	public putData(
+		data: ArrayBufferReal | BufferPointer | BufferView,
+		length?: number,
+	): void {
+		const d = 'buffer' in data
+			? new Uint8Array(
+				data.buffer,
+				data.byteOffset,
+				length ?? (data as BufferView).byteLength,
+			)
+			: new Uint8Array(data);
+		this.put(d.byteLength);
+		this.put(d);
 	}
 
 	/**
@@ -157,7 +165,10 @@ export class RequirementMaker {
 	 * @param key Key string.
 	 * @param value Value string.
 	 */
-	public infoKey(key: BufferView, value: BufferView): void {
+	public infoKey(
+		key: ArrayBufferReal | BufferView,
+		value: ArrayBufferReal | BufferView,
+	): void {
 		this.put(opInfoKeyValue);
 		this.putData(key);
 		this.putData(value);
@@ -168,7 +179,7 @@ export class RequirementMaker {
 	 *
 	 * @param identifier Identifier string.
 	 */
-	public ident(identifier: BufferView): void {
+	public ident(identifier: ArrayBufferReal | BufferView): void {
 		this.put(opIdent);
 		this.putData(identifier);
 	}
@@ -178,7 +189,7 @@ export class RequirementMaker {
 	 *
 	 * @param digest Hash digest.
 	 */
-	public cdhash(digest: BufferView): void {
+	public cdhash(digest: ArrayBufferReal | BufferView): void {
 		this.put(opCDHash);
 		this.putData(digest);
 	}
@@ -204,16 +215,21 @@ export class RequirementMaker {
 	/**
 	 * Copy data.
 	 *
-	 * @param data Buffer view.
+	 * @param data Data.
 	 */
-	public copy(data: BufferView): void;
+	public copy(data: ArrayBufferReal | BufferView): void;
 
-	public copy(data: BufferPointer | BufferView, length?: number): void {
-		const d = new Uint8Array(
-			data.buffer,
-			data.byteOffset,
-			length ?? (data as BufferView).byteLength,
-		);
+	public copy(
+		data: ArrayBufferReal | BufferPointer | BufferView,
+		length?: number,
+	): void {
+		const d = 'buffer' in data
+			? new Uint8Array(
+				data.buffer,
+				data.byteOffset,
+				length ?? (data as BufferView).byteLength,
+			)
+			: new Uint8Array(data);
 		this.alloc(d.byteLength).set(d);
 	}
 

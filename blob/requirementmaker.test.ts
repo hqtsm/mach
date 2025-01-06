@@ -203,7 +203,7 @@ Deno.test('(a or b) and (c or d)', () => {
 	and.add();
 
 	or = new RequirementMakerChain(maker, opOr);
-	maker.ident(new TextEncoder().encode('com.apple.gen'));
+	maker.ident(new TextEncoder().encode('com.apple.gen').buffer);
 	or.add();
 	maker.anchorGeneric();
 	or.add();
@@ -251,8 +251,15 @@ Deno.test('platform', () => {
 Deno.test('copy', () => {
 	const maker = new RequirementMaker(Requirement.exprForm);
 	maker.copy(new Uint8Array([1, 2, 3, 4]));
+	maker.copy(new Uint8Array([1, 2, 3, 4]).buffer);
 	const ptr = new Uint8Ptr(new Uint8Array([1, 2, 3, 4]).buffer);
 	maker.copy(ptr, 2);
+	maker.make();
+});
+
+Deno.test('copy', () => {
+	const maker = new RequirementMaker(Requirement.exprForm);
+	maker.put(new Uint8Array([1, 2, 3, 4]).buffer);
 	maker.make();
 });
 
