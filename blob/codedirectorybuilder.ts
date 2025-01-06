@@ -1,4 +1,4 @@
-import type { BufferView } from '@hqtsm/struct';
+import type { ArrayBufferReal, BufferView } from '@hqtsm/struct';
 import { UINT32_MAX } from '../const.ts';
 import type { DynamicHash } from '../hash/dynamichash.ts';
 import type { Reader } from '../util/reader.ts';
@@ -215,7 +215,10 @@ export class CodeDirectoryBuilder {
 	 * @param slot Slot index, 1 indexed.
 	 * @param hash Hash data.
 	 */
-	public specialSlot(slot: number, data: BufferView): Promise<void> {
+	public specialSlot(
+		slot: number,
+		data: ArrayBufferReal | BufferView,
+	): Promise<void> {
 		slot = specialSlot(slot);
 		const hash = this.getHash();
 		return (async () => {

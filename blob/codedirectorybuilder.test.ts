@@ -66,10 +66,10 @@ Deno.test('specialSlot', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	builder.executable(new Blob([]), 0, 0, 0);
 	const zero = (await builder.build()).length;
-	assertThrows(() => builder.specialSlot(0, new Uint8Array()));
+	assertThrows(() => builder.specialSlot(0, new ArrayBuffer(0)));
 	assertEquals((await builder.build()).length, zero + CS_SHA1_LEN * 0);
 
-	await builder.specialSlot(1, new Uint8Array());
+	await builder.specialSlot(1, new ArrayBuffer(0));
 	assertEquals((await builder.build()).length, zero + CS_SHA1_LEN * 1);
 });
 
