@@ -38,11 +38,12 @@ Deno.test('addExecSegFlags', async () => {
 
 Deno.test('specialSlot', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	assertEquals(builder.specialSlots, 0);
+	builder.executable(new Blob([]), 0, 0, 0);
+	const zero = (await builder.build()).length;
 	assertThrows(() => builder.specialSlot(0, new Uint8Array()));
-	assertEquals(builder.specialSlots, 0);
+	assertEquals((await builder.build()).length, zero + CS_SHA1_LEN * 0);
 	await builder.specialSlot(1, new Uint8Array());
-	assertEquals(builder.specialSlots, 1);
+	assertEquals((await builder.build()).length, zero + CS_SHA1_LEN * 1);
 });
 
 Deno.test('createScatter', async () => {
