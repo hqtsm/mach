@@ -2,11 +2,20 @@ import { assertEquals, assertGreater, assertThrows } from '@std/assert';
 import {
 	CS_SHA1_LEN,
 	kSecCodeSignatureHashSHA1,
+	kSecCodeSignatureHashSHA256,
 	PLATFORM_MACOS,
 	UINT32_MAX,
 } from '../const.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import { CodeDirectory } from './codedirectory.ts';
+
+Deno.test('hashType', () => {
+	let builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	assertEquals(builder.hashType(), kSecCodeSignatureHashSHA1);
+
+	builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA256);
+	assertEquals(builder.hashType(), kSecCodeSignatureHashSHA256);
+});
 
 Deno.test('codeSlots', async () => {
 	let builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
