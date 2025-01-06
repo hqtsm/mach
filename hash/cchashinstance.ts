@@ -81,12 +81,12 @@ export class CCHashInstance extends DynamicHash {
 		let buffer, byteOffset, byteLength;
 		if ('buffer' in data) {
 			buffer = data.buffer;
-			byteOffset = data.byteOffset;
 			byteLength = data.byteLength;
+			byteOffset = data.byteOffset;
 		} else {
 			buffer = data;
+			byteLength = data.byteLength;
 			byteOffset = 0;
-			byteLength = buffer.byteLength;
 		}
 		if (!transfer) {
 			mData.push(buffer.slice(byteOffset, byteOffset + byteLength));
