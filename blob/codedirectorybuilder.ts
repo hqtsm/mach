@@ -480,7 +480,6 @@ export class CodeDirectoryBuilder {
 				dir.getSlot(-i, false)!.set(new Uint8Array(hash));
 			}
 		}
-
 		let position = mExecOffset;
 		let remaining = mExecLength;
 		for (let i = 0; i < mCodeSlots; i++) {

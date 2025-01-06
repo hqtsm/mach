@@ -1,4 +1,9 @@
-import { assertEquals, assertGreater, assertThrows } from '@std/assert';
+import {
+	assertEquals,
+	assertGreater,
+	assertRejects,
+	assertThrows,
+} from '@std/assert';
 import {
 	CS_SHA1_LEN,
 	kSecCodeSignatureHashSHA1,
@@ -15,6 +20,16 @@ Deno.test('hashType', () => {
 
 	builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA256);
 	assertEquals(builder.hashType(), kSecCodeSignatureHashSHA256);
+});
+
+Deno.test('opened', async () => {
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	assertEquals(builder.opened(), false);
+
+	assertThrows(() => builder.reopen(new Blob([]), 0, 0));
+	assertEquals(builder.opened(), false);
+
+	await assertRejects(() => builder.build(), Error, 'Executable not open');
 });
 
 Deno.test('codeSlots', async () => {
