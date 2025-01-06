@@ -320,7 +320,7 @@ export class CodeDirectory extends Blob {
 				return new CCHashInstance(kCCDigestSHA256, 20);
 			}
 		}
-		throw new Error(`Unsupported hash type: ${hashType}`);
+		throw new RangeError(`Unsupported hash type: ${hashType}`);
 	}
 
 	static {

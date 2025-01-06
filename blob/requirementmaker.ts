@@ -225,7 +225,7 @@ export class RequirementMaker {
 	public copyRequirement(req: Readonly<Requirement>): void {
 		const { constructor: Requirement, kind } = req;
 		if (kind !== Requirement.exprForm) {
-			throw new Error(`Unsupported requirement kind: ${kind}`);
+			throw new RangeError(`Unsupported requirement kind: ${kind}`);
 		}
 		const { BYTE_LENGTH } = Requirement;
 		this.copy(req.at(Ptr, BYTE_LENGTH), req.length - BYTE_LENGTH);

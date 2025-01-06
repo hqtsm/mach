@@ -51,7 +51,7 @@ export class CCHashInstance extends DynamicHash {
 	 */
 	constructor(alg: number, truncate = 0) {
 		if (!algorithims.has(alg)) {
-			throw new Error(`Unsupported hash algorithm: ${alg}`);
+			throw new RangeError(`Unsupported hash algorithm: ${alg}`);
 		}
 		super();
 		this.mDigest = alg;

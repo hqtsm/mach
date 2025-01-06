@@ -91,7 +91,7 @@ export class MachOBase {
 				break;
 			}
 			default: {
-				throw new Error(
+				throw new TypeError(
 					`Unknown header magic: ${mhbe.magic.toString(16)}`,
 				);
 			}
