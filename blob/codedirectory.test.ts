@@ -32,8 +32,15 @@ Deno.test('identifier', async () => {
 
 Deno.test('signingLimit', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	builder.executable(new Blob([new Uint8Array(1)]), 1024, 0, 1);
-	assertEquals((await builder.build()).signingLimit, 1n);
+	builder.executable(new Blob([new Uint8Array(1)]), 0, 0, 1);
+	const cd = await builder.build();
+	assertEquals(cd.signingLimit, 1n);
+
+	// Test a big directory without big code blob.
+	const cd2 = await builder.build(CodeDirectory.supportsCodeLimit64);
+	cd2.codeLimit64 = BigInt(cd2.codeLimit);
+	cd2.codeLimit = 0;
+	assertEquals(cd2.signingLimit, 1n);
 });
 
 Deno.test('scatterVector', async () => {
