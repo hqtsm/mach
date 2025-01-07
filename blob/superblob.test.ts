@@ -78,5 +78,5 @@ Deno.test('count', () => {
 	maker.add(2, blob1);
 	maker.add(2, blob2);
 	const sb = maker.make();
-	assertEquals(sb.count, 2);
+	assertEquals(sb.count(), 2);
 });
