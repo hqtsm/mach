@@ -58,6 +58,8 @@ export class BlobCore extends Struct {
 	 * Blob data.
 	 * By default includes magic and length.
 	 * Child classes may redefine this to be a smaller area.
+	 *
+	 * @returns Data pointer.
 	 */
 	public data(): Ptr {
 		return new Ptr(this.buffer, this.byteOffset, this.littleEndian);

@@ -23,6 +23,8 @@ export class BlobWrapper extends Blob {
 
 	/**
 	 * Data of payload (only).
+	 *
+	 * @returns Data pointer.
 	 */
 	public override data(): Ptr {
 		// Overridden to point to payload (only).
