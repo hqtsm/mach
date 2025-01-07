@@ -94,13 +94,13 @@ Deno.test('anchor apple and identifier "com.apple.simple"', () => {
 	const maker = new RequirementMaker(Requirement.exprForm);
 
 	const and = new RequirementMakerChain(maker, opAnd);
-	assertEquals(and.empty, true);
+	assertEquals(and.empty(), true);
 	maker.anchor();
 	and.add();
-	assertEquals(and.empty, false);
+	assertEquals(and.empty(), false);
 	maker.ident(new TextEncoder().encode('com.apple.simple'));
 	and.add();
-	assertEquals(and.empty, false);
+	assertEquals(and.empty(), false);
 
 	const r = maker.make();
 	assertEquals(new Uint8Array(r.buffer, r.byteOffset, r.length()), data);
@@ -118,13 +118,13 @@ Deno.test('identifier "com.apple.simple" or anchor apple generic', () => {
 	const maker = new RequirementMaker(Requirement.exprForm);
 
 	const or = new RequirementMakerChain(maker, opOr);
-	assertEquals(or.empty, true);
+	assertEquals(or.empty(), true);
 	maker.ident(new TextEncoder().encode('com.apple.simple'));
 	or.add();
-	assertEquals(or.empty, false);
+	assertEquals(or.empty(), false);
 	maker.anchorGeneric();
 	or.add();
-	assertEquals(or.empty, false);
+	assertEquals(or.empty(), false);
 
 	const r = maker.make();
 	assertEquals(new Uint8Array(r.buffer, r.byteOffset, r.length()), data);

@@ -51,8 +51,10 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 
 	/**
 	 * Check if the chain has no elements.
+	 *
+	 * @returns Is empty.
 	 */
-	public get empty(): boolean {
+	public empty(): boolean {
 		return this.mCount === 0;
 	}
 }
