@@ -13,9 +13,9 @@ export interface Reader {
 	readonly type: string;
 
 	/**
-	 * Read data.
+	 * Read data from source.
 	 *
-	 * @returns ArrayBuffer.
+	 * @returns ArrayBuffer copy.
 	 */
 	arrayBuffer(): Promise<ArrayBuffer>;
 
