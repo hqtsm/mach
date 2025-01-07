@@ -34,22 +34,28 @@ export class MachOBase {
 
 	/**
 	 * If binary is little endian.
+	 *
+	 * @returns True if little endian, false if big endian.
 	 */
-	public get isLittleEndian(): boolean {
+	public isLittleEndian(): boolean {
 		return this.mHeader!.littleEndian;
 	}
 
 	/**
 	 * If binary endian does not matches the host endian.
+	 *
+	 * @returns True if flipped, false if not.
 	 */
-	public get isFlipped(): boolean {
-		return this.isLittleEndian !== LITTLE_ENDIAN;
+	public isFlipped(): boolean {
+		return this.isLittleEndian() !== LITTLE_ENDIAN;
 	}
 
 	/**
 	 * If binary is 64-bit.
+	 *
+	 * @returns True if 64-bit, false if 32-bit.
 	 */
-	public get is64(): boolean {
+	public is64(): boolean {
 		return this.mHeader!.magic === MH_MAGIC_64;
 	}
 
@@ -112,15 +118,19 @@ export class MachOBase {
 
 	/**
 	 * Size of header.
+	 *
+	 * @returns Byte length of header.
 	 */
-	protected get headerSize(): number {
+	protected headerSize(): number {
 		return this.mHeader!.byteLength;
 	}
 
 	/**
 	 * Size of commands.
+	 *
+	 * @returns Byte length of commands.
 	 */
-	protected get commandSize(): number {
+	protected commandSize(): number {
 		return this.mHeader!.sizeofcmds;
 	}
 }
