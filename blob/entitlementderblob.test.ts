@@ -26,8 +26,9 @@ Deno.test('data', () => {
 	const dv = new DataView(edb.buffer, edb.byteOffset, edb.length());
 	assertEquals(dv.getUint32(0), kSecCodeMagicEntitlementDER);
 	assertEquals(dv.getUint32(4), edb.length());
+	const ptr = edb.der();
 	assertEquals(
-		new Uint8Array(edb.der.buffer, edb.der.byteOffset, edb.derLength),
+		new Uint8Array(ptr.buffer, ptr.byteOffset, edb.derLength()),
 		data,
 	);
 });

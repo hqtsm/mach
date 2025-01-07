@@ -13,8 +13,10 @@ export class LaunchConstraintBlob extends Blob {
 
 	/**
 	 * DER data.
+	 *
+	 * @returns Data pointer.
 	 */
-	public get der(): Ptr<number> {
+	public der(): Ptr<number> {
 		return new Uint8Ptr(
 			this.buffer,
 			this.byteOffset + 8,
@@ -24,8 +26,10 @@ export class LaunchConstraintBlob extends Blob {
 
 	/**
 	 * DER length.
+	 *
+	 * @returns Byte length.
 	 */
-	public get derLength(): number {
+	public derLength(): number {
 		return this.length() - 8;
 	}
 

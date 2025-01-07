@@ -13,8 +13,10 @@ export class EntitlementBlob extends Blob {
 
 	/**
 	 * Entitlements data.
+	 *
+	 * @returns Data pointer.
 	 */
-	public get body(): Ptr<number> {
+	public body(): Ptr<number> {
 		return new Uint8Ptr(
 			this.buffer,
 			this.byteOffset + 8,
@@ -24,8 +26,10 @@ export class EntitlementBlob extends Blob {
 
 	/**
 	 * Entitlements length.
+	 *
+	 * @returns Byte length.
 	 */
-	public get bodyLength(): number {
+	public bodyLength(): number {
 		return this.length() - 8;
 	}
 
