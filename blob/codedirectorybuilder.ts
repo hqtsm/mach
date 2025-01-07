@@ -50,12 +50,12 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Starting offset inside mExec.
 	 */
-	private mExecOffset: number = 0;
+	private mExecOffset = 0;
 
 	/**
 	 * Total bytes to sign.
 	 */
-	private mExecLength: number = 0;
+	private mExecLength = 0;
 
 	/**
 	 * Page size, must be a power of 2, or zero for infinite.
