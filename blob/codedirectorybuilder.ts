@@ -85,12 +85,12 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Identifier.
 	 */
-	private mIdentifier: ArrayBufferReal | BufferView = new Int8Array();
+	private mIdentifier: ArrayBufferReal = new ArrayBuffer(0);
 
 	/**
 	 * Team ID.
 	 */
-	private mTeamID: ArrayBufferReal | BufferView = new Int8Array();
+	private mTeamID: ArrayBufferReal = new ArrayBuffer(0);
 
 	/**
 	 * Highest special slot index.
@@ -247,7 +247,15 @@ export class CodeDirectoryBuilder {
 	 * @param code Identifier.
 	 */
 	public identifier(code: ArrayBufferReal | BufferView): void {
-		this.mIdentifier = code;
+		if ('buffer' in code) {
+			const { buffer, byteOffset, byteLength } = code;
+			this.mIdentifier = buffer.slice(
+				byteOffset,
+				byteOffset + byteLength,
+			);
+		} else {
+			this.mIdentifier = code.slice(0);
+		}
 	}
 
 	/**
@@ -256,7 +264,15 @@ export class CodeDirectoryBuilder {
 	 * @param team Team ID.
 	 */
 	public teamID(team: ArrayBufferReal | BufferView): void {
-		this.mTeamID = team;
+		if ('buffer' in team) {
+			const { buffer, byteOffset, byteLength } = team;
+			this.mTeamID = buffer.slice(
+				byteOffset,
+				byteOffset + byteLength,
+			);
+		} else {
+			this.mTeamID = team.slice(0);
+		}
 	}
 
 	/**
@@ -450,29 +466,11 @@ export class CodeDirectoryBuilder {
 			}
 		}
 		dir.identOffset = offset;
-		data.set(
-			'buffer' in mIdentifier
-				? new Uint8Array(
-					mIdentifier.buffer,
-					mIdentifier.byteOffset,
-					mIdentifier.byteLength,
-				)
-				: new Uint8Array(mIdentifier),
-			offset,
-		);
+		data.set(new Uint8Array(mIdentifier), offset);
 		offset += mIdentifier.byteLength + 1;
 		if (mTeamID.byteLength && !(version < CodeDirectory.supportsTeamID)) {
 			dir.teamIDOffset = offset;
-			data.set(
-				'buffer' in mTeamID
-					? new Uint8Array(
-						mTeamID.buffer,
-						mTeamID.byteOffset,
-						mTeamID.byteLength,
-					)
-					: new Uint8Array(mTeamID),
-				offset,
-			);
+			data.set(new Uint8Array(mTeamID), offset);
 			offset += mTeamID.byteLength + 1;
 		}
 		const spe = !(version < CodeDirectory.supportsPreEncrypt);
