@@ -49,14 +49,28 @@ export class SuperBlobMaker {
 	/**
 	 * Size of super blob.
 	 *
+	 * @param sizes List of additional blob sizes.
+	 * @param size1 Additional blob sizes.
 	 * @returns Byte length.
 	 */
-	public size(): number {
-		let size = SuperBlob.BYTE_LENGTH;
+	public size(sizes?: number[], ...size1: number[]): number {
+		let count = 0;
+		let total = 0;
 		for (const [, blob] of this.mPieces) {
-			size += 8 + blob.length();
+			count++;
+			total += blob.length();
 		}
-		return size;
+		if (sizes) {
+			for (const s of sizes) {
+				count++;
+				total += s;
+			}
+		}
+		for (const s of size1) {
+			count++;
+			total += s;
+		}
+		return SuperBlob.BYTE_LENGTH + count * 8 + total;
 	}
 
 	/**

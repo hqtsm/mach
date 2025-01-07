@@ -44,4 +44,8 @@ Deno.test('size', () => {
 	maker.add(2, blob);
 	assertEquals(maker.size(), 60);
 	assertEquals(maker.make().length(), maker.size());
+	assertEquals(maker.size([4, 8]), 88);
+	assertEquals(maker.make().length(), maker.size());
+	assertEquals(maker.size([4, 8], 4, 8), 116);
+	assertEquals(maker.make().length(), maker.size());
 });
