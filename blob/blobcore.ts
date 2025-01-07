@@ -25,12 +25,8 @@ export class BlobCore extends Struct {
 	/**
 	 * Magic number.
 	 */
-	public get magic(): number {
+	public magic(): number {
 		return this.mMagic;
-	}
-
-	public set magic(value: number) {
-		this.mMagic = value;
 	}
 
 	/**
@@ -62,8 +58,8 @@ export class BlobCore extends Struct {
 	 * @param length Length.
 	 */
 	public initialize(magic: number, length = 0): void {
-		this.magic = magic;
-		this.length = length;
+		this.mMagic = magic;
+		this.mLength = length;
 	}
 
 	/**
