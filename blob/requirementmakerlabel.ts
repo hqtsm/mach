@@ -20,6 +20,6 @@ export class RequirementMakerLabel {
 	 * @param maker Maker reference.
 	 */
 	constructor(maker: Readonly<RequirementMaker>) {
-		this.pos = maker.length;
+		this.pos = maker.length();
 	}
 }

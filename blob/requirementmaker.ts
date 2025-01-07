@@ -279,8 +279,10 @@ export class RequirementMaker {
 
 	/**
 	 * Length of Requirement currently defined.
+	 *
+	 * @returns Byte length.
 	 */
-	public get length(): number {
+	public length(): number {
 		return this.mPC;
 	}
 
