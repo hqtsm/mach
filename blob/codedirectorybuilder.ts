@@ -98,11 +98,6 @@ export class CodeDirectoryBuilder {
 	private mSpecialSlots = 0;
 
 	/**
-	 * Code slots.
-	 */
-	private readonly mCodeSlotHashes: (Uint8Array | undefined)[] = [];
-
-	/**
 	 * Scatter vector.
 	 */
 	private mScatter: CodeDirectoryScatter[] | null = null;
