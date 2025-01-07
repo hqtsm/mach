@@ -7,6 +7,15 @@ Deno.test('BYTE_LENGTH', () => {
 	assertEquals(BlobWrapper.BYTE_LENGTH, 8);
 });
 
+Deno.test('length', () => {
+	const bw = new BlobWrapper(new ArrayBuffer(BlobWrapper.BYTE_LENGTH));
+	assertEquals(bw.length(), -8);
+	assertEquals(bw.length(8), undefined);
+	assertEquals(bw.length(), 0);
+	assertEquals(bw.length(16), undefined);
+	assertEquals(bw.length(), 8);
+});
+
 Deno.test('empty', () => {
 	const { BYTE_LENGTH } = BlobWrapper;
 	const buffer = new ArrayBuffer(BYTE_LENGTH);

@@ -11,6 +11,13 @@ Deno.test('magic', () => {
 	assertEquals(blob.magic(), 0x12345678);
 });
 
+Deno.test('length', () => {
+	const bw = new BlobCore(new ArrayBuffer(BlobCore.BYTE_LENGTH));
+	assertEquals(bw.length(), 0);
+	assertEquals(bw.length(16), undefined);
+	assertEquals(bw.length(), 16);
+});
+
 Deno.test('data', () => {
 	const data = new Uint8Array(12);
 	const blob = new BlobCore(data.buffer, 2);
