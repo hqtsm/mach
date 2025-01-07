@@ -93,7 +93,7 @@ export class CCHashInstance extends DynamicHash {
 			return;
 		}
 		let b = structuredClone(buffer, { transfer: [buffer] });
-		if (byteOffset || byteLength !== b.byteLength || buffer.byteLength) {
+		if (byteOffset || byteLength !== b.byteLength) {
 			b = b.slice(byteOffset, byteOffset + byteLength);
 		}
 		mData.push(b);
