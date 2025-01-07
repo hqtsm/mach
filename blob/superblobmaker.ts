@@ -97,9 +97,9 @@ export class SuperBlobMaker {
 			o1 += 4;
 			const p = mPieces.get(type)!;
 			const { buffer, byteOffset } = p;
-			const length = p.length();
-			data.set(new Uint8Array(buffer, byteOffset, length), o2);
-			o2 += length;
+			const l = p.length();
+			data.set(new Uint8Array(buffer, byteOffset, l), o2);
+			o2 += l;
 		}
 		return sb;
 	}
