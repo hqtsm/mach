@@ -143,8 +143,10 @@ export class CodeDirectory extends Blob {
 
 	/**
 	 * Pointer to identifier string.
+	 *
+	 * @returns Char pointer.
 	 */
-	public get identifier(): Int8Ptr {
+	public identifier(): Int8Ptr {
 		return new Int8Ptr(
 			this.buffer,
 			this.byteOffset + this.identOffset,
@@ -154,8 +156,10 @@ export class CodeDirectory extends Blob {
 
 	/**
 	 * Signed code limit, from codeLimit64 or codeLimit.
+	 *
+	 * @returns Code limit.
 	 */
-	public get signingLimit(): bigint {
+	public signingLimit(): bigint {
 		if (this.version >= this.constructor.supportsCodeLimit64) {
 			const { codeLimit64 } = this;
 			if (codeLimit64) {
@@ -163,80 +167,6 @@ export class CodeDirectory extends Blob {
 			}
 		}
 		return BigInt(this.codeLimit);
-	}
-
-	/**
-	 * Pointer to scatter vector.
-	 */
-	public get scatterVector(): Ptr<CodeDirectoryScatter> | null {
-		if (this.version >= this.constructor.supportsScatter) {
-			const { scatterOffset } = this;
-			if (scatterOffset) {
-				return new (pointer(CodeDirectoryScatter))(
-					this.buffer,
-					this.byteOffset + scatterOffset,
-					this.littleEndian,
-				);
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Pointer to team identifier string.
-	 */
-	public get teamID(): Int8Ptr | null {
-		if (this.version >= this.constructor.supportsTeamID) {
-			const { teamIDOffset } = this;
-			if (teamIDOffset) {
-				return new Int8Ptr(
-					this.buffer,
-					this.byteOffset + teamIDOffset,
-					this.littleEndian,
-				);
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Executable segment base, zero if not supported.
-	 */
-	public get execSegmentBase(): bigint {
-		if (this.version >= this.constructor.supportsExecSegment) {
-			return this.execSegBase;
-		}
-		return 0n;
-	}
-
-	/**
-	 * Executable segment limit, zero if not supported.
-	 */
-	public get execSegmentLimit(): bigint {
-		if (this.version >= this.constructor.supportsExecSegment) {
-			return this.execSegLimit;
-		}
-		return 0n;
-	}
-
-	/**
-	 * Executable segment flags, zero if not supported.
-	 */
-	public get execSegmentFlags(): bigint {
-		if (this.version >= this.constructor.supportsExecSegment) {
-			return this.execSegFlags;
-		}
-		return 0n;
-	}
-
-	/**
-	 * Runtime version, zero if not supported.
-	 */
-	public get runtimeVersion(): number {
-		if (this.version >= this.constructor.supportsPreEncrypt) {
-			return this.runtime;
-		}
-		return 0;
 	}
 
 	/**
@@ -265,6 +195,92 @@ export class CodeDirectory extends Blob {
 			this.byteOffset + offset + hashSize * slot,
 			hashSize,
 		);
+	}
+
+	/**
+	 * Pointer to scatter vector.
+	 *
+	 * @returns Scatter pointer, or null.
+	 */
+	public scatterVector(): Ptr<CodeDirectoryScatter> | null {
+		if (this.version >= this.constructor.supportsScatter) {
+			const { scatterOffset } = this;
+			if (scatterOffset) {
+				return new (pointer(CodeDirectoryScatter))(
+					this.buffer,
+					this.byteOffset + scatterOffset,
+					this.littleEndian,
+				);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Pointer to team identifier string.
+	 *
+	 * @returns Char pointer, or null.
+	 */
+	public teamID(): Int8Ptr | null {
+		if (this.version >= this.constructor.supportsTeamID) {
+			const { teamIDOffset } = this;
+			if (teamIDOffset) {
+				return new Int8Ptr(
+					this.buffer,
+					this.byteOffset + teamIDOffset,
+					this.littleEndian,
+				);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Executable segment base.
+	 *
+	 * @returns Byte offset, zero if not supported.
+	 */
+	public execSegmentBase(): bigint {
+		if (this.version >= this.constructor.supportsExecSegment) {
+			return this.execSegBase;
+		}
+		return 0n;
+	}
+
+	/**
+	 * Executable segment limit.
+	 *
+	 * @returns Byte length, zero if not supported.
+	 */
+	public execSegmentLimit(): bigint {
+		if (this.version >= this.constructor.supportsExecSegment) {
+			return this.execSegLimit;
+		}
+		return 0n;
+	}
+
+	/**
+	 * Executable segment flags.
+	 *
+	 * @returns Flags, zero if not supported.
+	 */
+	public execSegmentFlags(): bigint {
+		if (this.version >= this.constructor.supportsExecSegment) {
+			return this.execSegFlags;
+		}
+		return 0n;
+	}
+
+	/**
+	 * Runtime version.
+	 *
+	 * @returns Version, zero if not supported.
+	 */
+	public runtimeVersion(): number {
+		if (this.version >= this.constructor.supportsPreEncrypt) {
+			return this.runtime;
+		}
+		return 0;
 	}
 
 	public static override readonly typeMagic = kSecCodeMagicCodeDirectory;
