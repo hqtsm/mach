@@ -485,7 +485,10 @@ export class CodeDirectoryBuilder {
 		for (let i = 1; i <= mSpecialSlots; i++) {
 			const hash = this.getSpecialSlot(i);
 			if (hash) {
-				dir.getSlot(-i, false)!.set(new Uint8Array(hash));
+				const slot = dir.getSlotMutable(-i, false)!;
+				new Uint8Array(slot.buffer, slot.byteOffset).set(
+					new Uint8Array(hash),
+				);
 			}
 		}
 		let position = mExecOffset;
@@ -499,9 +502,11 @@ export class CodeDirectoryBuilder {
 			// deno-lint-ignore no-await-in-loop
 			const hash = await generateHash(hasher, mExec, position, thisPage);
 			const data = new Uint8Array(hash);
-			dir.getSlot(i, false)!.set(data);
+			const slot = dir.getSlotMutable(i, false)!;
+			new Uint8Array(slot.buffer, slot.byteOffset).set(data);
 			if (gpec) {
-				dir.getSlot(i, true)!.set(data);
+				const slot = dir.getSlotMutable(i, true)!;
+				new Uint8Array(slot.buffer, slot.byteOffset).set(data);
 			}
 			position += thisPage;
 			remaining -= thisPage;

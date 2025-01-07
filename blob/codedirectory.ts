@@ -6,6 +6,7 @@ import {
 	uint32BE,
 	uint64BE,
 	uint8,
+	Uint8Ptr,
 } from '@hqtsm/struct';
 import {
 	kCCDigestSHA1,
@@ -170,13 +171,13 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
-	 * Get slot data view.
+	 * Get slot data view, for writing.
 	 *
 	 * @param slot Slot index.
 	 * @param preEncrypt Pre-encrypt version.
 	 * @returns Hash value, or null.
 	 */
-	public getSlot(slot: number, preEncrypt: boolean): Uint8Array | null {
+	public getSlotMutable(slot: number, preEncrypt: boolean): Uint8Ptr | null {
 		slot = (+slot || 0) - (slot % 1 || 0);
 		let offset;
 		if (preEncrypt) {
@@ -190,11 +191,25 @@ export class CodeDirectory extends Blob {
 			offset = this.hashOffset;
 		}
 		const { hashSize } = this;
-		return new Uint8Array(
+		return new Uint8Ptr(
 			this.buffer,
 			this.byteOffset + offset + hashSize * slot,
-			hashSize,
+			this.littleEndian,
 		);
+	}
+
+	/**
+	 * Get slot data view, for reading.
+	 *
+	 * @param slot Slot index.
+	 * @param preEncrypt Pre-encrypt version.
+	 * @returns Hash value, or null.
+	 */
+	public getSlot(
+		slot: number,
+		preEncrypt: boolean,
+	): Readonly<Uint8Ptr> | null {
+		return this.getSlotMutable(slot, preEncrypt);
 	}
 
 	/**
