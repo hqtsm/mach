@@ -31,12 +31,12 @@ Deno.test('alloc', () => {
 	const add = maker.alloc(data.byteLength);
 	add.set(data);
 	const r = maker.make();
-	const dv = new DataView(r.buffer, r.byteOffset, r.length);
+	const dv = new DataView(r.buffer, r.byteOffset, r.length());
 	assertEquals(dv.getUint32(0), kSecCodeMagicRequirement);
-	assertEquals(dv.getUint32(4), r.length);
+	assertEquals(dv.getUint32(4), r.length());
 	assertEquals(dv.getUint32(8), Requirement.exprForm);
 	assertEquals(
-		new Uint8Array(r.buffer, r.byteOffset + 12, r.length - 12),
+		new Uint8Array(r.buffer, r.byteOffset + 12, r.length() - 12),
 		data,
 	);
 });
@@ -49,9 +49,9 @@ Deno.test('alloc grow fibonacci', () => {
 		maker.alloc(size).set(d);
 	}
 	const r = maker.make();
-	const dv = new DataView(r.buffer, r.byteOffset, r.length);
+	const dv = new DataView(r.buffer, r.byteOffset, r.length());
 	assertEquals(dv.getUint32(0), kSecCodeMagicRequirement);
-	assertEquals(dv.getUint32(4), r.length);
+	assertEquals(dv.getUint32(4), r.length());
 	assertEquals(dv.getUint32(8), Requirement.lwcrForm);
 });
 
@@ -63,9 +63,9 @@ Deno.test('alloc grow fast', () => {
 		maker.alloc(size).set(d);
 	}
 	const r = maker.make();
-	const dv = new DataView(r.buffer, r.byteOffset, r.length);
+	const dv = new DataView(r.buffer, r.byteOffset, r.length());
 	assertEquals(dv.getUint32(0), kSecCodeMagicRequirement);
-	assertEquals(dv.getUint32(4), r.length);
+	assertEquals(dv.getUint32(4), r.length());
 	assertEquals(dv.getUint32(8), Requirement.lwcrForm);
 });
 
@@ -79,7 +79,7 @@ Deno.test('identifier "com.apple.simple"', () => {
 	const maker = new RequirementMaker(Requirement.exprForm);
 	maker.ident(new TextEncoder().encode('com.apple.simple'));
 	const r = maker.make();
-	assertEquals(new Uint8Array(r.buffer, r.byteOffset, r.length), data);
+	assertEquals(new Uint8Array(r.buffer, r.byteOffset, r.length()), data);
 });
 
 Deno.test('anchor apple and identifier "com.apple.simple"', () => {
@@ -103,7 +103,7 @@ Deno.test('anchor apple and identifier "com.apple.simple"', () => {
 	assertEquals(and.empty, false);
 
 	const r = maker.make();
-	assertEquals(new Uint8Array(r.buffer, r.byteOffset, r.length), data);
+	assertEquals(new Uint8Array(r.buffer, r.byteOffset, r.length()), data);
 });
 
 Deno.test('identifier "com.apple.simple" or anchor apple generic', () => {
@@ -127,7 +127,7 @@ Deno.test('identifier "com.apple.simple" or anchor apple generic', () => {
 	assertEquals(or.empty, false);
 
 	const r = maker.make();
-	assertEquals(new Uint8Array(r.buffer, r.byteOffset, r.length), data);
+	assertEquals(new Uint8Array(r.buffer, r.byteOffset, r.length()), data);
 });
 
 Deno.test('(a and b) or (c and d)', () => {
@@ -169,7 +169,7 @@ Deno.test('(a and b) or (c and d)', () => {
 	or.add();
 
 	const r = maker.make();
-	assertEquals(new Uint8Array(r.buffer, r.byteOffset, r.length), data);
+	assertEquals(new Uint8Array(r.buffer, r.byteOffset, r.length()), data);
 });
 
 Deno.test('(a or b) and (c or d)', () => {
@@ -211,7 +211,7 @@ Deno.test('(a or b) and (c or d)', () => {
 	and.add();
 
 	const r = maker.make();
-	assertEquals(new Uint8Array(r.buffer, r.byteOffset, r.length), data);
+	assertEquals(new Uint8Array(r.buffer, r.byteOffset, r.length()), data);
 });
 
 Deno.test('anchorDigest', () => {

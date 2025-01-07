@@ -26,7 +26,7 @@ export class EntitlementBlob extends Blob {
 	 * Entitlements length.
 	 */
 	public get bodyLength(): number {
-		return this.length - 8;
+		return this.length() - 8;
 	}
 
 	public static override readonly typeMagic = kSecCodeMagicEntitlement;

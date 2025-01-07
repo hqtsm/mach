@@ -26,7 +26,7 @@ export class EntitlementDERBlob extends Blob {
 	 * DER length.
 	 */
 	public get derLength(): number {
-		return this.length - 8;
+		return this.length() - 8;
 	}
 
 	public static override readonly typeMagic = kSecCodeMagicEntitlementDER;

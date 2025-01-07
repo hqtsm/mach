@@ -48,9 +48,9 @@ Deno.test('data', () => {
 	const edb = new LaunchConstraintBlob(
 		LaunchConstraintBlob.blobify(sampleDer).buffer,
 	);
-	const dv = new DataView(edb.buffer, edb.byteOffset, edb.length);
+	const dv = new DataView(edb.buffer, edb.byteOffset, edb.length());
 	assertEquals(dv.getUint32(0), kSecCodeMagicLaunchConstraint);
-	assertEquals(dv.getUint32(4), edb.length);
+	assertEquals(dv.getUint32(4), edb.length());
 	assertEquals(
 		new Uint8Array(edb.der.buffer, edb.der.byteOffset, edb.derLength),
 		sampleDer,

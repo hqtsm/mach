@@ -30,16 +30,28 @@ export class BlobCore extends Struct {
 	}
 
 	/**
-	 * Blob length.
+	 * Get blob length.
 	 * By default includes magic and length.
 	 * Child classes may redefine this to be a smaller area.
+	 *
+	 * @returns Byte length.
 	 */
-	public get length(): number {
-		return this.mLength;
-	}
+	public length(): number;
 
-	public set length(value: number) {
-		this.mLength = value;
+	/**
+	 * Set blob length.
+	 * By default includes magic and length.
+	 * Child classes may redefine this to be a smaller area.
+	 *
+	 * @param size Byte length.
+	 */
+	public length(size: number): void;
+
+	public length(size?: number): number | void {
+		if (size === undefined) {
+			return this.mLength;
+		}
+		this.mLength = size;
 	}
 
 	/**

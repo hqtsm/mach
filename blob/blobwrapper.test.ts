@@ -24,9 +24,9 @@ Deno.test('alloc length', () => {
 	new Uint8Array(bw.data.buffer, bw.data.byteOffset).set(data);
 	const dv = new DataView(bw.buffer, bw.byteOffset, 8);
 	assertEquals(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
-	assertEquals(dv.getUint32(4), bw.length + 8);
+	assertEquals(dv.getUint32(4), bw.length() + 8);
 	assertEquals(
-		new Uint8Array(bw.data.buffer, bw.data.byteOffset, bw.length),
+		new Uint8Array(bw.data.buffer, bw.data.byteOffset, bw.length()),
 		data,
 	);
 });
@@ -36,9 +36,9 @@ Deno.test('alloc view', () => {
 	const bw = BlobWrapper.alloc(data.buffer);
 	const dv = new DataView(bw.buffer, bw.byteOffset, 8);
 	assertEquals(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
-	assertEquals(dv.getUint32(4), bw.length + 8);
+	assertEquals(dv.getUint32(4), bw.length() + 8);
 	assertEquals(
-		new Uint8Array(bw.data.buffer, bw.data.byteOffset, bw.length),
+		new Uint8Array(bw.data.buffer, bw.data.byteOffset, bw.length()),
 		data,
 	);
 });
@@ -49,9 +49,9 @@ Deno.test('alloc view', () => {
 	const bw = BlobWrapper.alloc(view);
 	const dv = new DataView(bw.buffer, bw.byteOffset, 8);
 	assertEquals(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
-	assertEquals(dv.getUint32(4), bw.length + 8);
+	assertEquals(dv.getUint32(4), bw.length() + 8);
 	assertEquals(
-		new Uint8Array(bw.data.buffer, bw.data.byteOffset, bw.length),
+		new Uint8Array(bw.data.buffer, bw.data.byteOffset, bw.length()),
 		data,
 	);
 });

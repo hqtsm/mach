@@ -34,9 +34,9 @@ Deno.test('data', () => {
 	const data = new TextEncoder().encode(examplePlist);
 	const eb = new EntitlementBlob(EntitlementBlob.blobify(data).buffer);
 	new Uint8Array(eb.body.buffer, eb.body.byteOffset).set(data);
-	const dv = new DataView(eb.buffer, eb.byteOffset, eb.length);
+	const dv = new DataView(eb.buffer, eb.byteOffset, eb.length());
 	assertEquals(dv.getUint32(0), kSecCodeMagicEntitlement);
-	assertEquals(dv.getUint32(4), eb.length);
+	assertEquals(dv.getUint32(4), eb.length());
 	assertEquals(
 		new Uint8Array(eb.body.buffer, eb.body.byteOffset, eb.bodyLength),
 		data,

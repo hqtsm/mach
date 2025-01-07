@@ -28,7 +28,7 @@ const emptyRequirements = new RequirementsMaker().make();
 const emptyRequirementsData = new Uint8Array(
 	emptyRequirements.buffer,
 	emptyRequirements.byteOffset,
-	emptyRequirements.length,
+	emptyRequirements.length(),
 );
 
 export async function* createCodeDirectories(
@@ -175,12 +175,12 @@ for (const { kind, arch, file, archs } of fixtures) {
 			const csBuffer = new Uint8Array(
 				cs.buffer,
 				cs.byteOffset,
-				cs.length,
+				cs.length(),
 			);
 			const expected = new Uint8Array(
 				bin.buffer,
 				bin.byteOffset + info.offset,
-				cs.length,
+				cs.length(),
 			);
 			assertEquals(csBuffer, expected, message('compare'));
 		}

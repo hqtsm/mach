@@ -244,7 +244,7 @@ export class RequirementMaker {
 			throw new RangeError(`Unsupported requirement kind: ${kind}`);
 		}
 		const { BYTE_LENGTH } = Requirement;
-		this.copy(req.at(Ptr, BYTE_LENGTH), req.length - BYTE_LENGTH);
+		this.copy(req.at(Ptr, BYTE_LENGTH), req.length() - BYTE_LENGTH);
 	}
 
 	/**
@@ -291,7 +291,7 @@ export class RequirementMaker {
 	 */
 	public make(): Requirement {
 		const r = new Requirement(this.mBuffer);
-		r.length = this.mPC;
+		r.length(this.mPC);
 		return r;
 	}
 

@@ -75,17 +75,17 @@ Deno.test('teamID', async () => {
 Deno.test('codeSlots', async () => {
 	let builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	builder.executable(new Blob([]), 0, 0, 0);
-	const zero = (await builder.build()).length;
+	const zero = (await builder.build()).length();
 
 	builder.reopen(new Blob([new Uint8Array(1)]), 0, 1);
-	assertEquals((await builder.build()).length, zero + CS_SHA1_LEN * 1);
+	assertEquals((await builder.build()).length(), zero + CS_SHA1_LEN * 1);
 
 	builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	builder.executable(new Blob([new Uint8Array(1024)]), 1024, 0, 1024);
-	assertEquals((await builder.build()).length, zero + CS_SHA1_LEN * 1);
+	assertEquals((await builder.build()).length(), zero + CS_SHA1_LEN * 1);
 
 	builder.reopen(new Blob([new Uint8Array(1025)]), 0, 1025);
-	assertEquals((await builder.build()).length, zero + CS_SHA1_LEN * 2);
+	assertEquals((await builder.build()).length(), zero + CS_SHA1_LEN * 2);
 });
 
 Deno.test('addExecSegFlags', async () => {
@@ -105,12 +105,12 @@ Deno.test('addExecSegFlags', async () => {
 Deno.test('specialSlot', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	builder.executable(new Blob([]), 0, 0, 0);
-	const zero = (await builder.build()).length;
+	const zero = (await builder.build()).length();
 	assertThrows(() => builder.specialSlot(0, new ArrayBuffer(0)));
-	assertEquals((await builder.build()).length, zero + CS_SHA1_LEN * 0);
+	assertEquals((await builder.build()).length(), zero + CS_SHA1_LEN * 0);
 
 	await builder.specialSlot(1, new ArrayBuffer(0));
-	assertEquals((await builder.build()).length, zero + CS_SHA1_LEN * 1);
+	assertEquals((await builder.build()).length(), zero + CS_SHA1_LEN * 1);
 });
 
 Deno.test('createScatter', async () => {
@@ -178,10 +178,13 @@ Deno.test('generatePreEncryptHashes', async () => {
 	const version = CodeDirectory.supportsPreEncrypt;
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	builder.executable(new Blob([new Uint8Array(1)]), 0, 0, 1);
-	const zero = (await builder.build(version)).length;
+	const zero = (await builder.build(version)).length();
 
 	builder.generatePreEncryptHashes(true);
-	assertEquals((await builder.build(version)).length, zero + CS_SHA1_LEN * 1);
+	assertEquals(
+		(await builder.build(version)).length(),
+		zero + CS_SHA1_LEN * 1,
+	);
 });
 
 Deno.test('Read valiation', async () => {

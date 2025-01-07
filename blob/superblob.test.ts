@@ -31,7 +31,7 @@ Deno.test('blob', () => {
 	const get2 = sb.blob(1)!;
 
 	assertEquals(
-		new Uint8Array(get1.buffer, get1.byteOffset, get1.length),
+		new Uint8Array(get1.buffer, get1.byteOffset, get1.length()),
 		new Uint8Array(blob1.buffer, 0, 16),
 	);
 
@@ -40,7 +40,7 @@ Deno.test('blob', () => {
 	assertEquals(sb.blob(0), null);
 
 	assertEquals(
-		new Uint8Array(get2.buffer, get2.byteOffset, get2.length),
+		new Uint8Array(get2.buffer, get2.byteOffset, get2.length()),
 		new Uint8Array(blob2.buffer, 0, 16),
 	);
 });
@@ -58,11 +58,11 @@ Deno.test('find', () => {
 	const get2 = sb.find(2)!;
 	const get3 = sb.find(3)!;
 	assertEquals(
-		new Uint8Array(get1.buffer, get1.byteOffset, get1.length),
+		new Uint8Array(get1.buffer, get1.byteOffset, get1.length()),
 		new Uint8Array(blob1.buffer, 0, 16),
 	);
 	assertEquals(
-		new Uint8Array(get2.buffer, get2.byteOffset, get2.length),
+		new Uint8Array(get2.buffer, get2.byteOffset, get2.length()),
 		new Uint8Array(blob2.buffer, 0, 16),
 	);
 	assertEquals(get3, null);

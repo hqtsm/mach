@@ -52,7 +52,7 @@ export class SuperBlobMaker {
 	public get size(): number {
 		let size = SuperBlob.BYTE_LENGTH;
 		for (const [, blob] of this.mPieces) {
-			size += 8 + blob.length;
+			size += 8 + blob.length();
 		}
 		return size;
 	}
@@ -78,7 +78,9 @@ export class SuperBlobMaker {
 			o1 += 4;
 			view.setUint32(o1, o2);
 			o1 += 4;
-			const { buffer, byteOffset, length } = mPieces.get(type)!;
+			const p = mPieces.get(type)!;
+			const { buffer, byteOffset } = p;
+			const length = p.length();
 			data.set(new Uint8Array(buffer, byteOffset, length), o2);
 			o2 += length;
 		}

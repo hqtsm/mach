@@ -32,15 +32,24 @@ export class BlobWrapper extends Blob {
 
 	/**
 	 * Length of payload (only), set length for full blob.
+	 *
+	 * @returns Byte length.
 	 */
-	public override get length(): number {
-		// Overridden to get length of payload (only).
-		return super.length - 8;
-	}
+	public override length(): number;
 
-	public override set length(value: number) {
-		// No change, needed to keep setter.
-		super.length = value;
+	/**
+	 * Set blob length for full blob, including magic and length.
+	 * Unchanged from parent.
+	 *
+	 * @param size Byte length.
+	 */
+	public override length(size: number): void;
+
+	public override length(size?: number): number | void {
+		if (size === undefined) {
+			return super.length() - 8;
+		}
+		super.length(size);
 	}
 
 	public static override readonly typeMagic = CSMAGIC_BLOBWRAPPER;
