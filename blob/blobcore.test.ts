@@ -21,6 +21,5 @@ Deno.test('length', () => {
 Deno.test('data', () => {
 	const data = new Uint8Array(12);
 	const blob = new BlobCore(data.buffer, 2);
-	const ptr = blob.data;
-	assertEquals(ptr.byteOffset, 2);
+	assertEquals(blob.data().byteOffset, 2);
 });

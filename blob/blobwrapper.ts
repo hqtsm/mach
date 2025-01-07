@@ -24,7 +24,7 @@ export class BlobWrapper extends Blob {
 	/**
 	 * Data of payload (only).
 	 */
-	public override get data(): Ptr {
+	public override data(): Ptr {
 		// Overridden to point to payload (only).
 		const { dataArea } = this;
 		return new Ptr(dataArea.buffer, dataArea.byteOffset, this.littleEndian);

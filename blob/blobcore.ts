@@ -59,7 +59,7 @@ export class BlobCore extends Struct {
 	 * By default includes magic and length.
 	 * Child classes may redefine this to be a smaller area.
 	 */
-	public get data(): Ptr {
+	public data(): Ptr {
 		return new Ptr(this.buffer, this.byteOffset, this.littleEndian);
 	}
 
