@@ -40,12 +40,17 @@ export class MachOBase {
 	constructor() {}
 
 	/**
-	 * If binary is little endian.
-	 *
-	 * @returns True if little endian, false if big endian.
+	 * Is a 64-bit binary.
 	 */
-	public isLittleEndian(): boolean {
-		return this.mHeader!.littleEndian;
+	private get m64(): boolean {
+		return this.mHeader!.magic === MH_MAGIC_64;
+	}
+
+	/**
+	 * Does binary endian not matches the host endian.
+	 */
+	private get mFlip(): boolean {
+		return this.mHeader!.littleEndian !== LITTLE_ENDIAN;
 	}
 
 	/**
@@ -54,7 +59,7 @@ export class MachOBase {
 	 * @returns True if flipped, false if not.
 	 */
 	public isFlipped(): boolean {
-		return this.isLittleEndian() !== LITTLE_ENDIAN;
+		return this.mFlip;
 	}
 
 	/**
@@ -63,7 +68,7 @@ export class MachOBase {
 	 * @returns True if 64-bit, false if 32-bit.
 	 */
 	public is64(): boolean {
-		return this.mHeader!.magic === MH_MAGIC_64;
+		return this.m64;
 	}
 
 	/**
@@ -248,7 +253,7 @@ export class MachOBase {
 	 * @returns Byte length of header.
 	 */
 	protected headerSize(): number {
-		return this.is64() ? MachHeader64.BYTE_LENGTH : MachHeader.BYTE_LENGTH;
+		return this.m64 ? MachHeader64.BYTE_LENGTH : MachHeader.BYTE_LENGTH;
 	}
 
 	/**
