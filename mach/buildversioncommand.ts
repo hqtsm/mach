@@ -27,7 +27,7 @@ export class BuildVersionCommand extends Struct {
 	/**
 	 * X.Y.Z in nibbles xxxx.yy.zz.
 	 */
-	declare public version: number;
+	declare public minos: number;
 
 	/**
 	 * X.Y.Z in nibbles xxxx.yy.zz.
@@ -43,7 +43,7 @@ export class BuildVersionCommand extends Struct {
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		uint32(this, 'platform');
-		uint32(this, 'version');
+		uint32(this, 'minos');
 		uint32(this, 'sdk');
 		uint32(this, 'ntools');
 		constant(this, 'BYTE_LENGTH');
