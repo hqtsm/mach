@@ -58,7 +58,7 @@ export class MachOBase {
 	 * The end commands offset, from start of commands.
 	 */
 	private get mEndCommands(): number {
-		return this.mHeader!.sizeofcmds;
+		return this.mCommands!.byteOffset + this.mHeader!.sizeofcmds;
 	}
 
 	/**
@@ -146,8 +146,27 @@ export class MachOBase {
 	 * @returns Next load command or null.
 	 */
 	public nextCommand(command: LoadCommand): LoadCommand | null {
-		void command;
-		throw new Error('TODO');
+		const { cmdsize } = command;
+		if (!cmdsize) {
+			throw new Error('Invalid command size');
+		}
+		const { mEndCommands } = this;
+		const byteOffset = command.byteOffset + cmdsize;
+		if (byteOffset >= mEndCommands) {
+			return null;
+		}
+		if (byteOffset + LoadCommand.BYTE_LENGTH > mEndCommands) {
+			throw new Error('Invalid command size');
+		}
+		command = new LoadCommand(
+			command.buffer,
+			byteOffset,
+			command.littleEndian,
+		);
+		if (byteOffset + command.cmdsize > mEndCommands) {
+			throw new Error('Invalid command size');
+		}
+		return command;
 	}
 
 	/**
