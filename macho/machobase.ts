@@ -14,6 +14,7 @@ import {
 	MH_MAGIC,
 	MH_MAGIC_64,
 } from '../const.ts';
+import type { BuildVersionCommand } from '../mach/buildversioncommand.ts';
 import type { LcStr } from '../mach/lcstr.ts';
 import { LinkeditDataCommand } from '../mach/linkeditdatacommand.ts';
 import { LoadCommand } from '../mach/loadcommand.ts';
@@ -23,6 +24,7 @@ import type { Section } from '../mach/section.ts';
 import type { Section64 } from '../mach/section64.ts';
 import type { SegmentCommand } from '../mach/segmentcommand.ts';
 import type { SegmentCommand64 } from '../mach/segmentcommand64.ts';
+import type { VersionMinCommand } from '../mach/versionmincommand.ts';
 import { Architecture } from './architecture.ts';
 
 const LoadCommandPtr = pointer(LoadCommand);
@@ -381,5 +383,23 @@ export class MachOBase {
 	 */
 	protected commandSize(): number {
 		return this.mHeader!.sizeofcmds;
+	}
+
+	/**
+	 * Find minimum version command.
+	 *
+	 * @returns Minimum version command or null.
+	 */
+	protected findMinVersion(): VersionMinCommand | null {
+		throw new Error('TODO');
+	}
+
+	/**
+	 * Find build version command.
+	 *
+	 * @returns Build version command or null.
+	 */
+	protected findBuildVersion(): BuildVersionCommand | null {
+		throw new Error('TODO');
 	}
 }
