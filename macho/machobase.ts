@@ -51,6 +51,13 @@ export class MachOBase {
 	constructor() {}
 
 	/**
+	 * The end commands offset, from start of commands.
+	 */
+	private get mEndCommands(): number {
+		return this.mHeader!.sizeofcmds;
+	}
+
+	/**
 	 * Is a 64-bit binary.
 	 */
 	private get m64(): boolean {
