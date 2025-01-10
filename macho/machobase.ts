@@ -1,6 +1,6 @@
 import {
 	type BufferPointer,
-	type Int8Ptr,
+	Int8Ptr,
 	LITTLE_ENDIAN,
 	Uint32Ptr,
 } from '@hqtsm/struct';
@@ -223,15 +223,26 @@ export class MachOBase {
 
 	/**
 	 * Get string from load command union.
+	 * Failed bounds check will return null (no exception).
+	 * Reading out-of-bounds may still throw exception.
 	 *
 	 * @param cmd Load command.
 	 * @param str String union.
 	 * @returns String pointer or null.
 	 */
-	public string(cmd: LoadCommand, str: LcStr): Int8Ptr {
-		void cmd;
-		void str;
-		throw new Error('TODO');
+	public string(cmd: LoadCommand, str: LcStr): Int8Ptr | null {
+		const { offset } = str;
+		const sp = new Int8Ptr(
+			cmd.buffer,
+			cmd.byteOffset + offset,
+			cmd.littleEndian,
+		);
+		let size = 0;
+		while (sp[size++]);
+		if (offset + size > cmd.cmdsize) {
+			return null;
+		}
+		return sp;
 	}
 
 	/**
