@@ -245,7 +245,7 @@ export class MachOBase {
 			return null;
 		}
 		if (cmd.cmdsize < LinkeditDataCommand.BYTE_LENGTH) {
-			throw new Error('Invalid LC_CODE_SIGNATURE command size');
+			throw new Error('Invalid command size');
 		}
 		return new LinkeditDataCommand(
 			cmd.buffer,
@@ -265,7 +265,7 @@ export class MachOBase {
 			return null;
 		}
 		if (cmd.cmdsize < LinkeditDataCommand.BYTE_LENGTH) {
-			throw new Error('Invalid LC_DYLIB_CODE_SIGN_DRS command size');
+			throw new Error('Invalid command size');
 		}
 		return new LinkeditDataCommand(
 			cmd.buffer,
