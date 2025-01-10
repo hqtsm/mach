@@ -436,13 +436,13 @@ export class MachOBase {
 	 * @param commands Mach-O commands data.
 	 */
 	protected initCommands(commands: BufferPointer): void {
-		const { littleEndian, sizeofcmds } = this.mHeader!;
+		const mHeader = this.mHeader!;
 		const lc = this.mCommands = new LoadCommand(
 			commands.buffer,
 			commands.byteOffset,
-			littleEndian,
+			mHeader.littleEndian,
 		);
-		this.mEndCommands = lc.byteOffset + sizeofcmds;
+		this.mEndCommands = lc.byteOffset + mHeader.sizeofcmds;
 	}
 
 	/**
