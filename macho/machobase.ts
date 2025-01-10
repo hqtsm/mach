@@ -8,6 +8,7 @@ import { MH_CIGAM, MH_CIGAM_64, MH_MAGIC, MH_MAGIC_64 } from '../const.ts';
 import { MachHeader } from '../mach/machheader.ts';
 import { MachHeader64 } from '../mach/machheader64.ts';
 import { LoadCommand } from '../mach/loadcommand.ts';
+import { Architecture } from './architecture.ts';
 
 const LoadCommandPtr = pointer(LoadCommand);
 
@@ -57,6 +58,63 @@ export class MachOBase {
 	 */
 	public is64(): boolean {
 		return this.mHeader!.magic === MH_MAGIC_64;
+	}
+
+	/**
+	 * Get Mach-O header.
+	 *
+	 * @returns Header or null.
+	 */
+	public header(): MachHeader | MachHeader64 | null {
+		return this.mHeader;
+	}
+
+	/**
+	 * Get architecture from header.
+	 *
+	 * @returns Architecture.
+	 */
+	public architecture(): Architecture {
+		const mHeader = this.mHeader!;
+		return new Architecture(mHeader.cputype, mHeader.cpusubtype);
+	}
+
+	/**
+	 * Get file type from header.
+	 *
+	 * @returns File type.
+	 */
+	public type(): number {
+		return this.mHeader!.filetype;
+	}
+
+	/**
+	 * Get flags from header.
+	 *
+	 * @returns Flags.
+	 */
+	public flags(): number {
+		return this.mHeader!.flags;
+	}
+
+	/**
+	 * Get load commands.
+	 *
+	 * @returns Load commands pointer or null.
+	 */
+	public loadCommands(): Ptr<LoadCommand> | null {
+		return this.mCommands;
+	}
+
+	/**
+	 * Get next load command.
+	 *
+	 * @param command Current load command.
+	 * @returns Next load command or null.
+	 */
+	public nextCommand(command: Ptr<LoadCommand>): Ptr<LoadCommand> | null {
+		void command;
+		throw new Error('TODO');
 	}
 
 	/**
