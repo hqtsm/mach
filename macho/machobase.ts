@@ -2,8 +2,6 @@ import {
 	type BufferPointer,
 	type Int8Ptr,
 	LITTLE_ENDIAN,
-	pointer,
-	type Ptr,
 	Uint32Ptr,
 } from '@hqtsm/struct';
 import {
@@ -35,8 +33,6 @@ import type { SegmentCommand64 } from '../mach/segmentcommand64.ts';
 import type { VersionMinCommand } from '../mach/versionmincommand.ts';
 import { Architecture } from './architecture.ts';
 
-const LoadCommandPtr = pointer(LoadCommand);
-
 /**
  * Common interface of Mach-O binaries features.
  */
@@ -51,7 +47,7 @@ export class MachOBase {
 	/**
 	 * Mach-O commands.
 	 */
-	private mCommands: Ptr<LoadCommand> | null = null;
+	private mCommands: LoadCommand | null = null;
 
 	/**
 	 * Create Mach-O base instance.
@@ -139,7 +135,7 @@ export class MachOBase {
 	 *
 	 * @returns Load commands pointer or null.
 	 */
-	public loadCommands(): Ptr<LoadCommand> | null {
+	public loadCommands(): LoadCommand | null {
 		return this.mCommands;
 	}
 
@@ -149,7 +145,7 @@ export class MachOBase {
 	 * @param command Current load command.
 	 * @returns Next load command or null.
 	 */
-	public nextCommand(command: Ptr<LoadCommand>): Ptr<LoadCommand> | null {
+	public nextCommand(command: LoadCommand): LoadCommand | null {
 		void command;
 		throw new Error('TODO');
 	}
@@ -423,9 +419,10 @@ export class MachOBase {
 	 * @param commands Mach-O commands data.
 	 */
 	protected initCommands(commands: BufferPointer): void {
-		this.mCommands = new LoadCommandPtr(
+		this.mCommands = new LoadCommand(
 			commands.buffer,
 			commands.byteOffset,
+			this.mHeader!.littleEndian,
 		);
 	}
 
