@@ -5,8 +5,16 @@ import {
 	pointer,
 	type Ptr,
 } from '@hqtsm/struct';
-import { MH_CIGAM, MH_CIGAM_64, MH_MAGIC, MH_MAGIC_64 } from '../const.ts';
+import {
+	LC_CODE_SIGNATURE,
+	LC_DYLIB_CODE_SIGN_DRS,
+	MH_CIGAM,
+	MH_CIGAM_64,
+	MH_MAGIC,
+	MH_MAGIC_64,
+} from '../const.ts';
 import type { LcStr } from '../mach/lcstr.ts';
+import { LinkeditDataCommand } from '../mach/linkeditdatacommand.ts';
 import { LoadCommand } from '../mach/loadcommand.ts';
 import { MachHeader } from '../mach/machheader.ts';
 import { MachHeader64 } from '../mach/machheader64.ts';
@@ -188,6 +196,66 @@ export class MachOBase {
 		void cmd;
 		void str;
 		throw new Error('TODO');
+	}
+
+	/**
+	 * Find code signature command.
+	 *
+	 * @returns Code signature command or null.
+	 */
+	public findCodeSignature(): LinkeditDataCommand | null {
+		const cmd = this.findCommand(LC_CODE_SIGNATURE);
+		if (!cmd) {
+			return null;
+		}
+		if (cmd.cmdsize < LinkeditDataCommand.BYTE_LENGTH) {
+			throw new Error('Invalid LC_CODE_SIGNATURE command size');
+		}
+		return new LinkeditDataCommand(
+			cmd.buffer,
+			cmd.byteOffset,
+			cmd.littleEndian,
+		);
+	}
+
+	/**
+	 * Get code signature offset.
+	 *
+	 * @returns Code signature offset, or 0.
+	 */
+	public signingOffset(): number {
+		const lec = this.findCodeSignature();
+		return lec ? lec.dataoff : 0;
+	}
+
+	/**
+	 * Get code signature length.
+	 *
+	 * @returns Code signature length, or 0.
+	 */
+	public signingLength(): number {
+		const lec = this.findCodeSignature();
+		return lec ? lec.datasize : 0;
+	}
+
+	/**
+	 * Find code signing DRs copied from linked dylibs.
+	 *
+	 * @returns Code signing DRs command or null.
+	 */
+	public findLibraryDependencies(): LinkeditDataCommand | null {
+		const cmd = this.findCommand(LC_DYLIB_CODE_SIGN_DRS);
+		if (!cmd) {
+			return null;
+		}
+		if (cmd.cmdsize < LinkeditDataCommand.BYTE_LENGTH) {
+			throw new Error('Invalid LC_DYLIB_CODE_SIGN_DRS command size');
+		}
+		return new LinkeditDataCommand(
+			cmd.buffer,
+			cmd.byteOffset,
+			cmd.littleEndian,
+		);
 	}
 
 	/**
