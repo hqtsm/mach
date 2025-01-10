@@ -122,7 +122,7 @@ export class MachOBase {
 	 * @returns Byte length of header.
 	 */
 	protected headerSize(): number {
-		return this.mHeader!.byteLength;
+		return this.is64() ? MachHeader64.BYTE_LENGTH : MachHeader.BYTE_LENGTH;
 	}
 
 	/**
