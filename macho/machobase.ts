@@ -194,7 +194,7 @@ export class MachOBase {
 	 * @returns Segment command or null.
 	 */
 	public findSegment(
-		segname: Int8Ptr,
+		segname: BufferPointer,
 	): SegmentCommand | SegmentCommand64 | null {
 		void segname;
 		throw new Error('TODO');
@@ -208,8 +208,8 @@ export class MachOBase {
 	 * @returns Section or null.
 	 */
 	public findSection(
-		segname: Int8Ptr,
-		sectname: Int8Ptr,
+		segname: BufferPointer,
+		sectname: BufferPointer,
 	): Section | Section64 | null {
 		void segname;
 		void sectname;
