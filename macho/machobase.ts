@@ -30,7 +30,7 @@ import type { Section } from '../mach/section.ts';
 import type { Section64 } from '../mach/section64.ts';
 import type { SegmentCommand } from '../mach/segmentcommand.ts';
 import type { SegmentCommand64 } from '../mach/segmentcommand64.ts';
-import type { VersionMinCommand } from '../mach/versionmincommand.ts';
+import { VersionMinCommand } from '../mach/versionmincommand.ts';
 import { Architecture } from './architecture.ts';
 
 /**
@@ -473,7 +473,24 @@ export class MachOBase {
 	 * @returns Minimum version command or null.
 	 */
 	protected findMinVersion(): VersionMinCommand | null {
-		throw new Error('TODO');
+		for (let c = this.loadCommands(); c; c = this.nextCommand(c)) {
+			switch (c.cmd) {
+				case LC_VERSION_MIN_MACOSX:
+				case LC_VERSION_MIN_IPHONEOS:
+				case LC_VERSION_MIN_WATCHOS:
+				case LC_VERSION_MIN_TVOS: {
+					if (c.cmdsize < VersionMinCommand.BYTE_LENGTH) {
+						throw new Error('Invalid command size');
+					}
+					return new VersionMinCommand(
+						c.buffer,
+						c.byteOffset,
+						c.littleEndian,
+					);
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
