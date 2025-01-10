@@ -5,6 +5,7 @@ import {
 	Uint32Ptr,
 } from '@hqtsm/struct';
 import {
+	LC_BUILD_VERSION,
 	LC_CODE_SIGNATURE,
 	LC_DYLIB_CODE_SIGN_DRS,
 	LC_VERSION_MIN_IPHONEOS,
@@ -20,7 +21,7 @@ import {
 	PLATFORM_TVOS,
 	PLATFORM_WATCHOS,
 } from '../const.ts';
-import type { BuildVersionCommand } from '../mach/buildversioncommand.ts';
+import { BuildVersionCommand } from '../mach/buildversioncommand.ts';
 import type { LcStr } from '../mach/lcstr.ts';
 import { LinkeditDataCommand } from '../mach/linkeditdatacommand.ts';
 import { LoadCommand } from '../mach/loadcommand.ts';
@@ -499,6 +500,18 @@ export class MachOBase {
 	 * @returns Build version command or null.
 	 */
 	protected findBuildVersion(): BuildVersionCommand | null {
-		throw new Error('TODO');
+		for (let c = this.loadCommands(); c; c = this.nextCommand(c)) {
+			if (c.cmd === LC_BUILD_VERSION) {
+				if (c.cmdsize < BuildVersionCommand.BYTE_LENGTH) {
+					throw new Error('Invalid command size');
+				}
+				return new BuildVersionCommand(
+					c.buffer,
+					c.byteOffset,
+					c.littleEndian,
+				);
+			}
+		}
+		return null;
 	}
 }
