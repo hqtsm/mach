@@ -1,13 +1,19 @@
 import {
 	type BufferPointer,
+	type Int8Ptr,
 	LITTLE_ENDIAN,
 	pointer,
 	type Ptr,
 } from '@hqtsm/struct';
 import { MH_CIGAM, MH_CIGAM_64, MH_MAGIC, MH_MAGIC_64 } from '../const.ts';
+import type { LcStr } from '../mach/lcstr.ts';
+import { LoadCommand } from '../mach/loadcommand.ts';
 import { MachHeader } from '../mach/machheader.ts';
 import { MachHeader64 } from '../mach/machheader64.ts';
-import { LoadCommand } from '../mach/loadcommand.ts';
+import type { Section } from '../mach/section.ts';
+import type { Section64 } from '../mach/section64.ts';
+import type { SegmentCommand } from '../mach/segmentcommand.ts';
+import type { SegmentCommand64 } from '../mach/segmentcommand64.ts';
 import { Architecture } from './architecture.ts';
 
 const LoadCommandPtr = pointer(LoadCommand);
@@ -124,6 +130,59 @@ export class MachOBase {
 	 */
 	public commandLength(): number {
 		return this.mHeader!.sizeofcmds;
+	}
+
+	/**
+	 * Find load command by type.
+	 *
+	 * @param cmd Command type.
+	 * @returns Load command or null.
+	 */
+	public findCommand(cmd: number): LoadCommand | null {
+		void cmd;
+		throw new Error('TODO');
+	}
+
+	/**
+	 * Find segment by name.
+	 *
+	 * @param segname Segment name.
+	 * @returns Segment command or null.
+	 */
+	public findSegment(
+		segname: Int8Ptr,
+	): SegmentCommand | SegmentCommand64 | null {
+		void segname;
+		throw new Error('TODO');
+	}
+
+	/**
+	 * Find section by name.
+	 *
+	 * @param segname Segment name.
+	 * @param sectname Section name.
+	 * @returns Section or null.
+	 */
+	public findSection(
+		segname: Int8Ptr,
+		sectname: Int8Ptr,
+	): Section | Section64 | null {
+		void segname;
+		void sectname;
+		throw new Error('TODO');
+	}
+
+	/**
+	 * Get string from load command union.
+	 *
+	 * @param cmd Load command.
+	 * @param str String union.
+	 * @returns String pointer or null.
+	 */
+	public string(cmd: LoadCommand, str: LcStr): Int8Ptr {
+		void cmd;
+		void str;
+		throw new Error('TODO');
 	}
 
 	/**
