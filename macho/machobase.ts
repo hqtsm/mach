@@ -118,6 +118,15 @@ export class MachOBase {
 	}
 
 	/**
+	 * Get command length.
+	 *
+	 * @returns Byte length of commands.
+	 */
+	public commandLength(): number {
+		return this.mHeader!.sizeofcmds;
+	}
+
+	/**
 	 * Initialize header.
 	 *
 	 * @param header Mach-O header data.
