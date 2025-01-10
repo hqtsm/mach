@@ -50,16 +50,14 @@ export class MachOBase {
 	private mCommands: LoadCommand | null = null;
 
 	/**
+	 * The end commands offset, from start of commands.
+	 */
+	private mEndCommands = 0;
+
+	/**
 	 * Create Mach-O base instance.
 	 */
 	constructor() {}
-
-	/**
-	 * The end commands offset, from start of commands.
-	 */
-	private get mEndCommands(): number {
-		return this.mCommands!.byteOffset + this.mHeader!.sizeofcmds;
-	}
 
 	/**
 	 * Is a 64-bit binary.
@@ -438,11 +436,13 @@ export class MachOBase {
 	 * @param commands Mach-O commands data.
 	 */
 	protected initCommands(commands: BufferPointer): void {
-		this.mCommands = new LoadCommand(
+		const { littleEndian, sizeofcmds } = this.mHeader!;
+		const lc = this.mCommands = new LoadCommand(
 			commands.buffer,
 			commands.byteOffset,
-			this.mHeader!.littleEndian,
+			littleEndian,
 		);
+		this.mEndCommands = lc.byteOffset + sizeofcmds;
 	}
 
 	/**
