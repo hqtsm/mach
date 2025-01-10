@@ -4,6 +4,7 @@ import {
 	LITTLE_ENDIAN,
 	pointer,
 	type Ptr,
+	Uint32Ptr,
 } from '@hqtsm/struct';
 import {
 	LC_CODE_SIGNATURE,
@@ -256,6 +257,55 @@ export class MachOBase {
 	public signingLength(): number {
 		const lec = this.findCodeSignature();
 		return lec ? lec.datasize : 0;
+	}
+
+	/**
+	 * Get version identifer information.
+	 *
+	 * @param platform Platform.
+	 * @param minVersion Minimum version.
+	 * @param sdkVersion SDK version.
+	 * @returns True if found, false if not.
+	 */
+	public version(
+		platform: Uint32Ptr | null,
+		minVersion: Uint32Ptr | null,
+		sdkVersion: Uint32Ptr | null,
+	): boolean {
+		void platform;
+		void minVersion;
+		void sdkVersion;
+		throw new Error('TODO');
+	}
+
+	/**
+	 * Get platform.
+	 *
+	 * @returns Platform or 0.
+	 */
+	public platform(): number {
+		const p = new Uint32Ptr(new ArrayBuffer(Uint32Ptr.BYTES_PER_ELEMENT));
+		return this.version(p, null, null) ? p[0] : 0;
+	}
+
+	/**
+	 * Get minimum version.
+	 *
+	 * @returns Minimum version or 0.
+	 */
+	public minVersion(): number {
+		const p = new Uint32Ptr(new ArrayBuffer(Uint32Ptr.BYTES_PER_ELEMENT));
+		return this.version(null, p, null) ? p[0] : 0;
+	}
+
+	/**
+	 * Get SDK version.
+	 *
+	 * @returns SDK version or 0.
+	 */
+	public sdkVersion(): number {
+		const p = new Uint32Ptr(new ArrayBuffer(Uint32Ptr.BYTES_PER_ELEMENT));
+		return this.version(null, null, p) ? p[0] : 0;
 	}
 
 	/**
