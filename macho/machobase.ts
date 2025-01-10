@@ -9,10 +9,18 @@ import {
 import {
 	LC_CODE_SIGNATURE,
 	LC_DYLIB_CODE_SIGN_DRS,
+	LC_VERSION_MIN_IPHONEOS,
+	LC_VERSION_MIN_MACOSX,
+	LC_VERSION_MIN_TVOS,
+	LC_VERSION_MIN_WATCHOS,
 	MH_CIGAM,
 	MH_CIGAM_64,
 	MH_MAGIC,
 	MH_MAGIC_64,
+	PLATFORM_IOS,
+	PLATFORM_MACOS,
+	PLATFORM_TVOS,
+	PLATFORM_WATCHOS,
 } from '../const.ts';
 import type { BuildVersionCommand } from '../mach/buildversioncommand.ts';
 import type { LcStr } from '../mach/lcstr.ts';
@@ -281,10 +289,57 @@ export class MachOBase {
 		minVersion: Uint32Ptr | null,
 		sdkVersion: Uint32Ptr | null,
 	): boolean {
-		void platform;
-		void minVersion;
-		void sdkVersion;
-		throw new Error('TODO');
+		const bc = this.findBuildVersion();
+		if (bc) {
+			if (platform) {
+				platform[0] = bc.platform;
+			}
+			if (minVersion) {
+				minVersion[0] = bc.minos;
+			}
+			if (sdkVersion) {
+				sdkVersion[0] = bc.sdk;
+			}
+			return true;
+		}
+
+		const vc = this.findMinVersion();
+		if (vc) {
+			if (platform) {
+				let pf;
+				switch (vc.cmd) {
+					case LC_VERSION_MIN_MACOSX: {
+						pf = PLATFORM_MACOS;
+						break;
+					}
+					case LC_VERSION_MIN_IPHONEOS: {
+						pf = PLATFORM_IOS;
+						break;
+					}
+					case LC_VERSION_MIN_WATCHOS: {
+						pf = PLATFORM_WATCHOS;
+						break;
+					}
+					case LC_VERSION_MIN_TVOS: {
+						pf = PLATFORM_TVOS;
+						break;
+					}
+					default: {
+						pf = 0;
+					}
+				}
+				platform[0] = pf;
+			}
+			if (minVersion) {
+				minVersion[0] = vc.version;
+			}
+			if (sdkVersion) {
+				sdkVersion[0] = vc.sdk;
+			}
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
