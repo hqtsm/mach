@@ -183,8 +183,12 @@ export class MachOBase {
 	 * @returns Load command or null.
 	 */
 	public findCommand(cmd: number): LoadCommand | null {
-		void cmd;
-		throw new Error('TODO');
+		for (let c = this.loadCommands(); c; c = this.nextCommand(c)) {
+			if (c.cmd === cmd) {
+				return c;
+			}
+		}
+		return null;
 	}
 
 	/**
