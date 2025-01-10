@@ -219,26 +219,6 @@ export class MachOBase {
 	}
 
 	/**
-	 * Get code signature offset.
-	 *
-	 * @returns Code signature offset, or 0.
-	 */
-	public signingOffset(): number {
-		const lec = this.findCodeSignature();
-		return lec ? lec.dataoff : 0;
-	}
-
-	/**
-	 * Get code signature length.
-	 *
-	 * @returns Code signature length, or 0.
-	 */
-	public signingLength(): number {
-		const lec = this.findCodeSignature();
-		return lec ? lec.datasize : 0;
-	}
-
-	/**
 	 * Find code signing DRs copied from linked dylibs.
 	 *
 	 * @returns Code signing DRs command or null.
@@ -256,6 +236,26 @@ export class MachOBase {
 			cmd.byteOffset,
 			cmd.littleEndian,
 		);
+	}
+
+	/**
+	 * Get code signature offset.
+	 *
+	 * @returns Code signature offset, or 0.
+	 */
+	public signingOffset(): number {
+		const lec = this.findCodeSignature();
+		return lec ? lec.dataoff : 0;
+	}
+
+	/**
+	 * Get code signature length.
+	 *
+	 * @returns Code signature length, or 0.
+	 */
+	public signingLength(): number {
+		const lec = this.findCodeSignature();
+		return lec ? lec.datasize : 0;
 	}
 
 	/**
