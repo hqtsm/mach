@@ -224,3 +224,33 @@ Deno.test('nextCommand over', () => {
 
 	assertThrows(() => macho.nextCommand(cmdA));
 });
+
+Deno.test('findCommand', () => {
+	const commands = new ArrayBuffer(LoadCommand.BYTE_LENGTH * 3);
+
+	const commandA = new LoadCommand(commands, 0);
+	commandA.cmd = 1;
+	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+
+	const commandB = new LoadCommand(commands, LoadCommand.BYTE_LENGTH);
+	commandB.cmd = 2;
+	commandB.cmdsize = LoadCommand.BYTE_LENGTH;
+
+	const commandC = new LoadCommand(commands, LoadCommand.BYTE_LENGTH * 2);
+	commandC.cmd = 2;
+	commandC.cmdsize = LoadCommand.BYTE_LENGTH;
+
+	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+	header.magic = MH_MAGIC;
+	header.ncmds = 3;
+	header.sizeofcmds = commands.byteLength;
+
+	const macho = new MachOBaseTest();
+	macho.initHeader(header);
+	macho.initCommands(new Uint8Array(commands));
+
+	assertEquals(macho.findCommand(0), null);
+	assertEquals(macho.findCommand(1)!.byteOffset, commandA.byteOffset);
+	assertEquals(macho.findCommand(2)!.byteOffset, commandB.byteOffset);
+	assertEquals(macho.findCommand(3), null);
+});
