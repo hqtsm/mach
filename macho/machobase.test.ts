@@ -261,103 +261,70 @@ Deno.test('findCommand', () => {
 	assertEquals(macho.findCommand(3), null);
 });
 
-Deno.test('findCodeSignature valid', () => {
-	const commands = new ArrayBuffer(
-		LoadCommand.BYTE_LENGTH + LinkeditDataCommand.BYTE_LENGTH,
-	);
+Deno.test('find methods', () => {
+	const cases = [
+		[
+			LC_CODE_SIGNATURE,
+			LinkeditDataCommand,
+			'findCodeSignature',
+		],
+		[
+			LC_DYLIB_CODE_SIGN_DRS,
+			LinkeditDataCommand,
+			'findLibraryDependencies',
+		],
+	] as const;
 
-	const commandA = new LoadCommand(commands);
-	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+	for (const [CMD, Command, method] of cases) {
+		const tag = `CMD=${CMD} Command=${Command.name} method=${method}`;
 
-	const commandB = new LinkeditDataCommand(commands, LoadCommand.BYTE_LENGTH);
-	commandB.cmdsize = LinkeditDataCommand.BYTE_LENGTH;
+		const commands = new ArrayBuffer(
+			LoadCommand.BYTE_LENGTH + Command.BYTE_LENGTH,
+		);
 
-	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
-	header.magic = MH_MAGIC;
-	header.ncmds = 2;
-	header.sizeofcmds = commands.byteLength;
+		const commandA = new LoadCommand(commands);
+		commandA.cmdsize = LoadCommand.BYTE_LENGTH;
 
-	const macho = new MachOBaseTest();
-	macho.initHeader(header);
-	macho.initCommands(new Uint8Array(commands));
+		const commandB = new Command(commands, LoadCommand.BYTE_LENGTH);
+		commandB.cmdsize = Command.BYTE_LENGTH;
 
-	assertEquals(macho.findCodeSignature(), null);
+		const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+		header.magic = MH_MAGIC;
+		header.ncmds = 2;
+		header.sizeofcmds = commands.byteLength;
 
-	commandB.cmd = LC_CODE_SIGNATURE;
+		const macho = new MachOBaseTest();
+		macho.initHeader(header);
+		macho.initCommands(new Uint8Array(commands));
 
-	assertEquals(macho.findCodeSignature()!.byteOffset, commandB.byteOffset);
-});
+		assertEquals(macho[method](), null, tag);
 
-Deno.test('findCodeSignature under', () => {
-	const commands = new ArrayBuffer(LoadCommand.BYTE_LENGTH * 2);
+		commandB.cmd = CMD;
 
-	const commandA = new LoadCommand(commands);
-	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+		assertEquals(macho[method]()!.byteOffset, commandB.byteOffset, tag);
+	}
 
-	const commandB = new LinkeditDataCommand(commands, LoadCommand.BYTE_LENGTH);
-	commandB.cmd = LC_CODE_SIGNATURE;
-	commandB.cmdsize = LoadCommand.BYTE_LENGTH;
+	for (const [CMD, Command, method] of cases) {
+		const tag = `CMD=${CMD} Command=${Command.name} method=${method}`;
 
-	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
-	header.magic = MH_MAGIC;
-	header.ncmds = 2;
-	header.sizeofcmds = commands.byteLength;
+		const commands = new ArrayBuffer(LoadCommand.BYTE_LENGTH * 2);
 
-	const macho = new MachOBaseTest();
-	macho.initHeader(header);
-	macho.initCommands(new Uint8Array(commands));
+		const commandA = new LoadCommand(commands);
+		commandA.cmdsize = LoadCommand.BYTE_LENGTH;
 
-	assertThrows(() => macho.findCodeSignature());
-});
+		const commandB = new LoadCommand(commands, LoadCommand.BYTE_LENGTH);
+		commandB.cmd = CMD;
+		commandB.cmdsize = LoadCommand.BYTE_LENGTH;
 
-Deno.test('findLibraryDependencies valid', () => {
-	const commands = new ArrayBuffer(
-		LoadCommand.BYTE_LENGTH + LinkeditDataCommand.BYTE_LENGTH,
-	);
+		const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+		header.magic = MH_MAGIC;
+		header.ncmds = 2;
+		header.sizeofcmds = commands.byteLength;
 
-	const commandA = new LoadCommand(commands);
-	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+		const macho = new MachOBaseTest();
+		macho.initHeader(header);
+		macho.initCommands(new Uint8Array(commands));
 
-	const commandB = new LinkeditDataCommand(commands, LoadCommand.BYTE_LENGTH);
-	commandB.cmdsize = LinkeditDataCommand.BYTE_LENGTH;
-
-	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
-	header.magic = MH_MAGIC;
-	header.ncmds = 2;
-	header.sizeofcmds = commands.byteLength;
-
-	const macho = new MachOBaseTest();
-	macho.initHeader(header);
-	macho.initCommands(new Uint8Array(commands));
-
-	assertEquals(macho.findLibraryDependencies(), null);
-
-	commandB.cmd = LC_DYLIB_CODE_SIGN_DRS;
-
-	assertEquals(
-		macho.findLibraryDependencies()!.byteOffset,
-		commandB.byteOffset,
-	);
-});
-
-Deno.test('findLibraryDependencies under', () => {
-	const commands = new ArrayBuffer(LoadCommand.BYTE_LENGTH * 2);
-
-	const commandA = new LoadCommand(commands);
-	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
-
-	const commandB = new LinkeditDataCommand(commands, LoadCommand.BYTE_LENGTH);
-	commandB.cmd = LC_DYLIB_CODE_SIGN_DRS;
-	commandB.cmdsize = LoadCommand.BYTE_LENGTH;
-
-	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
-	header.magic = MH_MAGIC;
-	header.ncmds = 2;
-	header.sizeofcmds = commands.byteLength;
-
-	const macho = new MachOBaseTest();
-	macho.initHeader(header);
-	macho.initCommands(new Uint8Array(commands));
-
-	assertThrows(() => macho.findLibraryDependencies());
+		assertThrows(() => macho[method](), tag);
+	}
 });
