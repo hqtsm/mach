@@ -37,6 +37,16 @@ class MachOBaseTest extends MachOBase {
 	}
 }
 
+const findCommands = [
+	['findCodeSignature', LinkeditDataCommand, LC_CODE_SIGNATURE],
+	['findLibraryDependencies', LinkeditDataCommand, LC_DYLIB_CODE_SIGN_DRS],
+	['findMinVersion', VersionMinCommand, LC_VERSION_MIN_MACOSX],
+	['findMinVersion', VersionMinCommand, LC_VERSION_MIN_IPHONEOS],
+	['findMinVersion', VersionMinCommand, LC_VERSION_MIN_WATCHOS],
+	['findMinVersion', VersionMinCommand, LC_VERSION_MIN_TVOS],
+	['findBuildVersion', BuildVersionCommand, LC_BUILD_VERSION],
+] as const;
+
 Deno.test('init', () => {
 	let macho = new MachOBaseTest();
 
@@ -268,47 +278,9 @@ Deno.test('findCommand', () => {
 	assertEquals(macho.findCommand(3), null);
 });
 
-Deno.test('find methods', () => {
-	const cases = [
-		[
-			LC_CODE_SIGNATURE,
-			LinkeditDataCommand,
-			'findCodeSignature',
-		],
-		[
-			LC_DYLIB_CODE_SIGN_DRS,
-			LinkeditDataCommand,
-			'findLibraryDependencies',
-		],
-		[
-			LC_VERSION_MIN_MACOSX,
-			VersionMinCommand,
-			'findMinVersion',
-		],
-		[
-			LC_VERSION_MIN_IPHONEOS,
-			VersionMinCommand,
-			'findMinVersion',
-		],
-		[
-			LC_VERSION_MIN_WATCHOS,
-			VersionMinCommand,
-			'findMinVersion',
-		],
-		[
-			LC_VERSION_MIN_TVOS,
-			VersionMinCommand,
-			'findMinVersion',
-		],
-		[
-			LC_BUILD_VERSION,
-			BuildVersionCommand,
-			'findBuildVersion',
-		],
-	] as const;
-
-	for (const [CMD, Command, method] of cases) {
-		const tag = `CMD=${CMD} Command=${Command.name} method=${method}`;
+Deno.test('find command valid', () => {
+	for (const [method, Command, CMD] of findCommands) {
+		const tag = `method=${method} Command=${Command.name} CMD=${CMD}`;
 
 		const commands = new ArrayBuffer(
 			LoadCommand.BYTE_LENGTH + Command.BYTE_LENGTH,
@@ -337,9 +309,11 @@ Deno.test('find methods', () => {
 		assertEquals(found.cmd, CMD, tag);
 		assertEquals(found.byteOffset, commandB.byteOffset, tag);
 	}
+});
 
-	for (const [CMD, Command, method] of cases) {
-		const tag = `CMD=${CMD} Command=${Command.name} method=${method}`;
+Deno.test('find command under', () => {
+	for (const [method, Command, CMD] of findCommands) {
+		const tag = `method=${method} Command=${Command.name} CMD=${CMD}`;
 
 		const commands = new ArrayBuffer(LoadCommand.BYTE_LENGTH * 2);
 
