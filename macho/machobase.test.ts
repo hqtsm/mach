@@ -315,7 +315,9 @@ Deno.test('find methods', () => {
 
 		commandB.cmd = CMD;
 
-		assertEquals(macho[method]()!.byteOffset, commandB.byteOffset, tag);
+		const found = macho[method]()!;
+		assertEquals(found.cmd, CMD, tag);
+		assertEquals(found.byteOffset, commandB.byteOffset, tag);
 	}
 
 	for (const [CMD, Command, method] of cases) {
