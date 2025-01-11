@@ -210,19 +210,17 @@ export class CodeDirectoryBuilder {
 	 * @param slot Slot index, 1 indexed.
 	 * @param hash Hash data.
 	 */
-	public specialSlot(
+	public async specialSlot(
 		slot: number,
 		data: ArrayBufferReal | BufferView,
 	): Promise<void> {
 		slot = specialSlot(slot);
 		const hash = this.getHash();
-		return (async () => {
-			await hash.update(data);
-			this.mSpecial.set(slot, await hash.finish());
-			if (slot > this.mSpecialSlots) {
-				this.mSpecialSlots = slot;
-			}
-		})();
+		await hash.update(data);
+		this.mSpecial.set(slot, await hash.finish());
+		if (slot > this.mSpecialSlots) {
+			this.mSpecialSlots = slot;
+		}
 	}
 
 	/**
