@@ -466,7 +466,8 @@ export class MachOBase {
 		const { buffer, byteOffset } = header;
 		let mh = this.mHeader = new MachHeader(buffer, byteOffset);
 		let m64 = false;
-		switch (mh.magic) {
+		const m = mh.magic;
+		switch (m) {
 			case MH_MAGIC: {
 				m64 = false;
 				break;
@@ -487,9 +488,7 @@ export class MachOBase {
 				break;
 			}
 			default: {
-				throw new TypeError(
-					`Unknown header magic: ${mh.magic.toString(16)}`,
-				);
+				throw new TypeError(`Unknown header magic: ${m.toString(16)}`);
 			}
 		}
 		this.mHeader = mh;
