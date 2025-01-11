@@ -1,4 +1,9 @@
-import type { ArrayBufferReal, BufferView } from '@hqtsm/struct';
+import {
+	type ArrayBufferReal,
+	type BufferView,
+	pointer,
+	type Ptr,
+} from '@hqtsm/struct';
 import { UINT32_MAX } from '../const.ts';
 import type { DynamicHash } from '../hash/dynamichash.ts';
 import type { Reader } from '../util/reader.ts';
@@ -100,7 +105,7 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Scatter vector.
 	 */
-	private mScatter: CodeDirectoryScatter[] | null = null;
+	private mScatter: Ptr<CodeDirectoryScatter> | null = null;
 
 	/**
 	 * Scatter vector byte size, include sentinel.
@@ -292,28 +297,23 @@ export class CodeDirectoryBuilder {
 	 * @param count Number of slots, excluding sentinel.
 	 * @returns Scatter vector.
 	 */
-	public scatter(count: number): CodeDirectoryScatter[];
+	public scatter(count: number): Ptr<CodeDirectoryScatter>;
 
 	/**
 	 * Get existing scatter vector.
 	 *
 	 * @returns Scatter vector.
 	 */
-	public scatter(): CodeDirectoryScatter[] | null;
+	public scatter(): Ptr<CodeDirectoryScatter> | null;
 
-	public scatter(count?: number): CodeDirectoryScatter[] | null {
+	public scatter(count?: number): Ptr<CodeDirectoryScatter> | null {
 		if (count !== undefined) {
 			count = (+count || 0) - (count % 1 || 0);
 			const { BYTE_LENGTH } = CodeDirectoryScatter;
-			const vector: typeof this.mScatter = [];
-			const total = count + 1;
-			for (let i = 0; i < total; i++) {
-				vector.push(
-					new CodeDirectoryScatter(new ArrayBuffer(BYTE_LENGTH)),
-				);
-			}
-			this.mScatterSize = total * BYTE_LENGTH;
-			return this.mScatter = vector;
+			const total = this.mScatterSize = (count + 1) * BYTE_LENGTH;
+			return this.mScatter = new (pointer(CodeDirectoryScatter))(
+				new ArrayBuffer(total),
+			);
 		}
 		return this.mScatter;
 	}
@@ -409,6 +409,7 @@ export class CodeDirectoryBuilder {
 			mCodeSlots,
 			mDigestLength,
 			mScatter,
+			mScatterSize,
 			mIdentifier,
 			mTeamID,
 			mGeneratePreEncryptHashes,
@@ -449,14 +450,15 @@ export class CodeDirectoryBuilder {
 		let offset = this.fixedSize(version);
 		if (mScatter && !(version < CodeDirectory.supportsScatter)) {
 			dir.scatterOffset = offset;
-			for (const s of mScatter) {
-				const { byteLength } = s;
-				data.set(
-					new Uint8Array(s.buffer, s.byteOffset, byteLength),
-					offset,
-				);
-				offset += byteLength;
-			}
+			data.set(
+				new Uint8Array(
+					mScatter.buffer,
+					mScatter.byteOffset,
+					mScatterSize,
+				),
+				offset,
+			);
+			offset += mScatterSize;
 		}
 		dir.identOffset = offset;
 		data.set(new Uint8Array(mIdentifier), offset);

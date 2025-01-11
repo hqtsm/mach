@@ -13,6 +13,7 @@ import {
 } from '../const.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import { CodeDirectory } from './codedirectory.ts';
+import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
 
 Deno.test('hashType', () => {
 	let builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
@@ -119,12 +120,15 @@ Deno.test('createScatter', async () => {
 	assertEquals(builder.scatter(), null);
 
 	let scatter = builder.scatter(NaN);
-	assertEquals(scatter.length, 1);
+	assertEquals(scatter.buffer.byteLength, CodeDirectoryScatter.BYTE_LENGTH);
 
 	scatter = builder.scatter(2);
 	scatter[0].count = 1;
 	scatter[1].count = 2;
-	assertEquals(scatter.length, 3);
+	assertEquals(
+		scatter.buffer.byteLength,
+		CodeDirectoryScatter.BYTE_LENGTH * 3,
+	);
 	await builder.build();
 });
 
