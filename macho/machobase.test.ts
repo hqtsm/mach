@@ -26,8 +26,11 @@ class MachOBaseTest extends MachOBase {
 
 Deno.test('init', () => {
 	let macho = new MachOBaseTest();
+
 	assertEquals(macho.header(), null);
 	assertEquals(macho.loadCommands(), null);
+	assertEquals(macho.is64(), false);
+	assertEquals(macho.isFlipped(), false);
 
 	// Should work with 32-bit size of 64-bit header.
 	const headerSize = MachHeader.BYTE_LENGTH;
