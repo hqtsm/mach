@@ -248,31 +248,30 @@ Deno.test('platform', () => {
 	maker.make();
 });
 
-Deno.test('copy', () => {
+Deno.test('copy Pointer', () => {
 	const maker = new RequirementMaker(Requirement.exprForm);
-	maker.copy(new Uint8Array([1, 2, 3, 4]));
-	maker.copy(new Uint8Array([1, 2, 3, 4]).buffer);
+	maker.copy(new Uint8Array([1, 2, 3, 4]), 4);
 	const ptr = new Uint8Ptr(new Uint8Array([1, 2, 3, 4]).buffer);
 	maker.copy(ptr, 2);
 	maker.make();
 });
 
-Deno.test('copy', () => {
-	const maker = new RequirementMaker(Requirement.exprForm);
-	maker.put(new Uint8Array([1, 2, 3, 4]).buffer);
-	maker.make();
-});
-
-Deno.test('copyRequirement', () => {
+Deno.test('copy Requirement', () => {
 	const a = new RequirementMaker(Requirement.exprForm);
 	const b = new RequirementMaker(Requirement.exprForm);
-	a.copyRequirement(b.make());
+	a.copy(b.make());
 	a.make();
 
 	const c = new RequirementMaker(Requirement.lwcrForm);
 	const d = new RequirementMaker(Requirement.lwcrForm);
 	const dr = d.make();
-	assertThrows(() => c.copyRequirement(dr));
+	assertThrows(() => c.copy(dr));
+});
+
+Deno.test('put', () => {
+	const maker = new RequirementMaker(Requirement.exprForm);
+	maker.put(new Uint8Array([1, 2, 3, 4]).buffer);
+	maker.make();
 });
 
 Deno.test('kind', () => {

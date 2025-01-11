@@ -214,38 +214,28 @@ export class RequirementMaker {
 	public copy(data: BufferPointer, length: number): void;
 
 	/**
-	 * Copy data.
-	 *
-	 * @param data Data.
-	 */
-	public copy(data: ArrayBufferReal | BufferView): void;
-
-	public copy(
-		data: ArrayBufferReal | BufferPointer | BufferView,
-		length?: number,
-	): void {
-		const d = 'buffer' in data
-			? new Uint8Array(
-				data.buffer,
-				data.byteOffset,
-				length ?? (data as BufferView).byteLength,
-			)
-			: new Uint8Array(data);
-		this.alloc(d.byteLength).set(d);
-	}
-
-	/**
 	 * Copy requirement (embed).
 	 *
 	 * @param req Requirement.
 	 */
-	public copyRequirement(req: Const<Requirement>): void {
-		const { constructor: Requirement, kind } = req;
-		if (kind !== Requirement.exprForm) {
-			throw new RangeError(`Unsupported requirement kind: ${kind}`);
+	public copy(req: Const<Requirement>): void;
+
+	public copy(
+		data: BufferPointer | Const<Requirement>,
+		length?: number,
+	): void {
+		if (length === undefined) {
+			const req = data as Const<Requirement>;
+			const { constructor: Requirement, kind } = req;
+			if (kind !== Requirement.exprForm) {
+				throw new RangeError(`Unsupported requirement kind: ${kind}`);
+			}
+			const { BYTE_LENGTH } = Requirement;
+			this.copy(req.at(Ptr, BYTE_LENGTH), req.length() - BYTE_LENGTH);
+		} else {
+			const d = new Uint8Array(data.buffer, data.byteOffset, length);
+			this.alloc(d.byteLength).set(d);
 		}
-		const { BYTE_LENGTH } = Requirement;
-		this.copy(req.at(Ptr, BYTE_LENGTH), req.length() - BYTE_LENGTH);
 	}
 
 	/**
