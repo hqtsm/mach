@@ -1,10 +1,16 @@
 import { assertEquals, assertStrictEquals, assertThrows } from '@std/assert';
 import { type BufferPointer, LITTLE_ENDIAN } from '@hqtsm/struct';
-import { MH_MAGIC, MH_MAGIC_64 } from '../const.ts';
+import {
+	LC_CODE_SIGNATURE,
+	LC_DYLIB_CODE_SIGN_DRS,
+	MH_MAGIC,
+	MH_MAGIC_64,
+} from '../const.ts';
+import { LinkeditDataCommand } from '../mach/linkeditdatacommand.ts';
+import { LoadCommand } from '../mach/loadcommand.ts';
 import { MachHeader } from '../mach/machheader.ts';
 import { MachHeader64 } from '../mach/machheader64.ts';
 import { MachOBase } from './machobase.ts';
-import { LoadCommand } from '../mod.ts';
 
 class MachOBaseTest extends MachOBase {
 	public override initHeader(header: BufferPointer): void {
@@ -253,4 +259,105 @@ Deno.test('findCommand', () => {
 	assertEquals(macho.findCommand(1)!.byteOffset, commandA.byteOffset);
 	assertEquals(macho.findCommand(2)!.byteOffset, commandB.byteOffset);
 	assertEquals(macho.findCommand(3), null);
+});
+
+Deno.test('findCodeSignature valid', () => {
+	const commands = new ArrayBuffer(
+		LoadCommand.BYTE_LENGTH + LinkeditDataCommand.BYTE_LENGTH,
+	);
+
+	const commandA = new LoadCommand(commands);
+	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+
+	const commandB = new LinkeditDataCommand(commands, LoadCommand.BYTE_LENGTH);
+	commandB.cmdsize = LinkeditDataCommand.BYTE_LENGTH;
+
+	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+	header.magic = MH_MAGIC;
+	header.ncmds = 2;
+	header.sizeofcmds = commands.byteLength;
+
+	const macho = new MachOBaseTest();
+	macho.initHeader(header);
+	macho.initCommands(new Uint8Array(commands));
+
+	assertEquals(macho.findCodeSignature(), null);
+
+	commandB.cmd = LC_CODE_SIGNATURE;
+
+	assertEquals(macho.findCodeSignature()!.byteOffset, commandB.byteOffset);
+});
+
+Deno.test('findCodeSignature under', () => {
+	const commands = new ArrayBuffer(LoadCommand.BYTE_LENGTH * 2);
+
+	const commandA = new LoadCommand(commands);
+	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+
+	const commandB = new LinkeditDataCommand(commands, LoadCommand.BYTE_LENGTH);
+	commandB.cmd = LC_CODE_SIGNATURE;
+	commandB.cmdsize = LoadCommand.BYTE_LENGTH;
+
+	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+	header.magic = MH_MAGIC;
+	header.ncmds = 2;
+	header.sizeofcmds = commands.byteLength;
+
+	const macho = new MachOBaseTest();
+	macho.initHeader(header);
+	macho.initCommands(new Uint8Array(commands));
+
+	assertThrows(() => macho.findCodeSignature());
+});
+
+Deno.test('findLibraryDependencies valid', () => {
+	const commands = new ArrayBuffer(
+		LoadCommand.BYTE_LENGTH + LinkeditDataCommand.BYTE_LENGTH,
+	);
+
+	const commandA = new LoadCommand(commands);
+	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+
+	const commandB = new LinkeditDataCommand(commands, LoadCommand.BYTE_LENGTH);
+	commandB.cmdsize = LinkeditDataCommand.BYTE_LENGTH;
+
+	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+	header.magic = MH_MAGIC;
+	header.ncmds = 2;
+	header.sizeofcmds = commands.byteLength;
+
+	const macho = new MachOBaseTest();
+	macho.initHeader(header);
+	macho.initCommands(new Uint8Array(commands));
+
+	assertEquals(macho.findLibraryDependencies(), null);
+
+	commandB.cmd = LC_DYLIB_CODE_SIGN_DRS;
+
+	assertEquals(
+		macho.findLibraryDependencies()!.byteOffset,
+		commandB.byteOffset,
+	);
+});
+
+Deno.test('findLibraryDependencies under', () => {
+	const commands = new ArrayBuffer(LoadCommand.BYTE_LENGTH * 2);
+
+	const commandA = new LoadCommand(commands);
+	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+
+	const commandB = new LinkeditDataCommand(commands, LoadCommand.BYTE_LENGTH);
+	commandB.cmd = LC_DYLIB_CODE_SIGN_DRS;
+	commandB.cmdsize = LoadCommand.BYTE_LENGTH;
+
+	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+	header.magic = MH_MAGIC;
+	header.ncmds = 2;
+	header.sizeofcmds = commands.byteLength;
+
+	const macho = new MachOBaseTest();
+	macho.initHeader(header);
+	macho.initCommands(new Uint8Array(commands));
+
+	assertThrows(() => macho.findLibraryDependencies());
 });
