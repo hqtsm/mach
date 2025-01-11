@@ -1,15 +1,19 @@
 import { assertEquals, assertStrictEquals, assertThrows } from '@std/assert';
 import { type BufferPointer, LITTLE_ENDIAN } from '@hqtsm/struct';
 import {
+	LC_BUILD_VERSION,
 	LC_CODE_SIGNATURE,
 	LC_DYLIB_CODE_SIGN_DRS,
+	LC_VERSION_MIN_MACOSX,
 	MH_MAGIC,
 	MH_MAGIC_64,
 } from '../const.ts';
+import { BuildVersionCommand } from '../mach/buildversioncommand.ts';
 import { LinkeditDataCommand } from '../mach/linkeditdatacommand.ts';
 import { LoadCommand } from '../mach/loadcommand.ts';
 import { MachHeader } from '../mach/machheader.ts';
 import { MachHeader64 } from '../mach/machheader64.ts';
+import { VersionMinCommand } from '../mach/versionmincommand.ts';
 import { MachOBase } from './machobase.ts';
 
 class MachOBaseTest extends MachOBase {
@@ -272,6 +276,16 @@ Deno.test('find methods', () => {
 			LC_DYLIB_CODE_SIGN_DRS,
 			LinkeditDataCommand,
 			'findLibraryDependencies',
+		],
+		[
+			LC_VERSION_MIN_MACOSX,
+			VersionMinCommand,
+			'findMinVersion',
+		],
+		[
+			LC_BUILD_VERSION,
+			BuildVersionCommand,
+			'findBuildVersion',
 		],
 	] as const;
 
