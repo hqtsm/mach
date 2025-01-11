@@ -77,8 +77,11 @@ Deno.test('init', () => {
 	header64F.ncmds = 1;
 	header64F.sizeofcmds = commandF.cmdsize;
 
+	// Throws on bad magic, but still updates mHeader.
 	assertThrows(() => macho.initHeader(header32N));
+	assertEquals(macho.header()?.buffer, header32N.buffer);
 	assertThrows(() => macho.initHeader(header64N));
+	assertEquals(macho.header()?.buffer, header64N.buffer);
 
 	header32N.magic = MH_MAGIC;
 	header32F.magic = MH_MAGIC;
