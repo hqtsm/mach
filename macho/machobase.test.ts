@@ -4,7 +4,10 @@ import {
 	LC_BUILD_VERSION,
 	LC_CODE_SIGNATURE,
 	LC_DYLIB_CODE_SIGN_DRS,
+	LC_VERSION_MIN_IPHONEOS,
 	LC_VERSION_MIN_MACOSX,
+	LC_VERSION_MIN_TVOS,
+	LC_VERSION_MIN_WATCHOS,
 	MH_MAGIC,
 	MH_MAGIC_64,
 } from '../const.ts';
@@ -279,6 +282,21 @@ Deno.test('find methods', () => {
 		],
 		[
 			LC_VERSION_MIN_MACOSX,
+			VersionMinCommand,
+			'findMinVersion',
+		],
+		[
+			LC_VERSION_MIN_IPHONEOS,
+			VersionMinCommand,
+			'findMinVersion',
+		],
+		[
+			LC_VERSION_MIN_WATCHOS,
+			VersionMinCommand,
+			'findMinVersion',
+		],
+		[
+			LC_VERSION_MIN_TVOS,
 			VersionMinCommand,
 			'findMinVersion',
 		],
