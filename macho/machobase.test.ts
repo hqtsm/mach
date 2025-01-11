@@ -81,19 +81,21 @@ Deno.test('init', () => {
 	header64F.magic = MH_MAGIC_64;
 
 	for (
-		const [tag, header, command] of [
-			['32N', header32N, commandN],
-			['32F', header32F, commandF],
-			['64N', header64N, commandN],
-			['64F', header64F, commandF],
+		const [bits, flip, header, command] of [
+			[32, false, header32N, commandN],
+			[32, true, header32F, commandF],
+			[64, false, header64N, commandN],
+			[64, true, header64F, commandF],
 		] as const
 	) {
+		const tag = `bits=${bits} flip=${flip}`;
+
 		macho = new MachOBaseTest();
 		macho.initHeader(header satisfies BufferPointer);
 
 		assertStrictEquals(macho.header()?.buffer, header.buffer, tag);
-		assertEquals(macho.isFlipped(), tag.endsWith('F'), tag);
-		assertEquals(macho.is64(), tag.startsWith('64'), tag);
+		assertEquals(macho.isFlipped(), flip, tag);
+		assertEquals(macho.is64(), bits === 64, tag);
 		assertEquals(macho.architecture().cpuType(), 2, tag);
 		assertEquals(macho.architecture().cpuSubType(), 3, tag);
 		assertEquals(macho.type(), 4, tag);
