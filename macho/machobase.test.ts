@@ -79,9 +79,9 @@ Deno.test('init', () => {
 
 	// Throws on bad magic, but still updates mHeader.
 	assertThrows(() => macho.initHeader(header32N));
-	assertStrictEquals(macho.header()?.buffer, header32N.buffer);
+	assertStrictEquals(macho.header()!.buffer, header32N.buffer);
 	assertThrows(() => macho.initHeader(header64N));
-	assertStrictEquals(macho.header()?.buffer, header64N.buffer);
+	assertStrictEquals(macho.header()!.buffer, header64N.buffer);
 
 	header32N.magic = MH_MAGIC;
 	header32F.magic = MH_MAGIC;
@@ -101,7 +101,7 @@ Deno.test('init', () => {
 		macho = new MachOBaseTest();
 		macho.initHeader(header satisfies BufferPointer);
 
-		assertStrictEquals(macho.header()?.buffer, header.buffer, tag);
+		assertStrictEquals(macho.header()!.buffer, header.buffer, tag);
 		assertEquals(macho.isFlipped(), flip, tag);
 		assertEquals(macho.is64(), bits === 64, tag);
 		assertEquals(macho.architecture().cpuType(), 2, tag);
@@ -114,6 +114,6 @@ Deno.test('init', () => {
 		assertEquals(macho.loadCommands(), null, tag);
 
 		macho.initCommands(command satisfies BufferPointer);
-		assertStrictEquals(macho.loadCommands()?.buffer, command.buffer, tag);
+		assertStrictEquals(macho.loadCommands()!.buffer, command.buffer, tag);
 	}
 });
