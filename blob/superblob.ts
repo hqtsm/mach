@@ -1,4 +1,4 @@
-import { constant, dataView, uint32BE } from '@hqtsm/struct';
+import { type Const, constant, dataView, uint32BE } from '@hqtsm/struct';
 import { Blob } from './blob.ts';
 import { BlobCore } from './blobcore.ts';
 
@@ -43,7 +43,7 @@ export class SuperBlob extends Blob {
 	 * @param index Index.
 	 * @returns Blob or null if no offset in index.
 	 */
-	public blob(index: number): BlobCore | null {
+	public blob(index: number): Const<BlobCore> | null {
 		index = (+index || 0) - (index % 1 || 0);
 		const offset = dataView(this.buffer).getUint32(
 			this.byteOffset + 16 + 8 * index,
@@ -57,7 +57,7 @@ export class SuperBlob extends Blob {
 	 * @param type Index type.
 	 * @returns First match or null.
 	 */
-	public find(type: number): BlobCore | null {
+	public find(type: number): Const<BlobCore> | null {
 		const count = this.mCount;
 		for (let i = 0; i < count; i++) {
 			if (this.type(i) === type) {
