@@ -1,5 +1,6 @@
 import {
 	type BufferPointer,
+	getByteLength,
 	Int8Ptr,
 	LITTLE_ENDIAN,
 	Uint32Ptr,
@@ -8,6 +9,8 @@ import {
 	LC_BUILD_VERSION,
 	LC_CODE_SIGNATURE,
 	LC_DYLIB_CODE_SIGN_DRS,
+	LC_SEGMENT,
+	LC_SEGMENT_64,
 	LC_VERSION_MIN_IPHONEOS,
 	LC_VERSION_MIN_MACOSX,
 	LC_VERSION_MIN_TVOS,
@@ -27,12 +30,26 @@ import { LinkeditDataCommand } from '../mach/linkeditdatacommand.ts';
 import { LoadCommand } from '../mach/loadcommand.ts';
 import { MachHeader } from '../mach/machheader.ts';
 import { MachHeader64 } from '../mach/machheader64.ts';
-import type { Section } from '../mach/section.ts';
-import type { Section64 } from '../mach/section64.ts';
-import type { SegmentCommand } from '../mach/segmentcommand.ts';
-import type { SegmentCommand64 } from '../mach/segmentcommand64.ts';
+import { Section } from '../mach/section.ts';
+import { Section64 } from '../mach/section64.ts';
+import { SegmentCommand } from '../mach/segmentcommand.ts';
+import { SegmentCommand64 } from '../mach/segmentcommand64.ts';
 import { VersionMinCommand } from '../mach/versionmincommand.ts';
 import { Architecture } from './architecture.ts';
+
+function strneq(s1: Int8Ptr, s2: Int8Ptr, n: number): boolean {
+	for (let i = 0; i < n; i++) {
+		const a = s1[i];
+		const b = s2[i];
+		if (!a && !b) {
+			return true;
+		}
+		if (a !== b) {
+			return false;
+		}
+	}
+	return true;
+}
 
 /**
  * Common interface of Mach-O binaries features.
@@ -195,30 +212,69 @@ export class MachOBase {
 	/**
 	 * Find segment by name.
 	 *
-	 * @param segname Segment name.
+	 * @param segname Segment name character pointer, null terminated.
 	 * @returns Segment command or null.
 	 */
 	public findSegment(
 		segname: BufferPointer,
 	): SegmentCommand | SegmentCommand64 | null {
-		void segname;
-		throw new Error('TODO');
+		const sn = new Int8Ptr(segname.buffer, segname.byteOffset);
+		let SC: typeof SegmentCommand | typeof SegmentCommand64 | null;
+		for (let c = this.loadCommands(); c; c = this.nextCommand(c)) {
+			switch (c.cmd) {
+				case LC_SEGMENT: {
+					SC = SegmentCommand;
+					break;
+				}
+				case LC_SEGMENT_64: {
+					SC = SegmentCommand64;
+					break;
+				}
+				default: {
+					continue;
+				}
+			}
+			if (c.cmdsize < SC.BYTE_LENGTH) {
+				throw new Error('Invalid command size');
+			}
+			const seg = new SC(c.buffer, c.byteOffset, c.littleEndian);
+			if (strneq(seg.segname, sn, getByteLength(SC, 'segname'))) {
+				return seg;
+			}
+		}
+		return null;
 	}
 
 	/**
 	 * Find section by name.
 	 *
-	 * @param segname Segment name.
-	 * @param sectname Section name.
+	 * @param segname Segment name character pointer, null terminated.
+	 * @param sectname Section name character pointer, null terminated.
 	 * @returns Section or null.
 	 */
 	public findSection(
 		segname: BufferPointer,
 		sectname: BufferPointer,
 	): Section | Section64 | null {
-		void segname;
-		void sectname;
-		throw new Error('TODO');
+		const seg = this.findSegment(segname);
+		if (!seg) {
+			return null;
+		}
+		const S = this.m64 ? Section64 : Section;
+		const SL = S.BYTE_LENGTH;
+		const { buffer, byteLength, littleEndian, nsects } = seg;
+		if (byteLength + (nsects * SL) > seg.cmdsize) {
+			return null;
+		}
+		const sn = new Int8Ptr(sectname.buffer, sectname.byteOffset);
+		const SNL = getByteLength(S, 'sectname');
+		for (let n = nsects, o = seg.byteOffset + byteLength; n--; o += SL) {
+			const sect = new S(buffer, o, littleEndian);
+			if (strneq(sect.sectname, sn, SNL)) {
+				return sect;
+			}
+		}
+		return null;
 	}
 
 	/**
