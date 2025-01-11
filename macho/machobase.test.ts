@@ -118,7 +118,7 @@ Deno.test('init', () => {
 	}
 });
 
-Deno.test('nextCommand', () => {
+Deno.test('nextCommand valid', () => {
 	const commands = new ArrayBuffer(LoadCommand.BYTE_LENGTH * 2);
 
 	const commandA = new LoadCommand(commands, 0);
@@ -146,4 +146,81 @@ Deno.test('nextCommand', () => {
 
 	const cmdC = macho.nextCommand(cmdB);
 	assertEquals(cmdC, null);
+});
+
+Deno.test('nextCommand zero', () => {
+	const commands = new ArrayBuffer(LoadCommand.BYTE_LENGTH * 2);
+
+	const commandA = new LoadCommand(commands, 0);
+	commandA.cmd = 1;
+	commandA.cmdsize = 0;
+
+	const commandB = new LoadCommand(commands, LoadCommand.BYTE_LENGTH);
+	commandB.cmd = 2;
+	commandB.cmdsize = LoadCommand.BYTE_LENGTH;
+
+	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+	header.magic = MH_MAGIC;
+	header.ncmds = 2;
+	header.sizeofcmds = commands.byteLength;
+
+	const macho = new MachOBaseTest();
+	macho.initHeader(header);
+	macho.initCommands(new Uint8Array(commands));
+
+	const cmdA = macho.loadCommands()!;
+	assertEquals(cmdA.cmd, commandA.cmd);
+
+	assertThrows(() => macho.nextCommand(cmdA));
+});
+
+Deno.test('nextCommand under', () => {
+	const commands = new ArrayBuffer(LoadCommand.BYTE_LENGTH * 2 - 1);
+
+	const commandA = new LoadCommand(commands, 0);
+	commandA.cmd = 1;
+	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+
+	const commandB = new LoadCommand(commands, LoadCommand.BYTE_LENGTH);
+	commandB.cmd = 2;
+
+	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+	header.magic = MH_MAGIC;
+	header.ncmds = 2;
+	header.sizeofcmds = commands.byteLength;
+
+	const macho = new MachOBaseTest();
+	macho.initHeader(header);
+	macho.initCommands(new Uint8Array(commands));
+
+	const cmdA = macho.loadCommands()!;
+	assertEquals(cmdA.cmd, commandA.cmd);
+
+	assertThrows(() => macho.nextCommand(cmdA));
+});
+
+Deno.test('nextCommand over', () => {
+	const commands = new ArrayBuffer(LoadCommand.BYTE_LENGTH * 2);
+
+	const commandA = new LoadCommand(commands, 0);
+	commandA.cmd = 1;
+	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+
+	const commandB = new LoadCommand(commands, LoadCommand.BYTE_LENGTH);
+	commandB.cmd = 2;
+	commandB.cmdsize = LoadCommand.BYTE_LENGTH + 1;
+
+	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+	header.magic = MH_MAGIC;
+	header.ncmds = 2;
+	header.sizeofcmds = commands.byteLength;
+
+	const macho = new MachOBaseTest();
+	macho.initHeader(header);
+	macho.initCommands(new Uint8Array(commands));
+
+	const cmdA = macho.loadCommands()!;
+	assertEquals(cmdA.cmd, commandA.cmd);
+
+	assertThrows(() => macho.nextCommand(cmdA));
 });
