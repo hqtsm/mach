@@ -26,6 +26,8 @@ class MachOBaseTest extends MachOBase {
 
 Deno.test('init', () => {
 	let macho = new MachOBaseTest();
+	assertEquals(macho.header(), null);
+	assertEquals(macho.loadCommands(), null);
 
 	// Should work with 32-bit size of 64-bit header.
 	const headerSize = MachHeader.BYTE_LENGTH;
@@ -91,8 +93,6 @@ Deno.test('init', () => {
 		const tag = `bits=${bits} flip=${flip}`;
 
 		macho = new MachOBaseTest();
-		assertEquals(macho.header(), null, tag);
-
 		macho.initHeader(header satisfies BufferPointer);
 
 		assertStrictEquals(macho.header()?.buffer, header.buffer, tag);
