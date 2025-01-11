@@ -472,29 +472,17 @@ export class MachOBase {
 				break;
 			}
 			case MH_CIGAM: {
-				mh = new MachHeader(
-					buffer,
-					byteOffset,
-					!mh.littleEndian,
-				);
+				mh = new MachHeader(buffer, byteOffset, !mh.littleEndian);
 				m64 = false;
 				break;
 			}
 			case MH_MAGIC_64: {
-				mh = new MachHeader64(
-					buffer,
-					byteOffset,
-					mh.littleEndian,
-				);
+				mh = new MachHeader64(buffer, byteOffset);
 				m64 = true;
 				break;
 			}
 			case MH_CIGAM_64: {
-				mh = new MachHeader64(
-					buffer,
-					byteOffset,
-					!mh.littleEndian,
-				);
+				mh = new MachHeader64(buffer, byteOffset, !mh.littleEndian);
 				m64 = true;
 				break;
 			}
