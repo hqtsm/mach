@@ -1,4 +1,5 @@
 import {
+	type Const,
 	constant,
 	Int8Ptr,
 	pointer,
@@ -208,7 +209,7 @@ export class CodeDirectory extends Blob {
 	public getSlot(
 		slot: number,
 		preEncrypt: boolean,
-	): Readonly<Uint8Ptr> | null {
+	): Const<Uint8Ptr> | null {
 		return this.getSlotMutable(slot, preEncrypt);
 	}
 

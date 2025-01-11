@@ -2,6 +2,7 @@ import {
 	type ArrayBufferReal,
 	type BufferPointer,
 	type BufferView,
+	type Const,
 	dataView,
 	Ptr,
 } from '@hqtsm/struct';
@@ -238,7 +239,7 @@ export class RequirementMaker {
 	 *
 	 * @param req Requirement.
 	 */
-	public copyRequirement(req: Readonly<Requirement>): void {
+	public copyRequirement(req: Const<Requirement>): void {
 		const { constructor: Requirement, kind } = req;
 		if (kind !== Requirement.exprForm) {
 			throw new RangeError(`Unsupported requirement kind: ${kind}`);
@@ -254,7 +255,7 @@ export class RequirementMaker {
 	 * @param length Byte length.
 	 * @returns Pointer to source data.
 	 */
-	public insert(label: Readonly<RequirementMakerLabel>, length = 4): Ptr {
+	public insert(label: Const<RequirementMakerLabel>, length = 4): Ptr {
 		const { pos } = label;
 		const req = new Requirement(this.mBuffer);
 		this.require(length);

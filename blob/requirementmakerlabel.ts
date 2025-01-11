@@ -1,3 +1,4 @@
+import type { Const } from '@hqtsm/struct';
 import type { RequirementMaker } from './requirementmaker.ts';
 
 /**
@@ -19,7 +20,7 @@ export class RequirementMakerLabel {
 	 *
 	 * @param maker Maker reference.
 	 */
-	constructor(maker: Readonly<RequirementMaker>) {
+	constructor(maker: Const<RequirementMaker>) {
 		this.pos = maker.length();
 	}
 }

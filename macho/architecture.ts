@@ -1,3 +1,4 @@
+import type { Const } from '@hqtsm/struct';
 import { CPU_SUBTYPE_MASK, CPU_SUBTYPE_MULTIPLE } from '../const.ts';
 import type { FatArch } from '../mach/fatarch.ts';
 import type { FatArch64 } from '../mach/fatarch64.ts';
@@ -36,10 +37,10 @@ export class Architecture {
 	 *
 	 * @param archInFile FatArch|FatArch64 struct.
 	 */
-	constructor(archInFile: Readonly<FatArch | FatArch64>);
+	constructor(archInFile: Const<FatArch | FatArch64>);
 
 	constructor(
-		type?: number | Readonly<FatArch | FatArch64>,
+		type?: number | Const<FatArch | FatArch64>,
 		sub?: number,
 	) {
 		switch (typeof type) {
