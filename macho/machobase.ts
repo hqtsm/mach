@@ -74,23 +74,19 @@ export class MachOBase {
 	private mEndCommands = 0;
 
 	/**
-	 * Create Mach-O base instance.
-	 */
-	constructor() {}
-
-	/**
 	 * Is a 64-bit binary.
 	 */
-	private get m64(): boolean {
-		return this.mHeader!.magic === MH_MAGIC_64;
-	}
+	private m64 = false;
 
 	/**
 	 * Does binary endian not matches the host endian.
 	 */
-	private get mFlip(): boolean {
-		return this.mHeader!.littleEndian !== LITTLE_ENDIAN;
-	}
+	private mFlip = false;
+
+	/**
+	 * Create Mach-O base instance.
+	 */
+	constructor() {}
 
 	/**
 	 * If binary endian does not matches the host endian.
@@ -468,42 +464,49 @@ export class MachOBase {
 	 */
 	protected initHeader(header: BufferPointer): void {
 		const { buffer, byteOffset } = header;
-		const mhbe = new MachHeader(buffer, byteOffset);
-		switch (mhbe.magic) {
+		let mh = this.mHeader = new MachHeader(buffer, byteOffset);
+		let m64 = false;
+		switch (mh.magic) {
 			case MH_MAGIC: {
-				this.mHeader = mhbe;
+				m64 = false;
 				break;
 			}
 			case MH_CIGAM: {
-				this.mHeader = new MachHeader(
+				mh = new MachHeader(
 					buffer,
 					byteOffset,
-					!mhbe.littleEndian,
+					!mh.littleEndian,
 				);
+				m64 = false;
 				break;
 			}
 			case MH_MAGIC_64: {
-				this.mHeader = new MachHeader64(
+				mh = new MachHeader64(
 					buffer,
 					byteOffset,
-					mhbe.littleEndian,
+					mh.littleEndian,
 				);
+				m64 = true;
 				break;
 			}
 			case MH_CIGAM_64: {
-				this.mHeader = new MachHeader64(
+				mh = new MachHeader64(
 					buffer,
 					byteOffset,
-					!mhbe.littleEndian,
+					!mh.littleEndian,
 				);
+				m64 = true;
 				break;
 			}
 			default: {
 				throw new TypeError(
-					`Unknown header magic: ${mhbe.magic.toString(16)}`,
+					`Unknown header magic: ${mh.magic.toString(16)}`,
 				);
 			}
 		}
+		this.mHeader = mh;
+		this.m64 = m64;
+		this.mFlip = mh.littleEndian !== LITTLE_ENDIAN;
 	}
 
 	/**
