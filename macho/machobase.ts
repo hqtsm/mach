@@ -1,5 +1,6 @@
 import {
 	type BufferPointer,
+	type Const,
 	getByteLength,
 	Int8Ptr,
 	LITTLE_ENDIAN,
@@ -60,12 +61,12 @@ export class MachOBase {
 	/**
 	 * Mach-O header.
 	 */
-	private mHeader: MachHeader | MachHeader64 | null = null;
+	private mHeader: Const<MachHeader> | Const<MachHeader64> | null = null;
 
 	/**
 	 * Mach-O commands.
 	 */
-	private mCommands: LoadCommand | null = null;
+	private mCommands: Const<LoadCommand> | null = null;
 
 	/**
 	 * The end commands offset, from start of commands.
@@ -114,7 +115,7 @@ export class MachOBase {
 	 *
 	 * @returns Header or null.
 	 */
-	public header(): MachHeader | MachHeader64 | null {
+	public header(): Const<MachHeader> | Const<MachHeader64> | null {
 		return this.mHeader;
 	}
 
@@ -151,7 +152,7 @@ export class MachOBase {
 	 *
 	 * @returns Load commands pointer or null.
 	 */
-	public loadCommands(): LoadCommand | null {
+	public loadCommands(): Const<LoadCommand> | null {
 		return this.mCommands;
 	}
 
@@ -161,7 +162,7 @@ export class MachOBase {
 	 * @param command Current load command.
 	 * @returns Next load command or null.
 	 */
-	public nextCommand(command: LoadCommand): LoadCommand | null {
+	public nextCommand(command: Const<LoadCommand>): Const<LoadCommand> | null {
 		const { cmdsize } = command;
 		if (!cmdsize) {
 			throw new Error('Invalid command size');
@@ -200,7 +201,7 @@ export class MachOBase {
 	 * @param cmd Command type.
 	 * @returns Load command or null.
 	 */
-	public findCommand(cmd: number): LoadCommand | null {
+	public findCommand(cmd: number): Const<LoadCommand> | null {
 		for (let c = this.loadCommands(); c; c = this.nextCommand(c)) {
 			if (c.cmd === cmd) {
 				return c;
@@ -217,7 +218,7 @@ export class MachOBase {
 	 */
 	public findSegment(
 		segname: BufferPointer,
-	): SegmentCommand | SegmentCommand64 | null {
+	): Const<SegmentCommand> | Const<SegmentCommand64> | null {
 		const sn = new Int8Ptr(segname.buffer, segname.byteOffset);
 		let SC: typeof SegmentCommand | typeof SegmentCommand64 | null;
 		for (let c = this.loadCommands(); c; c = this.nextCommand(c)) {
@@ -255,7 +256,7 @@ export class MachOBase {
 	public findSection(
 		segname: BufferPointer,
 		sectname: BufferPointer,
-	): Section | Section64 | null {
+	): Const<Section> | Const<Section64> | null {
 		const seg = this.findSegment(segname);
 		if (!seg) {
 			return null;
@@ -286,7 +287,10 @@ export class MachOBase {
 	 * @param str String union within load command.
 	 * @returns String pointer or null.
 	 */
-	public string(cmd: LoadCommand, str: LcStr): Int8Ptr | null {
+	public string(
+		cmd: Const<LoadCommand>,
+		str: Const<LcStr>,
+	): Const<Int8Ptr> | null {
 		const { offset } = str;
 		const sp = new Int8Ptr(
 			cmd.buffer,
@@ -306,7 +310,7 @@ export class MachOBase {
 	 *
 	 * @returns Code signature command or null.
 	 */
-	public findCodeSignature(): LinkeditDataCommand | null {
+	public findCodeSignature(): Const<LinkeditDataCommand> | null {
 		const cmd = this.findCommand(LC_CODE_SIGNATURE);
 		if (!cmd) {
 			return null;
@@ -326,7 +330,7 @@ export class MachOBase {
 	 *
 	 * @returns Code signing DRs command or null.
 	 */
-	public findLibraryDependencies(): LinkeditDataCommand | null {
+	public findLibraryDependencies(): Const<LinkeditDataCommand> | null {
 		const cmd = this.findCommand(LC_DYLIB_CODE_SIGN_DRS);
 		if (!cmd) {
 			return null;
@@ -433,7 +437,7 @@ export class MachOBase {
 	 * @returns Platform or 0.
 	 */
 	public platform(): number {
-		const p = new Uint32Ptr(new ArrayBuffer(Uint32Ptr.BYTES_PER_ELEMENT));
+		const p = new Uint32Ptr(new ArrayBuffer(4));
 		return this.version(p, null, null) ? p[0] : 0;
 	}
 
@@ -443,7 +447,7 @@ export class MachOBase {
 	 * @returns Minimum version or 0.
 	 */
 	public minVersion(): number {
-		const p = new Uint32Ptr(new ArrayBuffer(Uint32Ptr.BYTES_PER_ELEMENT));
+		const p = new Uint32Ptr(new ArrayBuffer(4));
 		return this.version(null, p, null) ? p[0] : 0;
 	}
 
@@ -453,7 +457,7 @@ export class MachOBase {
 	 * @returns SDK version or 0.
 	 */
 	public sdkVersion(): number {
-		const p = new Uint32Ptr(new ArrayBuffer(Uint32Ptr.BYTES_PER_ELEMENT));
+		const p = new Uint32Ptr(new ArrayBuffer(4));
 		return this.version(null, null, p) ? p[0] : 0;
 	}
 
@@ -540,7 +544,7 @@ export class MachOBase {
 	 *
 	 * @returns Minimum version command or null.
 	 */
-	protected findMinVersion(): VersionMinCommand | null {
+	protected findMinVersion(): Const<VersionMinCommand> | null {
 		for (let c = this.loadCommands(); c; c = this.nextCommand(c)) {
 			switch (c.cmd) {
 				case LC_VERSION_MIN_MACOSX:
@@ -566,7 +570,7 @@ export class MachOBase {
 	 *
 	 * @returns Build version command or null.
 	 */
-	protected findBuildVersion(): BuildVersionCommand | null {
+	protected findBuildVersion(): Const<BuildVersionCommand> | null {
 		for (let c = this.loadCommands(); c; c = this.nextCommand(c)) {
 			if (c.cmd === LC_BUILD_VERSION) {
 				if (c.cmdsize < BuildVersionCommand.BYTE_LENGTH) {
