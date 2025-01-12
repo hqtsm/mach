@@ -1,7 +1,8 @@
 import { assertEquals, assertRejects } from '@std/assert';
-import { MH_MAGIC_64 } from '../const.ts';
+import { LC_SYMTAB, MH_MAGIC, MH_MAGIC_64 } from '../const.ts';
 import { MachHeader } from '../mach/machheader.ts';
 import { MachHeader64 } from '../mach/machheader64.ts';
+import { SymtabCommand } from '../mach/symtabcommand.ts';
 import {
 	CPU_ARCHITECTURES,
 	fixtureMacho,
@@ -107,4 +108,29 @@ Deno.test('open under', async () => {
 		RangeError,
 		'Invalid commands',
 	);
+});
+
+Deno.test('validateStructure LC_SYMTAB', async () => {
+	const extra = 0xff;
+	const buffer = new ArrayBuffer(
+		MachHeader.BYTE_LENGTH + SymtabCommand.BYTE_LENGTH + extra,
+	);
+
+	const mh = new MachHeader(buffer, 0, false);
+	mh.magic = MH_MAGIC;
+	mh.ncmds = 1;
+	mh.sizeofcmds = SymtabCommand.BYTE_LENGTH;
+
+	const cmd = new SymtabCommand(buffer, MachHeader.BYTE_LENGTH, false);
+	cmd.cmd = LC_SYMTAB;
+	cmd.cmdsize = SymtabCommand.BYTE_LENGTH;
+	cmd.stroff = MachHeader.BYTE_LENGTH + SymtabCommand.BYTE_LENGTH;
+	cmd.strsize = extra;
+
+	const blob = new Blob([buffer]);
+	const macho = new MachO();
+
+	await macho.open(blob);
+
+	assertEquals(macho.isSuspicious(), false);
 });
