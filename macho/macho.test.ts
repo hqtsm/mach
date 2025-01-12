@@ -1,4 +1,7 @@
-import { assertEquals } from '@std/assert/equals';
+import { assertEquals, assertRejects } from '@std/assert';
+import { MH_MAGIC_64 } from '../const.ts';
+import { MachHeader } from '../mach/machheader.ts';
+import { MachHeader64 } from '../mach/machheader64.ts';
 import {
 	CPU_ARCHITECTURES,
 	fixtureMacho,
@@ -44,3 +47,35 @@ for (const { kind, arch, file, archs } of fixtures) {
 		}
 	});
 }
+
+Deno.test('open under', async () => {
+	const macho = new MachO();
+
+	let mh = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH - 1));
+
+	await assertRejects(
+		() => macho.open(new Blob([mh.buffer])),
+		RangeError,
+		'Invalid Mach-O header',
+	);
+
+	mh = new MachHeader64(new ArrayBuffer(MachHeader64.BYTE_LENGTH - 1));
+	mh.magic = MH_MAGIC_64;
+
+	await assertRejects(
+		() => macho.open(new Blob([mh.buffer])),
+		RangeError,
+		'Invalid Mach-O header',
+	);
+
+	mh = new MachHeader64(new ArrayBuffer(MachHeader64.BYTE_LENGTH + 1));
+	mh.magic = MH_MAGIC_64;
+	mh.ncmds = 1;
+	mh.sizeofcmds = 2;
+
+	await assertRejects(
+		() => macho.open(new Blob([mh.buffer])),
+		RangeError,
+		'Invalid Mach-O commands',
+	);
+});
