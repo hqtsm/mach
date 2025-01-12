@@ -1,5 +1,10 @@
 import { assertEquals, assertStrictEquals, assertThrows } from '@std/assert';
-import { type BufferPointer, LITTLE_ENDIAN } from '@hqtsm/struct';
+import {
+	type BufferPointer,
+	type Const,
+	LITTLE_ENDIAN,
+	Uint8Ptr,
+} from '@hqtsm/struct';
 import {
 	LC_BUILD_VERSION,
 	LC_CODE_SIGNATURE,
@@ -10,6 +15,10 @@ import {
 	LC_VERSION_MIN_WATCHOS,
 	MH_MAGIC,
 	MH_MAGIC_64,
+	PLATFORM_IOS,
+	PLATFORM_MACOS,
+	PLATFORM_TVOS,
+	PLATFORM_WATCHOS,
 } from '../const.ts';
 import { BuildVersionCommand } from '../mach/buildversioncommand.ts';
 import { LinkeditDataCommand } from '../mach/linkeditdatacommand.ts';
@@ -34,6 +43,23 @@ class MachOBaseTest extends MachOBase {
 
 	public override commandSize(): number {
 		return super.commandSize();
+	}
+}
+
+const LC_VERSION_FAKE = 0x12345678;
+
+class MachOBaseTestFMV extends MachOBaseTest {
+	protected override findMinVersion(): Const<VersionMinCommand> | null {
+		for (let c = this.loadCommands(); c; c = this.nextCommand(c)) {
+			if (c.cmd === LC_VERSION_FAKE) {
+				return new VersionMinCommand(
+					c.buffer,
+					c.byteOffset,
+					c.littleEndian,
+				);
+			}
+		}
+		return super.findMinVersion();
 	}
 }
 
@@ -335,4 +361,81 @@ Deno.test('find command under', () => {
 
 		assertThrows(() => macho[method](), tag);
 	}
+});
+
+Deno.test('find version', () => {
+	const p = new Uint8Ptr(new ArrayBuffer(4));
+
+	const commands = new ArrayBuffer(
+		LoadCommand.BYTE_LENGTH +
+			BuildVersionCommand.BYTE_LENGTH +
+			VersionMinCommand.BYTE_LENGTH,
+	);
+
+	const commandA = new LoadCommand(commands);
+	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+
+	const commandB = new BuildVersionCommand(commands, LoadCommand.BYTE_LENGTH);
+	commandB.cmdsize = BuildVersionCommand.BYTE_LENGTH;
+
+	const commandC = new VersionMinCommand(
+		commands,
+		LoadCommand.BYTE_LENGTH + BuildVersionCommand.BYTE_LENGTH,
+	);
+	commandC.cmdsize = VersionMinCommand.BYTE_LENGTH;
+
+	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+	header.magic = MH_MAGIC;
+	header.ncmds = 3;
+	header.sizeofcmds = commands.byteLength;
+
+	const macho = new MachOBaseTest();
+	macho.initHeader(header);
+	macho.initCommands(new Uint8Array(commands));
+
+	assertEquals(macho.version(null, null, null), false);
+	assertEquals(macho.platform(), 0);
+	assertEquals(macho.minVersion(), 0);
+	assertEquals(macho.sdkVersion(), 0);
+
+	for (
+		const [LC, PL] of [
+			[LC_VERSION_MIN_MACOSX, PLATFORM_MACOS],
+			[LC_VERSION_MIN_IPHONEOS, PLATFORM_IOS],
+			[LC_VERSION_MIN_WATCHOS, PLATFORM_WATCHOS],
+			[LC_VERSION_MIN_TVOS, PLATFORM_TVOS],
+		] as const
+	) {
+		commandC.cmd = LC;
+		assertEquals(macho.version(null, null, null), true);
+		assertEquals(macho.platform(), PL);
+
+		commandC.version = 12;
+		assertEquals(macho.minVersion(), 12);
+
+		commandC.sdk = 23;
+		assertEquals(macho.sdkVersion(), 23);
+	}
+
+	commandB.cmd = LC_BUILD_VERSION;
+	commandB.platform = PLATFORM_MACOS;
+	commandB.minos = 34;
+	commandB.sdk = 45;
+
+	assertEquals(macho.version(null, null, null), true);
+	assertEquals(macho.platform(), PLATFORM_MACOS);
+	assertEquals(macho.minVersion(), 34);
+	assertEquals(macho.sdkVersion(), 45);
+
+	// Testing default case if findMinVersion returns something not handled.
+	const machoFMV = new MachOBaseTestFMV();
+	machoFMV.initHeader(header);
+	machoFMV.initCommands(new Uint8Array(commands));
+
+	commandB.cmd = LC_VERSION_FAKE;
+	p[0] = 1;
+
+	assertEquals(machoFMV.platform(), 0);
+	assertEquals(machoFMV.version(p, null, null), true);
+	assertEquals(p[0], 0);
 });
