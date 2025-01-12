@@ -8,7 +8,7 @@ Deno.test('BYTE_LENGTH', () => {
 Deno.test('blobify length', () => {
 	const blobI = Blob.blobify(4);
 	assertEquals(
-		new Uint8Array(blobI.buffer),
+		new Uint8Array(blobI),
 		new Uint8Array([0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0]),
 	);
 });
@@ -16,7 +16,7 @@ Deno.test('blobify length', () => {
 Deno.test('blobify buffer', () => {
 	const blobB = Blob.blobify(new Uint8Array([1, 2, 3, 4]).buffer);
 	assertEquals(
-		new Uint8Array(blobB.buffer),
+		new Uint8Array(blobB),
 		new Uint8Array([0, 0, 0, 0, 0, 0, 0, 12, 1, 2, 3, 4]),
 	);
 });
@@ -26,7 +26,7 @@ Deno.test('blobify view', () => {
 		new Uint8Array([1, 2, 3, 4, 5, 6]).subarray(1, -1),
 	);
 	assertEquals(
-		new Uint8Array(blobV.buffer),
+		new Uint8Array(blobV),
 		new Uint8Array([0, 0, 0, 0, 0, 0, 0, 12, 2, 3, 4, 5]),
 	);
 });
