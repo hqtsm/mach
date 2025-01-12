@@ -10,6 +10,7 @@ import {
 	kSecCodeSignatureLinkerSigned,
 } from '../const.ts';
 import {
+	CPU_ARCHITECTURES,
 	fixtureMachos,
 	type FixtureMachoSignatureInfo,
 	fixtureMachoSigned,
@@ -107,7 +108,7 @@ for (const { kind, arch, file, archs } of fixtures) {
 			}
 
 			const message = (s: string) => `CD: ${arc}: ${s}`;
-			const bin = thin(macho, ...info.arch);
+			const bin = thin(macho, ...CPU_ARCHITECTURES.get(arc)!);
 			const cds = [];
 
 			for await (

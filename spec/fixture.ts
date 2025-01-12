@@ -48,8 +48,18 @@ export function fixtures(): string {
 	return fixturesCache;
 }
 
+export const CPU_ARCHITECTURES: ReadonlyMap<string, [number, number | null]> =
+	new Map([
+		['arm64', [CPU_TYPE_ARM64, null]],
+		['x86_64', [CPU_TYPE_X86_64, null]],
+		['i386', [CPU_TYPE_I386, null]],
+		['ppc64', [CPU_TYPE_POWERPC64, null]],
+		['ppc7400', [CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_7400]],
+		['ppc970', [CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_970]],
+		['ppc', [CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_ALL]],
+	]);
+
 export interface FixtureMachoSignatureInfo {
-	arch: [number, number | null];
 	offset: number;
 	version: number;
 	flags: number;
@@ -76,16 +86,6 @@ function fixtureMachosRead(): {
 		sha256: kSecCodeSignatureHashSHA256,
 		sha384: kSecCodeSignatureHashSHA384,
 		sha512: kSecCodeSignatureHashSHA512,
-	};
-	const cpus: { [key: string]: [number, number | null] } = {
-		arm64: [CPU_TYPE_ARM64, null],
-		// deno-lint-ignore camelcase
-		x86_64: [CPU_TYPE_X86_64, null],
-		i386: [CPU_TYPE_I386, null],
-		ppc64: [CPU_TYPE_POWERPC64, null],
-		ppc7400: [CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_7400],
-		ppc970: [CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_970],
-		ppc: [CPU_TYPE_POWERPC, CPU_SUBTYPE_POWERPC_ALL],
 	};
 	const lines = Deno.readTextFileSync(`${fixtures()}/macho.txt`)
 		.split('\n');
@@ -126,7 +126,6 @@ function fixtureMachosRead(): {
 		assert(mv && group && arch, `Bad line: ${line}`);
 		const [, k, v] = mv;
 		const a = all.get(group)!.get(arch)! || {
-			arch: cpus[arch],
 			offset: 0,
 			version: 0,
 			flags: 0,

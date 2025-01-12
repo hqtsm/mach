@@ -120,7 +120,9 @@ export class MachO extends MachOBase {
 		const data = await this.mReader!.slice(offset, offset + size)
 			.arrayBuffer();
 		if (data.byteLength !== size) {
-			throw new RangeError('Invalid Mach-O data range');
+			throw new RangeError(
+				`Invalid Mach-O data range: ${offset}:${size}`,
+			);
 		}
 		return data;
 	}
