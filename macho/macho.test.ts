@@ -23,6 +23,7 @@ for (const { kind, arch, file, archs } of fixtures) {
 			assertEquals(m.offset(), 0, arc);
 			assertEquals(m.length(), 0, arc);
 			assertEquals(m.signingExtent(), 0, arc);
+			assertEquals(m.isSuspicious(), false, arc);
 
 			const bin = thin(macho, ...CPU_ARCHITECTURES.get(arc)!);
 			const offset = bin.byteOffset;
@@ -38,12 +39,12 @@ for (const { kind, arch, file, archs } of fixtures) {
 			assertEquals(m.isOpen(), true, arc);
 			assertEquals(m.offset(), offset, arc);
 			assertEquals(m.length(), length, arc);
-
 			if (info) {
 				assertEquals(m.signingExtent(), info.offset, arc);
 			} else {
 				assertEquals(m.signingExtent(), length, arc);
 			}
+			assertEquals(m.isSuspicious(), false, arc);
 
 			assertEquals(
 				// deno-lint-ignore no-await-in-loop

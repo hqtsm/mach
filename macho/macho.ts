@@ -1,7 +1,18 @@
 import type { ArrayBufferReal } from '@hqtsm/struct/native';
+import {
+	LC_SEGMENT,
+	LC_SEGMENT_64,
+	LC_SYMTAB,
+	SEG_LINKEDIT,
+} from '../const.ts';
 import { MachHeader } from '../mach/machheader.ts';
+import { SegmentCommand } from '../mach/segmentcommand.ts';
+import { SegmentCommand64 } from '../mach/segmentcommand64.ts';
+import { SymtabCommand } from '../mach/symtabcommand.ts';
 import type { Reader } from '../util/reader.ts';
 import { MachOBase } from './machobase.ts';
+import { strncmp } from '../libc/string.ts';
+import { getByteLength } from '@hqtsm/struct';
 
 /**
  * A Mach-O binary over a readable.
@@ -25,6 +36,11 @@ export class MachO extends MachOBase {
 	private mLength = 0;
 
 	/**
+	 * Suspicious flag.
+	 */
+	private mSuspicious = false;
+
+	/**
 	 * Open binary.
 	 *
 	 * @param reader Reader object.
@@ -36,7 +52,8 @@ export class MachO extends MachOBase {
 		length = (+length || 0) - (length % 1 || 0);
 		this.mReader = reader;
 		this.mOffset = offset;
-		this.mLength = offset ? length : reader.size;
+		const mLength = this.mLength = offset ? length : reader.size;
+		this.mSuspicious = false;
 
 		const hs = MachHeader.BYTE_LENGTH;
 		const header = await reader.slice(offset, offset + hs).arrayBuffer();
@@ -66,6 +83,10 @@ export class MachO extends MachOBase {
 			throw new RangeError('Invalid commands');
 		}
 		this.initCommands(commands);
+
+		if (mLength) {
+			this.validateStructure();
+		}
 	}
 
 	/**
@@ -125,5 +146,94 @@ export class MachO extends MachOBase {
 			);
 		}
 		return data;
+	}
+
+	/**
+	 * Validate structure of binary.
+	 */
+	public validateStructure(): void {
+		let isValid = false;
+
+		const segLinkedit = new Uint8Array(SEG_LINKEDIT.length + 1);
+		for (let i = SEG_LINKEDIT.length; i--;) {
+			segLinkedit[i] = SEG_LINKEDIT.charCodeAt(i);
+		}
+
+		LOOP: for (
+			let cmd = this.loadCommands();
+			cmd;
+			cmd = this.nextCommand(cmd)
+		) {
+			switch (cmd.cmd) {
+				case LC_SEGMENT: {
+					if (cmd.cmdsize < SegmentCommand.BYTE_LENGTH) {
+						throw new RangeError('Invalid command size');
+					}
+					const seg = new SegmentCommand(
+						cmd.buffer,
+						cmd.byteOffset,
+						cmd.littleEndian,
+					);
+					if (
+						!strncmp(
+							seg.segname,
+							segLinkedit,
+							getByteLength(SegmentCommand, 'segname'),
+						)
+					) {
+						isValid = seg.fileoff + seg.filesize === this.length();
+						break LOOP;
+					}
+					break;
+				}
+				case LC_SEGMENT_64: {
+					if (cmd.cmdsize < SegmentCommand64.BYTE_LENGTH) {
+						throw new RangeError('Invalid command size');
+					}
+					const seg64 = new SegmentCommand64(
+						cmd.buffer,
+						cmd.byteOffset,
+						cmd.littleEndian,
+					);
+					if (
+						!strncmp(
+							seg64.segname,
+							segLinkedit,
+							getByteLength(SegmentCommand64, 'segname'),
+						)
+					) {
+						isValid = Number(seg64.fileoff + seg64.filesize) ===
+							this.length();
+						break LOOP;
+					}
+					break;
+				}
+				case LC_SYMTAB: {
+					if (cmd.cmdsize < SymtabCommand.BYTE_LENGTH) {
+						throw new RangeError('Invalid command size');
+					}
+					const symtab = new SymtabCommand(
+						cmd.buffer,
+						cmd.byteOffset,
+						cmd.littleEndian,
+					);
+					isValid = symtab.stroff + symtab.strsize === this.length();
+					break LOOP;
+				}
+			}
+		}
+
+		if (!isValid) {
+			this.mSuspicious = true;
+		}
+	}
+
+	/**
+	 * Check if binary structure is suspicious.
+	 *
+	 * @returns Is suspicious.
+	 */
+	public isSuspicious(): boolean {
+		return this.mSuspicious;
 	}
 }
