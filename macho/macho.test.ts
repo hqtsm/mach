@@ -1,7 +1,15 @@
 import { assertEquals, assertRejects } from '@std/assert';
-import { LC_SYMTAB, MH_MAGIC, MH_MAGIC_64 } from '../const.ts';
+import {
+	LC_SEGMENT,
+	LC_SEGMENT_64,
+	LC_SYMTAB,
+	MH_MAGIC,
+	MH_MAGIC_64,
+} from '../const.ts';
 import { MachHeader } from '../mach/machheader.ts';
 import { MachHeader64 } from '../mach/machheader64.ts';
+import { SegmentCommand } from '../mach/segmentcommand.ts';
+import { SegmentCommand64 } from '../mach/segmentcommand64.ts';
 import { SymtabCommand } from '../mach/symtabcommand.ts';
 import {
 	CPU_ARCHITECTURES,
@@ -141,4 +149,34 @@ Deno.test('validateStructure LC_SYMTAB', async () => {
 	await macho.open(new Blob([buffer.slice(0, buffer.byteLength - 1)]));
 
 	assertEquals(macho.isSuspicious(), true);
+});
+
+Deno.test('validateStructure bad command size', async () => {
+	for (
+		const [LC, Command, MH, Header] of [
+			[LC_SEGMENT, SegmentCommand, MH_MAGIC, MachHeader],
+			[LC_SEGMENT_64, SegmentCommand64, MH_MAGIC_64, MachHeader64],
+			[LC_SYMTAB, SymtabCommand, MH_MAGIC, MachHeader],
+		] as const
+	) {
+		const cmdsize = Command.BYTE_LENGTH - 1;
+		const buffer = new ArrayBuffer(Header.BYTE_LENGTH + cmdsize);
+
+		const mh = new Header(buffer);
+		mh.magic = MH;
+		mh.ncmds = 1;
+		mh.sizeofcmds = cmdsize;
+
+		const cmd = new Command(buffer, Header.BYTE_LENGTH);
+		cmd.cmd = LC;
+		cmd.cmdsize = cmdsize;
+
+		const macho = new MachO();
+		// deno-lint-ignore no-await-in-loop
+		await assertRejects(
+			() => macho.open(new Blob([buffer])),
+			RangeError,
+			'Invalid command size',
+		);
+	}
 });
