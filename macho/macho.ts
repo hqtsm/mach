@@ -38,37 +38,31 @@ export class MachO extends MachOBase {
 		this.mOffset = offset;
 		this.mLength = offset ? length : reader.size;
 
-		let header = await reader.slice(offset, offset + MachHeader.BYTE_LENGTH)
-			.arrayBuffer();
-		if (header.byteLength !== MachHeader.BYTE_LENGTH) {
+		const hs = MachHeader.BYTE_LENGTH;
+		const header = await reader.slice(offset, offset + hs).arrayBuffer();
+		if (header.byteLength !== hs) {
 			throw new RangeError('Invalid Mach-O header');
 		}
 		this.initHeader(header);
+		offset += hs;
 
-		const headersize = this.headerSize();
-		const more = headersize - header.byteLength;
+		const fhs = this.headerSize();
+		const more = fhs - hs;
 		if (more > 0) {
-			const o = offset + header.byteLength;
-			const d = new Uint8Array(
-				await reader.slice(o, o + more).arrayBuffer(),
-			);
+			const d = await reader.slice(offset, offset + more).arrayBuffer();
 			if (d.byteLength !== more) {
 				throw new RangeError('Invalid Mach-O header');
 			}
-			const full = new Uint8Array(header.byteLength + more);
+			const full = new Uint8Array(fhs);
 			full.set(new Uint8Array(header));
-			full.set(d, header.byteLength);
-			header = full;
-			this.initHeader(header);
+			full.set(new Uint8Array(d), hs);
+			this.initHeader(full);
+			offset += more;
 		}
 
-		const commandOffset = offset + headersize;
-		const commandSize = this.commandSize();
-		const commands = new Uint8Array(
-			await reader.slice(commandOffset, commandOffset + commandSize)
-				.arrayBuffer(),
-		);
-		if (commands.byteLength !== commandSize) {
+		const cs = this.commandSize();
+		const commands = await reader.slice(offset, offset + cs).arrayBuffer();
+		if (commands.byteLength !== cs) {
 			throw new RangeError('Invalid Mach-O commands');
 		}
 		this.initCommands(commands);
