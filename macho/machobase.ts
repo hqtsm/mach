@@ -214,9 +214,17 @@ export class MachOBase {
 	 * @returns Segment command or null.
 	 */
 	public findSegment(
-		segname: BufferPointer,
+		segname: ArrayBufferReal | BufferPointer,
 	): Const<SegmentCommand> | Const<SegmentCommand64> | null {
-		const sn = new Int8Ptr(segname.buffer, segname.byteOffset);
+		let buffer, byteOffset;
+		if ('buffer' in segname) {
+			buffer = segname.buffer;
+			byteOffset = segname.byteOffset;
+		} else {
+			buffer = segname;
+			byteOffset = 0;
+		}
+		const sn = new Int8Ptr(buffer, byteOffset);
 		let SC: typeof SegmentCommand | typeof SegmentCommand64 | null;
 		for (let c = this.loadCommands(); c; c = this.nextCommand(c)) {
 			switch (c.cmd) {
@@ -251,8 +259,8 @@ export class MachOBase {
 	 * @returns Section or null.
 	 */
 	public findSection(
-		segname: BufferPointer,
-		sectname: BufferPointer,
+		segname: ArrayBufferReal | BufferPointer,
+		sectname: ArrayBufferReal | BufferPointer,
 	): Const<Section> | Const<Section64> | null {
 		const seg = this.findSegment(segname);
 		if (!seg) {
@@ -260,14 +268,22 @@ export class MachOBase {
 		}
 		const S = this.m64 ? Section64 : Section;
 		const SL = S.BYTE_LENGTH;
-		const { buffer, byteLength, littleEndian, nsects } = seg;
+		const { byteLength, littleEndian, nsects } = seg;
 		if (byteLength + (nsects * SL) > seg.cmdsize) {
 			return null;
 		}
-		const sn = new Int8Ptr(sectname.buffer, sectname.byteOffset);
+		let buffer, byteOffset;
+		if ('buffer' in sectname) {
+			buffer = sectname.buffer;
+			byteOffset = sectname.byteOffset;
+		} else {
+			buffer = sectname;
+			byteOffset = 0;
+		}
+		const sn = new Int8Ptr(buffer, byteOffset);
 		const SNL = getByteLength(S, 'sectname');
 		for (let n = nsects, o = seg.byteOffset + byteLength; n--; o += SL) {
-			const sect = new S(buffer, o, littleEndian);
+			const sect = new S(seg.buffer, o, littleEndian);
 			if (strneq(sect.sectname, sn, SNL)) {
 				return sect;
 			}

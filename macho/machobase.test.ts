@@ -536,7 +536,7 @@ Deno.test('findSegment findSection', () => {
 		macho.initCommands(commands);
 
 		assertEquals(
-			macho.findSegment(cstr('GROUP')),
+			macho.findSegment(cstr('GROUP').buffer),
 			null,
 		);
 		assertEquals(
@@ -549,7 +549,7 @@ Deno.test('findSegment findSection', () => {
 			null,
 		);
 		assertEquals(
-			macho.findSection(cstr('group'), cstr('alpha'))!.byteOffset,
+			macho.findSection(cstr('group'), cstr('alpha').buffer)!.byteOffset,
 			secA.byteOffset,
 		);
 		assertEquals(
