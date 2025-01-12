@@ -1,5 +1,11 @@
 import type { ArrayBufferReal, BufferPointer } from '@hqtsm/struct';
 
+/**
+ * Get length of string.
+ *
+ * @param str Character pointer, null terminated.
+ * @returns Length of string.
+ */
 export function strlen(str: ArrayBufferReal | BufferPointer): number {
 	let b, o;
 	if ('buffer' in str) {
@@ -14,6 +20,14 @@ export function strlen(str: ArrayBufferReal | BufferPointer): number {
 	return r;
 }
 
+/**
+ * Compare characters of two strings.
+ *
+ * @param str1 Character pointer.
+ * @param str2 Character pointer.
+ * @param num Maximum characters to compare.
+ * @returns Difference of first non-matching character, 0 if equal.
+ */
 export function strncmp(
 	str1: ArrayBufferReal | BufferPointer,
 	str2: ArrayBufferReal | BufferPointer,
