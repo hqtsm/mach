@@ -481,10 +481,8 @@ Deno.test('signingOffset signingLength', () => {
 Deno.test('findSegment findSection', () => {
 	const cstr = (s: string) => new TextEncoder().encode(`${s}\0`);
 
-	const strSet = (ptr: Arr<number>, str: string) => {
-		new Uint8Array(ptr.buffer, ptr.byteOffset).set(
-			[...str].map((c) => c.charCodeAt(0)),
-		);
+	const strSet = (ptr: Arr<number>, str: ArrayLike<number>) => {
+		new Uint8Array(ptr.buffer, ptr.byteOffset).set(str);
 	};
 
 	for (
@@ -516,13 +514,13 @@ Deno.test('findSegment findSection', () => {
 		seg.cmd = LC;
 		seg.nsects = 2;
 		seg.cmdsize = Seg.BYTE_LENGTH + Sec.BYTE_LENGTH * seg.nsects;
-		strSet(seg.segname, 'group');
+		strSet(seg.segname, cstr('group'));
 
 		const secA = new Sec(seg.buffer, seg.byteLength + seg.byteOffset);
-		strSet(secA.sectname, 'alpha');
+		strSet(secA.sectname, cstr('alpha'));
 
 		const secB = new Sec(seg.buffer, secA.byteLength + secA.byteOffset);
-		strSet(secB.sectname, 'beta');
+		strSet(secB.sectname, cstr('beta'));
 
 		const header = new Mach(new ArrayBuffer(Mach.BYTE_LENGTH));
 		header.magic = MH;
@@ -559,11 +557,22 @@ Deno.test('findSegment findSection', () => {
 			null,
 		);
 
-		strSet(seg.segname, '0123456789abcdef');
+		strSet(seg.segname, cstr('0123456789abcdef').slice(0, 16));
 
 		assertEquals(
 			macho.findSegment(cstr('0123456789abcdefg'))!.byteOffset,
 			seg.byteOffset,
 		);
+
+		strSet(seg.segname, cstr('group'));
+		const { cmdsize } = seg;
+		seg.cmdsize = Seg.BYTE_LENGTH - 1;
+
+		assertThrows(() => macho.findSegment(cstr('group')));
+
+		seg.cmdsize = cmdsize;
+		seg.nsects++;
+
+		assertEquals(macho.findSection(cstr('group'), cstr('gamma')), null);
 	}
 });
