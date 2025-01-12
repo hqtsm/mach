@@ -535,12 +535,16 @@ export class MachOBase {
 			byteOffset = 0;
 		}
 		const mHeader = this.mHeader!;
-		const lc = this.mCommands = new LoadCommand(
+		const mCommands = this.mCommands = new LoadCommand(
 			buffer,
 			byteOffset,
 			mHeader.littleEndian,
 		);
-		this.mEndCommands = lc.byteOffset + mHeader.sizeofcmds;
+		const mEndCommands = this.mEndCommands = byteOffset +
+			mHeader.sizeofcmds;
+		if (byteOffset + mCommands.byteLength > mEndCommands) {
+			throw new Error('Invalid commands size');
+		}
 	}
 
 	/**

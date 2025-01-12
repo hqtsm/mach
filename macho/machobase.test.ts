@@ -143,6 +143,13 @@ Deno.test('init', () => {
 	assertThrows(() => macho.initHeader(header64N));
 	assertStrictEquals(macho.header()!.buffer, header64N.buffer);
 
+	header32N.sizeofcmds = 1;
+
+	assertThrows(() => macho.initHeader(header32N));
+	assertThrows(() => macho.initCommands(commandN));
+
+	header32N.sizeofcmds = commandN.cmdsize;
+
 	header32N.magic = MH_MAGIC;
 	header32F.magic = MH_MAGIC;
 	header64N.magic = MH_MAGIC_64;
