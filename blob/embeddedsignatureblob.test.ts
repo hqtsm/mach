@@ -107,7 +107,7 @@ for (const { kind, arch, file, archs } of fixtures) {
 			}
 
 			const message = (s: string) => `CD: ${arc}: ${s}`;
-			const bin = thin(macho, info.arch[0], info.arch[1]);
+			const bin = thin(macho, ...info.arch);
 			const cds = [];
 
 			for await (
