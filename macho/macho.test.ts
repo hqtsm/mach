@@ -127,10 +127,18 @@ Deno.test('validateStructure LC_SYMTAB', async () => {
 	cmd.stroff = MachHeader.BYTE_LENGTH + SymtabCommand.BYTE_LENGTH;
 	cmd.strsize = extra;
 
-	const blob = new Blob([buffer]);
-	const macho = new MachO();
-
-	await macho.open(blob);
+	let macho = new MachO();
+	await macho.open(new Blob([buffer]));
 
 	assertEquals(macho.isSuspicious(), false);
+
+	macho = new MachO();
+	await macho.open(new Blob([buffer, new ArrayBuffer(1)]));
+
+	assertEquals(macho.isSuspicious(), true);
+
+	macho = new MachO();
+	await macho.open(new Blob([buffer.slice(0, buffer.byteLength - 1)]));
+
+	assertEquals(macho.isSuspicious(), true);
 });
