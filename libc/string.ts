@@ -47,7 +47,10 @@ export function strncmp(
 		b2 = str2;
 		o2 = 0;
 	}
-	for (let c1 = new Uint8Array(b1), c2 = new Uint8Array(b2), u1, u2; num--;) {
+	for (
+		let i = 0, c1 = new Uint8Array(b1), c2 = new Uint8Array(b2), u1, u2;
+		i++ < num;
+	) {
 		u1 = c1[o1++];
 		u2 = c2[o2++];
 		if (u1 !== u2) {
