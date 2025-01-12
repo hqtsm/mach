@@ -20,9 +20,7 @@ Deno.test('empty (invalid?)', () => {
 
 Deno.test('data', () => {
 	const data = unhex('01 02 03 04 05 06 07 08 F0 F1 F2 F3 F4 F5 F6 F7');
-	const edb = new EntitlementDERBlob(
-		EntitlementDERBlob.blobify(data).buffer,
-	);
+	const edb = new EntitlementDERBlob(EntitlementDERBlob.blobify(data));
 	const dv = new DataView(edb.buffer, edb.byteOffset, edb.length());
 	assertEquals(dv.getUint32(0), kSecCodeMagicEntitlementDER);
 	assertEquals(dv.getUint32(4), edb.length());

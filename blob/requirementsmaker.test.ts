@@ -41,11 +41,11 @@ Deno.test('host + designated', () => {
 	const rsm = new RequirementsMaker();
 	rsm.add(
 		kSecHostRequirementType,
-		new Requirement(Requirement.blobify(host).buffer),
+		new Requirement(Requirement.blobify(host)),
 	);
 	rsm.add(
 		kSecDesignatedRequirementType,
-		new Requirement(Requirement.blobify(designated).buffer),
+		new Requirement(Requirement.blobify(designated)),
 	);
 	const rs = rsm.make();
 	assertEquals(

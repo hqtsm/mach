@@ -31,7 +31,7 @@ export class Blob extends BlobCore {
 	 */
 	public static blobify(
 		content: ArrayBufferReal | BufferView | number = 0,
-	): Uint8Array {
+	): ArrayBufferReal {
 		const { BYTE_LENGTH } = Blob;
 		let view;
 		let size = BYTE_LENGTH;
@@ -55,7 +55,7 @@ export class Blob extends BlobCore {
 		if (view) {
 			new Uint8Array(buffer, BYTE_LENGTH).set(view);
 		}
-		return new Uint8Array(buffer);
+		return buffer;
 	}
 
 	static {

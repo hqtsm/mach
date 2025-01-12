@@ -32,7 +32,7 @@ Deno.test('empty (invalid?)', () => {
 
 Deno.test('data', () => {
 	const data = new TextEncoder().encode(examplePlist);
-	const eb = new EntitlementBlob(EntitlementBlob.blobify(data).buffer);
+	const eb = new EntitlementBlob(EntitlementBlob.blobify(data));
 	let ptr = eb.body();
 	new Uint8Array(ptr.buffer, ptr.byteOffset).set(data);
 	const dv = new DataView(eb.buffer, eb.byteOffset, eb.length());

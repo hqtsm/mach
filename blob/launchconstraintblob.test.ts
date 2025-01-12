@@ -46,7 +46,7 @@ Deno.test('empty (invalid?)', () => {
 
 Deno.test('data', () => {
 	const edb = new LaunchConstraintBlob(
-		LaunchConstraintBlob.blobify(sampleDer).buffer,
+		LaunchConstraintBlob.blobify(sampleDer),
 	);
 	const dv = new DataView(edb.buffer, edb.byteOffset, edb.length());
 	assertEquals(dv.getUint32(0), kSecCodeMagicLaunchConstraint);
