@@ -28,10 +28,18 @@ Deno.test('clone', () => {
 	const data = new Uint8Array(12);
 	const blob = new BlobCore(data.buffer, 2);
 	const clone = blob.clone();
-
 	assertEquals(clone.data().byteOffset, 0);
-
 	new Uint8Array(clone.data().buffer).fill(1);
-
 	assertEquals(data, new Uint8Array(12));
+});
+
+Deno.test('innerData', () => {
+	const data = new Uint8Array(12);
+	const blob = new BlobCore(data.buffer, 2);
+	blob.length(10);
+	const body = blob.innerData();
+	assertEquals(body.length, 2);
+	body[0] = 1;
+	body[1] = 2;
+	assertEquals(data.slice(10), new Uint8Array([1, 2]));
 });

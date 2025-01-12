@@ -1,9 +1,12 @@
 import {
+	type Arr,
+	array,
 	type ArrayBufferReal,
 	constant,
 	Ptr,
 	Struct,
 	uint32BE,
+	Uint8Ptr,
 } from '@hqtsm/struct';
 
 /**
@@ -106,9 +109,22 @@ export class BlobCore extends Struct {
 	 * @returns Cloned blob.
 	 */
 	public clone(): BlobCore {
-		const l = this.length();
+		const l = this.mLength;
 		const o = this.byteOffset;
 		return new BlobCore(this.buffer.slice(o, o + l), 0, this.littleEndian);
+	}
+
+	/**
+	 * Inner byte data.
+	 *
+	 * @returns Uint8 byte array.
+	 */
+	public innerData(): Arr<number> {
+		return new (array(Uint8Ptr, this.mLength - 8))(
+			this.buffer,
+			this.byteOffset + 8,
+			this.littleEndian,
+		);
 	}
 
 	static {
