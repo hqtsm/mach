@@ -44,6 +44,34 @@ for (const { kind, arch, file, archs } of fixtures) {
 			} else {
 				assertEquals(m.signingExtent(), length, arc);
 			}
+
+			assertEquals(
+				// deno-lint-ignore no-await-in-loop
+				new Uint8Array(await m.dataAt(0, 4)),
+				bin.slice(0, 4),
+				arc,
+			);
+
+			assertEquals(
+				// deno-lint-ignore no-await-in-loop
+				new Uint8Array(await m.dataAt(4, 4)),
+				bin.slice(4, 8),
+				arc,
+			);
+
+			assertEquals(
+				// deno-lint-ignore no-await-in-loop
+				(await m.dataAt(4, 0)).byteLength,
+				0,
+				arc,
+			);
+
+			// deno-lint-ignore no-await-in-loop
+			await assertRejects(
+				() => m.dataAt(blob.size - 1, 2),
+				RangeError,
+				`Invalid data range: ${blob.size - 1}:2`,
+			);
 		}
 	});
 }
@@ -56,7 +84,7 @@ Deno.test('open under', async () => {
 	await assertRejects(
 		() => macho.open(new Blob([mh.buffer])),
 		RangeError,
-		'Invalid Mach-O header',
+		'Invalid header',
 	);
 
 	mh = new MachHeader64(new ArrayBuffer(MachHeader64.BYTE_LENGTH - 1));
@@ -65,7 +93,7 @@ Deno.test('open under', async () => {
 	await assertRejects(
 		() => macho.open(new Blob([mh.buffer])),
 		RangeError,
-		'Invalid Mach-O header',
+		'Invalid header',
 	);
 
 	mh = new MachHeader64(new ArrayBuffer(MachHeader64.BYTE_LENGTH + 1));
@@ -76,6 +104,6 @@ Deno.test('open under', async () => {
 	await assertRejects(
 		() => macho.open(new Blob([mh.buffer])),
 		RangeError,
-		'Invalid Mach-O commands',
+		'Invalid commands',
 	);
 });

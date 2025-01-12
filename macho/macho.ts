@@ -41,7 +41,7 @@ export class MachO extends MachOBase {
 		const hs = MachHeader.BYTE_LENGTH;
 		const header = await reader.slice(offset, offset + hs).arrayBuffer();
 		if (header.byteLength !== hs) {
-			throw new RangeError('Invalid Mach-O header');
+			throw new RangeError('Invalid header');
 		}
 		this.initHeader(header);
 		offset += hs;
@@ -51,7 +51,7 @@ export class MachO extends MachOBase {
 		if (more > 0) {
 			const d = await reader.slice(offset, offset + more).arrayBuffer();
 			if (d.byteLength !== more) {
-				throw new RangeError('Invalid Mach-O header');
+				throw new RangeError('Invalid header');
 			}
 			const full = new Uint8Array(fhs);
 			full.set(new Uint8Array(header));
@@ -63,7 +63,7 @@ export class MachO extends MachOBase {
 		const cs = this.commandSize();
 		const commands = await reader.slice(offset, offset + cs).arrayBuffer();
 		if (commands.byteLength !== cs) {
-			throw new RangeError('Invalid Mach-O commands');
+			throw new RangeError('Invalid commands');
 		}
 		this.initCommands(commands);
 	}
@@ -117,11 +117,11 @@ export class MachO extends MachOBase {
 	): Promise<ArrayBufferReal> {
 		offset = (+offset || 0) - (offset % 1 || 0);
 		size = (+size || 0) - (size % 1 || 0);
-		const data = await this.mReader!.slice(offset, offset + size)
-			.arrayBuffer();
+		const o = this.mOffset + offset;
+		const data = await this.mReader!.slice(o, o + size).arrayBuffer();
 		if (data.byteLength !== size) {
 			throw new RangeError(
-				`Invalid Mach-O data range: ${offset}:${size}`,
+				`Invalid data range: ${offset}:${size}`,
 			);
 		}
 		return data;
