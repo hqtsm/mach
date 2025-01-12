@@ -7,7 +7,7 @@ import type { ArrayBufferReal, BufferPointer } from '@hqtsm/struct';
  * @returns Length of string.
  */
 export function strlen(str: ArrayBufferReal | BufferPointer): number {
-	let b, o;
+	let b, o, c, r = 0;
 	if ('buffer' in str) {
 		b = str.buffer;
 		o = str.byteOffset;
@@ -15,8 +15,7 @@ export function strlen(str: ArrayBufferReal | BufferPointer): number {
 		b = str;
 		o = 0;
 	}
-	let r = 0;
-	for (const c = new Uint8Array(b); c[o++]; r++);
+	for (c = new Uint8Array(b); c[o++]; r++);
 	return r;
 }
 
@@ -48,9 +47,7 @@ export function strncmp(
 		b2 = str2;
 		o2 = 0;
 	}
-	const c1 = new Uint8Array(b1);
-	const c2 = new Uint8Array(b2);
-	for (let i = 0, u1, u2; i < num; i++) {
+	for (let c1 = new Uint8Array(b1), c2 = new Uint8Array(b2), u1, u2; num--;) {
 		u1 = c1[o1++];
 		u2 = c2[o2++];
 		if (u1 !== u2) {
