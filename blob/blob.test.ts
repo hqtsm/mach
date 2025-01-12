@@ -30,3 +30,10 @@ Deno.test('blobify view', () => {
 		new Uint8Array([0, 0, 0, 0, 0, 0, 0, 12, 2, 3, 4, 5]),
 	);
 });
+
+Deno.test('is', () => {
+	const blob = new Blob(Blob.blobify(new Uint8Array([1, 2, 3, 4]).buffer));
+	assertEquals(blob.is(), true);
+	blob.initialize(1);
+	assertEquals(blob.is(), false);
+});

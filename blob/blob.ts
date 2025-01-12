@@ -21,7 +21,7 @@ export class Blob extends BlobCore {
 	 *
 	 * @returns Type magic number.
 	 */
-	public static readonly typeMagic: number = 0;
+	public static override readonly typeMagic: number = 0;
 
 	/**
 	 * Wrap data into a new blob.

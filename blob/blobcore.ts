@@ -127,9 +127,24 @@ export class BlobCore extends Struct {
 		);
 	}
 
+	/**
+	 * Check if blob type match the expected magic.
+	 *
+	 * @returns Is the same type.
+	 */
+	public is(): boolean {
+		return this.mMagic === this.constructor.typeMagic;
+	}
+
+	/**
+	 * Type magic template placeholder.
+	 */
+	public static readonly typeMagic: unknown;
+
 	static {
 		uint32BE(this, 'mMagic' as never);
 		uint32BE(this, 'mLength' as never);
 		constant(this, 'BYTE_LENGTH');
+		constant(this, 'typeMagic');
 	}
 }
