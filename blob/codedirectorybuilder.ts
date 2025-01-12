@@ -27,7 +27,7 @@ async function generateHash(
 	const data = await reader.slice(offset, offset + length).arrayBuffer();
 	const { byteLength } = data;
 	if (byteLength !== length) {
-		throw new Error(`Read from ${offset}: ${byteLength} != ${length}`);
+		throw new RangeError(`Read from ${offset}: ${byteLength} != ${length}`);
 	}
 	await hasher.update(data, true);
 	return await hasher.finish();
