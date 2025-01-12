@@ -36,10 +36,8 @@ export class MachO extends MachOBase {
 		this.mOffset = offset;
 		this.mLength = offset ? length : reader.size;
 
-		let header = new Uint8Array(
-			await reader.slice(offset, offset + MachHeader.BYTE_LENGTH)
-				.arrayBuffer(),
-		);
+		let header = await reader.slice(offset, offset + MachHeader.BYTE_LENGTH)
+			.arrayBuffer();
 		if (header.byteLength !== MachHeader.BYTE_LENGTH) {
 			throw new RangeError('Invalid Mach-O header');
 		}
@@ -56,7 +54,7 @@ export class MachO extends MachOBase {
 				throw new RangeError('Invalid Mach-O header');
 			}
 			const full = new Uint8Array(header.byteLength + more);
-			full.set(header);
+			full.set(new Uint8Array(header));
 			full.set(d, header.byteLength);
 			header = full;
 			this.initHeader(header);

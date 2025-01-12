@@ -1,4 +1,5 @@
 import {
+	type ArrayBufferReal,
 	type BufferPointer,
 	type Const,
 	getByteLength,
@@ -462,8 +463,15 @@ export class MachOBase {
 	 *
 	 * @param header Mach-O header data.
 	 */
-	protected initHeader(header: BufferPointer): void {
-		const { buffer, byteOffset } = header;
+	protected initHeader(header: ArrayBufferReal | BufferPointer): void {
+		let buffer, byteOffset;
+		if ('buffer' in header) {
+			buffer = header.buffer;
+			byteOffset = header.byteOffset;
+		} else {
+			buffer = header;
+			byteOffset = 0;
+		}
 		let mh = this.mHeader = new MachHeader(buffer, byteOffset);
 		let m64 = false;
 		const m = mh.magic;
@@ -501,11 +509,19 @@ export class MachOBase {
 	 *
 	 * @param commands Mach-O commands data.
 	 */
-	protected initCommands(commands: BufferPointer): void {
+	protected initCommands(commands: ArrayBufferReal | BufferPointer): void {
+		let buffer, byteOffset;
+		if ('buffer' in commands) {
+			buffer = commands.buffer;
+			byteOffset = commands.byteOffset;
+		} else {
+			buffer = commands;
+			byteOffset = 0;
+		}
 		const mHeader = this.mHeader!;
 		const lc = this.mCommands = new LoadCommand(
-			commands.buffer,
-			commands.byteOffset,
+			buffer,
+			byteOffset,
 			mHeader.littleEndian,
 		);
 		this.mEndCommands = lc.byteOffset + mHeader.sizeofcmds;

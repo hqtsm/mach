@@ -1,6 +1,7 @@
 import { assertEquals, assertStrictEquals, assertThrows } from '@std/assert';
 import {
 	type Arr,
+	type ArrayBufferReal,
 	type BufferPointer,
 	type Const,
 	LITTLE_ENDIAN,
@@ -37,11 +38,13 @@ import { VersionMinCommand } from '../mach/versionmincommand.ts';
 import { MachOBase } from './machobase.ts';
 
 class MachOBaseTest extends MachOBase {
-	public override initHeader(header: BufferPointer): void {
+	public override initHeader(header: BufferPointer | ArrayBufferReal): void {
 		super.initHeader(header);
 	}
 
-	public override initCommands(commands: BufferPointer): void {
+	public override initCommands(
+		commands: ArrayBufferReal | BufferPointer,
+	): void {
 		super.initCommands(commands);
 	}
 
@@ -156,7 +159,7 @@ Deno.test('init', () => {
 		const tag = `bits=${bits} flip=${flip}`;
 
 		macho = new MachOBaseTest();
-		macho.initHeader(header satisfies BufferPointer);
+		macho.initHeader(flip ? header.buffer : header);
 
 		assertStrictEquals(macho.header()!.buffer, header.buffer, tag);
 		assertEquals(macho.isFlipped(), flip, tag);
@@ -170,7 +173,7 @@ Deno.test('init', () => {
 		assertEquals(macho.commandSize(), header.sizeofcmds, tag);
 		assertEquals(macho.loadCommands(), null, tag);
 
-		macho.initCommands(command satisfies BufferPointer);
+		macho.initCommands(flip ? command : command.buffer);
 		assertStrictEquals(macho.loadCommands()!.buffer, command.buffer, tag);
 	}
 });
@@ -193,7 +196,7 @@ Deno.test('nextCommand valid', () => {
 
 	const macho = new MachOBaseTest();
 	macho.initHeader(header);
-	macho.initCommands(new Uint8Array(commands));
+	macho.initCommands(commands);
 
 	const cmdA = macho.loadCommands()!;
 	assertEquals(cmdA.cmd, commandA.cmd);
@@ -223,7 +226,7 @@ Deno.test('nextCommand zero', () => {
 
 	const macho = new MachOBaseTest();
 	macho.initHeader(header);
-	macho.initCommands(new Uint8Array(commands));
+	macho.initCommands(commands);
 
 	const cmdA = macho.loadCommands()!;
 	assertEquals(cmdA.cmd, commandA.cmd);
@@ -248,7 +251,7 @@ Deno.test('nextCommand under', () => {
 
 	const macho = new MachOBaseTest();
 	macho.initHeader(header);
-	macho.initCommands(new Uint8Array(commands));
+	macho.initCommands(commands);
 
 	const cmdA = macho.loadCommands()!;
 	assertEquals(cmdA.cmd, commandA.cmd);
@@ -274,7 +277,7 @@ Deno.test('nextCommand over', () => {
 
 	const macho = new MachOBaseTest();
 	macho.initHeader(header);
-	macho.initCommands(new Uint8Array(commands));
+	macho.initCommands(commands);
 
 	const cmdA = macho.loadCommands()!;
 	assertEquals(cmdA.cmd, commandA.cmd);
@@ -304,7 +307,7 @@ Deno.test('findCommand', () => {
 
 	const macho = new MachOBaseTest();
 	macho.initHeader(header);
-	macho.initCommands(new Uint8Array(commands));
+	macho.initCommands(commands);
 
 	assertEquals(macho.findCommand(0), null);
 	assertEquals(macho.findCommand(1)!.byteOffset, commandA.byteOffset);
@@ -333,7 +336,7 @@ Deno.test('find command valid', () => {
 
 		const macho = new MachOBaseTest();
 		macho.initHeader(header);
-		macho.initCommands(new Uint8Array(commands));
+		macho.initCommands(commands);
 
 		assertEquals(macho[method](), null, tag);
 
@@ -365,7 +368,7 @@ Deno.test('find command under', () => {
 
 		const macho = new MachOBaseTest();
 		macho.initHeader(header);
-		macho.initCommands(new Uint8Array(commands));
+		macho.initCommands(commands);
 
 		assertThrows(() => macho[method](), tag);
 	}
@@ -399,7 +402,7 @@ Deno.test('find version', () => {
 
 	const macho = new MachOBaseTest();
 	macho.initHeader(header);
-	macho.initCommands(new Uint8Array(commands));
+	macho.initCommands(commands);
 
 	assertEquals(macho.version(null, null, null), false);
 	assertEquals(macho.platform(), 0);
@@ -438,7 +441,7 @@ Deno.test('find version', () => {
 	// Testing the default case if findMinVersion returns something not cased.
 	const machoFMV = new MachOBaseTestFMV();
 	machoFMV.initHeader(header);
-	machoFMV.initCommands(new Uint8Array(commands));
+	machoFMV.initCommands(commands);
 
 	commandB.cmd = LC_VERSION_FAKE;
 	p[0] = 1;
@@ -466,7 +469,7 @@ Deno.test('signingOffset signingLength', () => {
 
 	const macho = new MachOBaseTest();
 	macho.initHeader(header);
-	macho.initCommands(new Uint8Array(commands));
+	macho.initCommands(commands);
 
 	assertEquals(macho.signingOffset(), 0);
 	assertEquals(macho.signingLength(), 0);
@@ -530,7 +533,7 @@ Deno.test('findSegment findSection', () => {
 
 		const macho = new MachOBaseTest();
 		macho.initHeader(header);
-		macho.initCommands(new Uint8Array(commands));
+		macho.initCommands(commands);
 
 		assertEquals(
 			macho.findSegment(cstr('GROUP')),
