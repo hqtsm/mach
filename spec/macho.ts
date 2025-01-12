@@ -59,7 +59,7 @@ export function thin(
 			break;
 		}
 		default: {
-			throw new Error(`Unknown magic: ${magic}`);
+			throw new RangeError(`Unknown magic: 0x${magic.toString(16)}`);
 		}
 	}
 	if (!f) {

@@ -138,15 +138,32 @@ Deno.test('init', () => {
 	header64F.sizeofcmds = commandF.cmdsize;
 
 	// Throws on bad magic, but still updates mHeader.
-	assertThrows(() => macho.initHeader(header32N));
+	assertThrows(
+		() => macho.initHeader(header32N),
+		RangeError,
+		'Unknown magic: 0x0',
+	);
 	assertStrictEquals(macho.header()!.buffer, header32N.buffer);
-	assertThrows(() => macho.initHeader(header64N));
+	assertThrows(
+		() => macho.initHeader(header64N),
+		RangeError,
+		'Unknown magic: 0x0',
+	);
 	assertStrictEquals(macho.header()!.buffer, header64N.buffer);
 
+	header32N.magic = 0xabcd1234;
 	header32N.sizeofcmds = 1;
 
-	assertThrows(() => macho.initHeader(header32N));
-	assertThrows(() => macho.initCommands(commandN));
+	assertThrows(
+		() => macho.initHeader(header32N),
+		RangeError,
+		'Unknown magic: 0xabcd1234',
+	);
+	assertThrows(
+		() => macho.initCommands(commandN),
+		RangeError,
+		'Invalid commands size',
+	);
 
 	header32N.sizeofcmds = commandN.cmdsize;
 
@@ -238,7 +255,11 @@ Deno.test('nextCommand zero', () => {
 	const cmdA = macho.loadCommands()!;
 	assertEquals(cmdA.cmd, commandA.cmd);
 
-	assertThrows(() => macho.nextCommand(cmdA));
+	assertThrows(
+		() => macho.nextCommand(cmdA),
+		RangeError,
+		'Invalid command size',
+	);
 });
 
 Deno.test('nextCommand under', () => {
@@ -263,7 +284,11 @@ Deno.test('nextCommand under', () => {
 	const cmdA = macho.loadCommands()!;
 	assertEquals(cmdA.cmd, commandA.cmd);
 
-	assertThrows(() => macho.nextCommand(cmdA));
+	assertThrows(
+		() => macho.nextCommand(cmdA),
+		RangeError,
+		'Invalid command size',
+	);
 });
 
 Deno.test('nextCommand over', () => {
@@ -289,7 +314,11 @@ Deno.test('nextCommand over', () => {
 	const cmdA = macho.loadCommands()!;
 	assertEquals(cmdA.cmd, commandA.cmd);
 
-	assertThrows(() => macho.nextCommand(cmdA));
+	assertThrows(
+		() => macho.nextCommand(cmdA),
+		RangeError,
+		'Invalid command size',
+	);
 });
 
 Deno.test('findCommand', () => {
@@ -377,7 +406,12 @@ Deno.test('find command under', () => {
 		macho.initHeader(header);
 		macho.initCommands(commands);
 
-		assertThrows(() => macho[method](), tag);
+		assertThrows(
+			() => macho[method](),
+			RangeError,
+			'Invalid command size',
+			tag,
+		);
 	}
 });
 
@@ -514,6 +548,8 @@ Deno.test('findSegment findSection', () => {
 			],
 		] as const
 	) {
+		const tag = `Mach=${Mach.name}`;
+
 		const commands = new ArrayBuffer(
 			LoadCommand.BYTE_LENGTH + Seg.BYTE_LENGTH + Sec.BYTE_LENGTH * 2,
 		);
@@ -545,27 +581,33 @@ Deno.test('findSegment findSection', () => {
 		assertEquals(
 			macho.findSegment(cstr('GROUP').buffer),
 			null,
+			tag,
 		);
 		assertEquals(
 			macho.findSegment(cstr('group'))!.byteOffset,
 			seg.byteOffset,
+			tag,
 		);
 
 		assertEquals(
 			macho.findSection(cstr('GROUP'), cstr('ALPHA')),
 			null,
+			tag,
 		);
 		assertEquals(
 			macho.findSection(cstr('group'), cstr('alpha').buffer)!.byteOffset,
 			secA.byteOffset,
+			tag,
 		);
 		assertEquals(
 			macho.findSection(cstr('group'), cstr('beta'))!.byteOffset,
 			secB.byteOffset,
+			tag,
 		);
 		assertEquals(
 			macho.findSection(cstr('group'), cstr('gamma')),
 			null,
+			tag,
 		);
 
 		strSet(seg.segname, cstr('0123456789abcdef').slice(0, 16));
@@ -573,18 +615,28 @@ Deno.test('findSegment findSection', () => {
 		assertEquals(
 			macho.findSegment(cstr('0123456789abcdefg'))!.byteOffset,
 			seg.byteOffset,
+			tag,
 		);
 
 		strSet(seg.segname, cstr('group'));
 		const { cmdsize } = seg;
 		seg.cmdsize = Seg.BYTE_LENGTH - 1;
 
-		assertThrows(() => macho.findSegment(cstr('group')));
+		assertThrows(
+			() => macho.findSegment(cstr('group')),
+			RangeError,
+			'Invalid command size',
+			tag,
+		);
 
 		seg.cmdsize = cmdsize;
 		seg.nsects++;
 
-		assertEquals(macho.findSection(cstr('group'), cstr('gamma')), null);
+		assertEquals(
+			macho.findSection(cstr('group'), cstr('gamma')),
+			null,
+			tag,
+		);
 	}
 });
 

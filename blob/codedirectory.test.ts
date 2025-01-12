@@ -123,5 +123,9 @@ Deno.test('hashFor', () => {
 	);
 
 	// Not supported, intentional or an oversight?
-	assertThrows(() => CodeDirectory.hashFor(kSecCodeSignatureHashSHA512));
+	assertThrows(
+		() => CodeDirectory.hashFor(kSecCodeSignatureHashSHA512),
+		RangeError,
+		`Unsupported hash type: ${kSecCodeSignatureHashSHA512}`,
+	);
 });

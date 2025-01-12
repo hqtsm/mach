@@ -265,7 +265,11 @@ Deno.test('copy Requirement', () => {
 	const c = new RequirementMaker(Requirement.lwcrForm);
 	const d = new RequirementMaker(Requirement.lwcrForm);
 	const dr = d.make();
-	assertThrows(() => c.copy(dr));
+	assertThrows(
+		() => c.copy(dr),
+		RangeError,
+		`Unsupported requirement kind: ${dr.kind}`,
+	);
 });
 
 Deno.test('put', () => {

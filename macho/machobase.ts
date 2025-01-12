@@ -162,7 +162,7 @@ export class MachOBase {
 	public nextCommand(command: Const<LoadCommand>): Const<LoadCommand> | null {
 		const { cmdsize } = command;
 		if (!cmdsize) {
-			throw new Error('Invalid command size');
+			throw new RangeError('Invalid command size');
 		}
 		const { mEndCommands } = this;
 		const byteOffset = command.byteOffset + cmdsize;
@@ -170,7 +170,7 @@ export class MachOBase {
 			return null;
 		}
 		if (byteOffset + LoadCommand.BYTE_LENGTH > mEndCommands) {
-			throw new Error('Invalid command size');
+			throw new RangeError('Invalid command size');
 		}
 		command = new LoadCommand(
 			command.buffer,
@@ -178,7 +178,7 @@ export class MachOBase {
 			command.littleEndian,
 		);
 		if (byteOffset + command.cmdsize > mEndCommands) {
-			throw new Error('Invalid command size');
+			throw new RangeError('Invalid command size');
 		}
 		return command;
 	}
@@ -241,7 +241,7 @@ export class MachOBase {
 				}
 			}
 			if (c.cmdsize < SC.BYTE_LENGTH) {
-				throw new Error('Invalid command size');
+				throw new RangeError('Invalid command size');
 			}
 			const seg = new SC(c.buffer, c.byteOffset, c.littleEndian);
 			if (strneq(seg.segname, sn, getByteLength(SC, 'segname'))) {
@@ -329,7 +329,7 @@ export class MachOBase {
 			return null;
 		}
 		if (cmd.cmdsize < LinkeditDataCommand.BYTE_LENGTH) {
-			throw new Error('Invalid command size');
+			throw new RangeError('Invalid command size');
 		}
 		return new LinkeditDataCommand(
 			cmd.buffer,
@@ -349,7 +349,7 @@ export class MachOBase {
 			return null;
 		}
 		if (cmd.cmdsize < LinkeditDataCommand.BYTE_LENGTH) {
-			throw new Error('Invalid command size');
+			throw new RangeError('Invalid command size');
 		}
 		return new LinkeditDataCommand(
 			cmd.buffer,
@@ -512,7 +512,7 @@ export class MachOBase {
 				break;
 			}
 			default: {
-				throw new TypeError(`Unknown header magic: ${m.toString(16)}`);
+				throw new RangeError(`Unknown magic: 0x${m.toString(16)}`);
 			}
 		}
 		this.mHeader = mh;
@@ -543,7 +543,7 @@ export class MachOBase {
 		const mEndCommands = this.mEndCommands = byteOffset +
 			mHeader.sizeofcmds;
 		if (byteOffset + mCommands.byteLength > mEndCommands) {
-			throw new Error('Invalid commands size');
+			throw new RangeError('Invalid commands size');
 		}
 	}
 
@@ -578,7 +578,7 @@ export class MachOBase {
 				case LC_VERSION_MIN_WATCHOS:
 				case LC_VERSION_MIN_TVOS: {
 					if (c.cmdsize < VersionMinCommand.BYTE_LENGTH) {
-						throw new Error('Invalid command size');
+						throw new RangeError('Invalid command size');
 					}
 					return new VersionMinCommand(
 						c.buffer,
@@ -600,7 +600,7 @@ export class MachOBase {
 		for (let c = this.loadCommands(); c; c = this.nextCommand(c)) {
 			if (c.cmd === LC_BUILD_VERSION) {
 				if (c.cmdsize < BuildVersionCommand.BYTE_LENGTH) {
-					throw new Error('Invalid command size');
+					throw new RangeError('Invalid command size');
 				}
 				return new BuildVersionCommand(
 					c.buffer,

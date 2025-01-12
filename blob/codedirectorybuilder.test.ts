@@ -27,7 +27,11 @@ Deno.test('opened', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	assertEquals(builder.opened(), false);
 
-	assertThrows(() => builder.reopen(new Blob([]), 0, 0));
+	assertThrows(
+		() => builder.reopen(new Blob([]), 0, 0),
+		Error,
+		'Executable not open',
+	);
 	assertEquals(builder.opened(), false);
 
 	await assertRejects(() => builder.build(), Error, 'Executable not open');
@@ -107,7 +111,11 @@ Deno.test('specialSlot', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	builder.executable(new Blob([]), 0, 0, 0);
 	const zero = (await builder.build()).length();
-	await assertRejects(() => builder.specialSlot(0, new ArrayBuffer(0)));
+	await assertRejects(
+		() => builder.specialSlot(0, new ArrayBuffer(0)),
+		RangeError,
+		'Invalid slot index: 0',
+	);
 	assertEquals((await builder.build()).length(), zero + CS_SHA1_LEN * 0);
 
 	await builder.specialSlot(1, new ArrayBuffer(0));
@@ -194,5 +202,5 @@ Deno.test('generatePreEncryptHashes', async () => {
 Deno.test('Read valiation', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	builder.executable(new Blob([]), 1024, 0, UINT32_MAX + 1);
-	await assertRejects(() => builder.build(), Error, 'Read from 0');
+	await assertRejects(() => builder.build(), Error, 'Read from: 0 ');
 });

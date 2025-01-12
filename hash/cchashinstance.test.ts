@@ -96,20 +96,29 @@ Deno.test('CCHashInstance truncate', async () => {
 Deno.test('CCHashInstance unsupported', () => {
 	for (const alg of unsupported) {
 		const tag = `alg=${alg}`;
-		assertThrows(() => new CCHashInstance(alg), tag);
+		assertThrows(
+			() => new CCHashInstance(alg),
+			RangeError,
+			`Unsupported hash algorithm: ${alg}`,
+			tag,
+		);
 	}
 });
 
 Deno.test('CCHashInstance finish finished', async () => {
 	const hash = new CCHashInstance(kCCDigestSHA1);
 	await hash.finish();
-	await assertRejects(() => hash.finish());
+	await assertRejects(() => hash.finish(), Error, 'Digest finished');
 });
 
 Deno.test('CCHashInstance update finished', async () => {
 	const hash = new CCHashInstance(kCCDigestSHA1);
 	await hash.finish();
-	await assertRejects(() => hash.update(new Uint8Array()));
+	await assertRejects(
+		() => hash.update(new Uint8Array()),
+		Error,
+		'Digest finished',
+	);
 });
 
 Deno.test('CCHashInstance transfer', async () => {

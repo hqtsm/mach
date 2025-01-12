@@ -3,7 +3,11 @@ import { thin } from './macho.ts';
 import { unhex } from './hex.ts';
 
 Deno.test('machoThin', () => {
-	assertThrows(() => thin(new Uint8Array(4), 0));
+	assertThrows(
+		() => thin(new Uint8Array(4), 0),
+		RangeError,
+		'Unknown magic: 0x0',
+	);
 	assertEquals(
 		thin(
 			unhex(
