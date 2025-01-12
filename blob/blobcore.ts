@@ -55,28 +55,6 @@ export class BlobCore extends Struct {
 	}
 
 	/**
-	 * Blob data.
-	 * By default includes magic and length.
-	 * Child classes may redefine this to be a smaller area.
-	 *
-	 * @returns Data pointer.
-	 */
-	public data(): Ptr {
-		return new Ptr(this.buffer, this.byteOffset, this.littleEndian);
-	}
-
-	/**
-	 * Clone blob.
-	 *
-	 * @returns Cloned blob.
-	 */
-	public clone(): BlobCore {
-		const l = this.length();
-		const o = this.byteOffset;
-		return new BlobCore(this.buffer.slice(o, o + l), 0, this.littleEndian);
-	}
-
-	/**
 	 * Initialize blob with type and length.
 	 *
 	 * @param magic Magic number.
@@ -109,6 +87,28 @@ export class BlobCore extends Struct {
 			this.byteOffset + offset,
 			littleEndian ?? this.littleEndian,
 		);
+	}
+
+	/**
+	 * Blob data.
+	 * By default includes magic and length.
+	 * Child classes may redefine this to be a smaller area.
+	 *
+	 * @returns Data pointer.
+	 */
+	public data(): Ptr {
+		return new Ptr(this.buffer, this.byteOffset, this.littleEndian);
+	}
+
+	/**
+	 * Clone blob.
+	 *
+	 * @returns Cloned blob.
+	 */
+	public clone(): BlobCore {
+		const l = this.length();
+		const o = this.byteOffset;
+		return new BlobCore(this.buffer.slice(o, o + l), 0, this.littleEndian);
 	}
 
 	static {
