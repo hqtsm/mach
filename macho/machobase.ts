@@ -26,6 +26,7 @@ import {
 	PLATFORM_TVOS,
 	PLATFORM_WATCHOS,
 } from '../const.ts';
+import { strncmp } from '../libc/string.ts';
 import { BuildVersionCommand } from '../mach/buildversioncommand.ts';
 import type { LcStr } from '../mach/lcstr.ts';
 import { LinkeditDataCommand } from '../mach/linkeditdatacommand.ts';
@@ -38,20 +39,6 @@ import { SegmentCommand } from '../mach/segmentcommand.ts';
 import { SegmentCommand64 } from '../mach/segmentcommand64.ts';
 import { VersionMinCommand } from '../mach/versionmincommand.ts';
 import { Architecture } from './architecture.ts';
-
-function strneq(s1: Int8Ptr, s2: Int8Ptr, n: number): boolean {
-	for (let i = 0; i < n; i++) {
-		const a = s1[i];
-		const b = s2[i];
-		if (!a && !b) {
-			return true;
-		}
-		if (a !== b) {
-			return false;
-		}
-	}
-	return true;
-}
 
 /**
  * Common interface of Mach-O binaries features.
@@ -244,7 +231,7 @@ export class MachOBase {
 				throw new RangeError('Invalid command size');
 			}
 			const seg = new SC(c.buffer, c.byteOffset, c.littleEndian);
-			if (strneq(seg.segname, sn, getByteLength(SC, 'segname'))) {
+			if (!strncmp(seg.segname, sn, getByteLength(SC, 'segname'))) {
 				return seg;
 			}
 		}
@@ -284,7 +271,7 @@ export class MachOBase {
 		const SNL = getByteLength(S, 'sectname');
 		for (let n = nsects, o = seg.byteOffset + byteLength; n--; o += SL) {
 			const sect = new S(seg.buffer, o, littleEndian);
-			if (strneq(sect.sectname, sn, SNL)) {
+			if (!strncmp(sect.sectname, sn, SNL)) {
 				return sect;
 			}
 		}
