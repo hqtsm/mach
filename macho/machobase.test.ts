@@ -427,7 +427,7 @@ Deno.test('find version', () => {
 	assertEquals(macho.minVersion(), 34);
 	assertEquals(macho.sdkVersion(), 45);
 
-	// Testing default case if findMinVersion returns something not handled.
+	// Testing the default case if findMinVersion returns something not cased.
 	const machoFMV = new MachOBaseTestFMV();
 	machoFMV.initHeader(header);
 	machoFMV.initCommands(new Uint8Array(commands));
