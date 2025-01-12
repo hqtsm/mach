@@ -276,8 +276,8 @@ export class MachOBase {
 
 	/**
 	 * Get string from load command union.
-	 * Failed bounds check will return null (no exception).
-	 * Reading out-of-bounds may still throw exception.
+	 * Failed bounds check may return null, not throw.
+	 * Reading out of bounds may still throw exception.
 	 *
 	 * @param cmd Load command holding string.
 	 * @param str String within load command.
