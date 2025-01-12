@@ -28,6 +28,7 @@ import { LinkeditDataCommand } from '../mach/linkeditdatacommand.ts';
 import { LoadCommand } from '../mach/loadcommand.ts';
 import { MachHeader } from '../mach/machheader.ts';
 import { MachHeader64 } from '../mach/machheader64.ts';
+import { RpathCommand } from '../mach/rpathcommand.ts';
 import { Section } from '../mach/section.ts';
 import { Section64 } from '../mach/section64.ts';
 import { SegmentCommand } from '../mach/segmentcommand.ts';
@@ -575,4 +576,28 @@ Deno.test('findSegment findSection', () => {
 
 		assertEquals(macho.findSection(cstr('group'), cstr('gamma')), null);
 	}
+});
+
+Deno.test('string', () => {
+	const cstr = new TextEncoder().encode('Some String\0');
+	const data = new Uint8Array(RpathCommand.BYTE_LENGTH + cstr.byteLength);
+
+	const command = new RpathCommand(data.buffer);
+	command.cmdsize = data.byteLength;
+	command.path.offset = RpathCommand.BYTE_LENGTH;
+	data.set(cstr, command.path.offset);
+
+	const macho = new MachOBaseTest();
+	const chars = macho.string(command, command.path)!;
+	const charsStr = new Uint8Array(
+		chars.buffer,
+		chars.byteOffset,
+		cstr.byteLength,
+	);
+
+	assertEquals(charsStr, cstr);
+
+	command.cmdsize--;
+
+	assertEquals(macho.string(command, command.path), null);
 });
