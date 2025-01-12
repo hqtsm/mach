@@ -23,3 +23,15 @@ Deno.test('data', () => {
 	const blob = new BlobCore(data.buffer, 2);
 	assertEquals(blob.data().byteOffset, 2);
 });
+
+Deno.test('clone', () => {
+	const data = new Uint8Array(12);
+	const blob = new BlobCore(data.buffer, 2);
+	const clone = blob.clone();
+
+	assertEquals(clone.data().byteOffset, 0);
+
+	new Uint8Array(clone.data().buffer).fill(1);
+
+	assertEquals(data, new Uint8Array(12));
+});

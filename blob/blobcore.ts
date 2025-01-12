@@ -66,6 +66,17 @@ export class BlobCore extends Struct {
 	}
 
 	/**
+	 * Clone blob.
+	 *
+	 * @returns Cloned blob.
+	 */
+	public clone(): BlobCore {
+		const l = this.length();
+		const o = this.byteOffset;
+		return new BlobCore(this.buffer.slice(o, o + l), 0, this.littleEndian);
+	}
+
+	/**
 	 * Initialize blob with type and length.
 	 *
 	 * @param magic Magic number.
