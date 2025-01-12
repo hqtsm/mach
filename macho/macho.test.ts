@@ -81,6 +81,7 @@ for (const { kind, arch, file, archs } of fixtures) {
 				() => m.dataAt(blob.size - 1, 2),
 				RangeError,
 				`Invalid data range: ${blob.size - 1}:2`,
+				arc,
 			);
 		}
 	});
@@ -159,6 +160,9 @@ Deno.test('validateStructure bad command size', async () => {
 			[LC_SYMTAB, SymtabCommand, MH_MAGIC, MachHeader],
 		] as const
 	) {
+		const tag =
+			`LC=${LC} Command=${Command.name} MH=${MH} Header=${Header.name}`;
+
 		const cmdsize = Command.BYTE_LENGTH - 1;
 		const buffer = new ArrayBuffer(Header.BYTE_LENGTH + cmdsize);
 
@@ -177,6 +181,7 @@ Deno.test('validateStructure bad command size', async () => {
 			() => macho.open(new Blob([buffer])),
 			RangeError,
 			'Invalid command size',
+			tag,
 		);
 	}
 });
