@@ -18,7 +18,7 @@ export function strncmp(
 	str1: ArrayBufferReal | BufferPointer,
 	str2: ArrayBufferReal | BufferPointer,
 	num: number,
-): -1 | 0 | 1 {
+): number {
 	let b1, o1, b2, o2;
 	if ('buffer' in str1) {
 		b1 = str1.buffer;
@@ -36,14 +36,13 @@ export function strncmp(
 	}
 	const c1 = new Uint8Array(b1);
 	const c2 = new Uint8Array(b2);
-	for (let i = 0; i < num; i++) {
-		const a = c1[o1++];
-		const b = c2[o2++];
-		const d = a - b;
-		if (d) {
-			return d < 0 ? -1 : 1;
+	for (let i = 0, u1, u2; i < num; i++) {
+		u1 = c1[o1++];
+		u2 = c2[o2++];
+		if (u1 !== u2) {
+			return u1 - u2;
 		}
-		if (!a && !b) {
+		if (!u1) {
 			return 0;
 		}
 	}
