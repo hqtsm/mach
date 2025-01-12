@@ -1,5 +1,6 @@
 import { assertEquals, assertStrictEquals, assertThrows } from '@std/assert';
 import {
+	type Arr,
 	type BufferPointer,
 	type Const,
 	LITTLE_ENDIAN,
@@ -9,6 +10,8 @@ import {
 	LC_BUILD_VERSION,
 	LC_CODE_SIGNATURE,
 	LC_DYLIB_CODE_SIGN_DRS,
+	LC_SEGMENT,
+	LC_SEGMENT_64,
 	LC_VERSION_MIN_IPHONEOS,
 	LC_VERSION_MIN_MACOSX,
 	LC_VERSION_MIN_TVOS,
@@ -25,6 +28,10 @@ import { LinkeditDataCommand } from '../mach/linkeditdatacommand.ts';
 import { LoadCommand } from '../mach/loadcommand.ts';
 import { MachHeader } from '../mach/machheader.ts';
 import { MachHeader64 } from '../mach/machheader64.ts';
+import { Section } from '../mach/section.ts';
+import { Section64 } from '../mach/section64.ts';
+import { SegmentCommand } from '../mach/segmentcommand.ts';
+import { SegmentCommand64 } from '../mach/segmentcommand64.ts';
 import { VersionMinCommand } from '../mach/versionmincommand.ts';
 import { MachOBase } from './machobase.ts';
 
@@ -469,4 +476,94 @@ Deno.test('signingOffset signingLength', () => {
 
 	assertEquals(macho.signingOffset(), 12);
 	assertEquals(macho.signingLength(), 34);
+});
+
+Deno.test('findSegment findSection', () => {
+	const cstr = (s: string) => new TextEncoder().encode(`${s}\0`);
+
+	const strSet = (ptr: Arr<number>, str: string) => {
+		new Uint8Array(ptr.buffer, ptr.byteOffset).set(
+			[...str].map((c) => c.charCodeAt(0)),
+		);
+	};
+
+	for (
+		const [MH, Mach, LC, Seg, Sec] of [
+			[
+				MH_MAGIC,
+				MachHeader,
+				LC_SEGMENT,
+				SegmentCommand,
+				Section,
+			],
+			[
+				MH_MAGIC_64,
+				MachHeader64,
+				LC_SEGMENT_64,
+				SegmentCommand64,
+				Section64,
+			],
+		] as const
+	) {
+		const commands = new ArrayBuffer(
+			LoadCommand.BYTE_LENGTH + Seg.BYTE_LENGTH + Sec.BYTE_LENGTH * 2,
+		);
+
+		const lc = new LoadCommand(commands);
+		lc.cmdsize = LoadCommand.BYTE_LENGTH;
+
+		const seg = new Seg(commands, LoadCommand.BYTE_LENGTH);
+		seg.cmd = LC;
+		seg.nsects = 2;
+		seg.cmdsize = Seg.BYTE_LENGTH + Sec.BYTE_LENGTH * seg.nsects;
+		strSet(seg.segname, 'group');
+
+		const secA = new Sec(seg.buffer, seg.byteLength + seg.byteOffset);
+		strSet(secA.sectname, 'alpha');
+
+		const secB = new Sec(seg.buffer, secA.byteLength + secA.byteOffset);
+		strSet(secB.sectname, 'beta');
+
+		const header = new Mach(new ArrayBuffer(Mach.BYTE_LENGTH));
+		header.magic = MH;
+		header.ncmds = 2;
+		header.sizeofcmds = commands.byteLength;
+
+		const macho = new MachOBaseTest();
+		macho.initHeader(header);
+		macho.initCommands(new Uint8Array(commands));
+
+		assertEquals(
+			macho.findSegment(cstr('GROUP')),
+			null,
+		);
+		assertEquals(
+			macho.findSegment(cstr('group'))!.byteOffset,
+			seg.byteOffset,
+		);
+
+		assertEquals(
+			macho.findSection(cstr('GROUP'), cstr('ALPHA')),
+			null,
+		);
+		assertEquals(
+			macho.findSection(cstr('group'), cstr('alpha'))!.byteOffset,
+			secA.byteOffset,
+		);
+		assertEquals(
+			macho.findSection(cstr('group'), cstr('beta'))!.byteOffset,
+			secB.byteOffset,
+		);
+		assertEquals(
+			macho.findSection(cstr('group'), cstr('gamma')),
+			null,
+		);
+
+		strSet(seg.segname, '0123456789abcdef');
+
+		assertEquals(
+			macho.findSegment(cstr('0123456789abcdefg'))!.byteOffset,
+			seg.byteOffset,
+		);
+	}
 });
