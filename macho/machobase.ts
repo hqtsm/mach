@@ -26,7 +26,7 @@ import {
 	PLATFORM_TVOS,
 	PLATFORM_WATCHOS,
 } from '../const.ts';
-import { strncmp } from '../libc/string.ts';
+import { strlen, strncmp } from '../libc/string.ts';
 import { BuildVersionCommand } from '../mach/buildversioncommand.ts';
 import type { LcStr } from '../mach/lcstr.ts';
 import { LinkeditDataCommand } from '../mach/linkeditdatacommand.ts';
@@ -297,9 +297,7 @@ export class MachOBase {
 			cmd.byteOffset + offset,
 			cmd.littleEndian,
 		);
-		let size = 0;
-		while (sp[size++]);
-		if (offset + size > cmd.cmdsize) {
+		if (offset + strlen(sp) + 1 > cmd.cmdsize) {
 			return null;
 		}
 		return sp;
