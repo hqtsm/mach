@@ -439,3 +439,34 @@ Deno.test('find version', () => {
 	assertEquals(machoFMV.version(p, null, null), true);
 	assertEquals(p[0], 0);
 });
+
+Deno.test('signingOffset signingLength', () => {
+	const commands = new ArrayBuffer(
+		LoadCommand.BYTE_LENGTH + LinkeditDataCommand.BYTE_LENGTH,
+	);
+
+	const commandA = new LoadCommand(commands);
+	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+
+	const commandB = new LinkeditDataCommand(commands, LoadCommand.BYTE_LENGTH);
+	commandB.cmdsize = LinkeditDataCommand.BYTE_LENGTH;
+
+	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+	header.magic = MH_MAGIC;
+	header.ncmds = 2;
+	header.sizeofcmds = commands.byteLength;
+
+	const macho = new MachOBaseTest();
+	macho.initHeader(header);
+	macho.initCommands(new Uint8Array(commands));
+
+	assertEquals(macho.signingOffset(), 0);
+	assertEquals(macho.signingLength(), 0);
+
+	commandB.cmd = LC_CODE_SIGNATURE;
+	commandB.dataoff = 12;
+	commandB.datasize = 34;
+
+	assertEquals(macho.signingOffset(), 12);
+	assertEquals(macho.signingLength(), 34);
+});
