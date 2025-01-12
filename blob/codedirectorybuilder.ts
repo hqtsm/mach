@@ -178,6 +178,9 @@ export class CodeDirectoryBuilder {
 		offset: number,
 		length: number,
 	): void {
+		pagesize = (+pagesize || 0) - (pagesize % 1 || 0);
+		offset = (+offset || 0) - (offset % 1 || 0);
+		length = (+length || 0) - (length % 1 || 0);
 		this.mExec = file;
 		this.mPageSize = pagesize;
 		this.mExecOffset = offset;
@@ -192,6 +195,8 @@ export class CodeDirectoryBuilder {
 	 * @param length Length in file.
 	 */
 	public reopen(file: Reader, offset: number, length: number): void {
+		offset = (+offset || 0) - (offset % 1 || 0);
+		length = (+length || 0) - (length % 1 || 0);
 		if (!this.opened()) {
 			throw new Error('Executable not open');
 		}

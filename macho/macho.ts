@@ -32,6 +32,8 @@ export class MachO extends MachOBase {
 	 * @param length Length of subsection, requires offset.
 	 */
 	public async open(reader: Reader, offset = 0, length = 0): Promise<void> {
+		offset = (+offset || 0) - (offset % 1 || 0);
+		length = (+length || 0) - (length % 1 || 0);
 		this.mReader = reader;
 		this.mOffset = offset;
 		this.mLength = offset ? length : reader.size;
@@ -119,6 +121,8 @@ export class MachO extends MachOBase {
 		offset: number,
 		size: number,
 	): Promise<ArrayBufferReal> {
+		offset = (+offset || 0) - (offset % 1 || 0);
+		size = (+size || 0) - (size % 1 || 0);
 		const data = await this.mReader!.slice(offset, offset + size)
 			.arrayBuffer();
 		if (data.byteLength !== size) {
