@@ -21,4 +21,9 @@ Deno.test('strncmp', () => {
 	assertEquals(strncmp(cstr('a'), cstr('c'), 1), -2);
 	assertEquals(strncmp(cstr('c'), cstr('a'), 1), 2);
 	assertEquals(strncmp(cstr('AB'), cstr('AC'), 1), 0);
+	assertEquals(strncmp(cstr(''), cstr(''), 0), 0);
+	assertEquals(strncmp(cstr(''), cstr(''), 1), 0);
+	assertEquals(strncmp(cstr(''), cstr(''), 2), 0);
+	assertEquals(strncmp(cstr('A'), cstr('B'), 0), 0);
+	assertEquals(strncmp(cstr('A'), cstr('B'), -1), 0);
 });
