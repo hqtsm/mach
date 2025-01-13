@@ -14,16 +14,53 @@ export class SuperBlobMaker {
 	private readonly mPieces = new Map<number, BlobCore>();
 
 	/**
-	 * Add blob to super blob.
+	 * Add blob to super blob, by reference.
 	 *
 	 * @param type Index type.
 	 * @param blob Blob.
 	 */
-	public add(type: number, blob: BlobCore): void {
-		this.mPieces.set(
-			type,
-			new BlobCore(blob.buffer, blob.byteOffset, blob.littleEndian),
-		);
+	public add(type: number, blob: BlobCore): void;
+
+	/**
+	 * Copy blobs to super blob, by value.
+	 *
+	 * @param blobs Blobs.
+	 */
+	public add(blobs: SuperBlob): void;
+
+	/**
+	 * Copy blobs to super blob, by value.
+	 *
+	 * @param maker Maker.
+	 */
+	public add(maker: SuperBlobMaker): void;
+
+	public add(
+		type: number | SuperBlob | SuperBlobMaker,
+		blob?: BlobCore,
+	): void {
+		if (blob !== undefined) {
+			this.mPieces.set(
+				type as number,
+				new BlobCore(blob.buffer, blob.byteOffset, blob.littleEndian),
+			);
+			return;
+		}
+
+		if ('mPieces' in (type as SuperBlobMaker)) {
+			for (const [t, b] of (type as SuperBlobMaker).mPieces) {
+				this.add(t, b.clone());
+			}
+			return;
+		}
+
+		const count = (type as SuperBlob).count();
+		for (let i = 0; i < count; i++) {
+			this.add(
+				(type as SuperBlob).type(i),
+				(type as SuperBlob).blob(i)!.clone(),
+			);
+		}
 	}
 
 	/**
