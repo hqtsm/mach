@@ -1,7 +1,7 @@
 import { assert, assertEquals } from '@std/assert';
 import { Uint8Ptr } from '@hqtsm/struct';
-import { SuperBlobMaker } from './superblobmaker.ts';
 import { BlobWrapper } from './blobwrapper.ts';
+import { SuperBlobMaker } from './superblobmaker.ts';
 
 Deno.test('add BlobCore', () => {
 	const maker = new SuperBlobMaker();

@@ -1,18 +1,17 @@
-import type { ArrayBufferReal } from '@hqtsm/struct/native';
+import { type ArrayBufferReal, getByteLength } from '@hqtsm/struct';
 import {
 	LC_SEGMENT,
 	LC_SEGMENT_64,
 	LC_SYMTAB,
 	SEG_LINKEDIT,
 } from '../const.ts';
+import { strncmp } from '../libc/string.ts';
 import { MachHeader } from '../mach/machheader.ts';
 import { SegmentCommand } from '../mach/segmentcommand.ts';
 import { SegmentCommand64 } from '../mach/segmentcommand64.ts';
 import { SymtabCommand } from '../mach/symtabcommand.ts';
 import type { Reader } from '../util/reader.ts';
 import { MachOBase } from './machobase.ts';
-import { strncmp } from '../libc/string.ts';
-import { getByteLength } from '@hqtsm/struct';
 
 /**
  * A Mach-O binary over a readable.

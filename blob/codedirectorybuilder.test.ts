@@ -11,8 +11,8 @@ import {
 	PLATFORM_MACOS,
 	UINT32_MAX,
 } from '../const.ts';
-import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import { CodeDirectory } from './codedirectory.ts';
+import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
 
 Deno.test('hashType', () => {

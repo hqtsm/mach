@@ -21,8 +21,8 @@ import {
 } from '../const.ts';
 import { CCHashInstance } from '../hash/cchashinstance.ts';
 import type { DynamicHash } from '../hash/dynamichash.ts';
-import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
 import { Blob } from './blob.ts';
+import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
 
 /**
  * Describes secured pieces of a program.

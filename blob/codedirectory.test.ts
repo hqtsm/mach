@@ -1,6 +1,4 @@
 import { assert, assertEquals, assertThrows } from '@std/assert';
-import { CodeDirectory } from './codedirectory.ts';
-import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import {
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
@@ -8,6 +6,8 @@ import {
 	kSecCodeSignatureHashSHA384,
 	kSecCodeSignatureHashSHA512,
 } from '../const.ts';
+import { CodeDirectory } from './codedirectory.ts';
+import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 
 Deno.test('BYTE_LENGTH', () => {
 	assertEquals(CodeDirectory.BYTE_LENGTH, 96);

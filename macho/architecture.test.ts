@@ -1,7 +1,7 @@
 import { assertEquals } from '@std/assert';
-import { Architecture } from './architecture.ts';
 import { FatArch } from '../mach/fatarch.ts';
 import { FatArch64 } from '../mach/fatarch64.ts';
+import { Architecture } from './architecture.ts';
 
 Deno.test('constructor()', () => {
 	const a = new Architecture();
