@@ -118,6 +118,12 @@ export class Universal {
 					this.mArchCount = mArchCount = ++mArchCount;
 				}
 
+				const sortedList = [];
+				for (let i = 0; i < mArchCount; i++) {
+					sortedList.push(mArchList[i]);
+				}
+				sortedList.sort((a, b) => a.offset - b.offset);
+
 				break;
 			}
 			case MH_CIGAM:
