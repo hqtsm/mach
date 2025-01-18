@@ -1,4 +1,4 @@
-import type { Ptr } from '@hqtsm/struct';
+import { pointer, type Ptr } from '@hqtsm/struct';
 import {
 	FAT_CIGAM,
 	FAT_MAGIC,
@@ -12,6 +12,8 @@ import { MachHeader } from '../mach/machheader.ts';
 import type { Reader } from '../util/reader.ts';
 import { Architecture } from './architecture.ts';
 import { FatArch } from '../mach/fatarch.ts';
+import { CPU_ARCH_ABI64 } from '../const.ts';
+import { CPU_TYPE_ARM } from '../const.ts';
 
 /**
  * A universal binary over a readable.
@@ -26,7 +28,7 @@ export class Universal {
 	/**
 	 * Architecture list, if fat.
 	 */
-	private mArchList: Ptr<Architecture> | null = null;
+	private mArchList: Ptr<FatArch> | null = null;
 
 	/**
 	 * Architecture count, if fat.
@@ -93,7 +95,7 @@ export class Universal {
 			case FAT_MAGIC: {
 				// In some cases the fat header may be 1 less than needed.
 				// Something about "15001604" whatever that is.
-				const mArchCount = header.nfatArch;
+				let mArchCount = this.mArchCount = header.nfatArch;
 
 				// Read enough for 1 extra arch.
 				const archSize = FatArch.BYTE_LENGTH * (mArchCount + 1);
@@ -103,6 +105,17 @@ export class Universal {
 					.arrayBuffer();
 				if (archData.byteLength !== archSize) {
 					throw new RangeError('Invalid architectures');
+				}
+				const mArchList = this.mArchList = new (pointer(FatArch))(
+					archData,
+					0,
+					header.littleEndian,
+				);
+
+				// Detect possibly undercounted architecture.
+				const lastArch = mArchList[mArchCount];
+				if (lastArch.cputype === (CPU_ARCH_ABI64 | CPU_TYPE_ARM)) {
+					this.mArchCount = mArchCount = ++mArchCount;
 				}
 
 				break;
