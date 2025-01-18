@@ -68,7 +68,7 @@ export class Universal {
 		switch (m) {
 			case FAT_CIGAM:
 				header = new FatHeader(hd, 0, !header.littleEndian);
-				// falls through
+				// Falls through.
 			case FAT_MAGIC: {
 				// TODO
 				break;
@@ -76,7 +76,7 @@ export class Universal {
 			case MH_CIGAM:
 			case MH_CIGAM_64:
 				mHeader = new MachHeader(hd, 0, !header.littleEndian);
-				// falls through
+				// Falls through.
 			case MH_MAGIC:
 			case MH_MAGIC_64: {
 				mHeader ??= new MachHeader(hd, 0);
