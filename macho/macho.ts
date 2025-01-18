@@ -14,7 +14,7 @@ import type { Reader } from '../util/reader.ts';
 import { MachOBase } from './machobase.ts';
 
 /**
- * A Mach-O binary over a readable.
+ * A Mach-O binary over a reader.
  */
 export class MachO extends MachOBase {
 	declare public readonly ['constructor']: Omit<typeof MachO, 'new'>;
