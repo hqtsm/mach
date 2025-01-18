@@ -99,7 +99,7 @@ export class Universal {
 				// Falls through.
 			case MH_MAGIC:
 			case MH_MAGIC_64: {
-				mHeader ??= new MachHeader(hd, 0);
+				mHeader ??= new MachHeader(hd);
 				this.mThinArch = new Architecture(
 					mHeader.cputype,
 					mHeader.cpusubtype,
