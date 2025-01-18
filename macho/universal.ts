@@ -51,6 +51,11 @@ export class Universal {
 	private mLength = 0;
 
 	/**
+	 * Length of slice at each offset.
+	 */
+	private mSizes: Map<number, number> = new Map();
+
+	/**
 	 * Mach type.
 	 */
 	private mMachType = 0;
@@ -78,6 +83,7 @@ export class Universal {
 		this.mArchList = null;
 		this.mArchCount = 0;
 		this.mThinArch = null;
+		const mSizes = this.mSizes = new Map();
 
 		const hs = Math.max(FatHeader.BYTE_LENGTH, MachHeader.BYTE_LENGTH);
 		const hd = await reader.slice(offset, offset + hs).arrayBuffer();
@@ -123,6 +129,19 @@ export class Universal {
 					sortedList.push(mArchList[i]);
 				}
 				sortedList.sort((a, b) => a.offset - b.offset);
+
+				for (const { offset, size } of sortedList) {
+					if (mSizes.has(offset)) {
+						throw new RangeError(
+							`Two architectures have the same offset: ${offset}`,
+						);
+					}
+					mSizes.set(offset, size);
+
+					// TODO
+				}
+
+				// TODO
 
 				break;
 			}
