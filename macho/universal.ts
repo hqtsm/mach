@@ -11,6 +11,7 @@ import { FatHeader } from '../mach/fatheader.ts';
 import { MachHeader } from '../mach/machheader.ts';
 import type { Reader } from '../util/reader.ts';
 import { Architecture } from './architecture.ts';
+import { FatArch } from '../mach/fatarch.ts';
 
 /**
  * A universal binary over a readable.
@@ -90,7 +91,20 @@ export class Universal {
 				header = new FatHeader(hd, 0, !header.littleEndian);
 				// Falls through.
 			case FAT_MAGIC: {
-				// TODO
+				// In some cases the fat header may be 1 less than needed.
+				// Something about "15001604" whatever that is.
+				const mArchCount = header.nfatArch;
+
+				// Read enough for 1 extra arch.
+				const archSize = FatArch.BYTE_LENGTH * (mArchCount + 1);
+				const archOffset = offset + header.byteLength;
+				const archData = await reader
+					.slice(archOffset, archOffset + archSize)
+					.arrayBuffer();
+				if (archData.byteLength !== archSize) {
+					throw new RangeError('Invalid architectures');
+				}
+
 				break;
 			}
 			case MH_CIGAM:
