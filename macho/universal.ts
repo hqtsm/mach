@@ -1,3 +1,4 @@
+import type { Ptr } from '@hqtsm/struct';
 import {
 	FAT_CIGAM,
 	FAT_MAGIC,
@@ -9,6 +10,7 @@ import {
 import { FatHeader } from '../mach/fatheader.ts';
 import { MachHeader } from '../mach/machheader.ts';
 import type { Reader } from '../util/reader.ts';
+import { Architecture } from './architecture.ts';
 
 /**
  * A universal binary over a readable.
@@ -21,12 +23,27 @@ export class Universal {
 	private mReader: Reader | null = null;
 
 	/**
+	 * Architecture list, if fat.
+	 */
+	private mArchList: Ptr<Architecture> | null = null;
+
+	/**
+	 * Architecture count, if fat.
+	 */
+	private mArchCount = 0;
+
+	/**
+	 * Single architecture, if thin.
+	 */
+	private mThinArch: Architecture | null = null;
+
+	/**
 	 * Offset in reader.
 	 */
 	private mBase = 0;
 
 	/**
-	 * Length in reader.
+	 * Length in reader, if thin.
 	 */
 	private mLength = 0;
 
@@ -55,6 +72,9 @@ export class Universal {
 		this.mLength = length;
 		this.mMachType = 0;
 		this.mSuspicious = false;
+		this.mArchList = null;
+		this.mArchCount = 0;
+		this.mThinArch = null;
 
 		const hs = Math.max(FatHeader.BYTE_LENGTH, MachHeader.BYTE_LENGTH);
 		const hd = await reader.slice(offset, offset + hs).arrayBuffer();
@@ -80,7 +100,10 @@ export class Universal {
 			case MH_MAGIC:
 			case MH_MAGIC_64: {
 				mHeader ??= new MachHeader(hd, 0);
-				// TODO
+				this.mThinArch = new Architecture(
+					mHeader.cputype,
+					mHeader.cpusubtype,
+				);
 				break;
 			}
 			default: {
