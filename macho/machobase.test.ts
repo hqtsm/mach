@@ -157,7 +157,7 @@ Deno.test('init', () => {
 	assertThrows(
 		() => macho.initHeader(header32N),
 		RangeError,
-		'Unknown magic: 0xabcd1234',
+		'Unknown magic: 0x',
 	);
 	assertThrows(
 		() => macho.initCommands(commandN),

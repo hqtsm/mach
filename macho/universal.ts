@@ -64,7 +64,8 @@ export class Universal {
 
 		let header = new FatHeader(hd);
 		let mHeader;
-		switch (header.magic) {
+		const m = header.magic;
+		switch (m) {
 			case FAT_CIGAM:
 				header = new FatHeader(hd, 0, !header.littleEndian);
 				// falls through
@@ -83,7 +84,7 @@ export class Universal {
 				break;
 			}
 			default: {
-				throw new RangeError('Invalid header');
+				throw new RangeError(`Unknown magic: 0x${m.toString(16)}`);
 			}
 		}
 	}
