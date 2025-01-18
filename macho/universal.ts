@@ -6,6 +6,7 @@ import {
 	MH_CIGAM_64,
 	MH_MAGIC,
 	MH_MAGIC_64,
+	PAGE_SIZE,
 } from '../const.ts';
 import { FatHeader } from '../mach/fatheader.ts';
 import { MachHeader } from '../mach/machheader.ts';
@@ -14,6 +15,11 @@ import { Architecture } from './architecture.ts';
 import { FatArch } from '../mach/fatarch.ts';
 import { CPU_ARCH_ABI64 } from '../const.ts';
 import { CPU_TYPE_ARM } from '../const.ts';
+
+/**
+ * Maximum power of 2 alignment amount.
+ */
+const MAX_ALIGN = 30;
 
 /**
  * A universal binary over a readable.
@@ -79,7 +85,7 @@ export class Universal {
 		this.mBase = offset;
 		this.mLength = length;
 		this.mMachType = 0;
-		this.mSuspicious = false;
+		let mSuspicious = this.mSuspicious = false;
 		this.mArchList = null;
 		this.mArchCount = 0;
 		this.mThinArch = null;
@@ -124,13 +130,20 @@ export class Universal {
 					this.mArchCount = mArchCount = ++mArchCount;
 				}
 
+				// Padding between header and slices should all be zeroed out.
 				const sortedList = [];
 				for (let i = 0; i < mArchCount; i++) {
 					sortedList.push(mArchList[i]);
 				}
 				sortedList.sort((a, b) => a.offset - b.offset);
 
-				for (const { offset, size } of sortedList) {
+				const universalHeaderEnd = offset + header.byteLength +
+					(FatArch.BYTE_LENGTH * mArchCount);
+				let prevHeaderEnd = universalHeaderEnd;
+				let prevArchSize = 0;
+				let prevArchStart = 0;
+
+				for (const { offset, size, align } of sortedList) {
 					if (mSizes.has(offset)) {
 						throw new RangeError(
 							`Two architectures have the same offset: ${offset}`,
@@ -138,11 +151,55 @@ export class Universal {
 					}
 					mSizes.set(offset, size);
 
-					// TODO
+					const gapSize = offset - prevHeaderEnd;
+					if (
+						prevHeaderEnd !== universalHeaderEnd &&
+						(align > MAX_ALIGN || gapSize >= (1 << align))
+					) {
+						this.mSuspicious = mSuspicious = true;
+						break;
+					}
+
+					let off = 0;
+					GAPS: while (off < gapSize) {
+						const want = Math.min(gapSize - off, PAGE_SIZE);
+						const readOffset = prevHeaderEnd + off;
+						// deno-lint-ignore no-await-in-loop
+						const read = await reader
+							.slice(readOffset, readOffset + want)
+							.arrayBuffer();
+						const got = read.byteLength;
+						if (!got) {
+							this.mSuspicious = mSuspicious = true;
+							break;
+						}
+						off += got;
+						const gapBytes = new Uint8Array(got);
+						for (let x = 0; x < got; x++) {
+							if (gapBytes[x]) {
+								this.mSuspicious = mSuspicious = true;
+								break GAPS;
+							}
+						}
+					}
+					if (off !== gapSize) {
+						this.mSuspicious = mSuspicious = true;
+					}
+					if (mSuspicious) {
+						break;
+					}
+
+					prevHeaderEnd = offset + size;
+					prevArchSize = size;
+					prevArchStart = offset;
 				}
 
-				// TODO
-
+				if (
+					!mSuspicious &&
+					(prevArchStart + prevArchSize !== reader.size)
+				) {
+					this.mSuspicious = true;
+				}
 				break;
 			}
 			case MH_CIGAM:

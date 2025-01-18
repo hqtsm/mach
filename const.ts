@@ -1,6 +1,7 @@
 // deno-lint-ignore-file camelcase
 
 export const UINT32_MAX = 0xffffffff;
+export const PAGE_SIZE = 0x4000;
 
 // FAT mach magic numbers:
 export const FAT_MAGIC = 0xcafebabe;
