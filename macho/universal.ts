@@ -148,7 +148,9 @@ export class Universal {
 				for (const { offset, size, align } of sortedList) {
 					if (mSizes.has(offset)) {
 						throw new RangeError(
-							`Two architectures have the same offset: ${offset}`,
+							`Multiple architectures at offset: 0x${
+								offset.toString(16)
+							}`,
 						);
 					}
 					mSizes.set(offset, size);

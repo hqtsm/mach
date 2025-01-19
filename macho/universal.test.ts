@@ -127,7 +127,7 @@ Deno.test('open under arch', async () => {
 Deno.test('open under count archs', async () => {
 	const data = new ArrayBuffer(
 		Math.max(FatHeader.BYTE_LENGTH, MachHeader.BYTE_LENGTH) +
-			FatArch.BYTE_LENGTH + 512,
+			FatArch.BYTE_LENGTH * 2 + 512,
 	);
 	const header = new FatHeader(data);
 	header.magic = FAT_MAGIC;
@@ -150,6 +150,32 @@ Deno.test('open under count archs', async () => {
 	const archs = new Set<Architecture>();
 	uni.architectures(archs);
 	assertEquals(archs.size, 2);
+});
+
+Deno.test('open duplicate offset', async () => {
+	const data = new ArrayBuffer(
+		Math.max(FatHeader.BYTE_LENGTH, MachHeader.BYTE_LENGTH) +
+			FatArch.BYTE_LENGTH * 2,
+	);
+	const header = new FatHeader(data);
+	header.magic = FAT_MAGIC;
+	header.nfatArch = 2;
+
+	const arch1 = new FatArch(data, header.byteLength);
+	arch1.offset = data.byteLength;
+	arch1.size = 0;
+
+	const arch2 = new FatArch(data, arch1.byteOffset + arch1.byteLength);
+	arch2.offset = data.byteLength;
+	arch2.size = 0;
+
+	const blob = new Blob([data]);
+	const uni = new Universal();
+	await assertRejects(
+		() => uni.open(blob),
+		RangeError,
+		`Multiple architectures at offset: 0x${data.byteLength.toString(16)}`,
+	);
 });
 
 Deno.test('typeOf under header', async () => {
