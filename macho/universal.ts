@@ -231,6 +231,15 @@ export class Universal {
 	}
 
 	/**
+	 * Is part of a FAT file.
+	 *
+	 * @returns Narrowed range or not.
+	 */
+	public narrowed(): boolean {
+		return !!this.mBase;
+	}
+
+	/**
 	 * Get set of architectures.
 	 *
 	 * @param archs Set of architectures to populate into.

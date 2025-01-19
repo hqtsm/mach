@@ -12,6 +12,7 @@ for (const { kind, arch, file, archs } of fixtures) {
 		assertEquals(uni.offset(), 0);
 		assertEquals(uni.length(), 0);
 		assertEquals(uni.isOpen(), false);
+		assertEquals(uni.narrowed(), false);
 		assertEquals(uni.isUniversal(), false);
 		assertEquals(uni.isSuspicious(), false);
 
@@ -20,6 +21,7 @@ for (const { kind, arch, file, archs } of fixtures) {
 		assertEquals(uni.offset(), 0);
 		assertEquals(uni.length(), 0);
 		assertEquals(uni.isOpen(), true);
+		assertEquals(uni.narrowed(), false);
 		assertEquals(uni.isUniversal(), archs.size > 1);
 		assertEquals(uni.isSuspicious(), false);
 
