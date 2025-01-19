@@ -87,4 +87,51 @@ export class Architecture {
 	public cpuSubtypeFull(): number {
 		return this.second;
 	}
+
+	/**
+	 * Is architecture valid.
+	 *
+	 * @returns Is valid.
+	 */
+	public bool(): boolean {
+		return !!this.first;
+	}
+
+	/**
+	 * If architectures are equal.
+	 *
+	 * @param arch Architecture to compare.
+	 * @returns Is equal.
+	 */
+	public equals(arch: Const<Architecture>): boolean {
+		return this.first === arch.first && this.second === arch.second;
+	}
+
+	/**
+	 * If architecture is less than another.
+	 *
+	 * @param arch Architecture to compare.
+	 * @returns Is less than.
+	 */
+	public lessThan(arch: Const<Architecture>): boolean {
+		const x = this.first;
+		const y = arch.first;
+		return x < y || (!(y < x) && this.second < arch.second);
+	}
+
+	/**
+	 * Check is architecture matches template, asymmetric comparison.
+	 *
+	 * @param templ Template architecture.
+	 * @returns Matches template.
+	 */
+	public matches(templ: Const<Architecture>): boolean {
+		if (this.first !== templ.first) {
+			return false;
+		}
+		if (templ.second === CPU_SUBTYPE_MULTIPLE) {
+			return true;
+		}
+		return !((this.second ^ templ.second) & ~CPU_SUBTYPE_MASK);
+	}
 }
