@@ -282,4 +282,13 @@ export class Universal {
 	public length(): number {
 		return this.mLength;
 	}
+
+	/**
+	 * Check if FAT binary is suspicious.
+	 *
+	 * @returns Is suspicious.
+	 */
+	public isSuspicious(): boolean {
+		return this.mSuspicious;
+	}
 }

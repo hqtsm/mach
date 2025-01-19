@@ -13,6 +13,7 @@ for (const [index, { kind, arch, file, archs }] of fixtures.entries()) {
 		assertEquals(uni.length(), 0);
 		assertEquals(uni.isOpen(), false);
 		assertEquals(uni.isUniversal(), false);
+		assertEquals(uni.isSuspicious(), false);
 
 		switch (index % 4) {
 			case 0: {
@@ -48,6 +49,7 @@ for (const [index, { kind, arch, file, archs }] of fixtures.entries()) {
 		}
 		assertEquals(uni.isOpen(), true);
 		assertEquals(uni.isUniversal(), archs.size > 1);
+		// assertEquals(uni.isSuspicious(), false);
 
 		const architectures = new Set<Architecture>();
 		uni.architectures(architectures);
