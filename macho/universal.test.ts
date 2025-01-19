@@ -6,7 +6,13 @@ import {
 	assertRejects,
 	assertThrows,
 } from '@std/assert';
-import { FAT_MAGIC, MH_DYLIB, MH_EXECUTE } from '../const.ts';
+import {
+	CPU_ARCH_ABI64,
+	CPU_TYPE_ARM,
+	FAT_MAGIC,
+	MH_DYLIB,
+	MH_EXECUTE,
+} from '../const.ts';
 import { FatArch } from '../mach/fatarch.ts';
 import { FatHeader } from '../mach/fatheader.ts';
 import { MachHeader } from '../mach/machheader.ts';
@@ -116,6 +122,34 @@ Deno.test('open under arch', async () => {
 		RangeError,
 		'Invalid architectures',
 	);
+});
+
+Deno.test('open under count archs', async () => {
+	const data = new ArrayBuffer(
+		Math.max(FatHeader.BYTE_LENGTH, MachHeader.BYTE_LENGTH) +
+			FatArch.BYTE_LENGTH + 512,
+	);
+	const header = new FatHeader(data);
+	header.magic = FAT_MAGIC;
+	header.nfatArch = 1;
+
+	const arch1 = new FatArch(data, header.byteLength);
+	arch1.cputype = CPU_TYPE_ARM;
+	arch1.offset = data.byteLength - 512;
+	arch1.size = 0;
+
+	const arch2 = new FatArch(data, arch1.byteOffset + arch1.byteLength);
+	arch2.cputype = CPU_ARCH_ABI64 | CPU_TYPE_ARM;
+	arch2.offset = data.byteLength - 256;
+	arch2.size = 0;
+
+	const blob = new Blob([data]);
+	const uni = new Universal();
+	await uni.open(blob);
+
+	const archs = new Set<Architecture>();
+	uni.architectures(archs);
+	assertEquals(archs.size, 2);
 });
 
 Deno.test('typeOf under header', async () => {
