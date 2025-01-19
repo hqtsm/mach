@@ -3,6 +3,7 @@ import {
 	assertGreater,
 	assertLess,
 	assertLessOrEqual,
+	assertRejects,
 	assertThrows,
 } from '@std/assert';
 import { FAT_MAGIC, MH_DYLIB, MH_EXECUTE } from '../const.ts';
@@ -77,6 +78,32 @@ for (const { kind, arch, file, archs } of fixtures) {
 		}
 	});
 }
+
+Deno.test('open under header', async () => {
+	const blob = new Blob([new ArrayBuffer(3)]);
+	const uni = new Universal();
+	await assertRejects(
+		() => uni.open(blob),
+		RangeError,
+		'Invalid header',
+	);
+});
+
+Deno.test('open under arch', async () => {
+	const data = new ArrayBuffer(
+		Math.max(FatHeader.BYTE_LENGTH, MachHeader.BYTE_LENGTH),
+	);
+	const header = new FatHeader(data);
+	header.magic = FAT_MAGIC;
+	header.nfatArch = 1;
+	const blob = new Blob([data]);
+	const uni = new Universal();
+	await assertRejects(
+		() => uni.open(blob),
+		RangeError,
+		'Invalid architectures',
+	);
+});
 
 Deno.test('typeOf under header', async () => {
 	const blob = new Blob([new ArrayBuffer(MachHeader.BYTE_LENGTH - 1)]);
