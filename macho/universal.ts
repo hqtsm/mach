@@ -255,4 +255,22 @@ export class Universal {
 	public isUniversal(): boolean {
 		return !!this.mArchList;
 	}
+
+	/**
+	 * Get offset in reader.
+	 *
+	 * @returns Byte offset in reader.
+	 */
+	public offset(): number {
+		return this.mBase;
+	}
+
+	/**
+	 * Get length in reader.
+	 *
+	 * @returns Byte length in reader.
+	 */
+	public length(): number {
+		return this.mLength;
+	}
 }
