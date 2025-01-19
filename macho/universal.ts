@@ -77,7 +77,7 @@ export class Universal {
 	 *
 	 * @param reader Reader.
 	 * @param offset Offset for subsection.
-	 * @param length Length of subsection, requires offset.
+	 * @param length Length of subsection.
 	 */
 	public async open(reader: Reader, offset = 0, length = 0): Promise<void> {
 		offset = (+offset || 0) - (offset % 1 || 0);
@@ -232,6 +232,38 @@ export class Universal {
 	}
 
 	/**
+	 * Get offset or architecture.
+	 *
+	 * @param arch Architecture to get the offset of.
+	 * @returns Architecture offset.
+	 */
+	public archOffset(arch: Const<Architecture>): number {
+		if (this.isUniversal()) {
+			return this.mBase + this.findArch(arch).offset;
+		}
+		if (this.mThinArch!.matches(arch)) {
+			return 0;
+		}
+		throw new RangeError('Architecture not found');
+	}
+
+	/**
+	 * Get length of architecture.
+	 *
+	 * @param arch Architecture to get the length of.
+	 * @returns Architecture length.
+	 */
+	public archLength(arch: Const<Architecture>): number {
+		if (this.isUniversal()) {
+			return this.mBase + this.findArch(arch).size;
+		}
+		if (this.mThinArch!.matches(arch)) {
+			return this.mReader!.size;
+		}
+		throw new RangeError('Architecture not found');
+	}
+
+	/**
 	 * Is part of a FAT file.
 	 *
 	 * @returns Narrowed range or not.
@@ -343,7 +375,7 @@ export class Universal {
 				return a;
 			}
 		}
-		throw new RangeError('No matching architecture');
+		throw new RangeError('Architecture not found');
 	}
 
 	/**
