@@ -45,6 +45,7 @@ for (const { kind, arch, file, archs } of fixtures) {
 				assertGreater(offset, 0);
 				assertLess(length, blob.size);
 				assertLessOrEqual(offset + length, blob.size);
+				assertEquals(uni.lengthOfSlice(offset), length);
 			} else {
 				assertEquals(offset, 0);
 				assertEquals(length, blob.size);
@@ -59,6 +60,11 @@ for (const { kind, arch, file, archs } of fixtures) {
 			() => uni.archLength(new Architecture()),
 			RangeError,
 			'Architecture not found',
+		);
+		assertThrows(
+			() => uni.lengthOfSlice(0),
+			RangeError,
+			'Offset not found',
 		);
 
 		if (/\.dylib$|\.framework\//i.test(file)) {

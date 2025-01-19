@@ -90,7 +90,8 @@ export class Universal {
 		this.mArchList = null;
 		this.mArchCount = 0;
 		this.mThinArch = null;
-		const mSizes = this.mSizes = new Map();
+		const mSizes = this.mSizes;
+		mSizes.clear();
 
 		const hs = Math.max(FatHeader.BYTE_LENGTH, MachHeader.BYTE_LENGTH);
 		const hd = await reader.slice(offset, offset + hs).arrayBuffer();
@@ -305,6 +306,20 @@ export class Universal {
 	 */
 	public isUniversal(): boolean {
 		return !!this.mArchList;
+	}
+
+	/**
+	 * Get length of slice at offset.
+	 *
+	 * @param offset Slice offset.
+	 * @returns Slice length.
+	 */
+	public lengthOfSlice(offset: number): number {
+		const value = this.mSizes.get(offset);
+		if (value === undefined) {
+			throw new RangeError('Offset not found');
+		}
+		return value;
 	}
 
 	/**
