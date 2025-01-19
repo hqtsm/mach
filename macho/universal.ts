@@ -227,20 +227,23 @@ export class Universal {
 	 * @param archs Set of architectures to populate into.
 	 */
 	public architectures(archs: Set<Architecture>): void {
+		const skip = new Set<string>();
+		for (const a of archs) {
+			skip.add(`${a.first}:${a.second}`);
+		}
 		if (this.isUniversal()) {
 			const mArchList = this.mArchList!;
 			for (let i = 0; i < this.mArchCount; i++) {
-				const arch = mArchList[i];
-				archs.add(new Architecture(arch.cputype, arch.cpusubtype));
+				const { cputype, cpusubtype } = mArchList[i];
+				if (!skip.has(`${cputype}:${cpusubtype}`)) {
+					archs.add(new Architecture(cputype, cpusubtype));
+				}
 			}
 		} else {
-			const mThinArch = this.mThinArch!;
-			archs.add(
-				new Architecture(
-					mThinArch.cpuType(),
-					mThinArch.cpuSubtypeFull(),
-				),
-			);
+			const { first, second } = this.mThinArch!;
+			if (!skip.has(`${first}:${second}`)) {
+				archs.add(new Architecture(first, second));
+			}
 		}
 	}
 

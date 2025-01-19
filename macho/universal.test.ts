@@ -12,10 +12,13 @@ for (const { kind, arch, file, archs } of fixtures) {
 		const uni = new Universal();
 
 		await uni.open(blob);
-
 		assertEquals(uni.isUniversal(), archs.size > 1);
 
 		const architectures = new Set<Architecture>();
+		uni.architectures(architectures);
+
+		assertEquals(architectures.size, archs.size);
+
 		uni.architectures(architectures);
 
 		assertEquals(architectures.size, archs.size);
