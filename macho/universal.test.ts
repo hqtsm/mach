@@ -10,6 +10,8 @@ for (const [index, { kind, arch, file, archs }] of fixtures.entries()) {
 		const [macho] = await fixtureMacho(kind, arch, [file]);
 		const uni = new Universal();
 
+		assertEquals(uni.isOpen(), false);
+
 		switch (index % 4) {
 			case 0: {
 				const blob = new Blob([macho]);
@@ -48,6 +50,7 @@ for (const [index, { kind, arch, file, archs }] of fixtures.entries()) {
 				break;
 			}
 		}
+		assertEquals(uni.isOpen(), true);
 		assertEquals(uni.isUniversal(), archs.size > 1);
 
 		const architectures = new Set<Architecture>();

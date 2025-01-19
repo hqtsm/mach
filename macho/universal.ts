@@ -222,6 +222,15 @@ export class Universal {
 	}
 
 	/**
+	 * Is a binary open.
+	 *
+	 * @returns Is open.
+	 */
+	public isOpen(): boolean {
+		return !!this.mReader;
+	}
+
+	/**
 	 * Get set of architectures.
 	 *
 	 * @param archs Set of architectures to populate into.
