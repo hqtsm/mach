@@ -9,7 +9,6 @@ for (const [index, { kind, arch, file, archs }] of fixtures.entries()) {
 	Deno.test(`${kind}: ${arch}: ${file}`, async () => {
 		const [macho] = await fixtureMacho(kind, arch, [file]);
 		const uni = new Universal();
-
 		assertEquals(uni.offset(), 0);
 		assertEquals(uni.length(), 0);
 		assertEquals(uni.isOpen(), false);
