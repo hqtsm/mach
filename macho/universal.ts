@@ -300,4 +300,55 @@ export class Universal {
 	public isSuspicious(): boolean {
 		return this.mSuspicious;
 	}
+
+	/**
+	 * Guess type of file.
+	 *
+	 * @param reader Reader object.
+	 * @returns Zero if not a valid Mach-O or Universal.
+	 */
+	public static async typeOf(reader: Reader): Promise<number> {
+		let data = await reader.slice(0, MachHeader.BYTE_LENGTH).arrayBuffer();
+		if (data.byteLength !== MachHeader.BYTE_LENGTH) {
+			return 0;
+		}
+		let header = new MachHeader(data);
+		let arch1;
+		for (let tries = 3; tries--;) {
+			switch (header.magic) {
+				case MH_CIGAM:
+				case MH_CIGAM_64:
+					header = new MachHeader(data, 0, !header.littleEndian);
+					// Falls through.
+				case MH_MAGIC:
+				case MH_MAGIC_64: {
+					return header.filetype;
+				}
+				case FAT_CIGAM:
+					arch1 = new FatArch(
+						data,
+						FatHeader.BYTE_LENGTH,
+						!header.littleEndian,
+					);
+					// Falls through.
+				case FAT_MAGIC: {
+					arch1 ??= new FatArch(data, FatHeader.BYTE_LENGTH);
+					const { offset } = arch1;
+					// deno-lint-ignore no-await-in-loop
+					data = await reader
+						.slice(offset, offset + header.byteLength)
+						.arrayBuffer();
+					if (data.byteLength !== header.byteLength) {
+						return 0;
+					}
+					header = new MachHeader(data, 0, arch1.littleEndian);
+					continue;
+				}
+				default: {
+					return 0;
+				}
+			}
+		}
+		return 0;
+	}
 }

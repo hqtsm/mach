@@ -2,6 +2,7 @@ import { assertEquals } from '@std/assert';
 import { fixtureMacho, fixtureMachos } from '../spec/fixture.ts';
 import type { Architecture } from './architecture.ts';
 import { Universal } from './universal.ts';
+import { MH_DYLIB, MH_EXECUTE } from '../const.ts';
 
 const fixtures = fixtureMachos();
 
@@ -30,5 +31,11 @@ for (const { kind, arch, file, archs } of fixtures) {
 		assertEquals(architectures.size, archs.size);
 		uni.architectures(architectures);
 		assertEquals(architectures.size, archs.size);
+
+		if (/\.dylib$|\.framework\//i.test(file)) {
+			assertEquals(await Universal.typeOf(blob), MH_DYLIB);
+		} else {
+			assertEquals(await Universal.typeOf(blob), MH_EXECUTE);
+		}
 	});
 }
