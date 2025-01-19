@@ -222,6 +222,29 @@ export class Universal {
 	}
 
 	/**
+	 * Get set of architectures.
+	 *
+	 * @param archs Set of architectures to populate into.
+	 */
+	public architectures(archs: Set<Architecture>): void {
+		if (this.isUniversal()) {
+			const mArchList = this.mArchList!;
+			for (let i = 0; i < this.mArchCount; i++) {
+				const arch = mArchList[i];
+				archs.add(new Architecture(arch.cputype, arch.cpusubtype));
+			}
+		} else {
+			const mThinArch = this.mThinArch!;
+			archs.add(
+				new Architecture(
+					mThinArch.cpuType(),
+					mThinArch.cpuSubtypeFull(),
+				),
+			);
+		}
+	}
+
+	/**
 	 * Is a universal binary.
 	 *
 	 * @returns True if universal, even if only 1 architecture.
