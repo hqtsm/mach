@@ -31,24 +31,18 @@ for (const [index, { kind, arch, file, archs }] of fixtures.entries()) {
 				break;
 			}
 			case 2: {
-				const blob = new Blob([
-					new ArrayBuffer(3),
-					macho,
-					new ArrayBuffer(3),
-				]);
-				await uni.open(blob, 3);
-				assertEquals(uni.offset(), 3);
+				const pad = new ArrayBuffer(3);
+				const blob = new Blob([pad, macho, pad]);
+				await uni.open(blob, pad.byteLength);
+				assertEquals(uni.offset(), pad.byteLength);
 				assertEquals(uni.length(), 0);
 				break;
 			}
 			case 3: {
-				const blob = new Blob([
-					new ArrayBuffer(3),
-					macho,
-					new ArrayBuffer(3),
-				]);
-				await uni.open(blob, 3, macho.byteLength);
-				assertEquals(uni.offset(), 3);
+				const pad = new ArrayBuffer(3);
+				const blob = new Blob([pad, macho, pad]);
+				await uni.open(blob, pad.byteLength, macho.byteLength);
+				assertEquals(uni.offset(), pad.byteLength);
 				assertEquals(uni.length(), macho.byteLength);
 				break;
 			}
