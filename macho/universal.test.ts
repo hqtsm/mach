@@ -89,6 +89,19 @@ Deno.test('open under header', async () => {
 	);
 });
 
+Deno.test('open unknown magic', async () => {
+	const data = new ArrayBuffer(
+		Math.max(FatHeader.BYTE_LENGTH, MachHeader.BYTE_LENGTH),
+	);
+	const blob = new Blob([data]);
+	const uni = new Universal();
+	await assertRejects(
+		() => uni.open(blob),
+		RangeError,
+		'Unknown magic: 0x0',
+	);
+});
+
 Deno.test('open under arch', async () => {
 	const data = new ArrayBuffer(
 		Math.max(FatHeader.BYTE_LENGTH, MachHeader.BYTE_LENGTH),
