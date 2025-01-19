@@ -10,7 +10,10 @@ for (const [index, { kind, arch, file, archs }] of fixtures.entries()) {
 		const [macho] = await fixtureMacho(kind, arch, [file]);
 		const uni = new Universal();
 
+		assertEquals(uni.offset(), 0);
+		assertEquals(uni.length(), 0);
 		assertEquals(uni.isOpen(), false);
+		assertEquals(uni.isUniversal(), false);
 
 		switch (index % 4) {
 			case 0: {
