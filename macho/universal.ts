@@ -1,5 +1,6 @@
-import { pointer, type Ptr } from '@hqtsm/struct';
+import { type Const, pointer, type Ptr } from '@hqtsm/struct';
 import {
+	CPU_SUBTYPE_MASK,
 	FAT_CIGAM,
 	FAT_MAGIC,
 	MH_CIGAM,
@@ -299,6 +300,50 @@ export class Universal {
 	 */
 	public isSuspicious(): boolean {
 		return this.mSuspicious;
+	}
+
+	/**
+	 * Find matching architecture in FAT file architecture list.
+	 *
+	 * @param arch Architecture to find.
+	 * @returns Matching FAT architecture.
+	 */
+	private findArch(arch: Const<Architecture>): Const<FatArch> {
+		const { mArchList, mArchCount } = this;
+		for (let i = 0; i < mArchCount; i++) {
+			const a = mArchList![i];
+			if (
+				a.cputype === arch.cpuType() &&
+				a.cpusubtype === arch.cpuSubtypeFull()
+			) {
+				return a;
+			}
+		}
+		for (let i = 0; i < mArchCount; i++) {
+			const a = mArchList![i];
+			if (
+				a.cputype === arch.cpuType() &&
+				(a.cpusubtype & ~CPU_SUBTYPE_MASK) === arch.cpuSubtype()
+			) {
+				return a;
+			}
+		}
+		for (let i = 0; i < mArchCount; i++) {
+			const a = mArchList![i];
+			if (
+				a.cputype === arch.cpuType() &&
+				!(a.cpusubtype & ~CPU_SUBTYPE_MASK)
+			) {
+				return a;
+			}
+		}
+		for (let i = 0; i < mArchCount; i++) {
+			const a = mArchList![i];
+			if (a.cputype === arch.cpuType()) {
+				return a;
+			}
+		}
+		throw new RangeError('No matching architecture');
 	}
 
 	/**
