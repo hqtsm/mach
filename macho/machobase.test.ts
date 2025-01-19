@@ -189,7 +189,7 @@ Deno.test('init', () => {
 		assertEquals(macho.isFlipped(), flip, tag);
 		assertEquals(macho.is64(), bits === 64, tag);
 		assertEquals(macho.architecture().cpuType(), 2, tag);
-		assertEquals(macho.architecture().cpuSubType(), 3, tag);
+		assertEquals(macho.architecture().cpuSubtype(), 3, tag);
 		assertEquals(macho.type(), 4, tag);
 		assertEquals(macho.flags(), 5, tag);
 		assertEquals(macho.headerSize(), header.byteLength, tag);

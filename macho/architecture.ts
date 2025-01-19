@@ -75,7 +75,7 @@ export class Architecture {
 	 *
 	 * @returns Masked subtype ID.
 	 */
-	public cpuSubType(): number {
+	public cpuSubtype(): number {
 		return this.second & ~CPU_SUBTYPE_MASK;
 	}
 
