@@ -220,4 +220,13 @@ export class Universal {
 			}
 		}
 	}
+
+	/**
+	 * Is a universal binary.
+	 *
+	 * @returns True if universal, even if only 1 architecture.
+	 */
+	public isUniversal(): boolean {
+		return !!this.mArchList;
+	}
 }
