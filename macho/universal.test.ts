@@ -178,6 +178,24 @@ Deno.test('open duplicate offset', async () => {
 	);
 });
 
+Deno.test('open suspicious gap', async () => {
+	const data = new ArrayBuffer(1024);
+	const header = new FatHeader(data);
+	header.magic = FAT_MAGIC;
+	header.nfatArch = 1;
+
+	const arch = new FatArch(data, header.byteLength);
+	arch.offset = 512;
+	arch.size = 512;
+
+	new Uint8Array(data)[256] = 1;
+
+	const blob = new Blob([data]);
+	const uni = new Universal();
+	await uni.open(blob);
+	assertEquals(uni.isSuspicious(), true);
+});
+
 Deno.test('typeOf under header', async () => {
 	const blob = new Blob([new ArrayBuffer(MachHeader.BYTE_LENGTH - 1)]);
 	assertEquals(await Universal.typeOf(blob), 0);
