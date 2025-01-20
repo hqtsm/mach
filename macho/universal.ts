@@ -76,13 +76,23 @@ export class Universal {
 	private mSuspicious = false;
 
 	/**
-	 * Open binary.
+	 * Create uninitialized Universal instance.
+	 */
+	protected constructor() {}
+
+	/**
+	 * Initialize instance.
 	 *
 	 * @param reader Reader.
 	 * @param offset Offset for subsection.
 	 * @param length Length of subsection.
+	 * @returns This instance.
 	 */
-	public async open(reader: Reader, offset = 0, length = 0): Promise<void> {
+	protected async Universal(
+		reader: Reader,
+		offset = 0,
+		length = 0,
+	): Promise<this> {
 		offset = (+offset || 0) - (offset % 1 || 0);
 		length = (+length || 0) - (length % 1 || 0);
 		this.mReader = reader;
@@ -226,15 +236,7 @@ export class Universal {
 				throw new RangeError(`Unknown magic: 0x${m.toString(16)}`);
 			}
 		}
-	}
-
-	/**
-	 * Is a binary open.
-	 *
-	 * @returns Is open.
-	 */
-	public isOpen(): boolean {
-		return !!this.mReader;
+		return this;
 	}
 
 	/**
@@ -519,5 +521,21 @@ export class Universal {
 			}
 		}
 		return 0;
+	}
+
+	/**
+	 * A universal binary over a readable.
+	 *
+	 * @param reader Reader.
+	 * @param offset Offset for subsection.
+	 * @param length Length of subsection.
+	 * @returns Universal instance.
+	 */
+	public static async Universal(
+		reader: Reader,
+		offset = 0,
+		length = 0,
+	): Promise<Universal> {
+		return await new Universal().Universal(reader, offset, length);
 	}
 }

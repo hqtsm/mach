@@ -34,19 +34,10 @@ const fixtures = fixtureMachos();
 for (const { kind, arch, file, archs } of fixtures) {
 	Deno.test(`${kind}: ${arch}: ${file}`, async () => {
 		const [macho] = await fixtureMacho(kind, arch, [file]);
-		const uni = new Universal();
-		assertEquals(uni.offset(), 0);
-		assertEquals(uni.length(), 0);
-		assertEquals(uni.isOpen(), false);
-		assertEquals(uni.narrowed(), false);
-		assertEquals(uni.isUniversal(), false);
-		assertEquals(uni.isSuspicious(), false);
-
 		const blob = new Blob([macho]);
-		await uni.open(blob);
+		const uni = await Universal.Universal(blob);
 		assertEquals(uni.offset(), 0);
 		assertEquals(uni.length(), 0);
-		assertEquals(uni.isOpen(), true);
 		assertEquals(uni.narrowed(), false);
 		assertEquals(uni.isUniversal(), archs.size > 1);
 		assertEquals(uni.isSuspicious(), false);
@@ -78,6 +69,7 @@ for (const { kind, arch, file, archs } of fixtures) {
 			const mo = await uni.architecture(offset);
 			assertEquals(mo.offset(), offset);
 		}
+
 		assertThrows(
 			() => uni.archOffset(new Architecture()),
 			RangeError,
@@ -114,9 +106,8 @@ for (const { kind, arch, file, archs } of fixtures) {
 
 Deno.test('open under header', async () => {
 	const blob = new Blob([new ArrayBuffer(3)]);
-	const uni = new Universal();
 	await assertRejects(
-		() => uni.open(blob),
+		() => Universal.Universal(blob),
 		RangeError,
 		'Invalid header',
 	);
@@ -127,9 +118,8 @@ Deno.test('open unknown magic', async () => {
 		Math.max(FatHeader.BYTE_LENGTH, MachHeader.BYTE_LENGTH),
 	);
 	const blob = new Blob([data]);
-	const uni = new Universal();
 	await assertRejects(
-		() => uni.open(blob),
+		() => Universal.Universal(blob),
 		RangeError,
 		'Unknown magic: 0x0',
 	);
@@ -143,9 +133,8 @@ Deno.test('open under arch', async () => {
 	header.magic = FAT_MAGIC;
 	header.nfatArch = 1;
 	const blob = new Blob([data]);
-	const uni = new Universal();
 	await assertRejects(
-		() => uni.open(blob),
+		() => Universal.Universal(blob),
 		RangeError,
 		'Invalid architectures',
 	);
@@ -170,10 +159,7 @@ Deno.test('open under count archs', async () => {
 	arch2.offset = data.byteLength - 256;
 	arch2.size = 0;
 
-	const blob = new Blob([data]);
-	const uni = new Universal();
-	await uni.open(blob);
-
+	const uni = await Universal.Universal(new Blob([data]));
 	const archs = new Set<Architecture>();
 	uni.architectures(archs);
 	assertEquals(archs.size, 2);
@@ -197,9 +183,8 @@ Deno.test('open duplicate offset', async () => {
 	arch2.size = 0;
 
 	const blob = new Blob([data]);
-	const uni = new Universal();
 	await assertRejects(
-		() => uni.open(blob),
+		() => Universal.Universal(blob),
 		RangeError,
 		`Multiple architectures at offset: 0x${data.byteLength.toString(16)}`,
 	);
@@ -217,9 +202,7 @@ Deno.test('open suspicious gap', async () => {
 
 	new Uint8Array(data)[256] = 1;
 
-	const blob = new Blob([data]);
-	const uni = new Universal();
-	await uni.open(blob);
+	const uni = await Universal.Universal(new Blob([data]));
 	assertEquals(uni.isSuspicious(), true);
 });
 
@@ -239,9 +222,7 @@ Deno.test('open suspicious read align', async () => {
 	arch2.size = 256;
 	arch2.align = 8;
 
-	const blob = new Blob([data]);
-	const uni = new Universal();
-	await uni.open(blob);
+	const uni = await Universal.Universal(new Blob([data]));
 	assertEquals(uni.isSuspicious(), true);
 });
 
@@ -261,9 +242,7 @@ Deno.test('open suspicious read after', async () => {
 	arch2.size = 256;
 	arch2.align = 8;
 
-	const blob = new Blob([data]);
-	const uni = new Universal();
-	await uni.open(blob);
+	const uni = await Universal.Universal(new Blob([data]));
 	assertEquals(uni.isSuspicious(), true);
 });
 
@@ -283,9 +262,7 @@ Deno.test('open suspicious read error', async () => {
 	arch2.size = 256;
 	arch2.align = 8;
 
-	const blob = new Blob([data]);
-	const uni = new Universal();
-	await uni.open(blob);
+	const uni = await Universal.Universal(new Blob([data]));
 	assertEquals(uni.isSuspicious(), true);
 });
 
@@ -309,9 +286,7 @@ Deno.test('findArch case 1: prefer full exact match', async () => {
 	arch2.cputype = CPU_TYPE_ARM;
 	arch2.cpusubtype = CPU_SUBTYPE_LIB64 | CPU_SUBTYPE_ARM_V8;
 
-	const uni = new Universal();
-	await uni.open(new Blob([data]));
-
+	const uni = await Universal.Universal(new Blob([data]));
 	assertEquals(
 		uni.archOffset(
 			new Architecture(
@@ -343,9 +318,7 @@ Deno.test('findArch case 2: prefer masked subtype equal to all', async () => {
 	arch2.cputype = CPU_TYPE_ARM;
 	arch2.cpusubtype = CPU_SUBTYPE_ARM_V8;
 
-	const uni = new Universal();
-	await uni.open(new Blob([data]));
-
+	const uni = await Universal.Universal(new Blob([data]));
 	assertEquals(
 		uni.archOffset(
 			new Architecture(
@@ -377,9 +350,7 @@ Deno.test('findArch case 3: prefer all subtype to mismatch', async () => {
 	arch2.cputype = CPU_TYPE_ARM;
 	arch2.cpusubtype = CPU_SUBTYPE_LIB64 | CPU_SUBTYPE_ARM_ALL;
 
-	const uni = new Universal();
-	await uni.open(new Blob([data]));
-
+	const uni = await Universal.Universal(new Blob([data]));
 	assertEquals(
 		uni.archOffset(
 			new Architecture(
@@ -411,9 +382,7 @@ Deno.test('findArch case 4: accept equal type as last resort', async () => {
 	arch2.cputype = CPU_TYPE_ARM;
 	arch2.cpusubtype = CPU_SUBTYPE_ARM_V7;
 
-	const uni = new Universal();
-	await uni.open(new Blob([data]));
-
+	const uni = await Universal.Universal(new Blob([data]));
 	assertEquals(
 		uni.archOffset(
 			new Architecture(
@@ -442,8 +411,7 @@ Deno.test('make unknown type', async () => {
 	const command = new LoadCommand(data, 256 + mach.byteLength);
 	command.cmdsize = 8;
 
-	const uni = new Universal();
-	await uni.open(new Blob([data]));
+	const uni = await Universal.Universal(new Blob([data]));
 	await assertRejects(
 		() => uni.architecture(256),
 		RangeError,
@@ -483,8 +451,7 @@ Deno.test('make mismatched type', async () => {
 		command.cmdsize = 8;
 	}
 
-	const uni = new Universal();
-	await uni.open(new Blob([data]));
+	const uni = await Universal.Universal(new Blob([data]));
 	await uni.architecture(256);
 	await assertRejects(
 		() => uni.architecture(512),
