@@ -16,7 +16,7 @@ import { FatHeader } from '../mach/fatheader.ts';
 import { MachHeader } from '../mach/machheader.ts';
 import type { Reader } from '../util/reader.ts';
 import { Architecture } from './architecture.ts';
-import type { MachO } from './macho.ts';
+import { MachO } from './macho.ts';
 
 /**
  * Maximum power of 2 alignment amount.
@@ -394,6 +394,19 @@ export class Universal {
 			}
 		}
 		throw new RangeError('Architecture not found');
+	}
+
+	/**
+	 * Find Mach-O image for architecture.
+	 *
+	 * @param target Architecture.
+	 * @returns Mach-O image.
+	 */
+	private async findImage(target: Const<Architecture>): Promise<MachO> {
+		const arch = this.findArch(target);
+		const macho = new MachO();
+		await macho.open(this.mReader!, this.mBase + arch.offset, arch.size);
+		return this.make(macho);
 	}
 
 	/**
