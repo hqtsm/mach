@@ -28,6 +28,8 @@ const MAX_ALIGN = 30;
  * Works for fat binaries and also thin binaries.
  */
 export class Universal {
+	declare public readonly ['constructor']: Omit<typeof Universal, 'new'>;
+
 	/**
 	 * Binary reader.
 	 */
