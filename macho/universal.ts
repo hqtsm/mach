@@ -178,7 +178,7 @@ export class Universal {
 							break;
 						}
 						off += got;
-						const gapBytes = new Uint8Array(got);
+						const gapBytes = new Uint8Array(read);
 						for (let x = 0; x < got; x++) {
 							if (gapBytes[x]) {
 								this.mSuspicious = mSuspicious = true;
