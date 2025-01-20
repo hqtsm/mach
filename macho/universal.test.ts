@@ -8,7 +8,13 @@ import {
 } from '@std/assert';
 import {
 	CPU_ARCH_ABI64,
+	CPU_SUBTYPE_ARM_ALL,
+	CPU_SUBTYPE_ARM_V7,
+	CPU_SUBTYPE_ARM_V8,
+	CPU_SUBTYPE_LIB64,
+	CPU_SUBTYPE_X86_ALL,
 	CPU_TYPE_ARM,
+	CPU_TYPE_X86,
 	FAT_MAGIC,
 	MH_DYLIB,
 	MH_EXECUTE,
@@ -260,6 +266,142 @@ Deno.test('open suspicious read error', async () => {
 	const uni = new Universal();
 	await uni.open(blob);
 	assertEquals(uni.isSuspicious(), true);
+});
+
+Deno.test('findArch case 1: prefer full exact match', async () => {
+	const data = new ArrayBuffer(256 * 3);
+	const header = new FatHeader(data);
+	header.magic = FAT_MAGIC;
+	header.nfatArch = 2;
+
+	const arch1 = new FatArch(data, header.byteLength);
+	arch1.offset = 256;
+	arch1.size = 256;
+	arch1.align = 8;
+	arch1.cputype = CPU_TYPE_ARM;
+	arch1.cpusubtype = CPU_SUBTYPE_ARM_V8;
+
+	const arch2 = new FatArch(data, arch1.byteOffset + arch1.byteLength);
+	arch2.offset = 256 * 2;
+	arch2.size = 256;
+	arch2.align = 8;
+	arch2.cputype = CPU_TYPE_ARM;
+	arch2.cpusubtype = CPU_SUBTYPE_LIB64 | CPU_SUBTYPE_ARM_V8;
+
+	const uni = new Universal();
+	await uni.open(new Blob([data]));
+
+	assertEquals(
+		uni.archOffset(
+			new Architecture(
+				CPU_TYPE_ARM,
+				CPU_SUBTYPE_LIB64 | CPU_SUBTYPE_ARM_V8,
+			),
+		),
+		arch2.offset,
+	);
+});
+
+Deno.test('findArch case 2: prefer masked subtype equal to all', async () => {
+	const data = new ArrayBuffer(256 * 3);
+	const header = new FatHeader(data);
+	header.magic = FAT_MAGIC;
+	header.nfatArch = 2;
+
+	const arch1 = new FatArch(data, header.byteLength);
+	arch1.offset = 256;
+	arch1.size = 256;
+	arch1.align = 8;
+	arch1.cputype = CPU_TYPE_ARM;
+	arch1.cpusubtype = CPU_SUBTYPE_ARM_ALL;
+
+	const arch2 = new FatArch(data, arch1.byteOffset + arch1.byteLength);
+	arch2.offset = 256 * 2;
+	arch2.size = 256;
+	arch2.align = 8;
+	arch2.cputype = CPU_TYPE_ARM;
+	arch2.cpusubtype = CPU_SUBTYPE_ARM_V8;
+
+	const uni = new Universal();
+	await uni.open(new Blob([data]));
+
+	assertEquals(
+		uni.archOffset(
+			new Architecture(
+				CPU_TYPE_ARM,
+				CPU_SUBTYPE_LIB64 | CPU_SUBTYPE_ARM_V8,
+			),
+		),
+		arch2.offset,
+	);
+});
+
+Deno.test('findArch case 3: prefer all subtype to mismatch', async () => {
+	const data = new ArrayBuffer(256 * 3);
+	const header = new FatHeader(data);
+	header.magic = FAT_MAGIC;
+	header.nfatArch = 2;
+
+	const arch1 = new FatArch(data, header.byteLength);
+	arch1.offset = 256;
+	arch1.size = 256;
+	arch1.align = 8;
+	arch1.cputype = CPU_TYPE_ARM;
+	arch1.cpusubtype = CPU_SUBTYPE_ARM_V7;
+
+	const arch2 = new FatArch(data, arch1.byteOffset + arch1.byteLength);
+	arch2.offset = 256 * 2;
+	arch2.size = 256;
+	arch2.align = 8;
+	arch2.cputype = CPU_TYPE_ARM;
+	arch2.cpusubtype = CPU_SUBTYPE_LIB64 | CPU_SUBTYPE_ARM_ALL;
+
+	const uni = new Universal();
+	await uni.open(new Blob([data]));
+
+	assertEquals(
+		uni.archOffset(
+			new Architecture(
+				CPU_TYPE_ARM,
+				CPU_SUBTYPE_ARM_V8,
+			),
+		),
+		arch2.offset,
+	);
+});
+
+Deno.test('findArch case 4: accept equal type as last resort', async () => {
+	const data = new ArrayBuffer(256 * 3);
+	const header = new FatHeader(data);
+	header.magic = FAT_MAGIC;
+	header.nfatArch = 2;
+
+	const arch1 = new FatArch(data, header.byteLength);
+	arch1.offset = 256;
+	arch1.size = 256;
+	arch1.align = 8;
+	arch1.cputype = CPU_TYPE_X86;
+	arch1.cpusubtype = CPU_SUBTYPE_X86_ALL;
+
+	const arch2 = new FatArch(data, arch1.byteOffset + arch1.byteLength);
+	arch2.offset = 256 * 2;
+	arch2.size = 256;
+	arch2.align = 8;
+	arch2.cputype = CPU_TYPE_ARM;
+	arch2.cpusubtype = CPU_SUBTYPE_ARM_V7;
+
+	const uni = new Universal();
+	await uni.open(new Blob([data]));
+
+	assertEquals(
+		uni.archOffset(
+			new Architecture(
+				CPU_TYPE_ARM,
+				CPU_SUBTYPE_ARM_V8,
+			),
+		),
+		arch2.offset,
+	);
 });
 
 Deno.test('typeOf under header', async () => {
