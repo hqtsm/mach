@@ -66,6 +66,14 @@ for (const { kind, arch, file, archs } of fixtures) {
 				assertEquals(offset, 0);
 				assertEquals(length, blob.size);
 			}
+
+			// deno-lint-ignore no-await-in-loop
+			const ma = await uni.architecture(a);
+			assertEquals(ma.offset(), offset);
+
+			// deno-lint-ignore no-await-in-loop
+			const mo = await uni.architecture(offset);
+			assertEquals(mo.offset(), offset);
 		}
 		assertThrows(
 			() => uni.archOffset(new Architecture()),
