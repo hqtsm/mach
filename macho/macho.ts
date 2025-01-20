@@ -58,7 +58,7 @@ export class MachO extends MachOBase {
 		reader: Reader,
 		offset = 0,
 		length = 0,
-	): Promise<MachO> {
+	): Promise<this> {
 		offset = (+offset || 0) - (offset % 1 || 0);
 		length = (+length || 0) - (length % 1 || 0);
 		this.mReader = reader;
