@@ -196,6 +196,28 @@ Deno.test('open suspicious gap', async () => {
 	assertEquals(uni.isSuspicious(), true);
 });
 
+Deno.test('open suspicious read align', async () => {
+	const data = new ArrayBuffer(1024);
+	const header = new FatHeader(data);
+	header.magic = FAT_MAGIC;
+	header.nfatArch = 2;
+
+	const arch1 = new FatArch(data, header.byteLength);
+	arch1.offset = 256;
+	arch1.size = 256;
+	arch1.align = 8;
+
+	const arch2 = new FatArch(data, header.byteLength + arch1.byteLength);
+	arch2.offset = 256 * 3;
+	arch2.size = 256;
+	arch2.align = 8;
+
+	const blob = new Blob([data]);
+	const uni = new Universal();
+	await uni.open(blob);
+	assertEquals(uni.isSuspicious(), true);
+});
+
 Deno.test('open suspicious read error', async () => {
 	const data = new ArrayBuffer(512 + 1);
 	const header = new FatHeader(data);
