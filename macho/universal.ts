@@ -257,23 +257,17 @@ export class Universal {
 		if (typeof a === 'number') {
 			if (this.isUniversal()) {
 				const length = this.lengthOfSlice(a);
-				const macho = new MachO();
-				await macho.open(this.mReader!, a, length);
-				return this.make(macho);
+				return this.make(await MachO.MachO(this.mReader!, a, length));
 			}
 			if (a === this.mBase) {
-				const macho = new MachO();
-				await macho.open(this.mReader!);
-				return macho;
+				return MachO.MachO(this.mReader!);
 			}
 		} else {
 			if (this.isUniversal()) {
 				return this.findImage(a);
 			}
 			if (this.mThinArch!.matches(a)) {
-				const macho = new MachO();
-				await macho.open(this.mReader!, this.mBase, this.mLength);
-				return macho;
+				return MachO.MachO(this.mReader!, this.mBase, this.mLength);
 			}
 		}
 		throw new RangeError('Architecture not found');
@@ -448,9 +442,13 @@ export class Universal {
 	 */
 	private async findImage(target: Const<Architecture>): Promise<MachO> {
 		const arch = this.findArch(target);
-		const macho = new MachO();
-		await macho.open(this.mReader!, this.mBase + arch.offset, arch.size);
-		return this.make(macho);
+		return this.make(
+			await MachO.MachO(
+				this.mReader!,
+				this.mBase + arch.offset,
+				arch.size,
+			),
+		);
 	}
 
 	/**

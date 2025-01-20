@@ -26,24 +26,14 @@ for (const { kind, arch, file, archs } of fixtures) {
 		const [macho] = await fixtureMacho(kind, arch, [file]);
 		const blob = new Blob([macho]);
 		for (const [arc, info] of archs) {
-			const m = new MachO();
-
-			assertEquals(m.isOpen(), false, arc);
-			assertEquals(m.offset(), 0, arc);
-			assertEquals(m.length(), 0, arc);
-			assertEquals(m.signingExtent(), 0, arc);
-			assertEquals(m.isSuspicious(), false, arc);
-
 			const bin = thin(macho, ...CPU_ARCHITECTURES.get(arc)!);
 			const offset = bin.byteOffset;
 			const length = offset ? bin.byteLength : blob.size;
-			if (offset) {
+			const m = offset
 				// deno-lint-ignore no-await-in-loop
-				await m.open(blob, offset, length);
-			} else {
+				? await MachO.MachO(blob, offset, length)
 				// deno-lint-ignore no-await-in-loop
-				await m.open(blob);
-			}
+				: await MachO.MachO(blob);
 
 			assertEquals(m.isOpen(), true, arc);
 			assertEquals(m.offset(), offset, arc);
@@ -87,13 +77,11 @@ for (const { kind, arch, file, archs } of fixtures) {
 	});
 }
 
-Deno.test('open under', async () => {
-	const macho = new MachO();
-
+Deno.test('read under', async () => {
 	let mh = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH - 1));
 
 	await assertRejects(
-		() => macho.open(new Blob([mh.buffer])),
+		() => MachO.MachO(new Blob([mh.buffer])),
 		RangeError,
 		'Invalid header',
 	);
@@ -102,7 +90,7 @@ Deno.test('open under', async () => {
 	mh.magic = MH_MAGIC_64;
 
 	await assertRejects(
-		() => macho.open(new Blob([mh.buffer])),
+		() => MachO.MachO(new Blob([mh.buffer])),
 		RangeError,
 		'Invalid header',
 	);
@@ -113,7 +101,7 @@ Deno.test('open under', async () => {
 	mh.sizeofcmds = 2;
 
 	await assertRejects(
-		() => macho.open(new Blob([mh.buffer])),
+		() => MachO.MachO(new Blob([mh.buffer])),
 		RangeError,
 		'Invalid commands',
 	);
@@ -136,20 +124,22 @@ Deno.test('validateStructure LC_SYMTAB', async () => {
 	cmd.stroff = MachHeader.BYTE_LENGTH + SymtabCommand.BYTE_LENGTH;
 	cmd.strsize = extra;
 
-	let macho = new MachO();
-	await macho.open(new Blob([buffer]));
+	{
+		const macho = await MachO.MachO(new Blob([buffer]));
+		assertEquals(macho.isSuspicious(), false);
+	}
 
-	assertEquals(macho.isSuspicious(), false);
+	{
+		const macho = await MachO.MachO(new Blob([buffer, new ArrayBuffer(1)]));
+		assertEquals(macho.isSuspicious(), true);
+	}
 
-	macho = new MachO();
-	await macho.open(new Blob([buffer, new ArrayBuffer(1)]));
-
-	assertEquals(macho.isSuspicious(), true);
-
-	macho = new MachO();
-	await macho.open(new Blob([buffer.slice(0, buffer.byteLength - 1)]));
-
-	assertEquals(macho.isSuspicious(), true);
+	{
+		const macho = await MachO.MachO(
+			new Blob([buffer.slice(0, buffer.byteLength - 1)]),
+		);
+		assertEquals(macho.isSuspicious(), true);
+	}
 });
 
 Deno.test('validateStructure bad command size', async () => {
@@ -175,10 +165,9 @@ Deno.test('validateStructure bad command size', async () => {
 		cmd.cmd = LC;
 		cmd.cmdsize = cmdsize;
 
-		const macho = new MachO();
 		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
-			() => macho.open(new Blob([buffer])),
+			() => MachO.MachO(new Blob([buffer])),
 			RangeError,
 			'Invalid command size',
 			tag,

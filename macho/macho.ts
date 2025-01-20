@@ -40,13 +40,25 @@ export class MachO extends MachOBase {
 	private mSuspicious = false;
 
 	/**
-	 * Open binary.
+	 * Create uninitialized Mach-O instance.
+	 */
+	protected constructor() {
+		super();
+	}
+
+	/**
+	 * Initialize instance.
 	 *
 	 * @param reader Reader object.
 	 * @param offset Offset for subsection.
 	 * @param length Length of subsection, requires offset.
+	 * @returns This instance.
 	 */
-	public async open(reader: Reader, offset = 0, length = 0): Promise<void> {
+	protected async MachO(
+		reader: Reader,
+		offset = 0,
+		length = 0,
+	): Promise<MachO> {
 		offset = (+offset || 0) - (offset % 1 || 0);
 		length = (+length || 0) - (length % 1 || 0);
 		this.mReader = reader;
@@ -86,6 +98,7 @@ export class MachO extends MachOBase {
 		if (mLength) {
 			this.validateStructure();
 		}
+		return this;
 	}
 
 	/**
@@ -234,5 +247,21 @@ export class MachO extends MachOBase {
 	 */
 	public isSuspicious(): boolean {
 		return this.mSuspicious;
+	}
+
+	/**
+	 * Create Mach-O binary over a reader.
+	 *
+	 * @param reader Reader object.
+	 * @param offset Offset for subsection.
+	 * @param length Length of subsection, requires offset.
+	 * @returns Mach-O binary.
+	 */
+	public static async MachO(
+		reader: Reader,
+		offset = 0,
+		length = 0,
+	): Promise<MachO> {
+		return await new MachO().MachO(reader, offset, length);
 	}
 }
