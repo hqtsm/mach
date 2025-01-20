@@ -1,6 +1,8 @@
 import { type Const, pointer, type Ptr } from '@hqtsm/struct';
 import {
+	CPU_ARCH_ABI64,
 	CPU_SUBTYPE_MASK,
+	CPU_TYPE_ARM,
 	FAT_CIGAM,
 	FAT_MAGIC,
 	MH_CIGAM,
@@ -9,13 +11,12 @@ import {
 	MH_MAGIC_64,
 	PAGE_SIZE,
 } from '../const.ts';
+import { FatArch } from '../mach/fatarch.ts';
 import { FatHeader } from '../mach/fatheader.ts';
 import { MachHeader } from '../mach/machheader.ts';
 import type { Reader } from '../util/reader.ts';
 import { Architecture } from './architecture.ts';
-import { FatArch } from '../mach/fatarch.ts';
-import { CPU_ARCH_ABI64 } from '../const.ts';
-import { CPU_TYPE_ARM } from '../const.ts';
+import type { MachO } from './macho.ts';
 
 /**
  * Maximum power of 2 alignment amount.
@@ -393,6 +394,25 @@ export class Universal {
 			}
 		}
 		throw new RangeError('Architecture not found');
+	}
+
+	/**
+	 * Validate type of Mach-O.
+	 *
+	 * @param macho Mach-O instance.
+	 * @returns Mach-O instance.
+	 */
+	private make(macho: MachO): MachO {
+		const type = macho.type();
+		if (!type) {
+			throw new RangeError('Unknown type');
+		}
+		const { mMachType } = this;
+		if (mMachType && mMachType !== type) {
+			throw new RangeError('Mismatched type');
+		}
+		this.mMachType = type;
+		return macho;
 	}
 
 	/**
