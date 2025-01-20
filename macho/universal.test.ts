@@ -439,16 +439,57 @@ Deno.test('make unknown type', async () => {
 	const mach = new MachHeader64(data, 256);
 	mach.magic = MH_MAGIC_64;
 	mach.sizeofcmds = 8;
-	const command = new LoadCommand(data, 256 + MachHeader64.BYTE_LENGTH);
+	const command = new LoadCommand(data, 256 + mach.byteLength);
 	command.cmdsize = 8;
 
 	const uni = new Universal();
 	await uni.open(new Blob([data]));
-
 	await assertRejects(
 		() => uni.architecture(256),
 		RangeError,
 		'Unknown type',
+	);
+});
+
+Deno.test('make mismatched type', async () => {
+	const data = new ArrayBuffer(256 * 3);
+	const header = new FatHeader(data);
+	header.magic = FAT_MAGIC;
+	header.nfatArch = 2;
+
+	const arch1 = new FatArch(data, header.byteLength);
+	arch1.offset = 256;
+	arch1.size = 256;
+	arch1.align = 8;
+	{
+		const mach = new MachHeader64(data, 256);
+		mach.magic = MH_MAGIC_64;
+		mach.filetype = MH_EXECUTE;
+		mach.sizeofcmds = 8;
+		const command = new LoadCommand(data, 256 + mach.byteLength);
+		command.cmdsize = 8;
+	}
+
+	const arch2 = new FatArch(data, arch1.byteOffset + arch1.byteLength);
+	arch2.offset = 512;
+	arch2.size = 512;
+	arch2.align = 8;
+	{
+		const mach = new MachHeader64(data, 512);
+		mach.magic = MH_MAGIC_64;
+		mach.filetype = MH_DYLIB;
+		mach.sizeofcmds = 8;
+		const command = new LoadCommand(data, 512 + mach.byteLength);
+		command.cmdsize = 8;
+	}
+
+	const uni = new Universal();
+	await uni.open(new Blob([data]));
+	await uni.architecture(256);
+	await assertRejects(
+		() => uni.architecture(512),
+		RangeError,
+		'Mismatched type',
 	);
 });
 
