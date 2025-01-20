@@ -18,10 +18,13 @@ import {
 	FAT_MAGIC,
 	MH_DYLIB,
 	MH_EXECUTE,
+	MH_MAGIC_64,
 } from '../const.ts';
 import { FatArch } from '../mach/fatarch.ts';
 import { FatHeader } from '../mach/fatheader.ts';
+import { LoadCommand } from '../mach/loadcommand.ts';
 import { MachHeader } from '../mach/machheader.ts';
+import { MachHeader64 } from '../mach/machheader64.ts';
 import { fixtureMacho, fixtureMachos } from '../spec/fixture.ts';
 import { Architecture } from './architecture.ts';
 import { Universal } from './universal.ts';
@@ -419,6 +422,33 @@ Deno.test('findArch case 4: accept equal type as last resort', async () => {
 			),
 		),
 		arch2.offset,
+	);
+});
+
+Deno.test('make unknown type', async () => {
+	const data = new ArrayBuffer(512);
+	const header = new FatHeader(data);
+	header.magic = FAT_MAGIC;
+	header.nfatArch = 1;
+
+	const arch = new FatArch(data, header.byteLength);
+	arch.offset = 256;
+	arch.size = 256;
+	arch.align = 8;
+
+	const mach = new MachHeader64(data, 256);
+	mach.magic = MH_MAGIC_64;
+	mach.sizeofcmds = 8;
+	const command = new LoadCommand(data, 256 + MachHeader64.BYTE_LENGTH);
+	command.cmdsize = 8;
+
+	const uni = new Universal();
+	await uni.open(new Blob([data]));
+
+	await assertRejects(
+		() => uni.architecture(256),
+		RangeError,
+		'Unknown type',
 	);
 });
 
