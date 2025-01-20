@@ -236,6 +236,48 @@ export class Universal {
 	}
 
 	/**
+	 * Get Mach-O for architecture.
+	 *
+	 * @param arch Architecture to get.
+	 * @returns Mach-O.
+	 */
+	public async architecture(arch: Const<Architecture>): Promise<MachO>;
+
+	/**
+	 * Get Mach-O for offset.
+	 *
+	 * @param arch Offset of binary.
+	 * @returns Mach-O.
+	 */
+	public async architecture(offset: number): Promise<MachO>;
+
+	public async architecture(a: Const<Architecture> | number): Promise<MachO> {
+		if (typeof a === 'number') {
+			if (this.isUniversal()) {
+				const length = this.lengthOfSlice(a);
+				const macho = new MachO();
+				await macho.open(this.mReader!, a, length);
+				return this.make(macho);
+			}
+			if (a === this.mBase) {
+				const macho = new MachO();
+				await macho.open(this.mReader!);
+				return macho;
+			}
+		} else {
+			if (this.isUniversal()) {
+				return this.findImage(a);
+			}
+			if (this.mThinArch!.matches(a)) {
+				const macho = new MachO();
+				await macho.open(this.mReader!, this.mBase, this.mLength);
+				return macho;
+			}
+		}
+		throw new Error('Architecture not found');
+	}
+
+	/**
 	 * Get offset or architecture.
 	 *
 	 * @param arch Architecture to get the offset of.
