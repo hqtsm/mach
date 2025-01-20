@@ -274,7 +274,7 @@ export class Universal {
 				return macho;
 			}
 		}
-		throw new Error('Architecture not found');
+		throw new RangeError('Architecture not found');
 	}
 
 	/**

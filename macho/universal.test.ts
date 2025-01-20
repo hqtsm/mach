@@ -90,6 +90,16 @@ for (const { kind, arch, file, archs } of fixtures) {
 			RangeError,
 			'Offset not found',
 		);
+		await assertRejects(
+			() => uni.architecture(new Architecture()),
+			RangeError,
+			'Architecture not found',
+		);
+		await assertRejects(
+			() => uni.architecture(1),
+			RangeError,
+			uni.isUniversal() ? 'Offset not found' : 'Architecture not found',
+		);
 
 		if (/\.dylib$|\.framework\//i.test(file)) {
 			assertEquals(await Universal.typeOf(blob), MH_DYLIB);
