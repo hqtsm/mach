@@ -5,7 +5,7 @@ import {
 	type Ptr,
 } from '@hqtsm/struct';
 import { UINT32_MAX } from '../const.ts';
-import type { DynamicHash } from '../hash/dynamichash.ts';
+import type { DynamicHash, HashCrypto } from '../hash/dynamichash.ts';
 import type { Reader } from '../util/reader.ts';
 import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
@@ -35,6 +35,11 @@ export class CodeDirectoryBuilder {
 		typeof CodeDirectoryBuilder,
 		'new'
 	>;
+
+	/**
+	 * Hash crypto.
+	 */
+	public crypto: HashCrypto | null = null;
 
 	/**
 	 * Special slots.
@@ -545,7 +550,9 @@ export class CodeDirectoryBuilder {
 	 * @returns Hash instance.
 	 */
 	public getHash(): DynamicHash {
-		return CodeDirectory.hashFor(this.mHashType);
+		const hash = CodeDirectory.hashFor(this.mHashType);
+		hash.crypto = this.crypto;
+		return hash;
 	}
 
 	/**
