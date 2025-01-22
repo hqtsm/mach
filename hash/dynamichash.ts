@@ -1,4 +1,5 @@
 import type { ArrayBufferReal, BufferView } from '@hqtsm/struct';
+import type { Reader } from '../util/reader.ts';
 
 /**
  * Dynamic hash.
@@ -12,20 +13,12 @@ export abstract class DynamicHash {
 	public abstract digestLength(): number;
 
 	/**
-	 * Update hash state with data chunk.
+	 * Create digest.
 	 *
-	 * @param data Data to be hashed.
-	 * @param transfer Transfer ArrayBuffer.
-	 */
-	public abstract update(
-		data: ArrayBufferReal | BufferView,
-		transfer?: boolean,
-	): Promise<void>;
-
-	/**
-	 * Finish digest.
-	 *
+	 * @param source Source data.
 	 * @returns Hash digest.
 	 */
-	public abstract finish(): Promise<ArrayBuffer>;
+	public abstract digest(
+		source: Reader | ArrayBufferReal | BufferView,
+	): Promise<ArrayBuffer>;
 }

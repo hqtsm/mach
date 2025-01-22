@@ -6,26 +6,24 @@ import {
 	kCCDigestSHA512,
 } from '../const.ts';
 import { DynamicHash } from './dynamichash.ts';
+import type { Reader } from '../util/reader.ts';
 
 // Workaround for missing types.
 declare const crypto: {
 	subtle: {
-		digest: (alg: string, data: ArrayBuffer) => Promise<ArrayBuffer>;
+		digest: (
+			alg: string,
+			data: ArrayBufferView | ArrayBuffer,
+		) => Promise<ArrayBuffer>;
 	};
 };
-declare function structuredClone<T>(
-	value: T,
-	options?: {
-		transfer?: ArrayBufferReal[];
-	},
-): T;
 
-// Supported hash algorithms with their Web Crypto names and lengths.
-const algorithims = new Map<number, [string, number]>([
-	[kCCDigestSHA1, ['SHA-1', 20]],
-	[kCCDigestSHA256, ['SHA-256', 32]],
-	[kCCDigestSHA384, ['SHA-384', 48]],
-	[kCCDigestSHA512, ['SHA-512', 64]],
+// Supported hash algorithms with their names and lengths.
+const algorithims = new Map<number, [number, string]>([
+	[kCCDigestSHA1, [20, 'SHA-1']],
+	[kCCDigestSHA256, [32, 'SHA-256']],
+	[kCCDigestSHA384, [48, 'SHA-384']],
+	[kCCDigestSHA512, [64, 'SHA-512']],
 ]);
 
 /**
@@ -43,13 +41,6 @@ export class CCHashInstance extends DynamicHash {
 	private mTruncate: number;
 
 	/**
-	 * Data buffer.
-	 * Web Crypto digest lacks streaming support.
-	 * No choice but to buffer all the data.
-	 */
-	private mData: ArrayBuffer[] | null;
-
-	/**
 	 * CCHashInstance constructor.
 	 *
 	 * @param alg Digest algorithm.
@@ -62,60 +53,42 @@ export class CCHashInstance extends DynamicHash {
 		super();
 		this.mDigest = alg;
 		this.mTruncate = truncate;
-		this.mData = [];
 	}
 
 	public digestLength(): number {
-		return this.mTruncate || algorithims.get(this.mDigest)![1];
+		return this.mTruncate || algorithims.get(this.mDigest)![0];
 	}
 
-	// deno-lint-ignore require-await
-	public async update(
-		data: ArrayBufferReal | BufferView,
-		transfer?: boolean,
-	): Promise<void> {
-		const mData = this.mData;
-		if (!mData) {
-			throw new Error('Digest finished');
-		}
-		let buffer, byteOffset, byteLength;
-		if ('buffer' in data) {
-			buffer = data.buffer;
-			byteLength = data.byteLength;
-			byteOffset = data.byteOffset;
-		} else {
-			buffer = data;
-			byteLength = data.byteLength;
-			byteOffset = 0;
-		}
-		if (!transfer) {
-			mData.push(buffer.slice(byteOffset, byteOffset + byteLength));
-			return;
-		}
-		let b = structuredClone(buffer, { transfer: [buffer] });
-		if (byteOffset || byteLength !== b.byteLength) {
-			b = b.slice(byteOffset, byteOffset + byteLength);
-		}
-		mData.push(b);
-	}
-
-	public async finish(): Promise<ArrayBuffer> {
-		const [name] = algorithims.get(this.mDigest)!;
+	public async digest(
+		source: Reader | ArrayBufferReal | BufferView,
+	): Promise<ArrayBuffer> {
 		const { mTruncate } = this;
-		const mData = this.mData;
-		if (!mData) {
-			throw new Error('Digest finished');
+		const [, name] = algorithims.get(this.mDigest)!;
+		let digest;
+		if ('arrayBuffer' in source) {
+			const { size } = source;
+			digest = await crypto.subtle.digest(
+				name,
+				await source.arrayBuffer().then((d) => {
+					const diff = d.byteLength - size;
+					if (diff) {
+						throw new RangeError(`Read size off by: ${diff}`);
+					}
+					return d;
+				}),
+			);
+		} else {
+			digest = await crypto.subtle.digest(
+				name,
+				'buffer' in source
+					? source = new Uint8Array(
+						source.buffer,
+						source.byteOffset,
+						source.byteLength,
+					)
+					: source,
+			);
 		}
-		let total = 0;
-		for (const data of mData) {
-			total += data.byteLength;
-		}
-		const buffer = new Uint8Array(total);
-		this.mData = null;
-		for (let b, offset = 0; mData.length; offset += b.byteLength) {
-			buffer.set(new Uint8Array(b = mData.shift()!), offset);
-		}
-		const digest = await crypto.subtle.digest(name, buffer);
 		return mTruncate ? digest.slice(0, mTruncate) : digest;
 	}
 }

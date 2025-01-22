@@ -24,15 +24,7 @@ async function generateHash(
 	offset: number,
 	length: number,
 ): Promise<ArrayBuffer> {
-	const data = await reader.slice(offset, offset + length).arrayBuffer();
-	const { byteLength } = data;
-	if (byteLength !== length) {
-		throw new RangeError(
-			`Read from: ${offset} (${byteLength} != ${length})`,
-		);
-	}
-	await hasher.update(data, true);
-	return await hasher.finish();
+	return await hasher.digest(reader.slice(offset, offset + length));
 }
 
 /**
@@ -227,9 +219,7 @@ export class CodeDirectoryBuilder {
 		data: ArrayBufferReal | BufferView,
 	): Promise<void> {
 		slot = specialSlot(slot);
-		const hash = this.getHash();
-		await hash.update(data);
-		this.mSpecial.set(slot, await hash.finish());
+		this.mSpecial.set(slot, await this.getHash().digest(data));
 		if (slot > this.mSpecialSlots) {
 			this.mSpecialSlots = slot;
 		}

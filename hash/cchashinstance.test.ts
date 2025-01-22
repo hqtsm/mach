@@ -21,7 +21,68 @@ import {
 	kCCDigestSkein512,
 } from '../const.ts';
 import { hex } from '../spec/hex.ts';
+import type { Reader } from '../util/reader.ts';
 import { CCHashInstance } from './cchashinstance.ts';
+
+class ShortReader implements Reader {
+	#size: number;
+
+	#type: string;
+
+	constructor(size: number, type: string = '') {
+		this.#size = size;
+		this.#type = type;
+	}
+
+	public get size(): number {
+		return this.#size;
+	}
+
+	public get type(): string {
+		return this.#type;
+	}
+
+	public slice(start?: number, end?: number, contentType?: string): Reader {
+		start ??= 0;
+		end ??= this.#size;
+		return new ShortReader(start < end ? end - start : 0, contentType);
+	}
+
+	// deno-lint-ignore require-await
+	public async arrayBuffer(): Promise<ArrayBuffer> {
+		return new ArrayBuffer(this.#size - 1);
+	}
+}
+
+class LongReader implements Reader {
+	#size: number;
+
+	#type: string;
+
+	constructor(size: number, type: string = '') {
+		this.#size = size;
+		this.#type = type;
+	}
+
+	public get size(): number {
+		return this.#size;
+	}
+
+	public get type(): string {
+		return this.#type;
+	}
+
+	public slice(start?: number, end?: number, contentType?: string): Reader {
+		start ??= 0;
+		end ??= this.#size;
+		return new LongReader(start < end ? end - start : 0, contentType);
+	}
+
+	// deno-lint-ignore require-await
+	public async arrayBuffer(): Promise<ArrayBuffer> {
+		return new ArrayBuffer(this.#size + 1);
+	}
+}
 
 // 'ABCD':
 const expected = [
@@ -63,36 +124,6 @@ const unsupported = [
 	kCCDigestSkein512,
 ];
 
-Deno.test('CCHashInstance full', async () => {
-	for (const [alg, expt] of expected) {
-		const tag = `alg=${alg}`;
-		const hash = new CCHashInstance(alg);
-		// deno-lint-ignore no-await-in-loop
-		await hash.update(new TextEncoder().encode('AB'));
-		// deno-lint-ignore no-await-in-loop
-		await hash.update(new TextEncoder().encode('CD'));
-		// deno-lint-ignore no-await-in-loop
-		const result = await hash.finish();
-		assertEquals(result.byteLength, hash.digestLength(), tag);
-		assertEquals(hex(new Uint8Array(result)), expt, tag);
-	}
-});
-
-Deno.test('CCHashInstance truncate', async () => {
-	const truncate = 8;
-	for (const [alg, expt] of expected) {
-		const tag = `alg=${alg} truncate=${truncate}`;
-		const exptHex = expt.slice(0, truncate * 2);
-		const hash = new CCHashInstance(alg, truncate);
-		// deno-lint-ignore no-await-in-loop
-		await hash.update(new TextEncoder().encode('ABCD'));
-		// deno-lint-ignore no-await-in-loop
-		const result = await hash.finish();
-		assertEquals(result.byteLength, truncate, tag);
-		assertEquals(hex(new Uint8Array(result)), exptHex, tag);
-	}
-});
-
 Deno.test('CCHashInstance unsupported', () => {
 	for (const alg of unsupported) {
 		const tag = `alg=${alg}`;
@@ -105,31 +136,44 @@ Deno.test('CCHashInstance unsupported', () => {
 	}
 });
 
-Deno.test('CCHashInstance finish finished', async () => {
-	const hash = new CCHashInstance(kCCDigestSHA1);
-	await hash.finish();
-	await assertRejects(() => hash.finish(), Error, 'Digest finished');
+Deno.test('CCHashInstance full', async () => {
+	for (const [alg, expt] of expected) {
+		const tag = `alg=${alg}`;
+		const hash = new CCHashInstance(alg);
+		// deno-lint-ignore no-await-in-loop
+		const result = await hash.digest(new TextEncoder().encode('ABCD'));
+		assertEquals(result.byteLength, hash.digestLength(), tag);
+		assertEquals(hex(new Uint8Array(result)), expt, tag);
+	}
 });
 
-Deno.test('CCHashInstance update finished', async () => {
+Deno.test('CCHashInstance truncate', async () => {
+	const truncate = 8;
+	for (const [alg, expt] of expected) {
+		const tag = `alg=${alg} truncate=${truncate}`;
+		const exptHex = expt.slice(0, truncate * 2);
+		const hash = new CCHashInstance(alg, truncate);
+		// deno-lint-ignore no-await-in-loop
+		const result = await hash.digest(new TextEncoder().encode('ABCD'));
+		assertEquals(result.byteLength, truncate, tag);
+		assertEquals(hex(new Uint8Array(result)), exptHex, tag);
+	}
+});
+
+Deno.test('CCHashInstance short read', async () => {
 	const hash = new CCHashInstance(kCCDigestSHA1);
-	await hash.finish();
 	await assertRejects(
-		() => hash.update(new Uint8Array()),
-		Error,
-		'Digest finished',
+		() => hash.digest(new ShortReader(1024)),
+		RangeError,
+		'Read size off by: -1',
 	);
 });
 
-Deno.test('CCHashInstance transfer', async () => {
+Deno.test('CCHashInstance long read', async () => {
 	const hash = new CCHashInstance(kCCDigestSHA1);
-	const copied = new ArrayBuffer(4);
-	await hash.update(copied);
-	assertEquals(copied.byteLength, 4);
-	const transfered = new ArrayBuffer(4);
-	await hash.update(transfered, true);
-	assertEquals(transfered.byteLength, 0);
-	const transferedSlice = new ArrayBuffer(8);
-	await hash.update(new Uint8Array(transferedSlice, 2, 4), true);
-	assertEquals(transferedSlice.byteLength, 0);
+	await assertRejects(
+		() => hash.digest(new LongReader(1024)),
+		RangeError,
+		'Read size off by: 1',
+	);
 });

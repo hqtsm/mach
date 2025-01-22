@@ -11,9 +11,40 @@ import {
 	PLATFORM_MACOS,
 	UINT32_MAX,
 } from '../const.ts';
+import type { Reader } from '../util/reader.ts';
 import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
+
+class ErrorReader implements Reader {
+	#size: number;
+
+	#type: string;
+
+	constructor(size: number, type: string = '') {
+		this.#size = size;
+		this.#type = type;
+	}
+
+	public get size(): number {
+		return this.#size;
+	}
+
+	public get type(): string {
+		return this.#type;
+	}
+
+	slice(start?: number, end?: number, contentType?: string): Reader {
+		start ??= 0;
+		end ??= this.#size;
+		return new ErrorReader(start < end ? end - start : 0, contentType);
+	}
+
+	// deno-lint-ignore require-await
+	public async arrayBuffer(): Promise<ArrayBuffer> {
+		throw new Error('BadReader');
+	}
+}
 
 Deno.test('hashType', () => {
 	let builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
@@ -201,6 +232,6 @@ Deno.test('generatePreEncryptHashes', async () => {
 
 Deno.test('Read valiation', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
-	builder.executable(new Blob([]), 1024, 0, UINT32_MAX + 1);
-	await assertRejects(() => builder.build(), Error, 'Read from: 0 ');
+	builder.executable(new ErrorReader(1024), 1024, 0, UINT32_MAX + 1);
+	await assertRejects(() => builder.build(), Error, 'BadReader');
 });
