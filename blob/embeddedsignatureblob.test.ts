@@ -32,6 +32,16 @@ const emptyRequirementsData = new Uint8Array(
 	emptyRequirements.length(),
 );
 
+const createBuilder = async (
+	hashType: number,
+): Promise<CodeDirectoryBuilder> => {
+	const builder = new CodeDirectoryBuilder(hashType);
+	if (typeof crypto === 'undefined') {
+		builder.crypto = await import('node:crypto');
+	}
+	return builder;
+};
+
 export async function* createCodeDirectories(
 	info: Readonly<FixtureMachoSignatureInfo>,
 	thin: Readonly<Uint8Array>,
@@ -42,7 +52,8 @@ export async function* createCodeDirectories(
 	for (const hashType of info.hashes) {
 		const identifier = new TextEncoder().encode(info.identifier);
 		const teamID = new TextEncoder().encode(info.teamid);
-		const builder = new CodeDirectoryBuilder(hashType);
+		// deno-lint-ignore no-await-in-loop
+		const builder = await createBuilder(hashType);
 		builder.executable(new Blob([thin]), info.page, 0, info.offset);
 		builder.flags(info.flags);
 		builder.execSeg(info.execsegbase, info.execseglimit, info.execsegflags);
