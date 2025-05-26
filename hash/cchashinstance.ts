@@ -66,9 +66,13 @@ export class CCHashInstance extends DynamicHash {
 		const { mTruncate } = this;
 		const cry = this.crypto || crypto.subtle;
 		const [, NAME, name] = algorithims.get(this.mDigest)!;
-		let digest;
 
 		if ('createHash' in cry) {
+			let digest: {
+				buffer: ArrayBuffer;
+				byteLength: number;
+				byteOffset: number;
+			};
 			const hash = cry.createHash(name);
 			const asyn = 'write' in hash;
 
@@ -100,9 +104,9 @@ export class CCHashInstance extends DynamicHash {
 					await new Promise((p, f) =>
 						hash.end((e) => e ? f(e) : p(0))
 					);
-					digest = hash.read();
+					digest = hash.read() as typeof digest;
 				} else {
-					digest = hash.digest();
+					digest = hash.digest() as typeof digest;
 				}
 			} else {
 				const data = 'buffer' in source
@@ -119,16 +123,17 @@ export class CCHashInstance extends DynamicHash {
 					await new Promise((p, f) =>
 						hash.end((e) => e ? f(e) : p(0))
 					);
-					digest = hash.read();
+					digest = hash.read() as typeof digest;
 				} else {
 					hash.update(data);
-					digest = hash.digest();
+					digest = hash.digest() as typeof digest;
 				}
 			}
 			const o = digest.byteOffset;
 			return digest.buffer.slice(o, o + (mTruncate || digest.byteLength));
 		}
 
+		let digest: ArrayBuffer;
 		if ('arrayBuffer' in source) {
 			const { size } = source;
 			digest = await cry.digest(
@@ -150,7 +155,7 @@ export class CCHashInstance extends DynamicHash {
 						source.byteOffset,
 						source.byteLength,
 					)
-					: source,
+					: (source as ArrayBuffer),
 			);
 		}
 		return mTruncate ? digest.slice(0, mTruncate) : digest;

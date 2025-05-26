@@ -81,7 +81,7 @@ Deno.test('read under', async () => {
 	let mh = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH - 1));
 
 	await assertRejects(
-		() => MachO.MachO(new Blob([mh.buffer])),
+		() => MachO.MachO(new Blob([mh.buffer as ArrayBuffer])),
 		RangeError,
 		'Invalid header',
 	);
@@ -90,7 +90,7 @@ Deno.test('read under', async () => {
 	mh.magic = MH_MAGIC_64;
 
 	await assertRejects(
-		() => MachO.MachO(new Blob([mh.buffer])),
+		() => MachO.MachO(new Blob([mh.buffer as ArrayBuffer])),
 		RangeError,
 		'Invalid header',
 	);
@@ -101,7 +101,7 @@ Deno.test('read under', async () => {
 	mh.sizeofcmds = 2;
 
 	await assertRejects(
-		() => MachO.MachO(new Blob([mh.buffer])),
+		() => MachO.MachO(new Blob([mh.buffer as ArrayBuffer])),
 		RangeError,
 		'Invalid commands',
 	);
