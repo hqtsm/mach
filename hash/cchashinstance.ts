@@ -155,7 +155,7 @@ export class CCHashInstance extends DynamicHash {
 						source.byteOffset,
 						source.byteLength,
 					)
-					: (source as ArrayBuffer),
+					: new Uint8Array(source).slice(0),
 			);
 		}
 		return mTruncate ? digest.slice(0, mTruncate) : digest;
