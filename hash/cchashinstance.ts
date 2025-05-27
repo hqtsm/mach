@@ -149,13 +149,15 @@ export class CCHashInstance extends DynamicHash {
 		} else {
 			digest = await cry.digest(
 				NAME,
-				'buffer' in source
-					? new Uint8Array(
-						source.buffer,
-						source.byteOffset,
-						source.byteLength,
-					)
-					: new Uint8Array(source).slice(0),
+				(
+					'buffer' in source
+						? new Uint8Array(
+							source.buffer,
+							source.byteOffset,
+							source.byteLength,
+						)
+						: new Uint8Array(source)
+				).slice(0),
 			);
 		}
 		return mTruncate ? digest.slice(0, mTruncate) : digest;

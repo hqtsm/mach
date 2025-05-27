@@ -14,7 +14,7 @@ export interface HashCryptoSubtle {
 	 */
 	digest: (
 		algo: string,
-		data: ArrayBufferView | ArrayBuffer,
+		data: ArrayBufferView<ArrayBuffer> | ArrayBuffer,
 	) => Promise<ArrayBuffer>;
 }
 
