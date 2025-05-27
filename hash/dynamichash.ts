@@ -2,6 +2,26 @@ import type { ArrayBufferReal, BufferView } from '@hqtsm/struct';
 import type { Reader } from '../util/reader.ts';
 
 /**
+ * Subtle crypto hash view.
+ */
+export interface HashCryptoSubtleView {
+	/**
+	 * Array buffer.
+	 */
+	readonly buffer: ArrayBuffer;
+
+	/**
+	 * Byte length.
+	 */
+	readonly byteLength: number;
+
+	/**
+	 * Byte offset.
+	 */
+	readonly byteOffset: number;
+}
+
+/**
  * Subtle crypto hash interface.
  */
 export interface HashCryptoSubtle {
@@ -14,7 +34,7 @@ export interface HashCryptoSubtle {
 	 */
 	digest: (
 		algo: string,
-		data: ArrayBufferView<ArrayBuffer> | ArrayBuffer,
+		data: HashCryptoSubtleView | ArrayBuffer,
 	) => Promise<ArrayBuffer>;
 }
 
