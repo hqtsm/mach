@@ -6,9 +6,9 @@
 		".": "./mod.ts"
 	},
 	"imports": {
-		"@deno/dnt": "jsr:@deno/dnt@^0.42.1",
+		"@deno/dnt": "jsr:@deno/dnt@^0.42.3",
 		"@hqtsm/struct": "jsr:@hqtsm/struct@^1.1.1",
-		"@std/assert": "jsr:@std/assert@^1.0.13"
+		"@std/assert": "jsr:@std/assert@^1.0.15"
 	},
 	"fmt": {
 		"useTabs": true,
