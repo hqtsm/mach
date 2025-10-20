@@ -6,29 +6,26 @@ async function inflate(
 	crc: number,
 ): Promise<InstanceType<typeof Uint8Array>> {
 	const d = new Uint8Array(size);
-	const r: ReadableStreamDefaultReader<InstanceType<typeof Uint8Array>> =
-		new ReadableStream<
-			InstanceType<typeof Uint8Array>
-		>({
-			start(controller): void {
-				controller.enqueue(
-					new Uint8Array([31, 139, 8, 0, 0, 0, 0, 0, 0, 0]),
-				);
-				controller.enqueue(data);
-				const tail = new ArrayBuffer(8);
-				const view = new DataView(tail);
-				view.setUint32(0, crc, true);
-				view.setUint32(4, size, true);
-				controller.enqueue(new Uint8Array(tail));
-				controller.close();
-			},
-		})
-			.pipeThrough(
-				new DecompressionStream('gzip') as TransformStream<
-					InstanceType<typeof Uint8Array>
-				>,
-			)
-			.getReader();
+	const r: ReadableStreamDefaultReader<Uint8Array> = new ReadableStream<
+		Uint8Array
+	>({
+		start(controller): void {
+			controller.enqueue(
+				new Uint8Array([31, 139, 8, 0, 0, 0, 0, 0, 0, 0]),
+			);
+			controller.enqueue(data);
+			const tail = new ArrayBuffer(8);
+			const view = new DataView(tail);
+			view.setUint32(0, crc, true);
+			view.setUint32(4, size, true);
+			controller.enqueue(new Uint8Array(tail));
+			controller.close();
+		},
+	})
+		.pipeThrough(
+			new DecompressionStream('gzip') as TransformStream<Uint8Array>,
+		)
+		.getReader();
 	let i = 0;
 	for (;;) {
 		// deno-lint-ignore no-await-in-loop
@@ -111,7 +108,7 @@ export async function* zipped(file: string): AsyncGenerator<
 				d.buffer,
 				d.byteOffset + headerOffset + i,
 				cSize,
-			);
+			) as InstanceType<typeof Uint8Array>;
 			return inflater ? await inflater(cData, uSize, crc) : cData;
 		}];
 	}
