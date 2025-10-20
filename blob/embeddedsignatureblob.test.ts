@@ -54,7 +54,12 @@ export async function* createCodeDirectories(
 		const teamID = new TextEncoder().encode(info.teamid);
 		// deno-lint-ignore no-await-in-loop
 		const builder = await createBuilder(hashType);
-		builder.executable(new Blob([thin]), info.page, 0, info.offset);
+		builder.executable(
+			new Blob([thin.slice(0)]),
+			info.page,
+			0,
+			info.offset,
+		);
 		builder.flags(info.flags);
 		builder.execSeg(info.execsegbase, info.execseglimit, info.execsegflags);
 		builder.identifier(identifier);

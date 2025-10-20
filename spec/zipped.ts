@@ -1,29 +1,30 @@
 import { assert } from '@std/assert';
 
 async function inflate(
-	data: Readonly<Uint8Array>,
+	data: InstanceType<typeof Uint8Array>,
 	size: number,
 	crc: number,
-): Promise<Uint8Array> {
+): Promise<InstanceType<typeof Uint8Array>> {
 	const d = new Uint8Array(size);
-	const r: ReadableStreamDefaultReader<Uint8Array> = new ReadableStream<
-		Uint8Array
-	>({
-		start(controller): void {
-			controller.enqueue(
-				new Uint8Array([31, 139, 8, 0, 0, 0, 0, 0, 0, 0]),
-			);
-			controller.enqueue(data);
-			const tail = new ArrayBuffer(8);
-			const view = new DataView(tail);
-			view.setUint32(0, crc, true);
-			view.setUint32(4, size, true);
-			controller.enqueue(new Uint8Array(tail));
-			controller.close();
-		},
-	})
-		.pipeThrough(new DecompressionStream('gzip'))
-		.getReader();
+	const r: ReadableStreamDefaultReader<InstanceType<typeof Uint8Array>> =
+		new ReadableStream<
+			InstanceType<typeof Uint8Array>
+		>({
+			start(controller): void {
+				controller.enqueue(
+					new Uint8Array([31, 139, 8, 0, 0, 0, 0, 0, 0, 0]),
+				);
+				controller.enqueue(data);
+				const tail = new ArrayBuffer(8);
+				const view = new DataView(tail);
+				view.setUint32(0, crc, true);
+				view.setUint32(4, size, true);
+				controller.enqueue(new Uint8Array(tail));
+				controller.close();
+			},
+		})
+			.pipeThrough(new DecompressionStream('gzip'))
+			.getReader();
 	let i = 0;
 	for (;;) {
 		// deno-lint-ignore no-await-in-loop
@@ -38,7 +39,7 @@ async function inflate(
 }
 
 export async function* zipped(file: string): AsyncGenerator<
-	readonly [string, () => Promise<Uint8Array>]
+	readonly [string, () => Promise<InstanceType<typeof Uint8Array>>]
 > {
 	const d = await Deno.readFile(file);
 	const v = new DataView(d.buffer, d.byteOffset, d.byteLength);
