@@ -23,7 +23,11 @@ async function inflate(
 				controller.close();
 			},
 		})
-			.pipeThrough(new DecompressionStream('gzip'))
+			.pipeThrough(
+				new DecompressionStream('gzip') as TransformStream<
+					InstanceType<typeof Uint8Array>
+				>,
+			)
 			.getReader();
 	let i = 0;
 	for (;;) {
