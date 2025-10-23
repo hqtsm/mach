@@ -1,4 +1,4 @@
-import { type ArrayBufferReal, getByteLength } from '@hqtsm/struct';
+import { getByteLength } from '@hqtsm/struct';
 import {
 	LC_SEGMENT,
 	LC_SEGMENT_64,
@@ -147,7 +147,7 @@ export class MachO extends MachOBase {
 	public async dataAt(
 		offset: number,
 		size: number,
-	): Promise<ArrayBufferReal> {
+	): Promise<ArrayBuffer> {
 		offset = (+offset || 0) - (offset % 1 || 0);
 		size = (+size || 0) - (size % 1 || 0);
 		const o = this.mOffset + offset;
