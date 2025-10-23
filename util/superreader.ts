@@ -1,6 +1,18 @@
 import type { Reader } from './reader.ts';
 
 /**
+ * Options for super reader.
+ */
+export interface SuperReaderOptions {
+	/**
+	 * Type of data.
+	 *
+	 * @default ''
+	 */
+	type?: string;
+}
+
+/**
  * Multiple readers wrapped in a single super reader.
  */
 export class SuperReader implements Reader {
@@ -25,7 +37,10 @@ export class SuperReader implements Reader {
 	 * @param readers Readers.
 	 * @param options Options.
 	 */
-	constructor(readers?: Iterable<Reader>, options?: { type?: string }) {
+	constructor(
+		readers?: Iterable<Reader>,
+		options?: Readonly<SuperReaderOptions>,
+	) {
 		let total = 0;
 		const list: Reader[] = this.#readers = [];
 		for (const r of readers || list) {
