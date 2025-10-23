@@ -35,6 +35,12 @@ export class SuperBlobMaker {
 	 */
 	public add(maker: SuperBlobMaker): void;
 
+	/**
+	 * Add a blob to super blob.
+	 *
+	 * @param type Type, blobs, or marker.
+	 * @param blob Blob if a type else undefined.
+	 */
 	public add(
 		type: number | SuperBlob | SuperBlobMaker,
 		blob?: BlobCore,

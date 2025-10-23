@@ -93,7 +93,7 @@ export class RequirementMaker {
 	 * Put data with length.
 	 *
 	 * @param data Buffer pointer.
-	 * @param length Length in bytes, null for view byte length.
+	 * @param length Length in bytes.
 	 */
 	public putData(data: BufferPointer, length: number): void;
 
@@ -104,6 +104,12 @@ export class RequirementMaker {
 	 */
 	public putData(data: ArrayBufferReal | BufferView): void;
 
+	/**
+	 * Put data with length.
+	 *
+	 * @param data Data or buffer pointer.
+	 * @param length Length in bytes.
+	 */
 	public putData(
 		data: ArrayBufferReal | BufferPointer | BufferView,
 		length?: number,
@@ -220,6 +226,12 @@ export class RequirementMaker {
 	 */
 	public copy(req: Const<Requirement>): void;
 
+	/**
+	 * Copy data or requirement.
+	 *
+	 * @param data Buffer pointer or requirement.
+	 * @param length Undefined for requirement.
+	 */
 	public copy(
 		data: BufferPointer | Const<Requirement>,
 		length?: number,

@@ -255,6 +255,12 @@ export class Universal {
 	 */
 	public async architecture(offset: number): Promise<MachO>;
 
+	/**
+	 * Get Mach-O for architecture or offset.
+	 *
+	 * @param a Architecture or offset.
+	 * @returns Mach-O.
+	 */
 	public async architecture(a: Const<Architecture> | number): Promise<MachO> {
 		if (typeof a === 'number') {
 			if (this.isUniversal()) {

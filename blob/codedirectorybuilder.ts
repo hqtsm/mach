@@ -308,6 +308,12 @@ export class CodeDirectoryBuilder {
 	 */
 	public scatter(): Ptr<CodeDirectoryScatter> | null;
 
+	/**
+	 * Get or create scatter vector.
+	 *
+	 * @param count Number to create or undefined to get existing.
+	 * @returns Scatter vector or null.
+	 */
 	public scatter(count?: number): Ptr<CodeDirectoryScatter> | null {
 		if (count !== undefined) {
 			count = (+count || 0) - (count % 1 || 0);
