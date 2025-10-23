@@ -89,10 +89,10 @@ export class CCHashInstance extends DynamicHash {
 					}
 					if (asyn) {
 						// deno-lint-ignore no-await-in-loop
-						await new Promise((p, f) =>
+						await new Promise<void>((p, f) =>
 							hash.write(
 								new Uint8Array(data),
-								(e) => e ? f(e) : p(0),
+								(e) => e ? f(e) : p(),
 							)
 						);
 					} else {
@@ -101,8 +101,8 @@ export class CCHashInstance extends DynamicHash {
 					remaining -= l;
 				}
 				if (asyn) {
-					await new Promise((p, f) =>
-						hash.end((e) => e ? f(e) : p(0))
+					await new Promise<void>((p, f) =>
+						hash.end((e) => e ? f(e) : p())
 					);
 					digest = hash.read() as typeof digest;
 				} else {
@@ -117,11 +117,14 @@ export class CCHashInstance extends DynamicHash {
 					)
 					: new Uint8Array(source);
 				if (asyn) {
-					await new Promise((p, f) =>
-						hash.write(data, (e) => e ? f(e) : p(0))
-					);
-					await new Promise((p, f) =>
-						hash.end((e) => e ? f(e) : p(0))
+					await new Promise<void>((p, f) =>
+						hash.write(data, (e) => {
+							if (e) {
+								f(e);
+							} else {
+								hash.end((e) => e ? f(e) : p());
+							}
+						})
 					);
 					digest = hash.read() as typeof digest;
 				} else {
@@ -136,16 +139,13 @@ export class CCHashInstance extends DynamicHash {
 		let digest: ArrayBuffer;
 		if ('arrayBuffer' in source) {
 			const { size } = source;
-			digest = await cry.digest(
-				NAME,
-				await source.arrayBuffer().then((data) => {
-					const diff = data.byteLength - size;
-					if (diff) {
-						throw new RangeError(`Read size off by: ${diff}`);
-					}
-					return data;
-				}),
-			);
+			digest = await source.arrayBuffer().then((data) => {
+				const diff = data.byteLength - size;
+				if (diff) {
+					throw new RangeError(`Read size off by: ${diff}`);
+				}
+				return cry.digest(NAME, data);
+			});
 		} else {
 			digest = await cry.digest(
 				NAME,
