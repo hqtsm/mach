@@ -71,6 +71,7 @@ export class BlobCore extends Struct {
 	/**
 	 * Get view of data at offset, with endian.
 	 *
+	 * @template T View type.
 	 * @param Type Constructor function.
 	 * @param offset Byte offset.
 	 * @param littleEndian Little endian, big endian, or inherit.
