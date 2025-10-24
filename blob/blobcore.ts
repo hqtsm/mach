@@ -9,6 +9,7 @@ import {
 	uint32BE,
 	Uint8Ptr,
 } from '@hqtsm/struct';
+import type { Reader } from '../util/reader.ts';
 
 /**
  * Polymorphic memory blobs with magics numbers.
@@ -199,6 +200,41 @@ export class BlobCore extends Struct {
 	 * Type magic template placeholder.
 	 */
 	public static readonly typeMagic: unknown;
+
+	/**
+	 * Read blob from reader.
+	 *
+	 * @param reader Reader.
+	 * @param magic Magic number.
+	 * @param minSize Minimum size.
+	 * @param maxSize Maximum size.
+	 * @returns Blob or null if not enough data for header.
+	 */
+	public static async readBlob(
+		reader: Reader,
+		magic = 0,
+		minSize = 0,
+		maxSize = 0,
+	): Promise<BlobCore | null> {
+		if (reader.size < 8) {
+			return null;
+		}
+		const head = await reader.slice(0, 8).arrayBuffer();
+		const header = new BlobCore(head);
+		header.validateBlob(magic, minSize, maxSize);
+		const length = header.mLength;
+		if (reader.size < length) {
+			throw new RangeError('Invalid blob size');
+		}
+		const data = new ArrayBuffer(length);
+		const view = new Uint8Array(data);
+		view.set(new Uint8Array(head), 0);
+		view.set(
+			new Uint8Array(await reader.slice(8, length).arrayBuffer()),
+			8,
+		);
+		return new BlobCore(data);
+	}
 
 	static {
 		uint32BE(this, 'mMagic' as never);

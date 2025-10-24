@@ -1,4 +1,9 @@
-import { assertEquals, assertNotEquals, assertThrows } from '@std/assert';
+import {
+	assertEquals,
+	assertNotEquals,
+	assertRejects,
+	assertThrows,
+} from '@std/assert';
 import { BlobCore } from './blobcore.ts';
 
 Deno.test('BYTE_LENGTH', () => {
@@ -153,4 +158,22 @@ Deno.test('stringAt', () => {
 	data[blob.byteOffset + 19] = 'C'.charCodeAt(0);
 
 	assertEquals(blob.stringAt(17), null);
+});
+
+Deno.test('readBlob', async () => {
+	assertEquals(
+		await BlobCore.readBlob(new Blob([new Uint8Array(7)])),
+		null,
+	);
+
+	const data = new Uint8Array(100);
+	const blob = new BlobCore(data.buffer);
+	blob.initialize(0x12345678, 101);
+	await assertRejects(() => BlobCore.readBlob(new Blob([data])));
+
+	blob.initialize(0x12345678, 100);
+	const read = await BlobCore.readBlob(new Blob([data]));
+	assertNotEquals(read, null);
+	assertEquals(read!.magic(), 0x12345678);
+	assertEquals(read!.length(), 100);
 });
