@@ -8,6 +8,7 @@ import {
 	uint32BE,
 	Uint8Ptr,
 } from '@hqtsm/struct';
+import { EINVAL, ENOMEM } from '../const.ts';
 
 /**
  * Polymorphic memory blobs with magics numbers.
@@ -72,6 +73,25 @@ export class BlobCore extends Struct {
 	public initialize(magic: number, length = 0): void {
 		this.mMagic = magic;
 		this.mLength = length;
+	}
+
+	/**
+	 * Validate blob.
+	 *
+	 * @param magic Magic number.
+	 * @param minSize Minimum size.
+	 * @param maxSize Maximum size.
+	 * @returns Error code or zero if valid.
+	 */
+	public validateBlob(magic: number, minSize = 0, maxSize = 0): number {
+		const length = this.mLength;
+		if ((magic && magic !== this.mMagic) || length < (minSize || 8)) {
+			return EINVAL;
+		}
+		if (maxSize && length > maxSize) {
+			return ENOMEM;
+		}
+		return 0;
 	}
 
 	/**

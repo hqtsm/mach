@@ -1,5 +1,6 @@
 import { assertEquals } from '@std/assert';
 import { BlobCore } from './blobcore.ts';
+import { EINVAL, ENOMEM } from '../const.ts';
 
 Deno.test('BYTE_LENGTH', () => {
 	assertEquals(BlobCore.BYTE_LENGTH, 8);
@@ -42,4 +43,29 @@ Deno.test('innerData', () => {
 	body[0] = 1;
 	body[1] = 2;
 	assertEquals(data.slice(10), new Uint8Array([1, 2]));
+});
+
+Deno.test('initialize', () => {
+	const data = new Uint8Array(12);
+	const blob = new BlobCore(data.buffer, 2);
+	blob.initialize(0x12345678, 10);
+	assertEquals(blob.magic(), 0x12345678);
+	assertEquals(blob.length(), 10);
+});
+
+Deno.test('validateBlob', () => {
+	const data = new Uint8Array(12);
+	const blob = new BlobCore(data.buffer, 2);
+	blob.initialize(0x12345678, 10);
+	assertEquals(blob.validateBlob(0x12345678), 0);
+	assertEquals(blob.validateBlob(0x12345679), EINVAL);
+	assertEquals(blob.validateBlob(0, 9), 0);
+	assertEquals(blob.validateBlob(0, 10), 0);
+	assertEquals(blob.validateBlob(0, 11), EINVAL);
+	assertEquals(blob.validateBlob(0, 0, 9), ENOMEM);
+	assertEquals(blob.validateBlob(0, 0, 10), 0);
+	assertEquals(blob.validateBlob(0, 0, 11), 0);
+
+	blob.initialize(0x12345678, 7);
+	assertEquals(blob.validateBlob(0x12345678), EINVAL);
 });
