@@ -120,6 +120,17 @@ export class BlobCore extends Struct {
 	}
 
 	/**
+	 * Check if blob contains a range.
+	 *
+	 * @param offset Byte offset.
+	 * @param size Byte size.
+	 * @returns Is contained.
+	 */
+	public contains(offset: number, size: number): boolean {
+		return offset >= 8 && size >= 0 && (offset + size) <= this.mLength;
+	}
+
+	/**
 	 * Blob data.
 	 * By default includes magic and length.
 	 * Child classes may redefine this to be a smaller area.

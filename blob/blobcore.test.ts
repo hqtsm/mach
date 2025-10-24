@@ -69,3 +69,31 @@ Deno.test('validateBlob', () => {
 	blob.initialize(0x12345678, 7);
 	assertEquals(blob.validateBlob(0x12345678), EINVAL);
 });
+
+Deno.test('contains', () => {
+	const data = new Uint8Array(12);
+	const blob = new BlobCore(data.buffer, 2);
+	blob.initialize(0x12345678, 10);
+	assertEquals(blob.contains(0, 0), false);
+	assertEquals(blob.contains(0, 1), false);
+	assertEquals(blob.contains(0, 2), false);
+	assertEquals(blob.contains(0, 3), false);
+	assertEquals(blob.contains(0, 4), false);
+	assertEquals(blob.contains(0, 5), false);
+	assertEquals(blob.contains(0, 6), false);
+	assertEquals(blob.contains(0, 7), false);
+	assertEquals(blob.contains(0, 8), false);
+	assertEquals(blob.contains(0, 9), false);
+	assertEquals(blob.contains(0, 10), false);
+	assertEquals(blob.contains(0, 11), false);
+	assertEquals(blob.contains(0, 12), false);
+	assertEquals(blob.contains(7, 1), false);
+	assertEquals(blob.contains(8, 0), true);
+	assertEquals(blob.contains(8, 1), true);
+	assertEquals(blob.contains(8, 2), true);
+	assertEquals(blob.contains(8, 3), false);
+	assertEquals(blob.contains(9, 1), true);
+	assertEquals(blob.contains(10, 0), true);
+	assertEquals(blob.contains(9, -1), false);
+	assertEquals(blob.contains(10, -1), false);
+});
