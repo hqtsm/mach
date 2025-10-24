@@ -17,6 +17,26 @@ export class Blob extends BlobCore {
 	}
 
 	/**
+	 * Validate blob with length, using known type magic.
+	 *
+	 * @param length Optionally require exact length.
+	 */
+	public validateBlobLength(length?: number): void {
+		const { byteLength } = this;
+		if (length === undefined) {
+			this.validateBlob(this.constructor.typeMagic, byteLength);
+		} else {
+			if (length < byteLength) {
+				throw new RangeError('Invalid length');
+			}
+			this.validateBlob(this.constructor.typeMagic, byteLength);
+			if (this.mLength !== length) {
+				throw new RangeError('Invalid length');
+			}
+		}
+	}
+
+	/**
 	 * Type magic number for this blob.
 	 *
 	 * @returns Type magic number.

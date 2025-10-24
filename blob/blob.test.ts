@@ -1,5 +1,6 @@
-import { assertEquals } from '@std/assert';
+import { assertEquals, assertThrows } from '@std/assert';
 import { Blob } from './blob.ts';
+import { constant, uint32BE } from '@hqtsm/struct';
 
 Deno.test('BYTE_LENGTH', () => {
 	assertEquals(Blob.BYTE_LENGTH, 8);
@@ -36,4 +37,58 @@ Deno.test('is', () => {
 	assertEquals(blob.is(), true);
 	blob.initialize(1);
 	assertEquals(blob.is(), false);
+});
+
+Deno.test('validateBlobLength', () => {
+	class Example extends Blob {
+		declare public readonly ['constructor']: Omit<typeof Example, 'new'>;
+
+		/**
+		 * Example value.
+		 */
+		declare public value: number;
+
+		public static override readonly typeMagic = 0x12345678;
+
+		static {
+			uint32BE(this, 'value');
+			constant(this, 'BYTE_LENGTH');
+			constant(this, 'typeMagic');
+		}
+	}
+
+	const data = new Uint8Array(22);
+	const blob = new Example(data.buffer, 2);
+
+	blob.initialize(0, 20);
+	assertThrows(
+		() => blob.validateBlobLength(),
+		RangeError,
+		'Invalid magic',
+	);
+
+	blob.initializeLength(20);
+	blob.validateBlobLength();
+
+	blob.initializeLength(11);
+	assertThrows(
+		() => blob.validateBlobLength(11),
+		RangeError,
+		'Invalid length',
+	);
+
+	blob.initialize(0, 20);
+	assertThrows(
+		() => blob.validateBlobLength(20),
+		RangeError,
+		'Invalid magic',
+	);
+
+	blob.initializeLength(20);
+	blob.validateBlobLength(20);
+	assertThrows(
+		() => blob.validateBlobLength(19),
+		RangeError,
+		'Invalid length',
+	);
 });

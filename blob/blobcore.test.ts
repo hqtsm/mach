@@ -65,19 +65,19 @@ Deno.test('validateBlob', () => {
 	assertThrows(
 		() => blob.validateBlob(0x12345679),
 		RangeError,
-		'Invalid magic number',
+		'Invalid magic',
 	);
 	blob.validateBlob(0, 9);
 	blob.validateBlob(0, 10);
 	assertThrows(
 		() => blob.validateBlob(0, 11),
 		RangeError,
-		'Invalid minimum size',
+		'Invalid length',
 	);
 	assertThrows(
 		() => blob.validateBlob(0, 0, 9),
 		RangeError,
-		'Invalid maximum size',
+		'Invalid length',
 	);
 	blob.validateBlob(0, 0, 10);
 	blob.validateBlob(0, 0, 11);
@@ -86,7 +86,7 @@ Deno.test('validateBlob', () => {
 	assertThrows(
 		() => blob.validateBlob(0x12345678),
 		RangeError,
-		'Invalid minimum size',
+		'Invalid length',
 	);
 });
 
