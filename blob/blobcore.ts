@@ -131,6 +131,26 @@ export class BlobCore extends Struct {
 	}
 
 	/**
+	 * Get string at offset.
+	 *
+	 * @param offset Byte offset.
+	 * @returns String pointer if null terminated string or null.
+	 */
+	public stringAt(offset: number): Uint8Ptr | null {
+		let length = this.mLength;
+		if (offset >= 0 && offset < length) {
+			const s = this.at(Uint8Ptr, offset);
+			length -= offset;
+			for (let i = 0; i < length; i++) {
+				if (!s[i]) {
+					return s;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Blob data.
 	 * By default includes magic and length.
 	 * Child classes may redefine this to be a smaller area.

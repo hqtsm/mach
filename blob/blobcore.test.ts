@@ -1,4 +1,4 @@
-import { assertEquals } from '@std/assert';
+import { assertEquals, assertNotEquals } from '@std/assert';
 import { BlobCore } from './blobcore.ts';
 import { EINVAL, ENOMEM } from '../const.ts';
 
@@ -96,4 +96,46 @@ Deno.test('contains', () => {
 	assertEquals(blob.contains(10, 0), true);
 	assertEquals(blob.contains(9, -1), false);
 	assertEquals(blob.contains(10, -1), false);
+});
+
+Deno.test('stringAt', () => {
+	const data = new Uint8Array(22);
+	const blob = new BlobCore(data.buffer, 2);
+	blob.initialize(0x12345678, 20);
+
+	assertEquals(blob.stringAt(-1), null);
+	assertEquals(blob.stringAt(20), null);
+
+	let s = blob.stringAt(0);
+	assertNotEquals(s, null);
+	assertEquals(s![0], 0x12);
+	assertEquals(s![1], 0x34);
+	assertEquals(s![2], 0x56);
+	assertEquals(s![3], 0x78);
+	assertEquals(s![4], 0);
+
+	s = blob.stringAt(8);
+	assertNotEquals(s, null);
+	assertEquals(s![0], 0);
+
+	s = blob.stringAt(19);
+	assertNotEquals(s, null);
+	assertEquals(s![0], 0);
+
+	data[blob.byteOffset + 10] = 'A'.charCodeAt(0);
+	data[blob.byteOffset + 11] = 'B'.charCodeAt(0);
+	data[blob.byteOffset + 12] = 'C'.charCodeAt(0);
+
+	s = blob.stringAt(10);
+	assertNotEquals(s, null);
+	assertEquals(s![0], 'A'.charCodeAt(0));
+	assertEquals(s![1], 'B'.charCodeAt(0));
+	assertEquals(s![2], 'C'.charCodeAt(0));
+	assertEquals(s![3], 0);
+
+	data[blob.byteOffset + 17] = 'A'.charCodeAt(0);
+	data[blob.byteOffset + 18] = 'B'.charCodeAt(0);
+	data[blob.byteOffset + 19] = 'C'.charCodeAt(0);
+
+	assertEquals(blob.stringAt(17), null);
 });
