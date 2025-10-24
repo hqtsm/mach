@@ -3,6 +3,7 @@ import {
 	array,
 	type ArrayBufferReal,
 	constant,
+	Int8Ptr,
 	Ptr,
 	Struct,
 	uint32BE,
@@ -136,10 +137,10 @@ export class BlobCore extends Struct {
 	 * @param offset Byte offset.
 	 * @returns String pointer if null terminated string or null.
 	 */
-	public stringAt(offset: number): Uint8Ptr | null {
+	public stringAt(offset: number): Int8Ptr | null {
 		let length = this.mLength;
 		if (offset >= 0 && offset < length) {
-			const s = this.at(Uint8Ptr, offset);
+			const s = this.at(Int8Ptr, offset);
 			length -= offset;
 			for (let i = 0; i < length; i++) {
 				if (!s[i]) {
