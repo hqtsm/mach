@@ -1,6 +1,5 @@
-import { assertEquals, assertNotEquals } from '@std/assert';
+import { assertEquals, assertNotEquals, assertThrows } from '@std/assert';
 import { BlobCore } from './blobcore.ts';
-import { EINVAL, ENOMEM } from '../const.ts';
 
 Deno.test('BYTE_LENGTH', () => {
 	assertEquals(BlobCore.BYTE_LENGTH, 8);
@@ -57,17 +56,33 @@ Deno.test('validateBlob', () => {
 	const data = new Uint8Array(12);
 	const blob = new BlobCore(data.buffer, 2);
 	blob.initialize(0x12345678, 10);
-	assertEquals(blob.validateBlob(0x12345678), 0);
-	assertEquals(blob.validateBlob(0x12345679), EINVAL);
-	assertEquals(blob.validateBlob(0, 9), 0);
-	assertEquals(blob.validateBlob(0, 10), 0);
-	assertEquals(blob.validateBlob(0, 11), EINVAL);
-	assertEquals(blob.validateBlob(0, 0, 9), ENOMEM);
-	assertEquals(blob.validateBlob(0, 0, 10), 0);
-	assertEquals(blob.validateBlob(0, 0, 11), 0);
+	blob.validateBlob(0x12345678);
+	assertThrows(
+		() => blob.validateBlob(0x12345679),
+		RangeError,
+		'Invalid magic number',
+	);
+	blob.validateBlob(0, 9);
+	blob.validateBlob(0, 10);
+	assertThrows(
+		() => blob.validateBlob(0, 11),
+		RangeError,
+		'Invalid minimum size',
+	);
+	assertThrows(
+		() => blob.validateBlob(0, 0, 9),
+		RangeError,
+		'Invalid maximum size',
+	);
+	blob.validateBlob(0, 0, 10);
+	blob.validateBlob(0, 0, 11);
 
 	blob.initialize(0x12345678, 7);
-	assertEquals(blob.validateBlob(0x12345678), EINVAL);
+	assertThrows(
+		() => blob.validateBlob(0x12345678),
+		RangeError,
+		'Invalid minimum size',
+	);
 });
 
 Deno.test('contains', () => {
