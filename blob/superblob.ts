@@ -20,7 +20,7 @@ export class SuperBlob extends Blob {
 	 * @param count Number of blobs.
 	 */
 	public setup(size: number, count: number): void {
-		this.initialize2(size);
+		this.initializeSize(size);
 		this.mCount = count;
 	}
 

@@ -11,7 +11,7 @@ Deno.test('empty (invalid?)', () => {
 	const { BYTE_LENGTH } = EntitlementDERBlob;
 	const buffer = new ArrayBuffer(BYTE_LENGTH);
 	const edb = new EntitlementDERBlob(buffer);
-	edb.initialize2(BYTE_LENGTH);
+	edb.initializeSize(BYTE_LENGTH);
 	assertEquals(
 		new Uint8Array(buffer),
 		unhex('FA DE 71 72 00 00 00 08'),

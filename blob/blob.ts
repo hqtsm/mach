@@ -12,7 +12,7 @@ export class Blob extends BlobCore {
 	 *
 	 * @param size Length.
 	 */
-	public initialize2(size = 0): void {
+	public initializeSize(size = 0): void {
 		this.initialize(this.constructor.typeMagic, size);
 	}
 
@@ -51,7 +51,7 @@ export class Blob extends BlobCore {
 		const { typeMagic } = this;
 		new (class extends Blob {
 			public static override readonly typeMagic = typeMagic;
-		})(buffer).initialize2(size);
+		})(buffer).initializeSize(size);
 		if (view) {
 			new Uint8Array(buffer, BYTE_LENGTH).set(view);
 		}
