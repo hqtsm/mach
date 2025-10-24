@@ -8,11 +8,11 @@ export class Blob extends BlobCore {
 	declare public readonly ['constructor']: Omit<typeof Blob, 'new'>;
 
 	/**
-	 * Initialize blob with length.
+	 * Initialize blob with length, using known type magic.
 	 *
 	 * @param size Length.
 	 */
-	public initializeSize(size = 0): void {
+	public initializeLength(size = 0): void {
 		this.initialize(this.constructor.typeMagic, size);
 	}
 
@@ -51,7 +51,7 @@ export class Blob extends BlobCore {
 		const { typeMagic } = this;
 		new (class extends Blob {
 			public static override readonly typeMagic = typeMagic;
-		})(buffer).initializeSize(size);
+		})(buffer).initializeLength(size);
 		if (view) {
 			new Uint8Array(buffer, BYTE_LENGTH).set(view);
 		}

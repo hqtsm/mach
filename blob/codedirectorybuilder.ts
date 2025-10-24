@@ -429,7 +429,7 @@ export class CodeDirectoryBuilder {
 		const buffer = new ArrayBuffer(size);
 		const data = new Uint8Array(buffer);
 		const dir = new CodeDirectory(buffer);
-		dir.initializeSize(size);
+		dir.initializeLength(size);
 		dir.version = version;
 		dir.flags = this.mFlags;
 		dir.nSpecialSlots = mSpecialSlots;
