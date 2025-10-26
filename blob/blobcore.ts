@@ -88,10 +88,7 @@ export class BlobCore extends Struct {
 		if ((magic && magic !== this.mMagic)) {
 			throw new RangeError('Invalid magic');
 		}
-		if (length < (minSize || 8)) {
-			throw new RangeError('Invalid length');
-		}
-		if (maxSize && length > maxSize) {
+		if (length < (minSize || 8) || (maxSize && length > maxSize)) {
 			throw new RangeError('Invalid length');
 		}
 	}
