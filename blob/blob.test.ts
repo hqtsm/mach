@@ -1,6 +1,7 @@
 import { assertEquals, assertThrows } from '@std/assert';
 import { constant, uint32BE } from '@hqtsm/struct';
 import { type BlobConstructor, templateBlob } from './blob.ts';
+import { BlobCore } from './blobcore.ts';
 
 const MAGIC = 0x12345678;
 
@@ -58,12 +59,12 @@ Deno.test('blobify view', () => {
 });
 
 Deno.test('is', () => {
-	const blob = new BlobTest(
+	const blob = new BlobCore(
 		BlobTest.blobify(new Uint8Array([1, 2, 3, 4]).buffer),
 	);
-	assertEquals(blob.is(), true);
+	assertEquals(blob.is(BlobTest), true);
 	blob.initialize(1);
-	assertEquals(blob.is(), false);
+	assertEquals(blob.is(BlobTest), false);
 });
 
 Deno.test('validateBlobLength', () => {

@@ -190,10 +190,11 @@ export class BlobCore extends Struct {
 	/**
 	 * Check if blob type match the expected magic.
 	 *
+	 * @param BlobType Blob type.
 	 * @returns Is the same type.
 	 */
-	public is(): boolean {
-		return this.mMagic === this.constructor.typeMagic;
+	public is(BlobType: { typeMagic: number }): boolean {
+		return this.mMagic === BlobType.typeMagic;
 	}
 
 	/**
