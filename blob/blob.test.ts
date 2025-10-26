@@ -48,7 +48,7 @@ Deno.test('blobify buffer', () => {
 });
 
 Deno.test('blobify view', () => {
-	const blobV = Blob.blobify(
+	const blobV = BlobTest.blobify(
 		new Uint8Array([1, 2, 3, 4, 5, 6]).subarray(1, -1),
 	);
 	assertEquals(
@@ -58,7 +58,9 @@ Deno.test('blobify view', () => {
 });
 
 Deno.test('is', () => {
-	const blob = new Blob(Blob.blobify(new Uint8Array([1, 2, 3, 4]).buffer));
+	const blob = new BlobTest(
+		BlobTest.blobify(new Uint8Array([1, 2, 3, 4]).buffer),
+	);
 	assertEquals(blob.is(), true);
 	blob.initialize(1);
 	assertEquals(blob.is(), false);
