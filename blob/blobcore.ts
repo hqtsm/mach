@@ -193,7 +193,7 @@ export class BlobCore extends Struct {
 	 * @param BlobType Blob type.
 	 * @returns Is the same type.
 	 */
-	public is(BlobType: { typeMagic: number }): boolean {
+	public is(BlobType: Readonly<{ typeMagic: number }>): boolean {
 		return this.mMagic === BlobType.typeMagic;
 	}
 
