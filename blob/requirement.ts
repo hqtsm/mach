@@ -1,6 +1,14 @@
 import { constant, uint32BE } from '@hqtsm/struct';
 import { kSecCodeMagicRequirement } from '../const.ts';
-import { Blob } from './blob.ts';
+import { type BlobConstructor, templateBlob } from './blob.ts';
+
+const Blob: BlobConstructor<
+	Requirement,
+	typeof kSecCodeMagicRequirement
+> = templateBlob(
+	() => Requirement,
+	kSecCodeMagicRequirement,
+);
 
 /**
  * Single requirement.
@@ -12,8 +20,6 @@ export class Requirement extends Blob {
 	 * Requirement kind.
 	 */
 	declare public kind: number;
-
-	public static override readonly typeMagic = kSecCodeMagicRequirement;
 
 	/**
 	 * Common alignment rule for all requirement forms.

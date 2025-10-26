@@ -21,8 +21,16 @@ import {
 } from '../const.ts';
 import { CCHashInstance } from '../hash/cchashinstance.ts';
 import type { DynamicHash } from '../hash/dynamichash.ts';
-import { Blob } from './blob.ts';
+import { type BlobConstructor, templateBlob } from './blob.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
+
+const Blob: BlobConstructor<
+	CodeDirectory,
+	typeof kSecCodeMagicCodeDirectory
+> = templateBlob(
+	() => CodeDirectory,
+	kSecCodeMagicCodeDirectory,
+);
 
 /**
  * Describes secured pieces of a program.
@@ -298,8 +306,6 @@ export class CodeDirectory extends Blob {
 		}
 		return 0;
 	}
-
-	public static override readonly typeMagic = kSecCodeMagicCodeDirectory;
 
 	/**
 	 * Earliest supported version.

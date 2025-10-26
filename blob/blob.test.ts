@@ -1,24 +1,49 @@
 import { assertEquals, assertThrows } from '@std/assert';
-import { Blob } from './blob.ts';
 import { constant, uint32BE } from '@hqtsm/struct';
+import { type BlobConstructor, templateBlob } from './blob.ts';
+
+const MAGIC = 0x12345678;
+
+const Blob: BlobConstructor<
+	BlobTest,
+	typeof MAGIC
+> = templateBlob(
+	() => BlobTest,
+	MAGIC,
+);
+
+class BlobTest extends Blob {
+	declare public readonly ['constructor']: Omit<typeof BlobTest, 'new'>;
+
+	/**
+	 * Text value.
+	 */
+	declare public value: number;
+
+	static {
+		uint32BE(this, 'value');
+		constant(this, 'BYTE_LENGTH');
+		constant(this, 'typeMagic');
+	}
+}
 
 Deno.test('BYTE_LENGTH', () => {
-	assertEquals(Blob.BYTE_LENGTH, 8);
+	assertEquals(BlobTest.BYTE_LENGTH, 12);
 });
 
 Deno.test('blobify length', () => {
-	const blobI = Blob.blobify(4);
+	const blobI = BlobTest.blobify(4);
 	assertEquals(
 		new Uint8Array(blobI),
-		new Uint8Array([0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0]),
+		new Uint8Array([0x12, 0x34, 0x56, 0x78, 0, 0, 0, 12, 0, 0, 0, 0]),
 	);
 });
 
 Deno.test('blobify buffer', () => {
-	const blobB = Blob.blobify(new Uint8Array([1, 2, 3, 4]).buffer);
+	const blobB = BlobTest.blobify(new Uint8Array([1, 2, 3, 4]).buffer);
 	assertEquals(
 		new Uint8Array(blobB),
-		new Uint8Array([0, 0, 0, 0, 0, 0, 0, 12, 1, 2, 3, 4]),
+		new Uint8Array([0x12, 0x34, 0x56, 0x78, 0, 0, 0, 12, 1, 2, 3, 4]),
 	);
 });
 
@@ -28,7 +53,7 @@ Deno.test('blobify view', () => {
 	);
 	assertEquals(
 		new Uint8Array(blobV),
-		new Uint8Array([0, 0, 0, 0, 0, 0, 0, 12, 2, 3, 4, 5]),
+		new Uint8Array([0x12, 0x34, 0x56, 0x78, 0, 0, 0, 12, 2, 3, 4, 5]),
 	);
 });
 
@@ -40,25 +65,8 @@ Deno.test('is', () => {
 });
 
 Deno.test('validateBlobLength', () => {
-	class Example extends Blob {
-		declare public readonly ['constructor']: Omit<typeof Example, 'new'>;
-
-		/**
-		 * Example value.
-		 */
-		declare public value: number;
-
-		public static override readonly typeMagic = 0x12345678;
-
-		static {
-			uint32BE(this, 'value');
-			constant(this, 'BYTE_LENGTH');
-			constant(this, 'typeMagic');
-		}
-	}
-
 	const data = new Uint8Array(22);
-	const blob = new Example(data.buffer, 2);
+	const blob = new BlobTest(data.buffer, 2);
 
 	blob.initialize(0, 20);
 	assertThrows(

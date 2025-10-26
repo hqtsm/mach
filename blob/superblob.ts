@@ -1,6 +1,14 @@
 import { type Const, constant, dataView, uint32BE } from '@hqtsm/struct';
-import { Blob } from './blob.ts';
+import { type BlobConstructor, templateBlob } from './blob.ts';
 import { BlobCore } from './blobcore.ts';
+
+const Blob: BlobConstructor<
+	SuperBlob,
+	number
+> = templateBlob(
+	() => SuperBlob,
+	0,
+);
 
 /**
  * Multiple Blobs wrapped in a single indexed blob.

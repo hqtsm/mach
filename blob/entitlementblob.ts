@@ -1,6 +1,14 @@
 import { constant, Uint8Ptr } from '@hqtsm/struct';
 import { kSecCodeMagicEntitlement } from '../const.ts';
-import { Blob } from './blob.ts';
+import { type BlobConstructor, templateBlob } from './blob.ts';
+
+const Blob: BlobConstructor<
+	EntitlementBlob,
+	typeof kSecCodeMagicEntitlement
+> = templateBlob(
+	() => EntitlementBlob,
+	kSecCodeMagicEntitlement,
+);
 
 /**
  * For embedding entitlement configuration data.

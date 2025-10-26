@@ -1,6 +1,14 @@
 import { constant, Uint8Ptr } from '@hqtsm/struct';
 import { kSecCodeMagicEntitlementDER } from '../const.ts';
-import { Blob } from './blob.ts';
+import { type BlobConstructor, templateBlob } from './blob.ts';
+
+const Blob: BlobConstructor<
+	EntitlementDERBlob,
+	typeof kSecCodeMagicEntitlementDER
+> = templateBlob(
+	() => EntitlementDERBlob,
+	kSecCodeMagicEntitlementDER,
+);
 
 /**
  * For embedding entitlement configuration data, in DER format.

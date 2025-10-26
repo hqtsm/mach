@@ -8,7 +8,15 @@ import {
 	Uint8Ptr,
 } from '@hqtsm/struct';
 import { CSMAGIC_BLOBWRAPPER } from '../const.ts';
-import { Blob } from './blob.ts';
+import { type BlobConstructor, templateBlob } from './blob.ts';
+
+const Blob: BlobConstructor<
+	BlobWrapper,
+	typeof CSMAGIC_BLOBWRAPPER
+> = templateBlob(
+	() => BlobWrapper,
+	CSMAGIC_BLOBWRAPPER,
+);
 
 /**
  * Generic blob wrapping arbitrary binary data.
@@ -60,8 +68,6 @@ export class BlobWrapper extends Blob {
 		super.length(size);
 	}
 
-	public static override readonly typeMagic = CSMAGIC_BLOBWRAPPER;
-
 	/**
 	 * Wrap data into a new blob.
 	 *
@@ -70,9 +76,11 @@ export class BlobWrapper extends Blob {
 	 * @returns Blob.
 	 */
 	public static alloc(
-		content: ArrayBufferReal | BufferView | number = 0,
-		magic = BlobWrapper.typeMagic,
+		content?: ArrayBufferReal | BufferView | number,
+		magic?: number,
 	): BlobWrapper {
+		content ??= 0;
+		magic ??= BlobWrapper.typeMagic;
 		const { BYTE_LENGTH } = BlobWrapper;
 		let view;
 		let size = BYTE_LENGTH;

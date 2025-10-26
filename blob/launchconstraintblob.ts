@@ -1,6 +1,14 @@
 import { constant, Uint8Ptr } from '@hqtsm/struct';
 import { kSecCodeMagicLaunchConstraint } from '../const.ts';
-import { Blob } from './blob.ts';
+import { type BlobConstructor, templateBlob } from './blob.ts';
+
+const Blob: BlobConstructor<
+	LaunchConstraintBlob,
+	typeof kSecCodeMagicLaunchConstraint
+> = templateBlob(
+	() => LaunchConstraintBlob,
+	kSecCodeMagicLaunchConstraint,
+);
 
 /**
  * Launch constraint in DER format.
