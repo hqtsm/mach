@@ -85,7 +85,7 @@ export class BlobCore extends Struct {
 	 */
 	public validateBlob(magic: number, minSize = 0, maxSize = 0): void {
 		const length = this.mLength;
-		if ((magic && magic !== this.mMagic)) {
+		if (magic && magic !== this.mMagic) {
 			throw new RangeError('Invalid magic');
 		}
 		if (length < (minSize || 8) || (maxSize && length > maxSize)) {
