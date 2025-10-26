@@ -107,7 +107,7 @@ export function templateBlob<
 			}
 		}
 
-		public static override readonly typeMagic = magic;
+		public static readonly typeMagic = magic;
 
 		public static blobify(
 			content: ArrayBufferReal | BufferView | number = 0,

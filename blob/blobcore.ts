@@ -198,11 +198,6 @@ export class BlobCore extends Struct {
 	}
 
 	/**
-	 * Type magic template placeholder.
-	 */
-	public static readonly typeMagic: unknown;
-
-	/**
 	 * Read blob from reader.
 	 *
 	 * @param reader Reader.
@@ -241,6 +236,5 @@ export class BlobCore extends Struct {
 		uint32BE(this, 'mMagic' as never);
 		uint32BE(this, 'mLength' as never);
 		constant(this, 'BYTE_LENGTH');
-		constant(this, 'typeMagic');
 	}
 }
