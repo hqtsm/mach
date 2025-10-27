@@ -83,10 +83,7 @@ export function templateBlob<
 	magic: M,
 ): BlobConstructor<B, M> {
 	return class Blob extends BlobCore {
-		declare public readonly ['constructor']: Omit<
-			BlobConstructor<B, M>,
-			'new'
-		>;
+		declare public readonly ['constructor']: Omit<typeof Blob, 'new'>;
 
 		public initializeLength(size = 0): void {
 			this.initialize(this.constructor.typeMagic, size);
