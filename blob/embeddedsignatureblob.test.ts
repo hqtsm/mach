@@ -20,12 +20,11 @@ import { BlobWrapper } from './blobwrapper.ts';
 import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import { EmbeddedSignatureBlob } from './embeddedsignatureblob.ts';
-import { EmbeddedSignatureBlobMaker } from './embeddedsignatureblobmaker.ts';
-import { RequirementsMaker } from './requirementsmaker.ts';
+import { Requirements } from './requirements.ts';
 
 const fixtures = fixtureMachos();
 
-const emptyRequirements = new RequirementsMaker().make();
+const emptyRequirements = new Requirements.Maker().make();
 const emptyRequirementsData = new Uint8Array(
 	emptyRequirements.buffer,
 	emptyRequirements.byteOffset,
@@ -153,7 +152,7 @@ for (const { kind, arch, file, archs } of fixtures) {
 				cd0.flags & kSecCodeSignatureLinkerSigned
 			);
 
-			const maker = new EmbeddedSignatureBlobMaker();
+			const maker = new EmbeddedSignatureBlob.Maker();
 			maker.add(cdCodeDirectorySlot, cd0);
 
 			if (!linkerSigned) {
