@@ -4,8 +4,8 @@ import { BlobCore } from './blobcore.ts';
 /**
  * Polymorphic memory blob for magic number.
  *
- * @typeparam B Blob type.
- * @typeparam M Magic number.
+ * @template B Blob type.
+ * @template M Magic number.
  */
 export interface Blob<B extends BlobCore, M extends number> extends BlobCore {
 	/**
@@ -31,8 +31,8 @@ export interface Blob<B extends BlobCore, M extends number> extends BlobCore {
 /**
  * Blob constructor.
  *
- * @typeparam B Blob type.
- * @typeparam M Magic number.
+ * @template B Blob type.
+ * @template M Magic number.
  */
 export interface BlobConstructor<
 	B extends BlobCore,
@@ -67,8 +67,8 @@ export interface BlobConstructor<
 /**
  * Blob template.
  *
- * @typeparam B Blob type.
- * @typeparam M Magic number.
+ * @template B Blob type.
+ * @template M Magic number.
  * @param Class Blob class.
  * @param magic Type magic number.
  * @returns Blob constructor.
