@@ -182,7 +182,7 @@ Deno.test('is', () => {
 	}
 	assertEquals(blob.is(MatchAbstract), true);
 
-	abstract class Mismatch {
+	class Mismatch {
 		static typeMagic = 0x12345679;
 	}
 	assertEquals(blob.is(Mismatch), false);
