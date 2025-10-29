@@ -5,7 +5,7 @@ import * as mod from './mod.ts';
 
 Deno.test('typeMagic', () => {
 	for (const name of Object.keys(mod)) {
-		if (name === 'SuperBlob') {
+		if (name === 'SuperBlob' || name === 'SuperBlobCore') {
 			continue;
 		}
 		const all = mod as {
