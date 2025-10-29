@@ -32,13 +32,6 @@ Deno.test('blobify view', () => {
 	);
 });
 
-Deno.test('is', () => {
-	const blob = new Blob(Blob.blobify(new Uint8Array([1, 2, 3, 4]).buffer));
-	assertEquals(blob.is(Blob), true);
-	blob.initialize(1);
-	assertEquals(blob.is(Blob), false);
-});
-
 Deno.test('validateBlobLength', () => {
 	class Example extends Blob {
 		declare public readonly ['constructor']: Omit<typeof Example, 'new'>;

@@ -160,6 +160,34 @@ Deno.test('stringAt', () => {
 	assertEquals(blob.stringAt(17), null);
 });
 
+Deno.test('is', () => {
+	const data = new ArrayBuffer(12);
+	const view = new DataView(data);
+	view.setUint32(0, 0x12345678);
+	view.setUint32(4, 12);
+	view.setUint8(8, 1);
+	view.setUint8(9, 2);
+	view.setUint8(10, 3);
+	view.setUint8(11, 4);
+
+	const blob = new BlobCore(data);
+
+	class Match {
+		static typeMagic = 0x12345678;
+	}
+	assertEquals(blob.is(Match), true);
+
+	abstract class MatchAbstract {
+		static typeMagic = 0x12345678;
+	}
+	assertEquals(blob.is(MatchAbstract), true);
+
+	abstract class Mismatch {
+		static typeMagic = 0x12345679;
+	}
+	assertEquals(blob.is(Mismatch), false);
+});
+
 Deno.test('readBlob', async () => {
 	assertEquals(
 		await BlobCore.readBlob(new Blob([new Uint8Array(7)])),
