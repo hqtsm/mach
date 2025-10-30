@@ -79,5 +79,6 @@ export class SuperBlobCore extends Blob {
 	static {
 		uint32BE(this, 'mCount' as never);
 		constant(this, 'BYTE_LENGTH');
+		constant(this, 'typeMagic');
 	}
 }
