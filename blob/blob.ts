@@ -79,6 +79,7 @@ export class Blob extends BlobCore {
 	}
 
 	static {
+		constant(this, 'BYTE_LENGTH');
 		constant(this, 'typeMagic');
 	}
 }
