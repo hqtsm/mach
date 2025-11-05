@@ -1,10 +1,29 @@
 import { assert, assertEquals } from '@std/assert';
-import { Uint8Ptr } from '@hqtsm/struct';
+import { constant, Uint8Ptr } from '@hqtsm/struct';
 import { BlobWrapper } from './blobwrapper.ts';
+import { SuperBlob } from './superblob.ts';
 import { SuperBlobMaker } from './superblobmaker.ts';
 
+const MAGIC = 0x12345678;
+
+class Example extends SuperBlob {
+	declare public readonly ['constructor']: Omit<typeof Example, 'new'>;
+
+	public static override readonly typeMagic = MAGIC;
+
+	static {
+		constant(this, 'typeMagic');
+	}
+}
+
+class ExampleMaker extends SuperBlobMaker {
+	declare public readonly ['constructor']: Omit<typeof ExampleMaker, 'new'>;
+
+	public static override readonly SuperBlob = Example;
+}
+
 Deno.test('add BlobCore', () => {
-	const maker = new SuperBlobMaker();
+	const maker = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	const blob = BlobWrapper.alloc(data);
 	maker.add(0x01020304, blob);
@@ -13,11 +32,11 @@ Deno.test('add BlobCore', () => {
 });
 
 Deno.test('add SuperBlob', () => {
-	const maker1 = new SuperBlobMaker();
+	const maker1 = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	maker1.add(0x11111111, BlobWrapper.alloc(data));
 	maker1.add(0x22222222, BlobWrapper.alloc(data));
-	const maker2 = new SuperBlobMaker();
+	const maker2 = new ExampleMaker();
 	maker2.add(maker1.make());
 	const sb2 = maker2.make();
 	assertEquals(sb2.count(), 2);
@@ -30,11 +49,11 @@ Deno.test('add SuperBlob', () => {
 });
 
 Deno.test('add SuperBlobMaker', () => {
-	const maker1 = new SuperBlobMaker();
+	const maker1 = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	maker1.add(0x11111111, BlobWrapper.alloc(data));
 	maker1.add(0x22222222, BlobWrapper.alloc(data));
-	const maker2 = new SuperBlobMaker();
+	const maker2 = new ExampleMaker();
 	maker2.add(maker1);
 	const sb2 = maker2.make();
 	assertEquals(sb2.count(), 2);
@@ -47,7 +66,7 @@ Deno.test('add SuperBlobMaker', () => {
 });
 
 Deno.test('contains', () => {
-	const maker = new SuperBlobMaker();
+	const maker = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	const blob = BlobWrapper.alloc(data);
 	assertEquals(maker.contains(0x01020304), false);
@@ -56,7 +75,7 @@ Deno.test('contains', () => {
 });
 
 Deno.test('get', () => {
-	const maker = new SuperBlobMaker();
+	const maker = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	const blob = BlobWrapper.alloc(data);
 	assertEquals(maker.get(0x01020304), null);
@@ -65,7 +84,7 @@ Deno.test('get', () => {
 });
 
 Deno.test('size', () => {
-	const maker = new SuperBlobMaker();
+	const maker = new ExampleMaker();
 	assertEquals(maker.size(), 12);
 	assertEquals(maker.make().length(), maker.size());
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
