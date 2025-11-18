@@ -1,6 +1,5 @@
 import type { Class } from '@hqtsm/class';
 import {
-	type ArrayBufferReal,
 	type BufferPointer,
 	type Const,
 	getByteLength,
@@ -202,7 +201,7 @@ export class MachOBase {
 	 * @returns Segment command or null.
 	 */
 	public findSegment(
-		segname: ArrayBufferReal | BufferPointer,
+		segname: ArrayBufferLike | BufferPointer,
 	): Const<SegmentCommand> | Const<SegmentCommand64> | null {
 		let buffer, byteOffset;
 		if ('buffer' in segname) {
@@ -247,8 +246,8 @@ export class MachOBase {
 	 * @returns Section or null.
 	 */
 	public findSection(
-		segname: ArrayBufferReal | BufferPointer,
-		sectname: ArrayBufferReal | BufferPointer,
+		segname: ArrayBufferLike | BufferPointer,
+		sectname: ArrayBufferLike | BufferPointer,
 	): Const<Section> | Const<Section64> | null {
 		const seg = this.findSegment(segname);
 		if (!seg) {
@@ -465,7 +464,7 @@ export class MachOBase {
 	 *
 	 * @param header Mach-O header data.
 	 */
-	protected initHeader(header: ArrayBufferReal | BufferPointer): void {
+	protected initHeader(header: ArrayBufferLike | BufferPointer): void {
 		let buffer, byteOffset;
 		if ('buffer' in header) {
 			buffer = header.buffer;
@@ -511,7 +510,7 @@ export class MachOBase {
 	 *
 	 * @param commands Mach-O commands data.
 	 */
-	protected initCommands(commands: ArrayBufferReal | BufferPointer): void {
+	protected initCommands(commands: ArrayBufferLike | BufferPointer): void {
 		let buffer, byteOffset;
 		if ('buffer' in commands) {
 			buffer = commands.buffer;

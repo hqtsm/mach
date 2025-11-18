@@ -1,5 +1,4 @@
 import { type Class, constant } from '@hqtsm/class';
-import type { ArrayBufferReal, BufferView } from '@hqtsm/struct';
 import { BlobCore } from './blobcore.ts';
 
 /**
@@ -51,7 +50,7 @@ export class Blob extends BlobCore {
 	 * @returns Blob data.
 	 */
 	public static blobify(
-		content: ArrayBufferReal | BufferView | number = 0,
+		content: ArrayBufferLike | ArrayBufferView | number = 0,
 	): ArrayBuffer {
 		const { BYTE_LENGTH } = Blob;
 		let view;

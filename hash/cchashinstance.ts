@@ -1,4 +1,3 @@
-import type { ArrayBufferReal, BufferView } from '@hqtsm/struct';
 import {
 	kCCDigestSHA1,
 	kCCDigestSHA256,
@@ -61,7 +60,7 @@ export class CCHashInstance extends DynamicHash {
 	}
 
 	public async digest(
-		source: Reader | ArrayBufferReal | BufferView,
+		source: Reader | ArrayBufferLike | ArrayBufferView,
 	): Promise<ArrayBuffer> {
 		const { mTruncate } = this;
 		const cry = this.crypto || crypto.subtle;

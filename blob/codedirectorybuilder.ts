@@ -1,10 +1,5 @@
 import type { Class } from '@hqtsm/class';
-import {
-	type ArrayBufferReal,
-	type BufferView,
-	pointer,
-	type Ptr,
-} from '@hqtsm/struct';
+import { pointer, type Ptr } from '@hqtsm/struct';
 import { UINT32_MAX } from '../const.ts';
 import type { DynamicHash, HashCrypto } from '../hash/dynamichash.ts';
 import type { Reader } from '../util/reader.ts';
@@ -87,12 +82,12 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Identifier.
 	 */
-	private mIdentifier: ArrayBufferReal = new ArrayBuffer(0);
+	private mIdentifier: ArrayBufferLike = new ArrayBuffer(0);
 
 	/**
 	 * Team ID.
 	 */
-	private mTeamID: ArrayBufferReal = new ArrayBuffer(0);
+	private mTeamID: ArrayBufferLike = new ArrayBuffer(0);
 
 	/**
 	 * Highest special slot index.
@@ -219,7 +214,7 @@ export class CodeDirectoryBuilder {
 	 */
 	public async specialSlot(
 		slot: number,
-		data: ArrayBufferReal | BufferView,
+		data: ArrayBufferLike | ArrayBufferView,
 	): Promise<void> {
 		slot = specialSlot(slot);
 		this.mSpecial.set(slot, await this.getHash().digest(data));
@@ -244,7 +239,7 @@ export class CodeDirectoryBuilder {
 	 *
 	 * @param code Identifier.
 	 */
-	public identifier(code: ArrayBufferReal | BufferView): void {
+	public identifier(code: ArrayBufferLike | ArrayBufferView): void {
 		if ('buffer' in code) {
 			const { buffer, byteOffset, byteLength } = code;
 			this.mIdentifier = buffer.slice(
@@ -261,7 +256,7 @@ export class CodeDirectoryBuilder {
 	 *
 	 * @param team Team ID.
 	 */
-	public teamID(team: ArrayBufferReal | BufferView): void {
+	public teamID(team: ArrayBufferLike | ArrayBufferView): void {
 		if ('buffer' in team) {
 			const { buffer, byteOffset, byteLength } = team;
 			this.mTeamID = buffer.slice(

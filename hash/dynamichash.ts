@@ -1,4 +1,3 @@
-import type { ArrayBufferReal, BufferView } from '@hqtsm/struct';
 import type { Reader } from '../util/reader.ts';
 
 /**
@@ -124,6 +123,6 @@ export abstract class DynamicHash {
 	 * @returns Hash digest.
 	 */
 	public abstract digest(
-		source: Reader | ArrayBufferReal | BufferView,
+		source: Reader | ArrayBufferLike | ArrayBufferView,
 	): Promise<ArrayBuffer>;
 }

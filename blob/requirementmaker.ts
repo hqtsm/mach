@@ -1,12 +1,5 @@
 import type { Class } from '@hqtsm/class';
-import {
-	type ArrayBufferReal,
-	type BufferPointer,
-	type BufferView,
-	type Const,
-	dataView,
-	Ptr,
-} from '@hqtsm/struct';
+import { type BufferPointer, type Const, dataView, Ptr } from '@hqtsm/struct';
 import {
 	opAnchorHash,
 	opAppleAnchor,
@@ -71,7 +64,7 @@ export class RequirementMaker {
 	 *
 	 * @param data Data or uint32.
 	 */
-	public put(data: ArrayBufferReal | BufferView | number): void {
+	public put(data: ArrayBufferLike | ArrayBufferView | number): void {
 		if (typeof data === 'number') {
 			const a = this.alloc(4);
 			dataView(a.buffer).setUint32(a.byteOffset, data);
@@ -100,7 +93,7 @@ export class RequirementMaker {
 	 *
 	 * @param data Data.
 	 */
-	public putData(data: ArrayBufferReal | BufferView): void;
+	public putData(data: ArrayBufferLike | ArrayBufferView): void;
 
 	/**
 	 * Put data with length.
@@ -109,14 +102,14 @@ export class RequirementMaker {
 	 * @param length Length in bytes.
 	 */
 	public putData(
-		data: ArrayBufferReal | BufferPointer | BufferView,
+		data: ArrayBufferLike | BufferPointer | ArrayBufferView,
 		length?: number,
 	): void {
 		const d = 'buffer' in data
 			? new Uint8Array(
 				data.buffer,
 				data.byteOffset,
-				length ?? (data as BufferView).byteLength,
+				length ?? (data as ArrayBufferView).byteLength,
 			)
 			: new Uint8Array(data);
 		this.put(d.byteLength);
@@ -171,8 +164,8 @@ export class RequirementMaker {
 	 * @param value Value string.
 	 */
 	public infoKey(
-		key: ArrayBufferReal | BufferView,
-		value: ArrayBufferReal | BufferView,
+		key: ArrayBufferLike | ArrayBufferView,
+		value: ArrayBufferLike | ArrayBufferView,
 	): void {
 		this.put(opInfoKeyValue);
 		this.putData(key);
@@ -184,7 +177,7 @@ export class RequirementMaker {
 	 *
 	 * @param identifier Identifier string.
 	 */
-	public ident(identifier: ArrayBufferReal | BufferView): void {
+	public ident(identifier: ArrayBufferLike | ArrayBufferView): void {
 		this.put(opIdent);
 		this.putData(identifier);
 	}
@@ -194,7 +187,7 @@ export class RequirementMaker {
 	 *
 	 * @param digest Hash digest.
 	 */
-	public cdhash(digest: ArrayBufferReal | BufferView): void {
+	public cdhash(digest: ArrayBufferLike | ArrayBufferView): void {
 		this.put(opCDHash);
 		this.putData(digest);
 	}

@@ -2,7 +2,6 @@ import { type Class, constant } from '@hqtsm/class';
 import {
 	type Arr,
 	array,
-	type ArrayBufferReal,
 	Int8Ptr,
 	Ptr,
 	Struct,
@@ -107,7 +106,7 @@ export class BlobCore extends Struct {
 	 */
 	public at<T>(
 		Type: new (
-			buffer: ArrayBufferReal,
+			buffer: ArrayBufferLike,
 			byteOffset?: number,
 			littleEndian?: boolean | null,
 		) => T,
