@@ -5,9 +5,9 @@ type Exports = Record<string, unknown>;
 
 const file = (function file(): string {
 	void file;
-	const o = { stack: '' };
-	Error.captureStackTrace(o);
-	const m = o.stack.match(/\((file:\/\/)?(.*):\d+:\d+\)/i);
+	const trace = { stack: '' };
+	Error.captureStackTrace(trace);
+	const m = trace.stack.match(/\((file:\/\/)?(.*):\d+:\d+\)/i);
 	if (!m) {
 		throw new Error('Unknown filename');
 	}
