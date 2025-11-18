@@ -5,8 +5,6 @@ interface Exports {
 	[k: string]: unknown;
 }
 
-declare const module: { require: (name: string) => Exports } | undefined;
-
 function getFilename(): string {
 	let trace;
 	let original;
@@ -30,15 +28,6 @@ function getFilename(): string {
 		throw new Error('Unknown filename');
 	}
 	return m[1] ? decodeURIComponent(m[2]) : m[2];
-}
-
-function getImport(): (name: string) => Promise<Exports> {
-	const m = typeof module !== 'undefined' ? module : null;
-	return m
-		// deno-lint-ignore require-await
-		? async (name: string) => m.require(name)
-		// deno-lint-ignore require-await
-		: async (name: string) => import(name);
 }
 
 async function* findModules(
@@ -95,7 +84,6 @@ function isClass(x: unknown): boolean {
 
 const file = getFilename();
 const dir = file.replace(/[\\\/][^/]+$/, '');
-const impire = getImport();
 
 Deno.test('public', async () => {
 	const filed = new Map([
@@ -116,7 +104,7 @@ Deno.test('public', async () => {
 			]),
 		)
 	) {
-		const m = await impire(uri);
+		const m = await import(uri);
 		assertExported(m, mod, uri);
 
 		const [file] = uri.split('/').pop()!.split('.');
