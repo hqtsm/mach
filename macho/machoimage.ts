@@ -1,4 +1,5 @@
 import type { Class } from '@hqtsm/class';
+import type { ArrayBufferPointer } from '@hqtsm/struct';
 import { MachOBase } from './machobase.ts';
 
 /**
@@ -12,9 +13,7 @@ export class MachOImage extends MachOBase {
 	 *
 	 * @param address Buffer pointer.
 	 */
-	constructor(
-		address: ArrayBufferLike | Omit<ArrayBufferView, 'byteLength'>,
-	) {
+	constructor(address: ArrayBufferLike | ArrayBufferPointer) {
 		super();
 
 		this.initHeader(address);
@@ -38,7 +37,7 @@ export class MachOImage extends MachOBase {
 	 *
 	 * @returns Pionter to Mach-O header.
 	 */
-	public address(): Omit<ArrayBufferView, 'byteLength'> {
+	public address(): ArrayBufferPointer {
 		return this.header()!;
 	}
 }

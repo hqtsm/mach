@@ -1,5 +1,6 @@
 import type { Class } from '@hqtsm/class';
 import {
+	type ArrayBufferPointer,
 	type Const,
 	getByteLength,
 	Int8Ptr,
@@ -200,7 +201,7 @@ export class MachOBase {
 	 * @returns Segment command or null.
 	 */
 	public findSegment(
-		segname: ArrayBufferLike | Omit<ArrayBufferView, 'byteLength'>,
+		segname: ArrayBufferLike | ArrayBufferPointer,
 	): Const<SegmentCommand> | Const<SegmentCommand64> | null {
 		let buffer, byteOffset;
 		if ('buffer' in segname) {
@@ -245,8 +246,8 @@ export class MachOBase {
 	 * @returns Section or null.
 	 */
 	public findSection(
-		segname: ArrayBufferLike | Omit<ArrayBufferView, 'byteLength'>,
-		sectname: ArrayBufferLike | Omit<ArrayBufferView, 'byteLength'>,
+		segname: ArrayBufferLike | ArrayBufferPointer,
+		sectname: ArrayBufferLike | ArrayBufferPointer,
 	): Const<Section> | Const<Section64> | null {
 		const seg = this.findSegment(segname);
 		if (!seg) {
@@ -464,7 +465,7 @@ export class MachOBase {
 	 * @param header Mach-O header data.
 	 */
 	protected initHeader(
-		header: ArrayBufferLike | Omit<ArrayBufferView, 'byteLength'>,
+		header: ArrayBufferLike | ArrayBufferPointer,
 	): void {
 		let buffer, byteOffset;
 		if ('buffer' in header) {
@@ -512,7 +513,7 @@ export class MachOBase {
 	 * @param commands Mach-O commands data.
 	 */
 	protected initCommands(
-		commands: ArrayBufferLike | Omit<ArrayBufferView, 'byteLength'>,
+		commands: ArrayBufferLike | ArrayBufferPointer,
 	): void {
 		let buffer, byteOffset;
 		if ('buffer' in commands) {
