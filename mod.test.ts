@@ -3,15 +3,13 @@ import * as mod from './mod.ts';
 
 type Exports = Record<string, unknown>;
 
-const file = (function file(): string {
-	void file;
-	const trace = { stack: '' };
+const file = (function file(m?: RegExpMatchArray | null): string {
+	const trace = { stack: file.name.slice(0, 0) };
 	Error.captureStackTrace(trace);
-	const m = trace.stack.match(/\((file:\/\/)?(.*):\d+:\d+\)/i);
-	if (!m) {
-		throw new Error('Unknown filename');
+	if ((m = trace.stack.match(/\((file:\/\/)?(.*):\d+:\d+\)/i))) {
+		return m[1] ? decodeURIComponent(m[2]) : m[2];
 	}
-	return m[1] ? decodeURIComponent(m[2]) : m[2];
+	throw new Error('Unknown filename');
 })();
 const dir = file.replace(/[\\\/][^/]+$/, '');
 
