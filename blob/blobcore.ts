@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import {
 	type Arr,
 	array,
@@ -15,7 +15,7 @@ import type { Reader } from '../util/reader.ts';
  * Polymorphic memory blobs with magics numbers.
  */
 export class BlobCore extends Struct {
-	declare public readonly ['constructor']: Omit<typeof BlobCore, 'new'>;
+	declare public readonly ['constructor']: Class<typeof BlobCore>;
 
 	/**
 	 * Magic number.

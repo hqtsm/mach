@@ -1,14 +1,11 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { Struct, uint32, uint64 } from '@hqtsm/struct';
 
 /**
  * Routines command, 64-bit.
  */
 export class RoutinesCommand64 extends Struct {
-	declare public readonly ['constructor']: Omit<
-		typeof RoutinesCommand64,
-		'new'
-	>;
+	declare public readonly ['constructor']: Class<typeof RoutinesCommand64>;
 
 	/**
 	 * Command type.

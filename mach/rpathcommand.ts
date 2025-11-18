@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { member, Struct, uint32 } from '@hqtsm/struct';
 import { LcStr } from './lcstr.ts';
 
@@ -6,7 +6,7 @@ import { LcStr } from './lcstr.ts';
  * Rpath command.
  */
 export class RpathCommand extends Struct {
-	declare public readonly ['constructor']: Omit<typeof RpathCommand, 'new'>;
+	declare public readonly ['constructor']: Class<typeof RpathCommand>;
 
 	/**
 	 * Command type.

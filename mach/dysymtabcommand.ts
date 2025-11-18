@@ -1,14 +1,11 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Dysymtab command.
  */
 export class DysymtabCommand extends Struct {
-	declare public readonly ['constructor']: Omit<
-		typeof DysymtabCommand,
-		'new'
-	>;
+	declare public readonly ['constructor']: Class<typeof DysymtabCommand>;
 
 	/**
 	 * Command type.

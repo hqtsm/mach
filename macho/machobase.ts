@@ -1,3 +1,4 @@
+import type { Class } from '@hqtsm/class';
 import {
 	type ArrayBufferReal,
 	type BufferPointer,
@@ -44,7 +45,7 @@ import { Architecture } from './architecture.ts';
  * Common interface of Mach-O binaries features.
  */
 export class MachOBase {
-	declare public readonly ['constructor']: Omit<typeof MachOBase, 'new'>;
+	declare public readonly ['constructor']: Class<typeof MachOBase>;
 
 	/**
 	 * Mach-O header.

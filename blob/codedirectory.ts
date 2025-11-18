@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import {
 	type Const,
 	Int8Ptr,
@@ -28,7 +28,7 @@ import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
  * Describes secured pieces of a program.
  */
 export class CodeDirectory extends Blob {
-	declare public readonly ['constructor']: Omit<typeof CodeDirectory, 'new'>;
+	declare public readonly ['constructor']: Class<typeof CodeDirectory>;
 
 	/**
 	 * Compatibility version.

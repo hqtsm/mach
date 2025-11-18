@@ -1,13 +1,12 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Encryption info command, 32-bit.
  */
 export class EncryptionInfoCommand extends Struct {
-	declare public readonly ['constructor']: Omit<
-		typeof EncryptionInfoCommand,
-		'new'
+	declare public readonly ['constructor']: Class<
+		typeof EncryptionInfoCommand
 	>;
 
 	/**

@@ -1,11 +1,11 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { Struct, uint32, uint64 } from '@hqtsm/struct';
 
 /**
  * Dylib module table entry, 64-bit.
  */
 export class DylibModule64 extends Struct {
-	declare public readonly ['constructor']: Omit<typeof DylibModule64, 'new'>;
+	declare public readonly ['constructor']: Class<typeof DylibModule64>;
 
 	/**
 	 * Module name index in string table.

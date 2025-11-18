@@ -1,3 +1,4 @@
+import type { Class } from '@hqtsm/class';
 import { getByteLength } from '@hqtsm/struct';
 import {
 	LC_SEGMENT,
@@ -17,7 +18,7 @@ import { MachOBase } from './machobase.ts';
  * A Mach-O binary over a reader.
  */
 export class MachO extends MachOBase {
-	declare public readonly ['constructor']: Omit<typeof MachO, 'new'>;
+	declare public readonly ['constructor']: Class<typeof MachO>;
 
 	/**
 	 * Binary reader.

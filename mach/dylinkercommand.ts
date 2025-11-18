@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { member, Struct, uint32 } from '@hqtsm/struct';
 import { LcStr } from './lcstr.ts';
 
@@ -6,10 +6,7 @@ import { LcStr } from './lcstr.ts';
  * Dynamic linker command.
  */
 export class DylinkerCommand extends Struct {
-	declare public readonly ['constructor']: Omit<
-		typeof DylinkerCommand,
-		'new'
-	>;
+	declare public readonly ['constructor']: Class<typeof DylinkerCommand>;
 
 	/**
 	 * Command type.

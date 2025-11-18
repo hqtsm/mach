@@ -1,11 +1,11 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Symbol table command.
  */
 export class SymsegCommand extends Struct {
-	declare public readonly ['constructor']: Omit<typeof SymsegCommand, 'new'>;
+	declare public readonly ['constructor']: Class<typeof SymsegCommand>;
 
 	/**
 	 * Command type.

@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import {
 	array,
 	type ArrayBufferReal,
@@ -14,7 +14,7 @@ import { Blob } from './blob.ts';
  * Generic blob wrapping arbitrary binary data.
  */
 export class BlobWrapper extends Blob {
-	declare public readonly ['constructor']: Omit<typeof BlobWrapper, 'new'>;
+	declare public readonly ['constructor']: Class<typeof BlobWrapper>;
 
 	/**
 	 * Data of payload (only).

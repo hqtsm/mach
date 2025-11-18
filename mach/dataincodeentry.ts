@@ -1,14 +1,11 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { Struct, uint16, uint32 } from '@hqtsm/struct';
 
 /**
  * Data in code entry.
  */
 export class DataInCodeEntry extends Struct {
-	declare public readonly ['constructor']: Omit<
-		typeof DataInCodeEntry,
-		'new'
-	>;
+	declare public readonly ['constructor']: Class<typeof DataInCodeEntry>;
 
 	/**
 	 * Offset from mach_header to start of data range.

@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import {
 	type Arr,
 	array,
@@ -13,7 +13,7 @@ import {
  * Note command.
  */
 export class NoteCommand extends Struct {
-	declare public readonly ['constructor']: Omit<typeof NoteCommand, 'new'>;
+	declare public readonly ['constructor']: Class<typeof NoteCommand>;
 
 	/**
 	 * Command type.

@@ -1,3 +1,4 @@
+import type { Class } from '@hqtsm/class';
 import type { Const } from '@hqtsm/struct';
 import type { RequirementMaker } from './requirementmaker.ts';
 
@@ -5,9 +6,8 @@ import type { RequirementMaker } from './requirementmaker.ts';
  * RequirementMaker label.
  */
 export class RequirementMakerLabel {
-	declare public readonly ['constructor']: Omit<
-		typeof RequirementMakerLabel,
-		'new'
+	declare public readonly ['constructor']: Class<
+		typeof RequirementMakerLabel
 	>;
 
 	/**

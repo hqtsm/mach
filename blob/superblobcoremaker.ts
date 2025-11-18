@@ -1,3 +1,4 @@
+import type { Class } from '@hqtsm/class';
 import { dataView } from '@hqtsm/struct';
 import { BlobCore } from './blobcore.ts';
 import { SuperBlob } from './superblob.ts';
@@ -6,10 +7,7 @@ import { SuperBlob } from './superblob.ts';
  * SuperBlob core maker.
  */
 export class SuperBlobCoreMaker {
-	declare public readonly ['constructor']: Omit<
-		typeof SuperBlobCoreMaker,
-		'new'
-	>;
+	declare public readonly ['constructor']: Class<typeof SuperBlobCoreMaker>;
 
 	/**
 	 * Blobs in super blob.

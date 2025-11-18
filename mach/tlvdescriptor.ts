@@ -1,11 +1,11 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Thread local variable entry, 64-bit.
  */
 export class TlvDescriptor extends Struct {
-	declare public readonly ['constructor']: Omit<typeof TlvDescriptor, 'new'>;
+	declare public readonly ['constructor']: Class<typeof TlvDescriptor>;
 
 	/**
 	 * A pointer.

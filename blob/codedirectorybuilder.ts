@@ -1,3 +1,4 @@
+import type { Class } from '@hqtsm/class';
 import {
 	type ArrayBufferReal,
 	type BufferView,
@@ -31,10 +32,7 @@ async function generateHash(
  * Builder for building CodeDirectories from pieces.
  */
 export class CodeDirectoryBuilder {
-	declare public readonly ['constructor']: Omit<
-		typeof CodeDirectoryBuilder,
-		'new'
-	>;
+	declare public readonly ['constructor']: Class<typeof CodeDirectoryBuilder>;
 
 	/**
 	 * Hash crypto.

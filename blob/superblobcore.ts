@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { type Const, dataView, uint32BE } from '@hqtsm/struct';
 import { Blob } from './blob.ts';
 import { BlobCore } from './blobcore.ts';
@@ -7,7 +7,7 @@ import { BlobCore } from './blobcore.ts';
  * Multiple Blobs wrapped in a single indexed blob.
  */
 export class SuperBlobCore extends Blob {
-	declare public readonly ['constructor']: Omit<typeof SuperBlobCore, 'new'>;
+	declare public readonly ['constructor']: Class<typeof SuperBlobCore>;
 
 	/**
 	 * Number of blobs in super blob.

@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import {
 	type Arr,
 	array,
@@ -12,7 +12,7 @@ import {
  * Section, 32-bit.
  */
 export class Section extends Struct {
-	declare public readonly ['constructor']: Omit<typeof Section, 'new'>;
+	declare public readonly ['constructor']: Class<typeof Section>;
 
 	/**
 	 * Section name.

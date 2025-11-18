@@ -1,3 +1,4 @@
+import type { Class } from '@hqtsm/class';
 import { type Const, pointer, type Ptr } from '@hqtsm/struct';
 import {
 	CPU_ARCH_ABI64,
@@ -28,7 +29,7 @@ const MAX_ALIGN = 30;
  * Works for fat binaries and also thin binaries.
  */
 export class Universal {
-	declare public readonly ['constructor']: Omit<typeof Universal, 'new'>;
+	declare public readonly ['constructor']: Class<typeof Universal>;
 
 	/**
 	 * Binary reader.

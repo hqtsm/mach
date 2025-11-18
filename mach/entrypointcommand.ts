@@ -1,14 +1,11 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { Struct, uint32, uint64 } from '@hqtsm/struct';
 
 /**
  * Entry point command.
  */
 export class EntryPointCommand extends Struct {
-	declare public readonly ['constructor']: Omit<
-		typeof EntryPointCommand,
-		'new'
-	>;
+	declare public readonly ['constructor']: Class<typeof EntryPointCommand>;
 
 	/**
 	 * Command type.

@@ -1,11 +1,11 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Load command.
  */
 export class LoadCommand extends Struct {
-	declare public readonly ['constructor']: Omit<typeof LoadCommand, 'new'>;
+	declare public readonly ['constructor']: Class<typeof LoadCommand>;
 
 	/**
 	 * Command type.

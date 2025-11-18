@@ -1,14 +1,11 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Dylib info command.
  */
 export class DylibInfoCommand extends Struct {
-	declare public readonly ['constructor']: Omit<
-		typeof DylibInfoCommand,
-		'new'
-	>;
+	declare public readonly ['constructor']: Class<typeof DylibInfoCommand>;
 
 	/**
 	 * Command type.

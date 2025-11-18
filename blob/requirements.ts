@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { kSecCodeMagicRequirementSet } from '../const.ts';
 import { SuperBlob } from './superblob.ts';
 
@@ -6,7 +6,7 @@ import { SuperBlob } from './superblob.ts';
  * Requirement groups indexed by SecRequirementType.
  */
 export class Requirements extends SuperBlob {
-	declare public readonly ['constructor']: Omit<typeof Requirements, 'new'>;
+	declare public readonly ['constructor']: Class<typeof Requirements>;
 
 	public static override readonly typeMagic = kSecCodeMagicRequirementSet;
 

@@ -1,11 +1,11 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Symtab command.
  */
 export class SymtabCommand extends Struct {
-	declare public readonly ['constructor']: Omit<typeof SymtabCommand, 'new'>;
+	declare public readonly ['constructor']: Class<typeof SymtabCommand>;
 
 	/**
 	 * Command type.

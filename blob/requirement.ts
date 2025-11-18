@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { uint32BE } from '@hqtsm/struct';
 import { kSecCodeMagicRequirement } from '../const.ts';
 import { Blob } from './blob.ts';
@@ -7,7 +7,7 @@ import { Blob } from './blob.ts';
  * Single requirement.
  */
 export class Requirement extends Blob {
-	declare public readonly ['constructor']: Omit<typeof Requirement, 'new'>;
+	declare public readonly ['constructor']: Class<typeof Requirement>;
 
 	/**
 	 * Requirement kind.

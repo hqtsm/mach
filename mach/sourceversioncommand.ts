@@ -1,14 +1,11 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { Struct, uint32, uint64 } from '@hqtsm/struct';
 
 /**
  * Source version command.
  */
 export class SourceVersionCommand extends Struct {
-	declare public readonly ['constructor']: Omit<
-		typeof SourceVersionCommand,
-		'new'
-	>;
+	declare public readonly ['constructor']: Class<typeof SourceVersionCommand>;
 
 	/**
 	 * Command type.

@@ -1,11 +1,11 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { int32, Struct, uint32, uint64 } from '@hqtsm/struct';
 
 /**
  * Fat architecture, 64-bit.
  */
 export class FatArch64 extends Struct {
-	declare public readonly ['constructor']: Omit<typeof FatArch64, 'new'>;
+	declare public readonly ['constructor']: Class<typeof FatArch64>;
 
 	/**
 	 * CPU type.

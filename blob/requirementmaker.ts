@@ -1,3 +1,4 @@
+import type { Class } from '@hqtsm/class';
 import {
 	type ArrayBufferReal,
 	type BufferPointer,
@@ -25,10 +26,7 @@ import type { RequirementMakerLabel } from './requirementmakerlabel.ts';
  * For creating a new Requirement blob.
  */
 export class RequirementMaker {
-	declare public readonly ['constructor']: Omit<
-		typeof RequirementMaker,
-		'new'
-	>;
+	declare public readonly ['constructor']: Class<typeof RequirementMaker>;
 
 	/**
 	 * Buffer of allocated bytes.

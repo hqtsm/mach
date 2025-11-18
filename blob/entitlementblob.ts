@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { Uint8Ptr } from '@hqtsm/struct';
 import { kSecCodeMagicEntitlement } from '../const.ts';
 import { Blob } from './blob.ts';
@@ -7,10 +7,7 @@ import { Blob } from './blob.ts';
  * For embedding entitlement configuration data.
  */
 export class EntitlementBlob extends Blob {
-	declare public readonly ['constructor']: Omit<
-		typeof EntitlementBlob,
-		'new'
-	>;
+	declare public readonly ['constructor']: Class<typeof EntitlementBlob>;
 
 	/**
 	 * Entitlements data.

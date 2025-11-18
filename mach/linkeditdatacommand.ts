@@ -1,14 +1,11 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Linkedit data command.
  */
 export class LinkeditDataCommand extends Struct {
-	declare public readonly ['constructor']: Omit<
-		typeof LinkeditDataCommand,
-		'new'
-	>;
+	declare public readonly ['constructor']: Class<typeof LinkeditDataCommand>;
 
 	/**
 	 * Command type.

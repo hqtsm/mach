@@ -1,14 +1,11 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Build tool version.
  */
 export class BuildToolVersion extends Struct {
-	declare public readonly ['constructor']: Omit<
-		typeof BuildToolVersion,
-		'new'
-	>;
+	declare public readonly ['constructor']: Class<typeof BuildToolVersion>;
 
 	/**
 	 * Tool ID.

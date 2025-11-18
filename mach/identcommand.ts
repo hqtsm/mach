@@ -1,11 +1,11 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Ident command.
  */
 export class IdentCommand extends Struct {
-	declare public readonly ['constructor']: Omit<typeof IdentCommand, 'new'>;
+	declare public readonly ['constructor']: Class<typeof IdentCommand>;
 
 	/**
 	 * Command type.

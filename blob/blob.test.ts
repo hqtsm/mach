@@ -1,5 +1,5 @@
 import { assertEquals, assertThrows } from '@std/assert';
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { uint32BE } from '@hqtsm/struct';
 import { Blob } from './blob.ts';
 
@@ -35,7 +35,7 @@ Deno.test('blobify view', () => {
 
 Deno.test('validateBlobLength', () => {
 	class Example extends Blob {
-		declare public readonly ['constructor']: Omit<typeof Example, 'new'>;
+		declare public readonly ['constructor']: Class<typeof Example>;
 
 		/**
 		 * Example value.

@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import type { ArrayBufferReal, BufferView } from '@hqtsm/struct';
 import { BlobCore } from './blobcore.ts';
 
@@ -6,7 +6,7 @@ import { BlobCore } from './blobcore.ts';
  * Polymorphic memory blob for magic number.
  */
 export class Blob extends BlobCore {
-	declare public readonly ['constructor']: Omit<typeof Blob, 'new'>;
+	declare public readonly ['constructor']: Class<typeof Blob>;
 
 	/**
 	 * Initialize blob with length, using known type magic.

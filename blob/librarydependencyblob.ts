@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { kSecCodeMagicDRList } from '../const.ts';
 import { SuperBlob } from './superblob.ts';
 
@@ -7,9 +7,8 @@ import { SuperBlob } from './superblob.ts';
  * Indexed sequentially from 0.
  */
 export class LibraryDependencyBlob extends SuperBlob {
-	declare public readonly ['constructor']: Omit<
-		typeof LibraryDependencyBlob,
-		'new'
+	declare public readonly ['constructor']: Class<
+		typeof LibraryDependencyBlob
 	>;
 
 	public static override readonly typeMagic = kSecCodeMagicDRList;

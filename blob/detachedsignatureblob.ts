@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { kSecCodeMagicDetachedSignature } from '../const.ts';
 import { SuperBlob } from './superblob.ts';
 
@@ -7,9 +7,8 @@ import { SuperBlob } from './superblob.ts';
  * Indexed by main architecture.
  */
 export class DetachedSignatureBlob extends SuperBlob {
-	declare public readonly ['constructor']: Omit<
-		typeof DetachedSignatureBlob,
-		'new'
+	declare public readonly ['constructor']: Class<
+		typeof DetachedSignatureBlob
 	>;
 
 	public static override readonly typeMagic = kSecCodeMagicDetachedSignature;

@@ -1,11 +1,11 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Thread command.
  */
 export class ThreadCommand extends Struct {
-	declare public readonly ['constructor']: Omit<typeof ThreadCommand, 'new'>;
+	declare public readonly ['constructor']: Class<typeof ThreadCommand>;
 
 	/**
 	 * Command type.

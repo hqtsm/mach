@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { member, Struct, uint32 } from '@hqtsm/struct';
 import { Fvmlib } from './fvmlib.ts';
 
@@ -6,7 +6,7 @@ import { Fvmlib } from './fvmlib.ts';
  * Fixed virtual memory shared library command.
  */
 export class FvmlibCommand extends Struct {
-	declare public readonly ['constructor']: Omit<typeof FvmlibCommand, 'new'>;
+	declare public readonly ['constructor']: Class<typeof FvmlibCommand>;
 
 	/**
 	 * Command type.

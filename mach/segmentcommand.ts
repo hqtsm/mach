@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import {
 	type Arr,
 	array,
@@ -13,7 +13,7 @@ import {
  * Segment command, 32-bit.
  */
 export class SegmentCommand extends Struct {
-	declare public readonly ['constructor']: Omit<typeof SegmentCommand, 'new'>;
+	declare public readonly ['constructor']: Class<typeof SegmentCommand>;
 
 	/**
 	 * Command type.

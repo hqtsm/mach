@@ -1,14 +1,11 @@
-import { constant } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Dynamically linked shared library use command.
  */
 export class DylibUseCommand extends Struct {
-	declare public readonly ['constructor']: Omit<
-		typeof DylibUseCommand,
-		'new'
-	>;
+	declare public readonly ['constructor']: Class<typeof DylibUseCommand>;
 
 	/**
 	 * Command type.
