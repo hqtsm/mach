@@ -1,9 +1,7 @@
 import { assertEquals } from '@std/assert';
 import * as mod from './mod.ts';
 
-interface Exports {
-	[k: string]: unknown;
-}
+type Exports = Record<string, unknown>;
 
 function getFilename(): string {
 	let trace;
