@@ -132,17 +132,18 @@ Deno.test('public', async () => {
 });
 
 Deno.test('class constants', () => {
-	const builtins = new Set<unknown>(
-		Object.getOwnPropertyNames(class {}),
-	);
+	const builtins = new Set<unknown>(Object.getOwnPropertyNames(class {}));
+
 	for (const [k, v] of Object.entries(mod)) {
 		if (!isClass(v)) {
 			continue;
 		}
+
 		for (const p of Object.getOwnPropertyNames(v) as (keyof typeof v)[]) {
 			if (builtins.has(p) || isFunction(v[p])) {
 				continue;
 			}
+
 			const desc = Object.getOwnPropertyDescriptor(v, p)!;
 			assertEquals(desc.writable ?? false, false, `${k}.${p}`);
 			assertEquals(desc.enumerable ?? false, false, `${k}.${p}`);
