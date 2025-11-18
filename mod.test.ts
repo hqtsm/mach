@@ -3,30 +3,17 @@ import * as mod from './mod.ts';
 
 type Exports = Record<string, unknown>;
 
-function getFilename(): string {
-	let trace;
-	let original;
-	const E = Error as unknown as { prepareStackTrace: unknown };
-	const own = Object.hasOwn(E, 'prepareStackTrace');
-	if (own) {
-		original = E.prepareStackTrace;
-		E.prepareStackTrace = (s: { stack: string }) => s.stack;
-	}
-	try {
-		trace = new Error('.').stack;
-	} finally {
-		if (own) {
-			E.prepareStackTrace = original;
-		} else {
-			delete E.prepareStackTrace;
-		}
-	}
-	const m = trace?.match(/\((file:\/\/)?(.*):\d+:\d+\)/i);
+const file = (function file(): string {
+	void file;
+	const o = { stack: '' };
+	Error.captureStackTrace(o);
+	const m = o.stack.match(/\((file:\/\/)?(.*):\d+:\d+\)/i);
 	if (!m) {
 		throw new Error('Unknown filename');
 	}
 	return m[1] ? decodeURIComponent(m[2]) : m[2];
-}
+})();
+const dir = file.replace(/[\\\/][^/]+$/, '');
 
 async function* findModules(
 	dir: string,
@@ -86,9 +73,6 @@ function isClass(x: unknown): boolean {
 		!Object.getOwnPropertyDescriptor(x, 'prototype')?.writable
 	);
 }
-
-const file = getFilename();
-const dir = file.replace(/[\\\/][^/]+$/, '');
 
 Deno.test('public', async () => {
 	const filed = new Map([
