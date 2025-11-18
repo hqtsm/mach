@@ -1,10 +1,10 @@
 import { assert } from '@std/assert';
 
 async function inflate(
-	data: InstanceType<typeof Uint8Array>,
+	data: Uint8Array<ArrayBuffer>,
 	size: number,
 	crc: number,
-): Promise<InstanceType<typeof Uint8Array>> {
+): Promise<Uint8Array<ArrayBuffer>> {
 	const d = new Uint8Array(size);
 	const r: ReadableStreamDefaultReader<Uint8Array> = new ReadableStream<
 		Uint8Array
@@ -40,7 +40,7 @@ async function inflate(
 }
 
 export async function* zipped(file: string): AsyncGenerator<
-	readonly [string, () => Promise<InstanceType<typeof Uint8Array>>]
+	readonly [string, () => Promise<Uint8Array<ArrayBuffer>>]
 > {
 	const d = await Deno.readFile(file);
 	const v = new DataView(d.buffer, d.byteOffset, d.byteLength);
@@ -108,7 +108,7 @@ export async function* zipped(file: string): AsyncGenerator<
 				d.buffer,
 				d.byteOffset + headerOffset + i,
 				cSize,
-			) as InstanceType<typeof Uint8Array>;
+			) as Uint8Array<ArrayBuffer>;
 			return inflater ? await inflater(cData, uSize, crc) : cData;
 		}];
 	}

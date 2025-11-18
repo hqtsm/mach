@@ -56,7 +56,7 @@ export class RequirementMaker {
 	 * @param size Size in bytes.
 	 * @returns View of allocated bytes.
 	 */
-	public alloc(size: number): InstanceType<typeof Uint8Array> {
+	public alloc(size: number): Uint8Array<ArrayBuffer> {
 		const usedSize = alignUp(size, Requirement.baseAlignment);
 		this.require(usedSize);
 		const a = new Uint8Array(this.mBuffer, this.mPC, size);

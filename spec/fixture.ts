@@ -194,9 +194,9 @@ export async function fixtureMacho(
 	kind: string,
 	arch: string,
 	files: readonly string[],
-): Promise<InstanceType<typeof Uint8Array>[]> {
+): Promise<Uint8Array<ArrayBuffer>[]> {
 	const m = new Map(files.map((name, i) => [name, i]));
-	const datas: InstanceType<typeof Uint8Array>[] = [];
+	const datas: Uint8Array<ArrayBuffer>[] = [];
 	for await (
 		const [name, read] of zipped(
 			`${fixtures()}/macho/${kind}/dist/${arch}.zip`,
@@ -218,9 +218,9 @@ export async function fixtureMachoSigned(
 	arch: string,
 	file: string,
 ): Promise<{
-	macho: InstanceType<typeof Uint8Array>;
-	infoPlist: InstanceType<typeof Uint8Array> | null;
-	codeResources: InstanceType<typeof Uint8Array> | null;
+	macho: Uint8Array<ArrayBuffer>;
+	infoPlist: Uint8Array<ArrayBuffer> | null;
+	codeResources: Uint8Array<ArrayBuffer> | null;
 }> {
 	let resources: string[] | null = null;
 	const bundle = file.match(

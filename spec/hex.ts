@@ -2,7 +2,7 @@ export function hex(data: Readonly<Uint8Array>, delim = ''): string {
 	return [...data].map((x) => x.toString(16).padStart(2, '0')).join(delim);
 }
 
-export function unhex(...hex: string[]): InstanceType<typeof Uint8Array> {
+export function unhex(...hex: string[]): Uint8Array<ArrayBuffer> {
 	return new Uint8Array(
 		hex
 			.join('')
