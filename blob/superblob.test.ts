@@ -20,6 +20,10 @@ class ExampleMaker extends SuperBlobMaker {
 	declare public readonly ['constructor']: Class<typeof ExampleMaker>;
 
 	public static override readonly SuperBlob = Example;
+
+	static {
+		constant(this, 'SuperBlob');
+	}
 }
 
 Deno.test('BYTE_LENGTH', () => {

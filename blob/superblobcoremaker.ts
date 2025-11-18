@@ -1,4 +1,4 @@
-import type { Class } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { dataView } from '@hqtsm/struct';
 import { BlobCore } from './blobcore.ts';
 import { SuperBlob } from './superblob.ts';
@@ -152,4 +152,8 @@ export class SuperBlobCoreMaker {
 	 * SuperBlob class.
 	 */
 	public static readonly SuperBlob = SuperBlob;
+
+	static {
+		constant(this, 'SuperBlob');
+	}
 }

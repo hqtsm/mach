@@ -1,4 +1,4 @@
-import type { Class } from '@hqtsm/class';
+import { type Class, constant } from '@hqtsm/class';
 import { DetachedSignatureBlob } from './detachedsignatureblob.ts';
 import { SuperBlobMaker } from './superblobmaker.ts';
 
@@ -11,4 +11,8 @@ export class DetachedSignatureBlobMaker extends SuperBlobMaker {
 	>;
 
 	public static override readonly SuperBlob = DetachedSignatureBlob;
+
+	static {
+		constant(this, 'SuperBlob');
+	}
 }

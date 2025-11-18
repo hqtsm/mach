@@ -75,6 +75,13 @@ function assertExported(
 	}
 }
 
+function isFunction(x: unknown): boolean {
+	return (
+		typeof x === 'function' &&
+		!!(Object.getOwnPropertyDescriptor(x, 'prototype')?.writable ?? true)
+	);
+}
+
 function isClass(x: unknown): boolean {
 	return (
 		typeof x === 'function' &&
@@ -127,21 +134,15 @@ Deno.test('public', async () => {
 });
 
 Deno.test('class constants', () => {
-	const defaultClassProperties = new Set<unknown>(
+	const builtins = new Set<unknown>(
 		Object.getOwnPropertyNames(class {}),
 	);
 	for (const [k, v] of Object.entries(mod)) {
-		if (
-			typeof v !== 'function' ||
-			Object.getOwnPropertyDescriptor(v, 'prototype')?.writable
-		) {
+		if (!isClass(v)) {
 			continue;
 		}
 		for (const p of Object.getOwnPropertyNames(v) as (keyof typeof v)[]) {
-			if (
-				defaultClassProperties.has(p) ||
-				typeof v[p] === 'function'
-			) {
+			if (builtins.has(p) || isFunction(v[p])) {
 				continue;
 			}
 			const desc = Object.getOwnPropertyDescriptor(v, p)!;
