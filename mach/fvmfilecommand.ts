@@ -1,4 +1,5 @@
-import { constant, member, Struct, uint32 } from '@hqtsm/struct';
+import { constant } from '@hqtsm/class';
+import { member, Struct, uint32 } from '@hqtsm/struct';
 import { LcStr } from './lcstr.ts';
 
 /**

@@ -1,4 +1,5 @@
-import { constant, uint32BE } from '@hqtsm/struct';
+import { constant } from '@hqtsm/class';
+import { uint32BE } from '@hqtsm/struct';
 import { kSecCodeMagicRequirement } from '../const.ts';
 import { Blob } from './blob.ts';
 

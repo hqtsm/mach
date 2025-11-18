@@ -1,8 +1,8 @@
+import { constant } from '@hqtsm/class';
 import {
 	type Arr,
 	array,
 	type ArrayBufferReal,
-	constant,
 	Int8Ptr,
 	Ptr,
 	Struct,

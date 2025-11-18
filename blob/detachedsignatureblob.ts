@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/struct';
+import { constant } from '@hqtsm/class';
 import { kSecCodeMagicDetachedSignature } from '../const.ts';
 import { SuperBlob } from './superblob.ts';
 

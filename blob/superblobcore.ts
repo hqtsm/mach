@@ -1,4 +1,5 @@
-import { type Const, constant, dataView, uint32BE } from '@hqtsm/struct';
+import { constant } from '@hqtsm/class';
+import { type Const, dataView, uint32BE } from '@hqtsm/struct';
 import { Blob } from './blob.ts';
 import { BlobCore } from './blobcore.ts';
 

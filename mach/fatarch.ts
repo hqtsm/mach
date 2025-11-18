@@ -1,4 +1,5 @@
-import { constant, int32, Struct, uint32 } from '@hqtsm/struct';
+import { constant } from '@hqtsm/class';
+import { int32, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Fat architecture, 32-bit.

@@ -1,4 +1,5 @@
-import { constant, Struct, uint32BE, uint64BE } from '@hqtsm/struct';
+import { constant } from '@hqtsm/class';
+import { Struct, uint32BE, uint64BE } from '@hqtsm/struct';
 
 /**
  * CodeDirectory scatter vector element.

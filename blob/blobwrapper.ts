@@ -1,8 +1,8 @@
+import { constant } from '@hqtsm/class';
 import {
 	array,
 	type ArrayBufferReal,
 	type BufferView,
-	constant,
 	member,
 	Ptr,
 	Uint8Ptr,

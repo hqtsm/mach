@@ -1,7 +1,7 @@
+import { constant } from '@hqtsm/class';
 import {
 	type Arr,
 	array,
-	constant,
 	member,
 	Struct,
 	uint32,

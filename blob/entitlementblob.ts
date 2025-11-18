@@ -1,4 +1,5 @@
-import { constant, Uint8Ptr } from '@hqtsm/struct';
+import { constant } from '@hqtsm/class';
+import { Uint8Ptr } from '@hqtsm/struct';
 import { kSecCodeMagicEntitlement } from '../const.ts';
 import { Blob } from './blob.ts';
 

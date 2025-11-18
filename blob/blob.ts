@@ -1,4 +1,5 @@
-import { type ArrayBufferReal, type BufferView, constant } from '@hqtsm/struct';
+import { constant } from '@hqtsm/class';
+import type { ArrayBufferReal, BufferView } from '@hqtsm/struct';
 import { BlobCore } from './blobcore.ts';
 
 /**

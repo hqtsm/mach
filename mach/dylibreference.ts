@@ -1,4 +1,5 @@
-import { constant, Struct, uint24, uint8 } from '@hqtsm/struct';
+import { constant } from '@hqtsm/class';
+import { Struct, uint24, uint8 } from '@hqtsm/struct';
 
 /**
  * Reference symbol table entry.

@@ -1,4 +1,5 @@
-import { constant, Struct, uint16, uint32 } from '@hqtsm/struct';
+import { constant } from '@hqtsm/class';
+import { Struct, uint16, uint32 } from '@hqtsm/struct';
 
 /**
  * Data in code entry.

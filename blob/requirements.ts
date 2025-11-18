@@ -1,4 +1,4 @@
-import { constant } from '@hqtsm/struct';
+import { constant } from '@hqtsm/class';
 import { kSecCodeMagicRequirementSet } from '../const.ts';
 import { SuperBlob } from './superblob.ts';
 

@@ -1,6 +1,7 @@
 import { assertEquals, assertThrows } from '@std/assert';
+import { constant } from '@hqtsm/class';
+import { uint32BE } from '@hqtsm/struct';
 import { Blob } from './blob.ts';
-import { constant, uint32BE } from '@hqtsm/struct';
 
 Deno.test('BYTE_LENGTH', () => {
 	assertEquals(Blob.BYTE_LENGTH, 8);

@@ -1,4 +1,5 @@
-import { constant, uint32, Union } from '@hqtsm/struct';
+import { constant } from '@hqtsm/class';
+import { uint32, Union } from '@hqtsm/struct';
 
 /**
  * Load command string union.

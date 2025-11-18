@@ -1,6 +1,6 @@
+import { constant } from '@hqtsm/class';
 import {
 	type Const,
-	constant,
 	Int8Ptr,
 	pointer,
 	type Ptr,

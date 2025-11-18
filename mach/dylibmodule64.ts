@@ -1,4 +1,5 @@
-import { constant, Struct, uint32, uint64 } from '@hqtsm/struct';
+import { constant } from '@hqtsm/class';
+import { Struct, uint32, uint64 } from '@hqtsm/struct';
 
 /**
  * Dylib module table entry, 64-bit.

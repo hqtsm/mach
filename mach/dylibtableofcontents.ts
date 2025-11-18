@@ -1,4 +1,5 @@
-import { constant, Struct, uint32 } from '@hqtsm/struct';
+import { constant } from '@hqtsm/class';
+import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Dylib table of contents entry.

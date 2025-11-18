@@ -12,6 +12,7 @@ const [env] = Deno.args;
 
 const mappings: BuildOptions['mappings'] = {
 	'jsr:@hqtsm/struct': '@hqtsm/struct',
+	'jsr:@hqtsm/class': '@hqtsm/class',
 };
 
 const GITHUB_REPOSITORY = Deno.env.get('GITHUB_REPOSITORY');

@@ -1,4 +1,5 @@
-import { constant, Struct, uint64 } from '@hqtsm/struct';
+import { constant } from '@hqtsm/class';
+import { Struct, uint64 } from '@hqtsm/struct';
 
 /**
  * Thread local variable entry, 64-bit.
