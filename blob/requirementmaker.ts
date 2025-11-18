@@ -1,5 +1,5 @@
 import type { Class } from '@hqtsm/class';
-import { type BufferPointer, type Const, dataView, Ptr } from '@hqtsm/struct';
+import { type Const, dataView, Ptr } from '@hqtsm/struct';
 import {
 	opAnchorHash,
 	opAppleAnchor,
@@ -86,7 +86,10 @@ export class RequirementMaker {
 	 * @param data Buffer pointer.
 	 * @param length Length in bytes.
 	 */
-	public putData(data: BufferPointer, length: number): void;
+	public putData(
+		data: Omit<ArrayBufferView, 'byteLength'>,
+		length: number,
+	): void;
 
 	/**
 	 * Put data with length.
@@ -102,7 +105,10 @@ export class RequirementMaker {
 	 * @param length Length in bytes.
 	 */
 	public putData(
-		data: ArrayBufferLike | BufferPointer | ArrayBufferView,
+		data:
+			| ArrayBufferLike
+			| Omit<ArrayBufferView, 'byteLength'>
+			| ArrayBufferView,
 		length?: number,
 	): void {
 		const d = 'buffer' in data
@@ -136,7 +142,10 @@ export class RequirementMaker {
 	 * @param slot Slot index.
 	 * @param digest SHA1 digest.
 	 */
-	public anchorDigest(slot: number, digest: BufferPointer): void {
+	public anchorDigest(
+		slot: number,
+		digest: Omit<ArrayBufferView, 'byteLength'>,
+	): void {
 		this.put(opAnchorHash);
 		this.put(slot);
 		// SHA1 digest length:
@@ -208,7 +217,10 @@ export class RequirementMaker {
 	 * @param data Buffer pointer.
 	 * @param length Length in bytes.
 	 */
-	public copy(data: BufferPointer, length: number): void;
+	public copy(
+		data: Omit<ArrayBufferView, 'byteLength'>,
+		length: number,
+	): void;
 
 	/**
 	 * Copy requirement (embed).
@@ -224,7 +236,7 @@ export class RequirementMaker {
 	 * @param length Undefined for requirement.
 	 */
 	public copy(
-		data: BufferPointer | Const<Requirement>,
+		data: Omit<ArrayBufferView, 'byteLength'> | Const<Requirement>,
 		length?: number,
 	): void {
 		if (length === undefined) {

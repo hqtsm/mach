@@ -1,11 +1,5 @@
 import { assertEquals, assertStrictEquals, assertThrows } from '@std/assert';
-import {
-	type Arr,
-	type BufferPointer,
-	type Const,
-	LITTLE_ENDIAN,
-	Uint8Ptr,
-} from '@hqtsm/struct';
+import { type Arr, type Const, LITTLE_ENDIAN, Uint8Ptr } from '@hqtsm/struct';
 import {
 	LC_BUILD_VERSION,
 	LC_CODE_SIGNATURE,
@@ -37,12 +31,14 @@ import { VersionMinCommand } from '../mach/versionmincommand.ts';
 import { MachOBase } from './machobase.ts';
 
 class MachOBaseTest extends MachOBase {
-	public override initHeader(header: BufferPointer | ArrayBufferLike): void {
+	public override initHeader(
+		header: Omit<ArrayBufferView, 'byteLength'> | ArrayBufferLike,
+	): void {
 		super.initHeader(header);
 	}
 
 	public override initCommands(
-		commands: ArrayBufferLike | BufferPointer,
+		commands: ArrayBufferLike | Omit<ArrayBufferView, 'byteLength'>,
 	): void {
 		super.initCommands(commands);
 	}

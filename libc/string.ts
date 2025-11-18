@@ -1,12 +1,12 @@
-import type { BufferPointer } from '@hqtsm/struct';
-
 /**
  * Get length of string.
  *
  * @param str Character pointer, null terminated.
  * @returns Length of string.
  */
-export function strlen(str: ArrayBufferLike | BufferPointer): number {
+export function strlen(
+	str: ArrayBufferLike | Omit<ArrayBufferView, 'byteLength'>,
+): number {
 	let b, o, c, r = 0;
 	if ('buffer' in str) {
 		b = str.buffer;
@@ -28,8 +28,8 @@ export function strlen(str: ArrayBufferLike | BufferPointer): number {
  * @returns Difference of first non-matching character, 0 if equal.
  */
 export function strncmp(
-	str1: ArrayBufferLike | BufferPointer,
-	str2: ArrayBufferLike | BufferPointer,
+	str1: ArrayBufferLike | Omit<ArrayBufferView, 'byteLength'>,
+	str2: ArrayBufferLike | Omit<ArrayBufferView, 'byteLength'>,
 	num: number,
 ): number {
 	let b1, o1, b2, o2;
