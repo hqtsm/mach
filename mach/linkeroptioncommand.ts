@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
@@ -23,6 +23,7 @@ export class LinkerOptionCommand extends Struct {
 	declare public count: number;
 
 	static {
+		toStringTag(this, 'LinkerOptionCommand');
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		uint32(this, 'count');

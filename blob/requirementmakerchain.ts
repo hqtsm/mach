@@ -1,4 +1,4 @@
-import type { Class } from '@hqtsm/class';
+import { type Class, toStringTag } from '@hqtsm/class';
 import { dataView } from '@hqtsm/struct';
 import type { RequirementMaker } from './requirementmaker.ts';
 import { RequirementMakerLabel } from './requirementmakerlabel.ts';
@@ -56,5 +56,9 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	 */
 	public empty(): boolean {
 		return this.mCount === 0;
+	}
+
+	static {
+		toStringTag(this, 'RequirementMakerChain');
 	}
 }

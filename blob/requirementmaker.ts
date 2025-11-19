@@ -1,4 +1,4 @@
-import type { Class } from '@hqtsm/class';
+import { type Class, toStringTag } from '@hqtsm/class';
 import {
 	type ArrayBufferPointer,
 	type Const,
@@ -314,5 +314,9 @@ export class RequirementMaker {
 			new Uint8Array(d).set(new Uint8Array(mBuffer));
 			this.mBuffer = d;
 		}
+	}
+
+	static {
+		toStringTag(this, 'RequirementMaker');
 	}
 }

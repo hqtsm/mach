@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
@@ -23,6 +23,7 @@ export class TlvDescriptor extends Struct {
 	declare public offset: number;
 
 	static {
+		toStringTag(this, 'TlvDescriptor');
 		uint32(this, 'thunk');
 		uint32(this, 'key');
 		uint32(this, 'offset');

@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32, uint64 } from '@hqtsm/struct';
 
 /**
@@ -58,6 +58,7 @@ export class RoutinesCommand64 extends Struct {
 	declare public reserved6: bigint;
 
 	static {
+		toStringTag(this, 'RoutinesCommand64');
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		uint64(this, 'initAddress');

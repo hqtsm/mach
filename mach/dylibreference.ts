@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint24, uint8 } from '@hqtsm/struct';
 
 /**
@@ -18,6 +18,7 @@ export class DylibReference extends Struct {
 	declare public flags: number;
 
 	static {
+		toStringTag(this, 'DylibReference');
 		uint24(this, 'isym');
 		uint8(this, 'flags');
 		constant(this, 'BYTE_LENGTH');

@@ -1,4 +1,4 @@
-import type { Class } from '@hqtsm/class';
+import { type Class, toStringTag } from '@hqtsm/class';
 import { type Const, pointer, type Ptr } from '@hqtsm/struct';
 import {
 	CPU_ARCH_ABI64,
@@ -79,7 +79,7 @@ export class Universal {
 	/**
 	 * Create uninitialized Universal instance.
 	 */
-	protected constructor() {}
+	public constructor() {}
 
 	/**
 	 * Initialize instance.
@@ -89,7 +89,7 @@ export class Universal {
 	 * @param length Length of subsection.
 	 * @returns This instance.
 	 */
-	protected async Universal(
+	public async Universal(
 		reader: Reader,
 		offset = 0,
 		length = 0,
@@ -544,5 +544,9 @@ export class Universal {
 		length = 0,
 	): Promise<Universal> {
 		return await new Universal().Universal(reader, offset, length);
+	}
+
+	static {
+		toStringTag(this, 'Universal');
 	}
 }

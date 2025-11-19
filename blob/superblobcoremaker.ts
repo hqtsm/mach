@@ -1,4 +1,4 @@
-import { type Class, type Concrete, constant } from '@hqtsm/class';
+import { type Class, type Concrete, constant, toStringTag } from '@hqtsm/class';
 import { dataView } from '@hqtsm/struct';
 import { BlobCore } from './blobcore.ts';
 import { SuperBlob } from './superblob.ts';
@@ -175,6 +175,7 @@ export abstract class SuperBlobCoreMaker {
 	public static readonly SuperBlob = SuperBlob;
 
 	static {
+		toStringTag(this, 'SuperBlobCoreMaker');
 		constant(this, 'SuperBlob');
 	}
 }

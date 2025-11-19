@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { EmbeddedSignatureBlob } from './embeddedsignatureblob.ts';
 import { SuperBlobCoreMaker } from './superblobcoremaker.ts';
 
@@ -13,6 +13,7 @@ export class EmbeddedSignatureBlobMaker extends SuperBlobCoreMaker {
 	public static override readonly SuperBlob = EmbeddedSignatureBlob;
 
 	static {
+		toStringTag(this, 'EmbeddedSignatureBlobMaker');
 		constant(this, 'SuperBlob');
 	}
 }

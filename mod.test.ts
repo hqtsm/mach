@@ -122,15 +122,29 @@ Deno.test('class constants', () => {
 			continue;
 		}
 
+		{
+			const desc = Object.getOwnPropertyDescriptor(
+				v.prototype,
+				Symbol.toStringTag,
+			);
+			assertEquals(desc, {
+				value: k,
+				configurable: true,
+				enumerable: false,
+				writable: false,
+			}, `${k}[Symbol.toStringTag]`);
+		}
+
 		for (const p of Object.getOwnPropertyNames(v) as (keyof typeof v)[]) {
 			if (builtins.has(p) || isFunction(v[p])) {
 				continue;
 			}
 
+			const tag = `${k}.${p}`;
 			const desc = Object.getOwnPropertyDescriptor(v, p)!;
-			assertEquals(desc.writable ?? false, false, `${k}.${p}`);
-			assertEquals(desc.enumerable ?? false, false, `${k}.${p}`);
-			assertEquals(desc.configurable ?? false, false, `${k}.${p}`);
+			assertEquals(desc.writable ?? false, false, tag);
+			assertEquals(desc.enumerable ?? false, false, tag);
+			assertEquals(desc.configurable ?? false, false, tag);
 		}
 	}
 });

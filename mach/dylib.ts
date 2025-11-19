@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { member, Struct, uint32 } from '@hqtsm/struct';
 import { LcStr } from './lcstr.ts';
 
@@ -29,6 +29,7 @@ export class Dylib extends Struct {
 	declare public compatibilityVersion: number;
 
 	static {
+		toStringTag(this, 'Dylib');
 		member(LcStr, this, 'name');
 		uint32(this, 'timestamp');
 		uint32(this, 'currentVersion');

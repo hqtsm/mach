@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import {
 	type Const,
 	Int8Ptr,
@@ -356,6 +356,7 @@ export class CodeDirectory extends Blob {
 	}
 
 	static {
+		toStringTag(this, 'CodeDirectory');
 		uint32BE(this, 'version');
 		uint32BE(this, 'flags');
 		uint32BE(this, 'hashOffset');

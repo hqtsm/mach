@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { uint32BE } from '@hqtsm/struct';
 import { kSecCodeMagicRequirement } from '../const.ts';
 import { Blob } from './blob.ts';
@@ -32,6 +32,7 @@ export class Requirement extends Blob {
 	public static readonly lwcrForm = 2;
 
 	static {
+		toStringTag(this, 'Requirement');
 		uint32BE(this, 'kind');
 		constant(this, 'BYTE_LENGTH');
 		constant(this, 'typeMagic');

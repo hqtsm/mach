@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { Uint8Ptr } from '@hqtsm/struct';
 import { kSecCodeMagicEntitlementDER } from '../const.ts';
 import { Blob } from './blob.ts';
@@ -34,6 +34,7 @@ export class EntitlementDERBlob extends Blob {
 	public static override readonly typeMagic = kSecCodeMagicEntitlementDER;
 
 	static {
+		toStringTag(this, 'EntitlementDERBlob');
 		constant(this, 'typeMagic');
 	}
 }

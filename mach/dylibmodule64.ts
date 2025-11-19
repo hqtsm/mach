@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32, uint64 } from '@hqtsm/struct';
 
 /**
@@ -75,6 +75,7 @@ export class DylibModule64 extends Struct {
 	declare public objcModuleInfoAddr: bigint;
 
 	static {
+		toStringTag(this, 'DylibModule64');
 		uint32(this, 'moduleName');
 		uint32(this, 'iextdefsym');
 		uint32(this, 'nextdefsym');

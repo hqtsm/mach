@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
@@ -108,6 +108,7 @@ export class DysymtabCommand extends Struct {
 	declare public nlocrel: number;
 
 	static {
+		toStringTag(this, 'DysymtabCommand');
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		uint32(this, 'ilocalsym');

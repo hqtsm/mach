@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { uint32, Union } from '@hqtsm/struct';
 
 /**
@@ -13,6 +13,7 @@ export class LcStr extends Union {
 	declare public offset: number;
 
 	static {
+		toStringTag(this, 'LcStr');
 		uint32(this, 'offset');
 		// Union because there was a 32-bit char *ptr.
 		constant(this, 'BYTE_LENGTH');

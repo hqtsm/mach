@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { member, Struct, uint32, uint64 } from '@hqtsm/struct';
 import { LcStr } from './lcstr.ts';
 
@@ -39,6 +39,7 @@ export class FilesetEntryCommand extends Struct {
 	declare public reserved: number;
 
 	static {
+		toStringTag(this, 'FilesetEntryCommand');
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		uint64(this, 'vmaddr');

@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint16, uint32 } from '@hqtsm/struct';
 
 /**
@@ -23,6 +23,7 @@ export class DataInCodeEntry extends Struct {
 	declare public kind: number;
 
 	static {
+		toStringTag(this, 'DataInCodeEntry');
 		uint32(this, 'offset');
 		uint16(this, 'length');
 		uint16(this, 'kind');

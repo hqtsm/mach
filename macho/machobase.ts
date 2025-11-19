@@ -1,4 +1,4 @@
-import type { Class } from '@hqtsm/class';
+import { type Class, toStringTag } from '@hqtsm/class';
 import {
 	type ArrayBufferPointer,
 	type Const,
@@ -599,5 +599,9 @@ export class MachOBase {
 			}
 		}
 		return null;
+	}
+
+	static {
+		toStringTag(this, 'MachOBase');
 	}
 }

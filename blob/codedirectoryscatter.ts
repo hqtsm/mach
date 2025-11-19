@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32BE, uint64BE } from '@hqtsm/struct';
 
 /**
@@ -28,6 +28,7 @@ export class CodeDirectoryScatter extends Struct {
 	declare public spare: bigint;
 
 	static {
+		toStringTag(this, 'CodeDirectoryScatter');
 		uint32BE(this, 'count');
 		uint32BE(this, 'base');
 		uint64BE(this, 'targetOffset');

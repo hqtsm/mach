@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
@@ -18,6 +18,7 @@ export class DylibTableOfContents extends Struct {
 	declare public moduleIndex: number;
 
 	static {
+		toStringTag(this, 'DylibTableOfContents');
 		uint32(this, 'symbolIndex');
 		uint32(this, 'moduleIndex');
 		constant(this, 'BYTE_LENGTH');

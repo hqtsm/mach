@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import {
 	type Arr,
 	array,
@@ -232,6 +232,7 @@ export class BlobCore extends Struct {
 	}
 
 	static {
+		toStringTag(this, 'BlobCore');
 		uint32BE(this, 'mMagic' as never);
 		uint32BE(this, 'mLength' as never);
 		constant(this, 'BYTE_LENGTH');

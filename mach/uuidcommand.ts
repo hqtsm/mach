@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import {
 	type Arr,
 	array,
@@ -30,6 +30,7 @@ export class UuidCommand extends Struct {
 	declare public uuid: Arr<number>;
 
 	static {
+		toStringTag(this, 'UuidCommand');
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		member(array(Uint8Ptr, 16), this, 'uuid');

@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { kSecCodeMagicDRList } from '../const.ts';
 import { SuperBlob } from './superblob.ts';
 
@@ -14,6 +14,7 @@ export class LibraryDependencyBlob extends SuperBlob {
 	public static override readonly typeMagic = kSecCodeMagicDRList;
 
 	static {
+		toStringTag(this, 'LibraryDependencyBlob');
 		constant(this, 'typeMagic');
 	}
 }

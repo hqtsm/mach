@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import {
 	type Arr,
 	array,
@@ -70,6 +70,7 @@ export class Section extends Struct {
 	declare public reserved2: number;
 
 	static {
+		toStringTag(this, 'Section');
 		member(array(Int8Ptr, 16), this, 'sectname');
 		member(array(Int8Ptr, 16), this, 'segname');
 		uint32(this, 'addr');

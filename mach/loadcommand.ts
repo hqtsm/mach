@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
@@ -18,6 +18,7 @@ export class LoadCommand extends Struct {
 	declare public cmdsize: number;
 
 	static {
+		toStringTag(this, 'LoadCommand');
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		constant(this, 'BYTE_LENGTH');

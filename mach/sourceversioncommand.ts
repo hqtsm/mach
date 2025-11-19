@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32, uint64 } from '@hqtsm/struct';
 
 /**
@@ -23,6 +23,7 @@ export class SourceVersionCommand extends Struct {
 	declare public version: bigint;
 
 	static {
+		toStringTag(this, 'SourceVersionCommand');
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		uint64(this, 'version');

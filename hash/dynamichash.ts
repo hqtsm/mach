@@ -1,3 +1,4 @@
+import { toStringTag } from '@hqtsm/class/symbol';
 import type { Reader } from '../util/reader.ts';
 
 /**
@@ -125,4 +126,8 @@ export abstract class DynamicHash {
 	public abstract digest(
 		source: Reader | ArrayBufferLike | ArrayBufferView,
 	): Promise<ArrayBuffer>;
+
+	static {
+		toStringTag(this, 'DynamicHash');
+	}
 }

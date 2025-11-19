@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
@@ -43,6 +43,7 @@ export class DylibUseCommand extends Struct {
 	declare public flags: number;
 
 	static {
+		toStringTag(this, 'DylibUseCommand');
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		uint32(this, 'nameoff');

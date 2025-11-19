@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { array, member, Ptr, Uint8Ptr } from '@hqtsm/struct';
 import { CSMAGIC_BLOBWRAPPER } from '../const.ts';
 import { Blob } from './blob.ts';
@@ -91,6 +91,7 @@ export class BlobWrapper extends Blob {
 	}
 
 	static {
+		toStringTag(this, 'BlobWrapper');
 		member(array(Uint8Ptr, 0), this, 'dataArea');
 		constant(this, 'BYTE_LENGTH');
 		constant(this, 'typeMagic');

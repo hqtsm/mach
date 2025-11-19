@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import {
 	type Arr,
 	array,
@@ -72,6 +72,7 @@ export class SegmentCommand64 extends Struct {
 	declare public flags: number;
 
 	static {
+		toStringTag(this, 'SegmentCommand64');
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		member(array(Int8Ptr, 16), this, 'segname');

@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { member, Struct, uint32 } from '@hqtsm/struct';
 import { LcStr } from './lcstr.ts';
 
@@ -24,6 +24,7 @@ export class Fvmlib extends Struct {
 	declare public headerAddr: number;
 
 	static {
+		toStringTag(this, 'Fvmlib');
 		member(LcStr, this, 'name');
 		uint32(this, 'minorVersion');
 		uint32(this, 'headerAddr');

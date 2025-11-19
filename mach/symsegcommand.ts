@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
@@ -28,6 +28,7 @@ export class SymsegCommand extends Struct {
 	declare public size: number;
 
 	static {
+		toStringTag(this, 'SymsegCommand');
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		uint32(this, 'offset');

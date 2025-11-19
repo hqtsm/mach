@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { member, Struct, uint32 } from '@hqtsm/struct';
 import { LcStr } from './lcstr.ts';
 
@@ -34,6 +34,7 @@ export class PreloadDylibCommand extends Struct {
 	declare public linkedModules: LcStr;
 
 	static {
+		toStringTag(this, 'PreloadDylibCommand');
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		member(LcStr, this, 'name');

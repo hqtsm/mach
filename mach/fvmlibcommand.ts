@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { member, Struct, uint32 } from '@hqtsm/struct';
 import { Fvmlib } from './fvmlib.ts';
 
@@ -24,6 +24,7 @@ export class FvmlibCommand extends Struct {
 	declare public fvmlib: Fvmlib;
 
 	static {
+		toStringTag(this, 'FvmlibCommand');
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		member(Fvmlib, this, 'fvmlib');

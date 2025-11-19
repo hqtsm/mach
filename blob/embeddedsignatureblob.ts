@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { kSecCodeMagicEmbeddedSignature } from '../const.ts';
 import { SuperBlobCore } from './superblobcore.ts';
 
@@ -14,6 +14,7 @@ export class EmbeddedSignatureBlob extends SuperBlobCore {
 	public static override readonly typeMagic = kSecCodeMagicEmbeddedSignature;
 
 	static {
+		toStringTag(this, 'EmbeddedSignatureBlob');
 		constant(this, 'typeMagic');
 	}
 }

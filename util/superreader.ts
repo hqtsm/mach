@@ -1,3 +1,4 @@
+import { toStringTag } from '@hqtsm/class';
 import type { Reader } from './reader.ts';
 
 /**
@@ -113,5 +114,9 @@ export class SuperReader implements Reader {
 			}
 		}
 		return new SuperReader(readers, { type: contentType });
+	}
+
+	static {
+		toStringTag(this, 'SuperReader');
 	}
 }

@@ -1,4 +1,4 @@
-import type { Class } from '@hqtsm/class';
+import { type Class, toStringTag } from '@hqtsm/class';
 import { pointer, type Ptr } from '@hqtsm/struct';
 import { UINT32_MAX } from '../const.ts';
 import type { DynamicHash, HashCrypto } from '../hash/dynamichash.ts';
@@ -574,5 +574,9 @@ export class CodeDirectoryBuilder {
 			return CodeDirectory.supportsScatter;
 		}
 		return CodeDirectory.earliestVersion;
+	}
+
+	static {
+		toStringTag(this, 'CodeDirectoryBuilder');
 	}
 }

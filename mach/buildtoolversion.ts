@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
@@ -18,6 +18,7 @@ export class BuildToolVersion extends Struct {
 	declare public version: number;
 
 	static {
+		toStringTag(this, 'BuildToolVersion');
 		uint32(this, 'tool');
 		uint32(this, 'version');
 		constant(this, 'BYTE_LENGTH');

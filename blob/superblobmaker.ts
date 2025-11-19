@@ -1,4 +1,4 @@
-import type { Class } from '@hqtsm/class';
+import { type Class, toStringTag } from '@hqtsm/class';
 import { SuperBlobCoreMaker } from './superblobcoremaker.ts';
 
 /**
@@ -6,4 +6,8 @@ import { SuperBlobCoreMaker } from './superblobcoremaker.ts';
  */
 export abstract class SuperBlobMaker extends SuperBlobCoreMaker {
 	declare public readonly ['constructor']: Class<typeof SuperBlobMaker>;
+
+	static {
+		toStringTag(this, 'SuperBlobMaker');
+	}
 }

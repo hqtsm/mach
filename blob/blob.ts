@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { BlobCore } from './blobcore.ts';
 
 /**
@@ -79,6 +79,7 @@ export abstract class Blob extends BlobCore {
 	}
 
 	static {
+		toStringTag(this, 'Blob');
 		constant(this, 'BYTE_LENGTH');
 		constant(this, 'typeMagic');
 	}

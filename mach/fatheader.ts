@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
@@ -18,6 +18,7 @@ export class FatHeader extends Struct {
 	declare public nfatArch: number;
 
 	static {
+		toStringTag(this, 'FatHeader');
 		uint32(this, 'magic');
 		uint32(this, 'nfatArch');
 		constant(this, 'BYTE_LENGTH');

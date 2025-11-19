@@ -1,3 +1,4 @@
+import { toStringTag } from '@hqtsm/class';
 import {
 	kCCDigestSHA1,
 	kCCDigestSHA256,
@@ -160,5 +161,9 @@ export class CCHashInstance extends DynamicHash {
 			);
 		}
 		return mTruncate ? digest.slice(0, mTruncate) : digest;
+	}
+
+	static {
+		toStringTag(this, 'CCHashInstance');
 	}
 }

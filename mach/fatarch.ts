@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { int32, Struct, uint32 } from '@hqtsm/struct';
 
 /**
@@ -33,6 +33,7 @@ export class FatArch extends Struct {
 	declare public align: number;
 
 	static {
+		toStringTag(this, 'FatArch');
 		int32(this, 'cputype');
 		int32(this, 'cpusubtype');
 		uint32(this, 'offset');

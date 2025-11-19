@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { member, Struct, uint32 } from '@hqtsm/struct';
 import { Dylib } from './dylib.ts';
 
@@ -24,6 +24,7 @@ export class DylibCommand extends Struct {
 	declare public dylib: Dylib;
 
 	static {
+		toStringTag(this, 'DylibCommand');
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		member(Dylib, this, 'dylib');

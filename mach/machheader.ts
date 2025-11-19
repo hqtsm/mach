@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { int32, Struct, uint32 } from '@hqtsm/struct';
 
 /**
@@ -43,6 +43,7 @@ export class MachHeader extends Struct {
 	declare public flags: number;
 
 	static {
+		toStringTag(this, 'MachHeader');
 		uint32(this, 'magic');
 		int32(this, 'cputype');
 		int32(this, 'cpusubtype');

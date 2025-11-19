@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { type Const, dataView, uint32BE } from '@hqtsm/struct';
 import { Blob } from './blob.ts';
 import { BlobCore } from './blobcore.ts';
@@ -78,6 +78,7 @@ export abstract class SuperBlobCore extends Blob {
 	}
 
 	static {
+		toStringTag(this, 'SuperBlobCore');
 		uint32BE(this, 'mCount' as never);
 		constant(this, 'BYTE_LENGTH');
 		constant(this, 'typeMagic');

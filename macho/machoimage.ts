@@ -1,4 +1,4 @@
-import type { Class } from '@hqtsm/class';
+import { type Class, toStringTag } from '@hqtsm/class';
 import type { ArrayBufferPointer } from '@hqtsm/struct';
 import { MachOBase } from './machobase.ts';
 
@@ -39,5 +39,9 @@ export class MachOImage extends MachOBase {
 	 */
 	public address(): ArrayBufferPointer {
 		return this.header()!;
+	}
+
+	static {
+		toStringTag(this, 'MachOImage');
 	}
 }

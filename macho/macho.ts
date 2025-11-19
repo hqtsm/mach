@@ -1,4 +1,4 @@
-import type { Class } from '@hqtsm/class';
+import { type Class, toStringTag } from '@hqtsm/class';
 import { getByteLength } from '@hqtsm/struct';
 import {
 	LC_SEGMENT,
@@ -43,7 +43,7 @@ export class MachO extends MachOBase {
 	/**
 	 * Create uninitialized Mach-O instance.
 	 */
-	protected constructor() {
+	public constructor() {
 		super();
 	}
 
@@ -55,11 +55,7 @@ export class MachO extends MachOBase {
 	 * @param length Length of subsection, requires offset.
 	 * @returns This instance.
 	 */
-	protected async MachO(
-		reader: Reader,
-		offset = 0,
-		length = 0,
-	): Promise<this> {
+	public async MachO(reader: Reader, offset = 0, length = 0): Promise<this> {
 		offset = (+offset || 0) - (offset % 1 || 0);
 		length = (+length || 0) - (length % 1 || 0);
 		this.mReader = reader;
@@ -264,5 +260,9 @@ export class MachO extends MachOBase {
 		length = 0,
 	): Promise<MachO> {
 		return await new MachO().MachO(reader, offset, length);
+	}
+
+	static {
+		toStringTag(this, 'MachO');
 	}
 }

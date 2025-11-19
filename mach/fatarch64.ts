@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { int32, Struct, uint32, uint64 } from '@hqtsm/struct';
 
 /**
@@ -38,6 +38,7 @@ export class FatArch64 extends Struct {
 	declare public reserved: number;
 
 	static {
+		toStringTag(this, 'FatArch64');
 		int32(this, 'cputype');
 		int32(this, 'cpusubtype');
 		uint64(this, 'offset');

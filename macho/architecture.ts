@@ -1,4 +1,4 @@
-import type { Class } from '@hqtsm/class';
+import { type Class, toStringTag } from '@hqtsm/class';
 import type { Const } from '@hqtsm/struct';
 import { CPU_SUBTYPE_MASK, CPU_SUBTYPE_MULTIPLE } from '../const.ts';
 import type { FatArch } from '../mach/fatarch.ts';
@@ -134,5 +134,9 @@ export class Architecture {
 			return true;
 		}
 		return !((this.second ^ templ.second) & ~CPU_SUBTYPE_MASK);
+	}
+
+	static {
+		toStringTag(this, 'Architecture');
 	}
 }

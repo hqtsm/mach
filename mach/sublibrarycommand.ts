@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import { member, Struct, uint32 } from '@hqtsm/struct';
 import { LcStr } from './lcstr.ts';
 
@@ -24,6 +24,7 @@ export class SubLibraryCommand extends Struct {
 	declare public subLibrary: LcStr;
 
 	static {
+		toStringTag(this, 'SubLibraryCommand');
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		member(LcStr, this, 'subLibrary');

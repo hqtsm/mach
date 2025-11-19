@@ -1,4 +1,4 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import {
 	type Arr,
 	array,
@@ -41,6 +41,7 @@ export class NoteCommand extends Struct {
 	declare public size: bigint;
 
 	static {
+		toStringTag(this, 'NoteCommand');
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		member(array(Int8Ptr, 16), this, 'dataOwner');
