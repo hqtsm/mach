@@ -1,4 +1,4 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { type Class, constant, type IsClass, toStringTag } from '@hqtsm/class';
 import {
 	type Arr,
 	array,
@@ -192,7 +192,9 @@ export class BlobCore extends Struct {
 	 * @param BlobType Blob type.
 	 * @returns Is the same type.
 	 */
-	public is(BlobType: Class<{ readonly typeMagic: number }>): boolean {
+	public is<T>(
+		BlobType: T & IsClass<T, { readonly typeMagic: number }>,
+	): boolean {
 		return this.mMagic === BlobType.typeMagic;
 	}
 
