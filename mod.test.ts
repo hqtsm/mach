@@ -1,4 +1,5 @@
 import { assertEquals } from '@std/assert';
+import type { Class } from '@hqtsm/class';
 import * as mod from './mod.ts';
 
 type Exports = Record<string, unknown>;
@@ -58,17 +59,17 @@ function assertExported(
 	}
 }
 
-function isFunction(x: unknown): boolean {
+function isFunction(arg: unknown): arg is (...args: unknown[]) => unknown {
 	return (
-		typeof x === 'function' &&
-		!!(Object.getOwnPropertyDescriptor(x, 'prototype')?.writable ?? true)
+		typeof arg === 'function' &&
+		!!(Object.getOwnPropertyDescriptor(arg, 'prototype')?.writable ?? true)
 	);
 }
 
-function isClass(x: unknown): boolean {
+function isClass(arg: unknown): arg is Class {
 	return (
-		typeof x === 'function' &&
-		!Object.getOwnPropertyDescriptor(x, 'prototype')?.writable
+		typeof arg === 'function' &&
+		!Object.getOwnPropertyDescriptor(arg, 'prototype')?.writable
 	);
 }
 
