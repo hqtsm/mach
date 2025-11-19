@@ -123,16 +123,21 @@ Deno.test('class constants', () => {
 		}
 
 		{
-			const desc = Object.getOwnPropertyDescriptor(
-				v.prototype,
-				Symbol.toStringTag,
+			const tag = `${k}[Symbol.toStringTag]`;
+			assertEquals(String(v.prototype), `[object ${k}]`, tag);
+			assertEquals(
+				Object.getOwnPropertyDescriptor(
+					v.prototype,
+					Symbol.toStringTag,
+				),
+				{
+					value: k,
+					configurable: true,
+					enumerable: false,
+					writable: false,
+				},
+				tag,
 			);
-			assertEquals(desc, {
-				value: k,
-				configurable: true,
-				enumerable: false,
-				writable: false,
-			}, `${k}[Symbol.toStringTag]`);
 		}
 
 		for (const p of Object.getOwnPropertyNames(v) as (keyof typeof v)[]) {
