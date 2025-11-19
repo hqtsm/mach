@@ -79,7 +79,7 @@ export class Universal {
 	/**
 	 * Create uninitialized Universal instance.
 	 */
-	public constructor() {}
+	protected constructor() {}
 
 	/**
 	 * Initialize instance.
@@ -89,7 +89,7 @@ export class Universal {
 	 * @param length Length of subsection.
 	 * @returns This instance.
 	 */
-	public async Universal(
+	protected async Universal(
 		reader: Reader,
 		offset = 0,
 		length = 0,
