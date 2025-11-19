@@ -192,18 +192,9 @@ export class BlobCore extends Struct {
 	 * @param BlobType Blob type.
 	 * @returns Is the same type.
 	 */
-	public is(
-		BlobType:
-			& (abstract new (...args: never[]) => unknown)
-			& Readonly<{ typeMagic: number }>,
-	): boolean {
+	public is(BlobType: Class<{ readonly typeMagic: number }>): boolean {
 		return this.mMagic === BlobType.typeMagic;
 	}
-
-	/**
-	 * Type magic template placeholder.
-	 */
-	public static readonly typeMagic: unknown;
 
 	/**
 	 * Read blob from reader.
@@ -244,6 +235,5 @@ export class BlobCore extends Struct {
 		uint32BE(this, 'mMagic' as never);
 		uint32BE(this, 'mLength' as never);
 		constant(this, 'BYTE_LENGTH');
-		constant(this, 'typeMagic');
 	}
 }

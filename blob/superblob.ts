@@ -4,7 +4,7 @@ import { SuperBlobCore } from './superblobcore.ts';
 /**
  * A generic SuperBlob base.
  */
-export class SuperBlob extends SuperBlobCore {
+export abstract class SuperBlob extends SuperBlobCore {
 	declare public readonly ['constructor']: Class<typeof SuperBlob>;
 
 	static {

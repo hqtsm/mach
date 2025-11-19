@@ -6,7 +6,7 @@ import { BlobCore } from './blobcore.ts';
 /**
  * Multiple Blobs wrapped in a single indexed blob.
  */
-export class SuperBlobCore extends Blob {
+export abstract class SuperBlobCore extends Blob {
 	declare public readonly ['constructor']: Class<typeof SuperBlobCore>;
 
 	/**

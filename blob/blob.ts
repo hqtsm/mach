@@ -4,7 +4,7 @@ import { BlobCore } from './blobcore.ts';
 /**
  * Polymorphic memory blob for magic number.
  */
-export class Blob extends BlobCore {
+export abstract class Blob extends BlobCore {
 	declare public readonly ['constructor']: Class<typeof Blob>;
 
 	/**
@@ -41,7 +41,7 @@ export class Blob extends BlobCore {
 	 *
 	 * @returns Type magic number.
 	 */
-	public static override readonly typeMagic: number = 0;
+	public static readonly typeMagic: number = 0;
 
 	/**
 	 * Wrap data into a new blob.

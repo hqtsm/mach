@@ -4,6 +4,6 @@ import { SuperBlobCoreMaker } from './superblobcoremaker.ts';
 /**
  * SuperBlob maker.
  */
-export class SuperBlobMaker extends SuperBlobCoreMaker {
+export abstract class SuperBlobMaker extends SuperBlobCoreMaker {
 	declare public readonly ['constructor']: Class<typeof SuperBlobMaker>;
 }

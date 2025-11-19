@@ -1,12 +1,31 @@
-import { type Class, constant } from '@hqtsm/class';
+import { type Class, type Concrete, constant } from '@hqtsm/class';
 import { dataView } from '@hqtsm/struct';
 import { BlobCore } from './blobcore.ts';
 import { SuperBlob } from './superblob.ts';
 
 /**
+ * Instance type for SuperBlobCoreMaker.
+ *
+ * @template T SuperBlobCoreMaker.
+ */
+export type SuperBlobCoreMakerThis<T extends SuperBlobCoreMaker> = {
+	readonly constructor: {
+		readonly SuperBlob: Concrete<T['constructor']['SuperBlob']>;
+	};
+} & T;
+
+/**
+ * Blob type for SuperBlobCoreMaker.
+ *
+ * @template T SuperBlobCoreMaker.
+ */
+export type SuperBlobCoreMakerBlobType<T extends SuperBlobCoreMaker> =
+	T['constructor']['SuperBlob']['prototype'];
+
+/**
  * SuperBlob core maker.
  */
-export class SuperBlobCoreMaker {
+export abstract class SuperBlobCoreMaker {
 	declare public readonly ['constructor']: Class<typeof SuperBlobCoreMaker>;
 
 	/**
@@ -122,7 +141,9 @@ export class SuperBlobCoreMaker {
 	 *
 	 * @returns SuperBlob.
 	 */
-	public make(): SuperBlob {
+	public make(
+		this: SuperBlobCoreMakerThis<this>,
+	): SuperBlobCoreMakerBlobType<this> {
 		const { mPieces } = this;
 		const size = this.size();
 		const count = mPieces.size;
