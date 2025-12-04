@@ -68,8 +68,9 @@ export abstract class Blob extends BlobCore {
 	/**
 	 * Cast blob to specific type.
 	 *
-	 * @param this Type.
+	 * @template T Blob type.
 	 * @param blob Blob.
+	 * @param context Context.
 	 * @returns Cast blob or null.
 	 */
 	public static specific<T extends Blob>(
@@ -116,23 +117,68 @@ export abstract class Blob extends BlobCore {
 	/**
 	 * Read blob from reader.
 	 *
+	 * @template T Blob type.
+	 * @param this Blob class.
 	 * @param reader Reader.
-	 * @returns Blob or null if not enough data for header.
+	 * @param context Context.
+	 * @returns Blob or null if not valid.
 	 */
 	public static override async readBlob<T extends Blob>(
 		this: BlobStaticThis<T>,
 		reader: Reader,
 		context?: { errno: number },
+	): Promise<BlobCore | null>;
+
+	/**
+	 * Read blob from reader.
+	 *
+	 * @template T Blob type.
+	 * @param this Blob class.
+	 * @param reader Reader.
+	 * @param offset Byte offset.
+	 * @param maxSize Maximum size.
+	 * @param context Context.
+	 * @returns Blob or null if not valid.
+	 */
+	public static override async readBlob<T extends Blob>(
+		this: BlobStaticThis<T>,
+		reader: Reader,
+		offset: number,
+		maxSize?: number,
+		context?: { errno: number },
+	): Promise<BlobCore | null>;
+
+	/**
+	 * Read blob from reader.
+	 *
+	 * @template T Blob type.
+	 * @param this Blob class.
+	 * @param reader Reader.
+	 * @param offset Byte offset.
+	 * @param maxSize Maximum size.
+	 * @param context Context.
+	 * @returns Blob or null if not valid.
+	 */
+	public static override async readBlob<T extends Blob>(
+		this: BlobStaticThis<T>,
+		reader: Reader,
+		offset?: number | { errno: number },
+		maxSize?: number,
+		context?: { errno: number },
 	): Promise<BlobCore | null> {
+		if (typeof offset !== 'number') {
+			context = offset;
+			maxSize = offset = 0;
+		}
 		const p = await BlobCore.readBlobInternal(
 			reader,
-			0,
+			offset,
 			this.typeMagic,
 			0,
-			0,
+			maxSize || 0,
 			context,
 		);
-		return p ? this.specific(p, context) : null;
+		return p ? this.specific(p, context) : p;
 	}
 
 	static {
