@@ -70,7 +70,7 @@ Deno.test('blobify view', () => {
 	);
 });
 
-Deno.test('readBlob', async () => {
+Deno.test('readBlob regular', async () => {
 	const data = new Uint8Array(100);
 	const blob = new Example(data.buffer);
 	{
@@ -86,6 +86,39 @@ Deno.test('readBlob', async () => {
 	blob.value = 0xAABBCCDD;
 	const context = { errno: 0 };
 	const read = await Example.readBlob(new globalThis.Blob([data]), context);
+	assertInstanceOf(read, Example);
+	assertEquals(context.errno, 0);
+	assertEquals(read.magic(), Example.typeMagic);
+	assertEquals(read.length(), Example.BYTE_LENGTH);
+	assertEquals(read.value, 0xAABBCCDD);
+});
+
+Deno.test('readBlob offset', async () => {
+	const data = new Uint8Array(100);
+	const blob = new Example(data.buffer, 10);
+	{
+		const context = { errno: 0 };
+		assertEquals(
+			await Example.readBlob(
+				new globalThis.Blob([data]),
+				10,
+				Example.BYTE_LENGTH - 1,
+				context,
+			),
+			null,
+		);
+		assertEquals(context.errno, EINVAL);
+	}
+
+	blob.initializeLength(Example.BYTE_LENGTH);
+	blob.value = 0xAABBCCDD;
+	const context = { errno: 0 };
+	const read = await Example.readBlob(
+		new globalThis.Blob([data]),
+		10,
+		0,
+		context,
+	);
 	assertInstanceOf(read, Example);
 	assertEquals(context.errno, 0);
 	assertEquals(read.magic(), Example.typeMagic);
