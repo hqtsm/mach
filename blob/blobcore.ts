@@ -201,6 +201,7 @@ export class BlobCore extends Struct {
 	/**
 	 * Check if blob type match the expected magic.
 	 *
+	 * @template T Blob class.
 	 * @param BlobType Blob type.
 	 * @returns Is the same type.
 	 */

@@ -139,6 +139,7 @@ export abstract class SuperBlobCoreMaker {
 	/**
 	 * Create the super blob.
 	 *
+	 * @param this Maker instance.
 	 * @returns SuperBlob.
 	 */
 	public make(

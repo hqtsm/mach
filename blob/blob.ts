@@ -69,6 +69,7 @@ export abstract class Blob extends BlobCore {
 	 * Cast blob to specific type.
 	 *
 	 * @template T Blob type.
+	 * @param this Blob class.
 	 * @param blob Blob.
 	 * @param context Context.
 	 * @returns Cast blob or null.
