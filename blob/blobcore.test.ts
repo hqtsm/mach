@@ -213,26 +213,8 @@ Deno.test('readBlob', async () => {
 	blob.initialize(0x12345678, 101);
 	{
 		const context = { errno: 0 };
-		await BlobCore.readBlob(
-			new Blob([data]),
-			undefined,
-			undefined,
-			undefined,
-			context,
-		);
+		await BlobCore.readBlob(new Blob([data]), context);
 		assertEquals(context.errno, EINVAL);
-	}
-
-	{
-		const context = { errno: 0 };
-		await BlobCore.readBlob(
-			new Blob([data]),
-			undefined,
-			undefined,
-			9,
-			context,
-		);
-		assertEquals(context.errno, ENOMEM);
 	}
 
 	blob.initialize(0x12345678, 100);

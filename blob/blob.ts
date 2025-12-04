@@ -1,4 +1,5 @@
 import { type Class, type Concrete, constant, toStringTag } from '@hqtsm/class';
+import type { Reader } from '../util/reader.ts';
 import { BlobCore } from './blobcore.ts';
 
 /**
@@ -103,6 +104,30 @@ export abstract class Blob extends BlobCore {
 			new Uint8Array(buffer, BYTE_LENGTH).set(view);
 		}
 		return buffer;
+	}
+
+	/**
+	 * Read blob from reader.
+	 *
+	 * @param reader Reader.
+	 * @returns Blob or null if not enough data for header.
+	 */
+	public static override async readBlob<T extends Blob>(
+		this:
+			& typeof Blob
+			& (new (...args: ConstructorParameters<typeof Blob>) => T),
+		reader: Reader,
+		context?: { errno: number },
+	): Promise<BlobCore | null> {
+		const p = await BlobCore.readBlobInternal(
+			reader,
+			0,
+			this.typeMagic,
+			0,
+			0,
+			context,
+		);
+		return p ? this.specific(p, context) : null;
 	}
 
 	static {

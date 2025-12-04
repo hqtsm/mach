@@ -214,18 +214,34 @@ export class BlobCore extends Struct {
 	 * Read blob from reader.
 	 *
 	 * @param reader Reader.
+	 * @returns Blob or null if not enough data for header.
+	 */
+	public static async readBlob(
+		reader: Reader,
+		context?: { errno: number },
+	): Promise<BlobCore | null> {
+		return await BlobCore.readBlobInternal(reader, 0, 0, 0, 0, context);
+	}
+
+	/**
+	 * Read blob from reader.
+	 *
+	 * @param reader Reader.
+	 * @param offset Byte offset.
 	 * @param magic Magic number.
 	 * @param minSize Minimum size.
 	 * @param maxSize Maximum size.
 	 * @returns Blob or null if not enough data for header.
 	 */
-	public static async readBlob(
+	protected static async readBlobInternal(
 		reader: Reader,
-		magic?: number,
-		minSize?: number,
-		maxSize?: number,
+		offset: number,
+		magic: number,
+		minSize: number,
+		maxSize: number,
 		context?: { errno: number },
 	): Promise<BlobCore | null> {
+		reader = reader.slice(offset);
 		if (reader.size < 8) {
 			return null;
 		}

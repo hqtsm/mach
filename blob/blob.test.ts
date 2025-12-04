@@ -70,6 +70,29 @@ Deno.test('blobify view', () => {
 	);
 });
 
+Deno.test('readBlob', async () => {
+	const data = new Uint8Array(100);
+	const blob = new Example(data.buffer);
+	{
+		const context = { errno: 0 };
+		assertEquals(
+			await Example.readBlob(new globalThis.Blob([data]), context),
+			null,
+		);
+		assertEquals(context.errno, EINVAL);
+	}
+
+	blob.initializeLength(Example.BYTE_LENGTH);
+	blob.value = 0xAABBCCDD;
+	const context = { errno: 0 };
+	const read = await Example.readBlob(new globalThis.Blob([data]), context);
+	assertInstanceOf(read, Example);
+	assertEquals(context.errno, 0);
+	assertEquals(read.magic(), Example.typeMagic);
+	assertEquals(read.length(), Example.BYTE_LENGTH);
+	assertEquals(read.value, 0xAABBCCDD);
+});
+
 Deno.test('validateBlobLength', () => {
 	const data = new Uint8Array(22);
 	const blob = new Example(data.buffer, 2);
