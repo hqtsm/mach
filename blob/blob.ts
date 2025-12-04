@@ -64,6 +64,7 @@ export abstract class Blob extends BlobCore {
 	public static blobify(
 		content: ArrayBufferLike | ArrayBufferView,
 	): ArrayBuffer {
+		const { typeMagic } = this;
 		const { BYTE_LENGTH } = BlobCore;
 		const view = 'buffer' in content
 			? new Uint8Array(
@@ -74,7 +75,6 @@ export abstract class Blob extends BlobCore {
 			: new Uint8Array(content);
 		const size = BYTE_LENGTH + view.byteLength;
 		const buffer = new ArrayBuffer(size);
-		const { typeMagic } = this;
 		new (class extends Blob {
 			public static override readonly typeMagic = typeMagic;
 		})(buffer).initializeLength(size);
