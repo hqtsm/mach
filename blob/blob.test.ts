@@ -1,8 +1,9 @@
-import { assertEquals } from '@std/assert';
+import { assertEquals, assertInstanceOf } from '@std/assert';
 import { type Class, constant } from '@hqtsm/class';
 import { uint32BE } from '@hqtsm/struct';
 import { EINVAL } from '../const.ts';
 import { Blob } from './blob.ts';
+import { BlobCore } from './blobcore.ts';
 
 class NoErrno {
 	get errno(): number {
@@ -33,6 +34,22 @@ class Example extends Blob {
 
 Deno.test('BYTE_LENGTH', () => {
 	assertEquals(Blob.BYTE_LENGTH, 8);
+});
+
+Deno.test('specific', () => {
+	const data = new Uint8Array(12);
+	const blob = new BlobCore(data.buffer);
+	{
+		const context = { errno: 0 };
+		assertEquals(Example.specific(blob, context), null);
+		assertEquals(context.errno, EINVAL);
+	}
+
+	blob.initialize(Example.typeMagic, Example.BYTE_LENGTH);
+	{
+		const example = Example.specific(blob, new NoErrno());
+		assertInstanceOf(example, Example);
+	}
 });
 
 Deno.test('blobify buffer', () => {

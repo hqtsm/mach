@@ -56,6 +56,22 @@ export abstract class Blob extends BlobCore {
 	public static readonly typeMagic: number = 0;
 
 	/**
+	 * Cast blob to specific type.
+	 *
+	 * @param this Type.
+	 * @param blob Blob.
+	 * @returns Cast blob or null.
+	 */
+	public static specific<T extends Blob>(
+		this: new (...args: ConstructorParameters<typeof Blob>) => T,
+		blob: BlobCore,
+		context?: { errno: number },
+	): T | null {
+		const p = new this(blob.buffer, blob.byteOffset);
+		return p.validateBlobLength(undefined, context) ? p : null;
+	}
+
+	/**
 	 * Wrap data into a new blob.
 	 *
 	 * @param content Data to wrap.
