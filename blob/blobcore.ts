@@ -8,6 +8,7 @@ import {
 	uint32BE,
 	Uint8Ptr,
 } from '@hqtsm/struct';
+import { EINVAL, ENOMEM } from '../const.ts';
 import type { Reader } from '../util/reader.ts';
 
 /**
@@ -81,18 +82,29 @@ export class BlobCore extends Struct {
 	 * @param magic Magic number.
 	 * @param minSize Minimum size.
 	 * @param maxSize Maximum size.
+	 * @param context Context.
+	 * @returns Is valid.
 	 */
-	public validateBlob(magic: number, minSize = 0, maxSize = 0): void {
+	public validateBlob(
+		magic: number,
+		minSize?: number,
+		maxSize?: number,
+		context?: { errno: number },
+	): boolean {
 		const length = this.mLength;
 		if ((magic && magic !== this.mMagic)) {
-			throw new RangeError('Invalid magic');
+			if (context) context.errno = EINVAL;
+			return false;
 		}
 		if (length < (minSize || 8)) {
-			throw new RangeError('Invalid length');
+			if (context) context.errno = EINVAL;
+			return false;
 		}
 		if (maxSize && length > maxSize) {
-			throw new RangeError('Invalid length');
+			if (context) context.errno = ENOMEM;
+			return false;
 		}
+		return true;
 	}
 
 	/**
@@ -209,19 +221,23 @@ export class BlobCore extends Struct {
 	 */
 	public static async readBlob(
 		reader: Reader,
-		magic = 0,
-		minSize = 0,
-		maxSize = 0,
+		magic?: number,
+		minSize?: number,
+		maxSize?: number,
+		context?: { errno: number },
 	): Promise<BlobCore | null> {
 		if (reader.size < 8) {
 			return null;
 		}
 		const head = await reader.slice(0, 8).arrayBuffer();
 		const header = new BlobCore(head);
-		header.validateBlob(magic, minSize, maxSize);
+		if (!header.validateBlob(magic || 0, minSize, maxSize, context)) {
+			return null;
+		}
 		const length = header.mLength;
 		if (reader.size < length) {
-			throw new RangeError('Invalid blob size');
+			if (context) context.errno = EINVAL;
+			return null;
 		}
 		const data = new ArrayBuffer(length);
 		const view = new Uint8Array(data);

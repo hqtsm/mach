@@ -1,10 +1,6 @@
-import {
-	assertEquals,
-	assertNotEquals,
-	assertRejects,
-	assertThrows,
-} from '@std/assert';
+import { assertEquals, assertNotEquals } from '@std/assert';
 import { BlobCore } from './blobcore.ts';
+import { EINVAL, ENOMEM } from '../const.ts';
 
 Deno.test('BYTE_LENGTH', () => {
 	assertEquals(BlobCore.BYTE_LENGTH, 8);
@@ -61,33 +57,51 @@ Deno.test('validateBlob', () => {
 	const data = new Uint8Array(12);
 	const blob = new BlobCore(data.buffer, 2);
 	blob.initialize(0x12345678, 10);
-	blob.validateBlob(0x12345678);
-	assertThrows(
-		() => blob.validateBlob(0x12345679),
-		RangeError,
-		'Invalid magic',
-	);
-	blob.validateBlob(0, 9);
-	blob.validateBlob(0, 10);
-	assertThrows(
-		() => blob.validateBlob(0, 11),
-		RangeError,
-		'Invalid length',
-	);
-	assertThrows(
-		() => blob.validateBlob(0, 0, 9),
-		RangeError,
-		'Invalid length',
-	);
-	blob.validateBlob(0, 0, 10);
-	blob.validateBlob(0, 0, 11);
+	assertEquals(blob.validateBlob(0x12345678), true);
+	{
+		const context = { errno: 0 };
+		assertEquals(
+			blob.validateBlob(0x12345678, undefined, undefined, context),
+			true,
+		);
+		assertEquals(context.errno, 0);
+	}
+
+	{
+		const context = { errno: 0 };
+		assertEquals(
+			blob.validateBlob(0x12345679, undefined, undefined, context),
+			false,
+		);
+		assertEquals(context.errno, EINVAL);
+	}
+
+	assertEquals(blob.validateBlob(0, 9), true);
+	assertEquals(blob.validateBlob(0, 10), true);
+
+	{
+		const context = { errno: 0 };
+		assertEquals(blob.validateBlob(0, 11, undefined, context), false);
+		assertEquals(context.errno, EINVAL);
+	}
+
+	{
+		const context = { errno: 0 };
+		assertEquals(blob.validateBlob(0, 0, 9, context), false);
+		assertEquals(context.errno, ENOMEM);
+	}
+	assertEquals(blob.validateBlob(0, 0, 10), true);
+	assertEquals(blob.validateBlob(0, 0, 11), true);
 
 	blob.initialize(0x12345678, 7);
-	assertThrows(
-		() => blob.validateBlob(0x12345678),
-		RangeError,
-		'Invalid length',
-	);
+	{
+		const context = { errno: 0 };
+		assertEquals(
+			blob.validateBlob(0x12345678, undefined, undefined, context),
+			false,
+		);
+		assertEquals(context.errno, EINVAL);
+	}
 });
 
 Deno.test('contains', () => {
@@ -197,7 +211,29 @@ Deno.test('readBlob', async () => {
 	const data = new Uint8Array(100);
 	const blob = new BlobCore(data.buffer);
 	blob.initialize(0x12345678, 101);
-	await assertRejects(() => BlobCore.readBlob(new Blob([data])));
+	{
+		const context = { errno: 0 };
+		await BlobCore.readBlob(
+			new Blob([data]),
+			undefined,
+			undefined,
+			undefined,
+			context,
+		);
+		assertEquals(context.errno, EINVAL);
+	}
+
+	{
+		const context = { errno: 0 };
+		await BlobCore.readBlob(
+			new Blob([data]),
+			undefined,
+			undefined,
+			9,
+			context,
+		);
+		assertEquals(context.errno, ENOMEM);
+	}
 
 	blob.initialize(0x12345678, 100);
 	const read = await BlobCore.readBlob(new Blob([data]));

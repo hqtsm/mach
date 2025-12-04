@@ -1,7 +1,18 @@
-import { assertEquals, assertThrows } from '@std/assert';
+import { assertEquals } from '@std/assert';
 import { type Class, constant } from '@hqtsm/class';
 import { uint32BE } from '@hqtsm/struct';
+import { EINVAL } from '../const.ts';
 import { Blob } from './blob.ts';
+
+class NoErrno {
+	get errno(): number {
+		throw new Error('Unused');
+	}
+
+	set errno(_value: number) {
+		throw new Error('Unused');
+	}
+}
 
 Deno.test('BYTE_LENGTH', () => {
 	assertEquals(Blob.BYTE_LENGTH, 8);
@@ -55,34 +66,28 @@ Deno.test('validateBlobLength', () => {
 	const blob = new Example(data.buffer, 2);
 
 	blob.initialize(0, 20);
-	assertThrows(
-		() => blob.validateBlobLength(),
-		RangeError,
-		'Invalid magic',
-	);
+	{
+		const context = { errno: 0 };
+		assertEquals(blob.validateBlobLength(undefined, context), false);
+		assertEquals(context.errno, EINVAL);
+	}
 
 	blob.initializeLength(20);
-	blob.validateBlobLength();
+	assertEquals(blob.validateBlobLength(), true);
 
 	blob.initializeLength(11);
-	assertThrows(
-		() => blob.validateBlobLength(11),
-		RangeError,
-		'Invalid length',
-	);
+	assertEquals(blob.validateBlobLength(11, new NoErrno()), false);
 
 	blob.initialize(0, 20);
-	assertThrows(
-		() => blob.validateBlobLength(20),
-		RangeError,
-		'Invalid magic',
-	);
+	{
+		const context = { errno: 0 };
+		assertEquals(blob.validateBlobLength(20, context), false);
+		assertEquals(context.errno, EINVAL);
+	}
 
 	blob.initializeLength(20);
-	blob.validateBlobLength(20);
-	assertThrows(
-		() => blob.validateBlobLength(19),
-		RangeError,
-		'Invalid length',
-	);
+	assertEquals(blob.validateBlobLength(20, new NoErrno()), true);
+
+	blob.initializeLength(19);
+	assertEquals(blob.validateBlobLength(19, new NoErrno()), true);
 });
