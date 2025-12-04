@@ -1,4 +1,4 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { type Class, type Concrete, constant, toStringTag } from '@hqtsm/class';
 import { BlobCore } from './blobcore.ts';
 
 /**
@@ -63,11 +63,16 @@ export abstract class Blob extends BlobCore {
 	 * @returns Cast blob or null.
 	 */
 	public static specific<T extends Blob>(
-		this: new (...args: ConstructorParameters<typeof Blob>) => T,
+		this:
+			& typeof Blob
+			& (new (...args: ConstructorParameters<typeof Blob>) => T),
 		blob: BlobCore,
 		context?: { errno: number },
 	): T | null {
-		const p = new this(blob.buffer, blob.byteOffset);
+		const p = new (this as Concrete<typeof this>)(
+			blob.buffer,
+			blob.byteOffset,
+		);
 		return p.validateBlobLength(undefined, context) ? p : null;
 	}
 
