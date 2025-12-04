@@ -3,15 +3,6 @@ import type { Reader } from '../util/reader.ts';
 import { BlobCore } from './blobcore.ts';
 
 /**
- * Blob static.
- *
- * @template T Blob type.
- */
-export type BlobStatic<T extends Blob = Blob> =
-	& typeof Blob
-	& (new (...args: ConstructorParameters<typeof Blob>) => T);
-
-/**
  * Polymorphic memory blob for magic number.
  */
 export abstract class Blob extends BlobCore {
@@ -74,15 +65,12 @@ export abstract class Blob extends BlobCore {
 	 * @param context Context.
 	 * @returns Cast blob or null.
 	 */
-	public static specific<T extends Blob>(
-		this: BlobStatic<T>,
+	public static specific<T extends Concrete<typeof Blob>>(
+		this: T,
 		blob: BlobCore,
 		context?: { errno: number },
-	): T | null {
-		const p = new (this as Concrete<typeof this>)(
-			blob.buffer,
-			blob.byteOffset,
-		);
+	): T['prototype'] | null {
+		const p = new this(blob.buffer, blob.byteOffset, blob.littleEndian);
 		return p.validateBlobLength(undefined, context) ? p : null;
 	}
 
@@ -124,11 +112,11 @@ export abstract class Blob extends BlobCore {
 	 * @param context Context.
 	 * @returns Blob or null if not valid.
 	 */
-	public static override async readBlob<T extends Blob>(
-		this: BlobStatic<T>,
+	public static override async readBlob<T extends Concrete<typeof Blob>>(
+		this: T,
 		reader: Reader,
 		context?: { errno: number },
-	): Promise<BlobCore | null>;
+	): Promise<T['prototype'] | null>;
 
 	/**
 	 * Read blob from reader.
@@ -141,13 +129,13 @@ export abstract class Blob extends BlobCore {
 	 * @param context Context.
 	 * @returns Blob or null if not valid.
 	 */
-	public static override async readBlob<T extends Blob>(
-		this: BlobStatic<T>,
+	public static override async readBlob<T extends Concrete<typeof Blob>>(
+		this: T,
 		reader: Reader,
 		offset: number,
 		maxSize?: number,
 		context?: { errno: number },
-	): Promise<BlobCore | null>;
+	): Promise<T['prototype'] | null>;
 
 	/**
 	 * Read blob from reader.
@@ -160,13 +148,13 @@ export abstract class Blob extends BlobCore {
 	 * @param context Context.
 	 * @returns Blob or null if not valid.
 	 */
-	public static override async readBlob<T extends Blob>(
-		this: BlobStatic<T>,
+	public static override async readBlob<T extends Concrete<typeof Blob>>(
+		this: T,
 		reader: Reader,
 		offset?: number | { errno: number },
 		maxSize?: number,
 		context?: { errno: number },
-	): Promise<BlobCore | null> {
+	): Promise<T['prototype'] | null> {
 		if (typeof offset !== 'number') {
 			context = offset;
 			maxSize = offset = 0;
