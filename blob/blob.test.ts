@@ -18,14 +18,6 @@ Deno.test('BYTE_LENGTH', () => {
 	assertEquals(Blob.BYTE_LENGTH, 8);
 });
 
-Deno.test('blobify length', () => {
-	const blobI = Blob.blobify(4);
-	assertEquals(
-		new Uint8Array(blobI),
-		new Uint8Array([0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0]),
-	);
-});
-
 Deno.test('blobify buffer', () => {
 	const blobB = Blob.blobify(new Uint8Array([1, 2, 3, 4]).buffer);
 	assertEquals(

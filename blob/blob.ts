@@ -58,27 +58,21 @@ export abstract class Blob extends BlobCore {
 	/**
 	 * Wrap data into a new blob.
 	 *
-	 * @param content Data to wrap, or number of content bytes.
+	 * @param content Data to wrap.
 	 * @returns Blob data.
 	 */
 	public static blobify(
-		content: ArrayBufferLike | ArrayBufferView | number = 0,
+		content: ArrayBufferLike | ArrayBufferView,
 	): ArrayBuffer {
 		const { BYTE_LENGTH } = BlobCore;
-		let view;
-		let size = BYTE_LENGTH;
-		if (typeof content === 'number') {
-			size += content;
-		} else {
-			view = 'buffer' in content
-				? new Uint8Array(
-					content.buffer,
-					content.byteOffset,
-					content.byteLength,
-				)
-				: new Uint8Array(content);
-			size += view.byteLength;
-		}
+		const view = 'buffer' in content
+			? new Uint8Array(
+				content.buffer,
+				content.byteOffset,
+				content.byteLength,
+			)
+			: new Uint8Array(content);
+		const size = BYTE_LENGTH + view.byteLength;
 		const buffer = new ArrayBuffer(size);
 		const { typeMagic } = this;
 		new (class extends Blob {
