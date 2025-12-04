@@ -155,7 +155,7 @@ export abstract class Blob extends BlobCore {
 	 * @template T Blob type.
 	 * @param this Blob class.
 	 * @param reader Reader.
-	 * @param offset Byte offset.
+	 * @param offset Byte offset or context.
 	 * @param maxSize Maximum size.
 	 * @param context Context.
 	 * @returns Blob or null if not valid.
