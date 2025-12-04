@@ -14,6 +14,23 @@ class NoErrno {
 	}
 }
 
+class Example extends Blob {
+	declare public readonly ['constructor']: Class<typeof Example>;
+
+	/**
+	 * Example value.
+	 */
+	declare public value: number;
+
+	public static override readonly typeMagic = 0x12345678;
+
+	static {
+		uint32BE(this, 'value');
+		constant(this, 'BYTE_LENGTH');
+		constant(this, 'typeMagic');
+	}
+}
+
 Deno.test('BYTE_LENGTH', () => {
 	assertEquals(Blob.BYTE_LENGTH, 8);
 });
@@ -37,23 +54,6 @@ Deno.test('blobify view', () => {
 });
 
 Deno.test('validateBlobLength', () => {
-	class Example extends Blob {
-		declare public readonly ['constructor']: Class<typeof Example>;
-
-		/**
-		 * Example value.
-		 */
-		declare public value: number;
-
-		public static override readonly typeMagic = 0x12345678;
-
-		static {
-			uint32BE(this, 'value');
-			constant(this, 'BYTE_LENGTH');
-			constant(this, 'typeMagic');
-		}
-	}
-
 	const data = new Uint8Array(22);
 	const blob = new Example(data.buffer, 2);
 
