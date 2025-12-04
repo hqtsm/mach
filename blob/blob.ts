@@ -3,11 +3,11 @@ import type { Reader } from '../util/reader.ts';
 import { BlobCore } from './blobcore.ts';
 
 /**
- * Blob static this.
+ * Blob static.
  *
  * @template T Blob type.
  */
-export type BlobStaticThis<T extends Blob = Blob> =
+export type BlobStatic<T extends Blob = Blob> =
 	& typeof Blob
 	& (new (...args: ConstructorParameters<typeof Blob>) => T);
 
@@ -75,7 +75,7 @@ export abstract class Blob extends BlobCore {
 	 * @returns Cast blob or null.
 	 */
 	public static specific<T extends Blob>(
-		this: BlobStaticThis<T>,
+		this: BlobStatic<T>,
 		blob: BlobCore,
 		context?: { errno: number },
 	): T | null {
@@ -125,7 +125,7 @@ export abstract class Blob extends BlobCore {
 	 * @returns Blob or null if not valid.
 	 */
 	public static override async readBlob<T extends Blob>(
-		this: BlobStaticThis<T>,
+		this: BlobStatic<T>,
 		reader: Reader,
 		context?: { errno: number },
 	): Promise<BlobCore | null>;
@@ -142,7 +142,7 @@ export abstract class Blob extends BlobCore {
 	 * @returns Blob or null if not valid.
 	 */
 	public static override async readBlob<T extends Blob>(
-		this: BlobStaticThis<T>,
+		this: BlobStatic<T>,
 		reader: Reader,
 		offset: number,
 		maxSize?: number,
@@ -161,7 +161,7 @@ export abstract class Blob extends BlobCore {
 	 * @returns Blob or null if not valid.
 	 */
 	public static override async readBlob<T extends Blob>(
-		this: BlobStaticThis<T>,
+		this: BlobStatic<T>,
 		reader: Reader,
 		offset?: number | { errno: number },
 		maxSize?: number,
