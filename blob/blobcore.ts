@@ -72,7 +72,7 @@ export class BlobCore extends Struct {
 	 */
 	public initialize(magic: number, length = 0): void {
 		this.mMagic = magic;
-		this.mLength = length;
+		this.mLength = length >>> 0;
 	}
 
 	/**

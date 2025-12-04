@@ -52,7 +52,7 @@ export abstract class Blob extends BlobCore {
 	public static blobify(
 		content: ArrayBufferLike | ArrayBufferView | number = 0,
 	): ArrayBuffer {
-		const { BYTE_LENGTH } = Blob;
+		const { BYTE_LENGTH } = BlobCore;
 		let view;
 		let size = BYTE_LENGTH;
 		if (typeof content === 'number') {
