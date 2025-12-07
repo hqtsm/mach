@@ -92,11 +92,11 @@ export class BlobCore extends Struct {
 		context?: { errno: number },
 	): boolean {
 		const length = this.mLength;
-		if ((magic && magic !== this.mMagic)) {
+		if (magic && magic !== this.mMagic) {
 			if (context) context.errno = EINVAL;
 			return false;
 		}
-		if (length < (minSize || 8)) {
+		if (length < (minSize || BlobCore.BYTE_LENGTH)) {
 			if (context) context.errno = EINVAL;
 			return false;
 		}
@@ -140,7 +140,10 @@ export class BlobCore extends Struct {
 	 * @returns Is contained.
 	 */
 	public contains(offset: number, size: number): boolean {
-		return offset >= 8 && size >= 0 && (offset + size) <= this.mLength;
+		return (
+			offset >= BlobCore.BYTE_LENGTH && size >= 0 &&
+			(offset + size) <= this.mLength
+		);
 	}
 
 	/**
