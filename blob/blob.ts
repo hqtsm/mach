@@ -14,7 +14,11 @@ export abstract class Blob extends BlobCore {
 	 * @param size Length.
 	 */
 	public initializeLength(size = 0): void {
-		this.initialize(this.constructor.typeMagic, size);
+		BlobCore.prototype.initialize.call(
+			this,
+			this.constructor.typeMagic,
+			size,
+		);
 	}
 
 	/**
@@ -30,7 +34,8 @@ export abstract class Blob extends BlobCore {
 	): boolean {
 		const { byteLength } = this;
 		if (length === undefined) {
-			return this.validateBlob(
+			return BlobCore.prototype.validateBlob.call(
+				this,
 				this.constructor.typeMagic,
 				byteLength,
 				undefined,
@@ -39,7 +44,8 @@ export abstract class Blob extends BlobCore {
 		}
 		return (
 			length >= byteLength &&
-			this.validateBlob(
+			BlobCore.prototype.validateBlob.call(
+				this,
 				this.constructor.typeMagic,
 				byteLength,
 				undefined,
@@ -97,9 +103,7 @@ export abstract class Blob extends BlobCore {
 		new (class extends Blob {
 			public static override readonly typeMagic = typeMagic;
 		})(buffer).initializeLength(size);
-		if (view) {
-			new Uint8Array(buffer, BYTE_LENGTH).set(view);
-		}
+		new Uint8Array(buffer, BYTE_LENGTH).set(view);
 		return buffer;
 	}
 
