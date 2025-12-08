@@ -58,7 +58,7 @@ export class BlobCore extends Struct {
 	 * @param size Byte length to set or undefined to get.
 	 * @returns Byte length on get or undefined on set.
 	 */
-	public length(size?: number): number | void {
+	public length(size?: number | undefined): number | void {
 		if (size === undefined) {
 			return this.mLength;
 		}
@@ -141,8 +141,10 @@ export class BlobCore extends Struct {
 	 */
 	public contains(offset: number, size: number): boolean {
 		return (
-			offset >= BlobCore.BYTE_LENGTH && size >= 0 &&
-			(offset + size) <= this.mLength
+			offset >= BlobCore.BYTE_LENGTH &&
+			size >= 0 &&
+			(offset + size) <=
+				BlobCore.prototype.length.call<BlobCore, [], number>(this)
 		);
 	}
 
@@ -153,9 +155,10 @@ export class BlobCore extends Struct {
 	 * @returns String pointer if null terminated string or null.
 	 */
 	public stringAt(offset: number): Int8Ptr | null {
-		let length = this.mLength;
+		let length = BlobCore.prototype.length.call<BlobCore, [], number>(this);
+		const at = BlobCore.prototype.at;
 		if (offset >= 0 && offset < length) {
-			const s = this.at(Int8Ptr, offset);
+			const s = at.call(this, Int8Ptr, offset) as Int8Ptr;
 			length -= offset;
 			for (let i = 0; i < length; i++) {
 				if (!s[i]) {
@@ -183,7 +186,7 @@ export class BlobCore extends Struct {
 	 * @returns Cloned blob.
 	 */
 	public clone(): BlobCore {
-		const l = this.mLength;
+		const l = BlobCore.prototype.length.call<BlobCore, [], number>(this);
 		const o = this.byteOffset;
 		return new BlobCore(this.buffer.slice(o, o + l), 0, this.littleEndian);
 	}
@@ -194,11 +197,12 @@ export class BlobCore extends Struct {
 	 * @returns Uint8 byte array.
 	 */
 	public innerData(): Arr<number> {
-		return new (array(Uint8Ptr, this.mLength - 8))(
-			this.buffer,
-			this.byteOffset + 8,
-			this.littleEndian,
-		);
+		const o = BlobCore.BYTE_LENGTH;
+		const p = BlobCore.prototype.at.call(this, Uint8Ptr, o) as Uint8Ptr;
+		return new (array(
+			Uint8Ptr,
+			BlobCore.prototype.length.call<BlobCore, [], number>(this) - o,
+		))(p.buffer, p.byteOffset, p.littleEndian);
 	}
 
 	/**
@@ -211,7 +215,7 @@ export class BlobCore extends Struct {
 	public is<T>(
 		BlobType: T & IsClass<T, { readonly typeMagic: number }>,
 	): boolean {
-		return this.mMagic === BlobType.typeMagic;
+		return BlobCore.prototype.magic.call(this) === BlobType.typeMagic;
 	}
 
 	/**
