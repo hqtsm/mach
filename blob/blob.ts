@@ -77,7 +77,9 @@ export abstract class Blob extends BlobCore {
 		context?: { errno: number },
 	): T['prototype'] | null {
 		const p = new this(blob.buffer, blob.byteOffset, blob.littleEndian);
-		return p.validateBlobLength(undefined, context) ? p : null;
+		return Blob.prototype.validateBlobLength.call(p, undefined, context)
+			? p
+			: null;
 	}
 
 	/**
@@ -171,7 +173,7 @@ export abstract class Blob extends BlobCore {
 			maxSize || 0,
 			context,
 		);
-		return p ? this.specific(p, context) : p;
+		return p ? Blob.specific.call(this, p, context) : p;
 	}
 
 	static {
