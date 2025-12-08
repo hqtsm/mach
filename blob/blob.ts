@@ -32,25 +32,18 @@ export abstract class Blob extends BlobCore {
 		length?: number,
 		context?: { errno: number },
 	): boolean {
-		const { byteLength } = this;
 		if (length === undefined) {
 			return BlobCore.prototype.validateBlob.call(
 				this,
 				this.constructor.typeMagic,
-				byteLength,
+				this.byteLength,
 				undefined,
 				context,
 			);
 		}
 		return (
-			length >= byteLength &&
-			BlobCore.prototype.validateBlob.call(
-				this,
-				this.constructor.typeMagic,
-				byteLength,
-				undefined,
-				context,
-			) &&
+			length >= this.byteLength &&
+			Blob.prototype.validateBlobLength.call(this, undefined, context) &&
 			this.mLength === length
 		);
 	}
