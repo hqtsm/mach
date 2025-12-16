@@ -1,7 +1,8 @@
 import { type Class, constant, toStringTag } from '@hqtsm/class';
-import { type Const, dataView, uint32BE } from '@hqtsm/struct';
+import { array, type Const, member, type Ptr, uint32BE } from '@hqtsm/struct';
 import { Blob } from './blob.ts';
 import { BlobCore } from './blobcore.ts';
+import { SuperBlobCoreIndex } from './superblobcoreindex.ts';
 
 /**
  * Multiple Blobs wrapped in a single indexed blob.
@@ -13,6 +14,11 @@ export abstract class SuperBlobCore extends Blob {
 	 * Number of blobs in super blob.
 	 */
 	declare private mCount: number;
+
+	/**
+	 * Data of payload (only).
+	 */
+	declare private readonly mIndex: Ptr<SuperBlobCoreIndex>;
 
 	/**
 	 * Setup size and number of blobs in super blob.
@@ -42,9 +48,7 @@ export abstract class SuperBlobCore extends Blob {
 	 */
 	public type(n: number): number {
 		n >>>= 0;
-		return dataView(this.buffer).getUint32(
-			this.byteOffset + 12 + 8 * n,
-		);
+		return this.mIndex[n].type;
 	}
 
 	/**
@@ -55,9 +59,7 @@ export abstract class SuperBlobCore extends Blob {
 	 */
 	public blob(n: number): Const<BlobCore> | null {
 		n >>>= 0;
-		const offset = dataView(this.buffer).getUint32(
-			this.byteOffset + 16 + 8 * n,
-		);
+		const { offset } = this.mIndex[n];
 		return offset
 			? (SuperBlobCore.prototype.at<BlobCore>).call(
 				this,
@@ -74,10 +76,19 @@ export abstract class SuperBlobCore extends Blob {
 	 * @returns First match or null.
 	 */
 	public find(type: number): Const<BlobCore> | null {
-		const count = this.mCount;
-		for (let i = 0; i < count; i++) {
-			if (SuperBlobCore.prototype.type.call(this, i) === type) {
-				return SuperBlobCore.prototype.blob.call(this, i);
+		type >>>= 0;
+		const { mCount, mIndex } = this;
+		for (let i = 0; i < mCount; i++) {
+			const index = mIndex[i];
+			if (index.type === type) {
+				const { offset } = index;
+				return offset
+					? (SuperBlobCore.prototype.at<BlobCore>).call(
+						this,
+						BlobCore,
+						offset,
+					)
+					: null;
 			}
 		}
 		return null;
@@ -86,6 +97,7 @@ export abstract class SuperBlobCore extends Blob {
 	static {
 		toStringTag(this, 'SuperBlobCore');
 		uint32BE(this, 'mCount' as never);
+		member(array(SuperBlobCoreIndex, 0), this, 'mIndex' as never);
 		constant(this, 'BYTE_LENGTH');
 		constant(this, 'typeMagic');
 	}
