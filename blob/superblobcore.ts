@@ -26,28 +26,37 @@ export abstract class SuperBlobCore extends Blob {
 	}
 
 	/**
+	 * Number of blobs in super blob.
+	 *
+	 * @returns Blob count.
+	 */
+	public count(): number {
+		return this.mCount;
+	}
+
+	/**
 	 * Get type of index.
 	 *
-	 * @param index Index.
+	 * @param n Index.
 	 * @returns Type.
 	 */
-	public type(index: number): number {
-		index = (+index || 0) - (index % 1 || 0);
+	public type(n: number): number {
+		n >>>= 0;
 		return dataView(this.buffer).getUint32(
-			this.byteOffset + 12 + 8 * index,
+			this.byteOffset + 12 + 8 * n,
 		);
 	}
 
 	/**
 	 * Get blob at index.
 	 *
-	 * @param index Index.
+	 * @param n Index.
 	 * @returns Blob or null if no offset in index.
 	 */
-	public blob(index: number): Const<BlobCore> | null {
-		index = (+index || 0) - (index % 1 || 0);
+	public blob(n: number): Const<BlobCore> | null {
+		n >>>= 0;
 		const offset = dataView(this.buffer).getUint32(
-			this.byteOffset + 16 + 8 * index,
+			this.byteOffset + 16 + 8 * n,
 		);
 		return offset
 			? (SuperBlobCore.prototype.at<BlobCore>).call(
@@ -72,15 +81,6 @@ export abstract class SuperBlobCore extends Blob {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Number of blobs in super blob.
-	 *
-	 * @returns Blob count.
-	 */
-	public count(): number {
-		return this.mCount;
 	}
 
 	static {
