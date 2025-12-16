@@ -1,5 +1,11 @@
 import { type Class, constant, toStringTag } from '@hqtsm/class';
-import { array, member, Ptr, Uint8Ptr } from '@hqtsm/struct';
+import {
+	array,
+	type ArrayBufferPointer,
+	member,
+	Ptr,
+	Uint8Ptr,
+} from '@hqtsm/struct';
 import { CSMAGIC_BLOBWRAPPER } from '../const.ts';
 import { Blob } from './blob.ts';
 
@@ -58,29 +64,52 @@ export class BlobWrapper extends Blob {
 	/**
 	 * Wrap data into a new blob.
 	 *
-	 * @param content Data to wrap, or number of bytes.
+	 * @param length Length of data.
+	 * @param magic Magic number.
+	 * @returns Blob.
+	 */
+	public static alloc(length: number, magic?: number): BlobWrapper;
+
+	/**
+	 * Wrap data into a new blob.
+	 *
+	 * @param data Data to wrap.
+	 * @param length Length of data.
 	 * @param magic Magic number.
 	 * @returns Blob.
 	 */
 	public static alloc(
-		content: ArrayBufferLike | ArrayBufferView | number = 0,
-		magic = BlobWrapper.typeMagic,
+		data: ArrayBufferPointer | ArrayBufferLike,
+		length: number,
+		magic?: number,
+	): BlobWrapper;
+
+	/**
+	 * Wrap data into a new blob.
+	 *
+	 * @param data Data to wrap.
+	 * @param length Length of data.
+	 * @param magic Magic number.
+	 * @returns Blob.
+	 */
+	public static alloc(
+		data: number | ArrayBufferPointer | ArrayBufferLike,
+		length?: number,
+		magic?: number,
 	): BlobWrapper {
 		const { BYTE_LENGTH } = BlobWrapper;
 		let view;
 		let size = BYTE_LENGTH;
-		if (typeof content === 'number') {
-			size += content;
+		if (typeof data === 'number') {
+			size += data;
+			magic = length;
 		} else {
-			view = 'buffer' in content
-				? new Uint8Array(
-					content.buffer,
-					content.byteOffset,
-					content.byteLength,
-				)
-				: new Uint8Array(content);
+			view = 'buffer' in data
+				? new Uint8Array(data.buffer, data.byteOffset, length)
+				: new Uint8Array(data, 0, length);
 			size += view.byteLength;
 		}
+		magic ??= BlobWrapper.typeMagic;
 		const buffer = new ArrayBuffer(size);
 		const blob = new BlobWrapper(buffer);
 		blob.initialize(magic, size);

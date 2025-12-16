@@ -180,7 +180,7 @@ for (const { kind, arch, file, archs } of fixtures) {
 				}
 
 				// Empty signature.
-				maker.add(cdSignatureSlot, BlobWrapper.alloc());
+				maker.add(cdSignatureSlot, BlobWrapper.alloc(0));
 			} else if (cds.length) {
 				throw new Error(
 					message(`Alt linker code directories: ${cds.length}`),

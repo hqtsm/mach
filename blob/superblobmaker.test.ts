@@ -30,7 +30,7 @@ class ExampleMaker extends SuperBlobMaker {
 Deno.test('add BlobCore', () => {
 	const maker = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
-	const blob = BlobWrapper.alloc(data);
+	const blob = BlobWrapper.alloc(data, data.byteLength);
 	maker.add(0x01020304, blob);
 	const sb = maker.make();
 	assertEquals(new Uint8Array(sb.buffer, 20), new Uint8Array(blob.buffer));
@@ -39,8 +39,8 @@ Deno.test('add BlobCore', () => {
 Deno.test('add SuperBlob', () => {
 	const maker1 = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
-	maker1.add(0x11111111, BlobWrapper.alloc(data));
-	maker1.add(0x22222222, BlobWrapper.alloc(data));
+	maker1.add(0x11111111, BlobWrapper.alloc(data, data.byteLength));
+	maker1.add(0x22222222, BlobWrapper.alloc(data, data.byteLength));
 	const maker2 = new ExampleMaker();
 	maker2.add(maker1.make());
 	const sb2 = maker2.make();
@@ -56,8 +56,8 @@ Deno.test('add SuperBlob', () => {
 Deno.test('add SuperBlobMaker', () => {
 	const maker1 = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
-	maker1.add(0x11111111, BlobWrapper.alloc(data));
-	maker1.add(0x22222222, BlobWrapper.alloc(data));
+	maker1.add(0x11111111, BlobWrapper.alloc(data, data.byteLength));
+	maker1.add(0x22222222, BlobWrapper.alloc(data, data.byteLength));
 	const maker2 = new ExampleMaker();
 	maker2.add(maker1);
 	const sb2 = maker2.make();
@@ -73,7 +73,7 @@ Deno.test('add SuperBlobMaker', () => {
 Deno.test('contains', () => {
 	const maker = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
-	const blob = BlobWrapper.alloc(data);
+	const blob = BlobWrapper.alloc(data, data.byteLength);
 	assertEquals(maker.contains(0x01020304), false);
 	maker.add(0x01020304, blob);
 	assertEquals(maker.contains(0x01020304), true);
@@ -82,7 +82,7 @@ Deno.test('contains', () => {
 Deno.test('get', () => {
 	const maker = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
-	const blob = BlobWrapper.alloc(data);
+	const blob = BlobWrapper.alloc(data, data.byteLength);
 	assertEquals(maker.get(0x01020304), null);
 	maker.add(0x01020304, blob);
 	assert(maker.get(0x01020304));
@@ -93,7 +93,7 @@ Deno.test('size', () => {
 	assertEquals(maker.size(), 12);
 	assertEquals(maker.make().length(), maker.size());
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
-	const blob = BlobWrapper.alloc(data);
+	const blob = BlobWrapper.alloc(data, data.byteLength);
 	maker.add(1, blob);
 	assertEquals(maker.size(), 36);
 	assertEquals(maker.make().length(), maker.size());
