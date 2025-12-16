@@ -198,7 +198,7 @@ export class BlobCore extends Struct {
 	 */
 	public innerData(): Arr<number> {
 		const o = BlobCore.BYTE_LENGTH;
-		const p = BlobCore.prototype.at.call(this, Uint8Ptr, o) as Uint8Ptr;
+		const p = (BlobCore.prototype.at<Uint8Ptr>).call(this, Uint8Ptr, o);
 		return new (array(
 			Uint8Ptr,
 			BlobCore.prototype.length.call<BlobCore, [], number>(this) - o,

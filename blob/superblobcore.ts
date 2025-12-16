@@ -21,7 +21,7 @@ export abstract class SuperBlobCore extends Blob {
 	 * @param count Number of blobs.
 	 */
 	public setup(size: number, count: number): void {
-		this.initializeLength(size);
+		SuperBlobCore.prototype.initializeLength.call(this, size);
 		this.mCount = count;
 	}
 
@@ -49,7 +49,13 @@ export abstract class SuperBlobCore extends Blob {
 		const offset = dataView(this.buffer).getUint32(
 			this.byteOffset + 16 + 8 * index,
 		);
-		return offset ? this.at(BlobCore, offset) : null;
+		return offset
+			? (SuperBlobCore.prototype.at<BlobCore>).call(
+				this,
+				BlobCore,
+				offset,
+			)
+			: null;
 	}
 
 	/**
@@ -61,8 +67,8 @@ export abstract class SuperBlobCore extends Blob {
 	public find(type: number): Const<BlobCore> | null {
 		const count = this.mCount;
 		for (let i = 0; i < count; i++) {
-			if (this.type(i) === type) {
-				return this.blob(i);
+			if (SuperBlobCore.prototype.type.call(this, i) === type) {
+				return SuperBlobCore.prototype.blob.call(this, i);
 			}
 		}
 		return null;
