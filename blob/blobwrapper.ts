@@ -8,6 +8,7 @@ import {
 } from '@hqtsm/struct';
 import { CSMAGIC_BLOBWRAPPER } from '../const.ts';
 import { Blob } from './blob.ts';
+import { BlobCore } from './blobcore.ts';
 
 /**
  * Generic blob wrapping arbitrary binary data.
@@ -54,7 +55,9 @@ export class BlobWrapper extends Blob {
 	 */
 	public override length(size?: number): number | void {
 		if (size === undefined) {
-			return super.length() - 8;
+			return BlobCore.prototype.length.call<BlobWrapper, [], number>(
+				this,
+			) - BlobCore.BYTE_LENGTH;
 		}
 		super.length(size);
 	}
