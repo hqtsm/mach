@@ -75,7 +75,7 @@ export abstract class SuperBlobCoreMaker {
 
 		if ('mPieces' in (type as SuperBlobCoreMaker)) {
 			for (const [t, b] of (type as SuperBlobCoreMaker).mPieces) {
-				this.add(t, b.clone());
+				this.add(t, b.clone()!);
 			}
 			return;
 		}
@@ -84,7 +84,7 @@ export abstract class SuperBlobCoreMaker {
 		for (let i = 0; i < count; i++) {
 			this.add(
 				(type as SuperBlob).type(i),
-				(type as SuperBlob).blob(i)!.clone(),
+				(type as SuperBlob).blob(i)!.clone()!,
 			);
 		}
 	}

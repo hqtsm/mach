@@ -52,6 +52,25 @@ Deno.test('specific', () => {
 	}
 });
 
+Deno.test('clone', () => {
+	const data = new Uint8Array(12);
+	const example = new Example(data.buffer);
+	example.initialize(0xFFFFFFFF, Example.BYTE_LENGTH);
+	example.value = 42;
+	{
+		const context = { errno: 0 };
+		assertEquals(example.clone(context), null);
+		assertEquals(context.errno, EINVAL);
+	}
+
+	example.initializeLength(Example.BYTE_LENGTH);
+	{
+		const clone = example.clone(new NoErrno());
+		assertInstanceOf(clone, Example);
+		assertEquals(clone.value, 42);
+	}
+});
+
 Deno.test('blobify buffer', () => {
 	const blobB = Blob.blobify(new Uint8Array([1, 2, 3, 4]).buffer);
 	assertEquals(

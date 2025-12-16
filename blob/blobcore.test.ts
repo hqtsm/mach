@@ -1,4 +1,4 @@
-import { assertEquals, assertNotEquals } from '@std/assert';
+import { assertEquals, assertInstanceOf, assertNotEquals } from '@std/assert';
 import { BlobCore } from './blobcore.ts';
 import { EINVAL, ENOMEM } from '../const.ts';
 
@@ -29,6 +29,7 @@ Deno.test('clone', () => {
 	const data = new Uint8Array(12);
 	const blob = new BlobCore(data.buffer, 2);
 	const clone = blob.clone();
+	assertInstanceOf(clone, BlobCore);
 	assertEquals(clone.data().byteOffset, 0);
 	new Uint8Array(clone.data().buffer).fill(1);
 	assertEquals(data, new Uint8Array(12));

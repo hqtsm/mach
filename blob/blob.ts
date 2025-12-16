@@ -49,6 +49,23 @@ export abstract class Blob extends BlobCore {
 	}
 
 	/**
+	 * Clone blob.
+	 *
+	 * @template T Blob type.
+	 * @param this Blob instance.
+	 * @returns Cloned blob.
+	 */
+	public override clone(context?: { errno: number }): this | null {
+		const c = BlobCore.prototype.clone.call(this);
+		return c &&
+			Blob.specific.call(
+				this.constructor as Concrete<typeof Blob>,
+				c,
+				context,
+			) as this;
+	}
+
+	/**
 	 * Type magic number for this blob.
 	 *
 	 * @returns Type magic number.

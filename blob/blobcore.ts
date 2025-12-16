@@ -185,7 +185,7 @@ export class BlobCore extends Struct {
 	 *
 	 * @returns Cloned blob.
 	 */
-	public clone(): BlobCore {
+	public clone(): BlobCore | null {
 		const l = BlobCore.prototype.length.call<BlobCore, [], number>(this);
 		const o = this.byteOffset;
 		return new BlobCore(this.buffer.slice(o, o + l), 0, this.littleEndian);
