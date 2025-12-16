@@ -174,8 +174,7 @@ export abstract class SuperBlobCoreMaker {
 		const data = new Uint8Array(buffer);
 		const result = new this.constructor.SuperBlob(buffer);
 		result.setup(total, count);
-		const types = [...mPieces.keys()].sort((a, b) => a - b);
-		for (const type of types) {
+		for (const type of [...mPieces.keys()].sort((a, b) => a - b)) {
 			const index = new SuperBlobCoreIndex(buffer, n);
 			index.type = type;
 			index.offset = pc;
