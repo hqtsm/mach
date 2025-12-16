@@ -90,21 +90,21 @@ Deno.test('get', () => {
 
 Deno.test('size', () => {
 	const maker = new ExampleMaker();
-	assertEquals(maker.size(), 12);
-	assertEquals(maker.make().length(), maker.size());
+	assertEquals(maker.size([]), 12);
+	assertEquals(maker.make().length(), maker.size([]));
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	const blob = BlobWrapper.alloc(data, data.byteLength);
 	maker.add(1, blob);
-	assertEquals(maker.size(), 36);
-	assertEquals(maker.make().length(), maker.size());
+	assertEquals(maker.size([]), 36);
+	assertEquals(maker.make().length(), maker.size([]));
 	maker.add(1, blob);
-	assertEquals(maker.size(), 36);
-	assertEquals(maker.make().length(), maker.size());
+	assertEquals(maker.size([]), 36);
+	assertEquals(maker.make().length(), maker.size([]));
 	maker.add(2, blob);
-	assertEquals(maker.size(), 60);
-	assertEquals(maker.make().length(), maker.size());
+	assertEquals(maker.size([]), 60);
+	assertEquals(maker.make().length(), maker.size([]));
 	assertEquals(maker.size([4, 8]), 88);
-	assertEquals(maker.make().length(), maker.size());
+	assertEquals(maker.make().length(), maker.size([]));
 	assertEquals(maker.size([4, 8], 4, 8), 116);
-	assertEquals(maker.make().length(), maker.size());
+	assertEquals(maker.make().length(), maker.size([]));
 });

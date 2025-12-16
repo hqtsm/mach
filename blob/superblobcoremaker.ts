@@ -1,7 +1,8 @@
 import { type Class, type Concrete, constant, toStringTag } from '@hqtsm/class';
-import { dataView } from '@hqtsm/struct';
 import { BlobCore } from './blobcore.ts';
 import { SuperBlob } from './superblob.ts';
+import { SuperBlobCore } from './superblobcore.ts';
+import { SuperBlobCoreIndex } from './superblobcoreindex.ts';
 
 /**
  * Instance type for SuperBlobCoreMaker.
@@ -65,26 +66,45 @@ export abstract class SuperBlobCoreMaker {
 		type: number | SuperBlob | SuperBlobCoreMaker,
 		blob?: BlobCore,
 	): void {
-		if (blob !== undefined) {
+		if (typeof type === 'number') {
 			this.mPieces.set(
-				type as number,
-				new BlobCore(blob.buffer, blob.byteOffset, blob.littleEndian),
+				type,
+				new BlobCore(
+					blob!.buffer,
+					blob!.byteOffset,
+					blob!.littleEndian,
+				),
 			);
 			return;
 		}
 
-		if ('mPieces' in (type as SuperBlobCoreMaker)) {
-			for (const [t, b] of (type as SuperBlobCoreMaker).mPieces) {
-				this.add(t, b.clone()!);
+		if ('mPieces' in type) {
+			for (const [t, b] of type.mPieces) {
+				SuperBlobCoreMaker.prototype.add.call<
+					SuperBlobCoreMaker,
+					[number, BlobCore],
+					void
+				>(
+					this,
+					t,
+					BlobCore.prototype.clone.call(b)!,
+				);
 			}
 			return;
 		}
 
-		const count = (type as SuperBlob).count();
+		const count = SuperBlob.prototype.count.call(type);
 		for (let i = 0; i < count; i++) {
-			this.add(
-				(type as SuperBlob).type(i),
-				(type as SuperBlob).blob(i)!.clone()!,
+			SuperBlobCoreMaker.prototype.add.call<
+				SuperBlobCoreMaker,
+				[number, BlobCore],
+				void
+			>(
+				this,
+				SuperBlob.prototype.type.call(type, i),
+				BlobCore.prototype.clone.call(
+					SuperBlob.prototype.blob.call(type, i)!,
+				)!,
 			);
 		}
 	}
@@ -116,24 +136,24 @@ export abstract class SuperBlobCoreMaker {
 	 * @param size1 Additional blob sizes.
 	 * @returns Byte length.
 	 */
-	public size(sizes?: Iterable<number>, ...size1: number[]): number {
+	public size(sizes: Iterable<number>, ...size1: number[]): number {
 		let count = 0;
 		let total = 0;
-		for (const [, blob] of this.mPieces) {
+		for (const blob of this.mPieces.values()) {
 			count++;
-			total += blob.length();
+			total += BlobCore.prototype.length.call<BlobCore, [], number>(blob);
 		}
-		if (sizes) {
-			for (const s of sizes) {
-				count++;
-				total += s;
-			}
+		for (const s of sizes) {
+			count++;
+			total += s;
 		}
 		for (const s of size1) {
 			count++;
 			total += s;
 		}
-		return SuperBlob.BYTE_LENGTH + count * 8 + total;
+		return SuperBlobCore.BYTE_LENGTH +
+			count * SuperBlobCoreIndex.BYTE_LENGTH +
+			total;
 	}
 
 	/**
@@ -146,28 +166,26 @@ export abstract class SuperBlobCoreMaker {
 		this: SuperBlobCoreMakerThis<this>,
 	): SuperBlobCoreMakerBlobType<this> {
 		const { mPieces } = this;
-		const size = this.size();
 		const count = mPieces.size;
-		const buffer = new ArrayBuffer(size);
+		let n = SuperBlobCore.BYTE_LENGTH;
+		let pc = n + count * SuperBlobCoreIndex.BYTE_LENGTH;
+		const total = SuperBlobCoreMaker.prototype.size.call(this, []);
+		const buffer = new ArrayBuffer(total);
 		const data = new Uint8Array(buffer);
-		const view = dataView(buffer);
-		const sb = new this.constructor.SuperBlob(buffer);
-		sb.setup(size, count);
-		let o1 = SuperBlob.BYTE_LENGTH;
-		let o2 = o1 + count * 8;
+		const result = new this.constructor.SuperBlob(buffer);
+		result.setup(total, count);
 		const types = [...mPieces.keys()].sort((a, b) => a - b);
 		for (const type of types) {
-			view.setUint32(o1, type);
-			o1 += 4;
-			view.setUint32(o1, o2);
-			o1 += 4;
+			const index = new SuperBlobCoreIndex(buffer, n);
+			index.type = type;
+			index.offset = pc;
 			const p = mPieces.get(type)!;
-			const { buffer, byteOffset } = p;
-			const l = p.length();
-			data.set(new Uint8Array(buffer, byteOffset, l), o2);
-			o2 += l;
+			const l = BlobCore.prototype.length.call<BlobCore, [], number>(p);
+			data.set(new Uint8Array(p.buffer, p.byteOffset, l), pc);
+			pc += l;
+			n += index.byteLength;
 		}
-		return sb;
+		return result;
 	}
 
 	/**
