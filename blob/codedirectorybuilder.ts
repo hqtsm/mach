@@ -136,7 +136,8 @@ export class CodeDirectoryBuilder {
 	 */
 	constructor(digestAlgorithm: number) {
 		this.mHashType = digestAlgorithm;
-		this.mDigestLength = this.getHash().digestLength();
+		this.mDigestLength = CodeDirectoryBuilder.prototype.getHash.call(this)
+			.digestLength();
 	}
 
 	/**
@@ -189,7 +190,7 @@ export class CodeDirectoryBuilder {
 	public reopen(file: Reader, offset: number, length: number): void {
 		offset = (+offset || 0) - (offset % 1 || 0);
 		length = (+length || 0) - (length % 1 || 0);
-		if (!this.opened()) {
+		if (!CodeDirectoryBuilder.prototype.opened.call(this)) {
 			throw new Error('Executable not open');
 		}
 		this.mExec = file;
@@ -217,7 +218,12 @@ export class CodeDirectoryBuilder {
 		data: ArrayBufferLike | ArrayBufferView,
 	): Promise<void> {
 		slot = specialSlot(slot);
-		this.mSpecial.set(slot, await this.getHash().digest(data));
+		this.mSpecial.set(
+			slot,
+			await CodeDirectoryBuilder.prototype.getHash.call(this).digest(
+				data,
+			),
+		);
 		if (slot > this.mSpecialSlots) {
 			this.mSpecialSlots = slot;
 		}
@@ -375,7 +381,7 @@ export class CodeDirectoryBuilder {
 			mDigestLength,
 			mGeneratePreEncryptHashes,
 		} = this;
-		let size = this.fixedSize(version);
+		let size = CodeDirectoryBuilder.prototype.fixedSize.call(this, version);
 		if (!(version < CodeDirectory.supportsScatter)) {
 			size += this.mScatterSize;
 		}
@@ -400,7 +406,7 @@ export class CodeDirectoryBuilder {
 	 * @returns CodeDirectory instance.
 	 */
 	public async build(version: number | null = null): Promise<CodeDirectory> {
-		version ??= this.minVersion();
+		version ??= CodeDirectoryBuilder.prototype.minVersion.call(this);
 		const {
 			mExec,
 			mExecOffset,
@@ -418,7 +424,7 @@ export class CodeDirectoryBuilder {
 		if (!mExec) {
 			throw new Error('Executable not open');
 		}
-		const size = this.size(version);
+		const size = CodeDirectoryBuilder.prototype.size.call(this, version);
 		const buffer = new ArrayBuffer(size);
 		const data = new Uint8Array(buffer);
 		const dir = new CodeDirectory(buffer);
@@ -448,7 +454,10 @@ export class CodeDirectoryBuilder {
 		if (!(version < CodeDirectory.supportsPreEncrypt)) {
 			dir.runtime = this.mRuntimeVersion;
 		}
-		let offset = this.fixedSize(version);
+		let offset = CodeDirectoryBuilder.prototype.fixedSize.call(
+			this,
+			version,
+		);
 		if (mScatter && !(version < CodeDirectory.supportsScatter)) {
 			dir.scatterOffset = offset;
 			data.set(
@@ -477,7 +486,10 @@ export class CodeDirectoryBuilder {
 		}
 		dir.hashOffset = offset + mSpecialSlots * mDigestLength;
 		for (let i = 1; i <= mSpecialSlots; i++) {
-			const hash = this.getSpecialSlot(i);
+			const hash = CodeDirectoryBuilder.prototype.getSpecialSlot.call(
+				this,
+				i,
+			);
 			if (hash) {
 				const slot = dir.getSlotMutable(-i, false)!;
 				new Uint8Array(slot.buffer, slot.byteOffset).set(
@@ -492,7 +504,7 @@ export class CodeDirectoryBuilder {
 			if (mPageSize && thisPage > mPageSize) {
 				thisPage = mPageSize;
 			}
-			const hasher = this.getHash();
+			const hasher = CodeDirectoryBuilder.prototype.getHash.call(this);
 			// deno-lint-ignore no-await-in-loop
 			const hash = await generateHash(hasher, mExec, position, thisPage);
 			const data = new Uint8Array(hash);
