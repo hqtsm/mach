@@ -1,6 +1,6 @@
 import { type Class, toStringTag } from '@hqtsm/class';
 import { dataView } from '@hqtsm/struct';
-import type { RequirementMaker } from './requirementmaker.ts';
+import { RequirementMaker } from './requirementmaker.ts';
 import { RequirementMakerLabel } from './requirementmakerlabel.ts';
 
 /**
@@ -44,7 +44,7 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	 */
 	public add(): void {
 		if (this.mCount++) {
-			const p = this.maker.insert(this);
+			const p = RequirementMaker.prototype.insert.call(this.maker, this);
 			dataView(p.buffer).setUint32(p.byteOffset, this.mJoiner);
 		}
 	}
