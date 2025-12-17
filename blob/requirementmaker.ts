@@ -39,13 +39,13 @@ export class RequirementMaker {
 	/**
 	 * Maker constructor.
 	 *
-	 * @param kind Kind.
+	 * @param k Kind.
 	 */
-	constructor(kind: number) {
+	constructor(k: number) {
 		const buffer = new ArrayBuffer(1024);
 		const r = new Requirement(buffer);
 		r.initializeLength();
-		r.kind(kind);
+		r.kind(k);
 		this.mBuffer = buffer;
 		this.mPC = r.byteLength;
 	}
@@ -58,7 +58,7 @@ export class RequirementMaker {
 	 */
 	public alloc(size: number): Uint8Array<ArrayBuffer> {
 		const usedSize = alignUp(size, Requirement.baseAlignment);
-		this.require(usedSize);
+		RequirementMaker.prototype.require.call(this, usedSize);
 		const a = new Uint8Array(this.mBuffer, this.mPC, size);
 		this.mPC += usedSize;
 		return a;
@@ -71,7 +71,7 @@ export class RequirementMaker {
 	 */
 	public put(data: ArrayBufferLike | ArrayBufferView | number): void {
 		if (typeof data === 'number') {
-			const a = this.alloc(4);
+			const a = RequirementMaker.prototype.alloc.call(this, 4);
 			dataView(a.buffer).setUint32(a.byteOffset, data);
 		} else {
 			const d = 'buffer' in data
@@ -81,7 +81,7 @@ export class RequirementMaker {
 					data.byteLength,
 				)
 				: new Uint8Array(data);
-			this.alloc(d.byteLength).set(d);
+			RequirementMaker.prototype.alloc.call(this, d.byteLength).set(d);
 		}
 	}
 
@@ -117,22 +117,22 @@ export class RequirementMaker {
 				length ?? (data as ArrayBufferView).byteLength,
 			)
 			: new Uint8Array(data);
-		this.put(d.byteLength);
-		this.put(d);
+		RequirementMaker.prototype.put.call(this, d.byteLength);
+		RequirementMaker.prototype.put.call(this, d);
 	}
 
 	/**
 	 * Anchor Apple.
 	 */
 	public anchor(): void {
-		this.put(opAppleAnchor);
+		RequirementMaker.prototype.put.call(this, opAppleAnchor);
 	}
 
 	/**
 	 * Anchor Apple generic.
 	 */
 	public anchorGeneric(): void {
-		this.put(opAppleGenericAnchor);
+		RequirementMaker.prototype.put.call(this, opAppleGenericAnchor);
 	}
 
 	/**
@@ -142,10 +142,14 @@ export class RequirementMaker {
 	 * @param digest SHA1 digest.
 	 */
 	public anchorDigest(slot: number, digest: ArrayBufferPointer): void {
-		this.put(opAnchorHash);
-		this.put(slot);
+		RequirementMaker.prototype.put.call(this, opAnchorHash);
+		RequirementMaker.prototype.put.call(this, slot);
 		// SHA1 digest length:
-		this.putData(digest, 20);
+		RequirementMaker.prototype.putData.call<
+			RequirementMaker,
+			[ArrayBufferPointer, number],
+			void
+		>(this, digest, 20);
 	}
 
 	/**
@@ -155,10 +159,10 @@ export class RequirementMaker {
 	 */
 	public trustedAnchor(slot: number | null = null): void {
 		if (slot === null) {
-			this.put(opTrustedCerts);
+			RequirementMaker.prototype.put.call(this, opTrustedCerts);
 		} else {
-			this.put(opTrustedCert);
-			this.put(slot);
+			RequirementMaker.prototype.put.call(this, opTrustedCert);
+			RequirementMaker.prototype.put.call(this, slot);
 		}
 	}
 
@@ -172,9 +176,9 @@ export class RequirementMaker {
 		key: ArrayBufferLike | ArrayBufferView,
 		value: ArrayBufferLike | ArrayBufferView,
 	): void {
-		this.put(opInfoKeyValue);
-		this.putData(key);
-		this.putData(value);
+		RequirementMaker.prototype.put.call(this, opInfoKeyValue);
+		RequirementMaker.prototype.putData.call(this, key);
+		RequirementMaker.prototype.putData.call(this, value);
 	}
 
 	/**
@@ -183,8 +187,8 @@ export class RequirementMaker {
 	 * @param identifier Identifier string.
 	 */
 	public ident(identifier: ArrayBufferLike | ArrayBufferView): void {
-		this.put(opIdent);
-		this.putData(identifier);
+		RequirementMaker.prototype.put.call(this, opIdent);
+		RequirementMaker.prototype.putData.call(this, identifier);
 	}
 
 	/**
@@ -193,8 +197,8 @@ export class RequirementMaker {
 	 * @param digest Hash digest.
 	 */
 	public cdhash(digest: ArrayBufferLike | ArrayBufferView): void {
-		this.put(opCDHash);
-		this.putData(digest);
+		RequirementMaker.prototype.put.call(this, opCDHash);
+		RequirementMaker.prototype.putData.call(this, digest);
 	}
 
 	/**
@@ -203,8 +207,8 @@ export class RequirementMaker {
 	 * @param platformIdentifier Platform identifier.
 	 */
 	public platform(platformIdentifier: number): void {
-		this.put(opPlatform);
-		this.put(platformIdentifier);
+		RequirementMaker.prototype.put.call(this, opPlatform);
+		RequirementMaker.prototype.put.call(this, platformIdentifier);
 	}
 
 	/**
@@ -234,16 +238,34 @@ export class RequirementMaker {
 	): void {
 		if (length === undefined) {
 			const req = data as Const<Requirement>;
-			const Requirement = req.constructor;
-			const kind = req.kind();
-			if (kind !== Requirement.exprForm) {
+			const Req = req.constructor;
+			const kind = Requirement.prototype.kind.call<
+				Const<Requirement>,
+				[],
+				number
+			>(req);
+			if (kind !== Req.exprForm) {
 				throw new RangeError(`Unsupported requirement kind: ${kind}`);
 			}
-			const { BYTE_LENGTH } = Requirement;
-			this.copy(req.at(Ptr, BYTE_LENGTH), req.length() - BYTE_LENGTH);
+			const { BYTE_LENGTH } = Req;
+			RequirementMaker.prototype.copy.call<
+				RequirementMaker,
+				[ArrayBufferPointer, number],
+				void
+			>(
+				this,
+				(Requirement.prototype.at<Ptr>).call(req, Ptr, BYTE_LENGTH),
+				Requirement.prototype.length.call<
+					Const<Requirement>,
+					[],
+					number
+				>(
+					req,
+				) - BYTE_LENGTH,
+			);
 		} else {
 			const d = new Uint8Array(data.buffer, data.byteOffset, length);
-			this.alloc(d.byteLength).set(d);
+			RequirementMaker.prototype.alloc.call(this, d.byteLength).set(d);
 		}
 	}
 
@@ -257,7 +279,7 @@ export class RequirementMaker {
 	public insert(label: Const<RequirementMakerLabel>, length = 4): Ptr {
 		const { pos } = label;
 		const req = new Requirement(this.mBuffer);
-		this.require(length);
+		RequirementMaker.prototype.require.call(this, length);
 		const len = this.mPC - pos;
 		const reqDest = req.at(Ptr, pos + length);
 		const reqSrc = req.at(Ptr, pos);
