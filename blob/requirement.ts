@@ -12,7 +12,34 @@ export class Requirement extends Blob {
 	/**
 	 * Requirement kind.
 	 */
-	declare public kind: number;
+	declare private mKind: number;
+
+	/**
+	 * Get kind.
+	 *
+	 * @returns Kind.
+	 */
+	public kind(): number;
+
+	/**
+	 * Set kind.
+	 *
+	 * @param k Kind.
+	 */
+	public kind(k: number): void;
+
+	/**
+	 * Get or set kind.
+	 *
+	 * @param k Kind to set or undefined to get.
+	 * @returns Kind on get or undefined on set.
+	 */
+	public kind(k?: number | undefined): number | void {
+		if (k === undefined) {
+			return this.mKind;
+		}
+		this.mKind = k >>> 0;
+	}
 
 	public static override readonly typeMagic = kSecCodeMagicRequirement;
 
@@ -33,7 +60,7 @@ export class Requirement extends Blob {
 
 	static {
 		toStringTag(this, 'Requirement');
-		uint32BE(this, 'kind');
+		uint32BE(this, 'mKind' as never);
 		constant(this, 'BYTE_LENGTH');
 		constant(this, 'typeMagic');
 		constant(this, 'baseAlignment');
