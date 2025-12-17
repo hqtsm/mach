@@ -162,7 +162,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Code limit.
 	 */
 	public signingLimit(): bigint {
-		if (this.version >= this.constructor.supportsCodeLimit64) {
+		if (this.version >= CodeDirectory.supportsCodeLimit64) {
 			const { codeLimit64 } = this;
 			if (codeLimit64) {
 				return codeLimit64;
@@ -183,7 +183,7 @@ export class CodeDirectory extends Blob {
 		let offset;
 		if (preEncrypt) {
 			if (
-				this.version < this.constructor.supportsPreEncrypt ||
+				this.version < CodeDirectory.supportsPreEncrypt ||
 				!(offset = this.preEncryptOffset)
 			) {
 				return null;
@@ -219,7 +219,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Scatter pointer, or null.
 	 */
 	public scatterVector(): Ptr<CodeDirectoryScatter> | null {
-		if (this.version >= this.constructor.supportsScatter) {
+		if (this.version >= CodeDirectory.supportsScatter) {
 			const { scatterOffset } = this;
 			if (scatterOffset) {
 				return new (pointer(CodeDirectoryScatter))(
@@ -238,7 +238,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Char pointer, or null.
 	 */
 	public teamID(): Int8Ptr | null {
-		if (this.version >= this.constructor.supportsTeamID) {
+		if (this.version >= CodeDirectory.supportsTeamID) {
 			const { teamIDOffset } = this;
 			if (teamIDOffset) {
 				return new Int8Ptr(
@@ -257,7 +257,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset, zero if not supported.
 	 */
 	public execSegmentBase(): bigint {
-		if (this.version >= this.constructor.supportsExecSegment) {
+		if (this.version >= CodeDirectory.supportsExecSegment) {
 			return this.execSegBase;
 		}
 		return 0n;
@@ -269,7 +269,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte length, zero if not supported.
 	 */
 	public execSegmentLimit(): bigint {
-		if (this.version >= this.constructor.supportsExecSegment) {
+		if (this.version >= CodeDirectory.supportsExecSegment) {
 			return this.execSegLimit;
 		}
 		return 0n;
@@ -281,7 +281,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Flags, zero if not supported.
 	 */
 	public execSegmentFlags(): bigint {
-		if (this.version >= this.constructor.supportsExecSegment) {
+		if (this.version >= CodeDirectory.supportsExecSegment) {
 			return this.execSegFlags;
 		}
 		return 0n;
@@ -293,7 +293,7 @@ export class CodeDirectory extends Blob {
 	 * @returns Version, zero if not supported.
 	 */
 	public runtimeVersion(): number {
-		if (this.version >= this.constructor.supportsPreEncrypt) {
+		if (this.version >= CodeDirectory.supportsPreEncrypt) {
 			return this.runtime;
 		}
 		return 0;
