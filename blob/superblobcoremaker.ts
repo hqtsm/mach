@@ -94,8 +94,8 @@ export abstract class SuperBlobCoreMaker {
 		}
 
 		const mIndex = type['mIndex'];
-		const count = type['mCount'];
-		for (let ix = 0; ix < count; ix++) {
+		const mCount = type['mCount'];
+		for (let ix = 0; ix < mCount; ix++) {
 			SuperBlobCoreMaker.prototype.add.call<
 				SuperBlobCoreMaker,
 				[number, BlobCore],
