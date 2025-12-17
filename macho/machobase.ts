@@ -186,7 +186,11 @@ export class MachOBase {
 	 * @returns Load command or null.
 	 */
 	public findCommand(cmd: number): Const<LoadCommand> | null {
-		for (let c = this.loadCommands(); c; c = this.nextCommand(c)) {
+		for (
+			let c = MachOBase.prototype.loadCommands.call(this);
+			c;
+			c = MachOBase.prototype.nextCommand.call(this, c)
+		) {
 			if (c.cmd === cmd) {
 				return c;
 			}
@@ -213,7 +217,11 @@ export class MachOBase {
 		}
 		const sn = new Int8Ptr(buffer, byteOffset);
 		let SC: typeof SegmentCommand | typeof SegmentCommand64 | null;
-		for (let c = this.loadCommands(); c; c = this.nextCommand(c)) {
+		for (
+			let c = MachOBase.prototype.loadCommands.call(this);
+			c;
+			c = MachOBase.prototype.nextCommand.call(this, c)
+		) {
 			switch (c.cmd) {
 				case LC_SEGMENT: {
 					SC = SegmentCommand;
@@ -249,7 +257,7 @@ export class MachOBase {
 		segname: ArrayBufferLike | ArrayBufferPointer,
 		sectname: ArrayBufferLike | ArrayBufferPointer,
 	): Const<Section> | Const<Section64> | null {
-		const seg = this.findSegment(segname);
+		const seg = MachOBase.prototype.findSegment.call(this, segname);
 		if (!seg) {
 			return null;
 		}
@@ -309,7 +317,10 @@ export class MachOBase {
 	 * @returns Code signature command or null.
 	 */
 	public findCodeSignature(): Const<LinkeditDataCommand> | null {
-		const cmd = this.findCommand(LC_CODE_SIGNATURE);
+		const cmd = MachOBase.prototype.findCommand.call(
+			this,
+			LC_CODE_SIGNATURE,
+		);
 		if (!cmd) {
 			return null;
 		}
@@ -329,7 +340,10 @@ export class MachOBase {
 	 * @returns Code signing DRs command or null.
 	 */
 	public findLibraryDependencies(): Const<LinkeditDataCommand> | null {
-		const cmd = this.findCommand(LC_DYLIB_CODE_SIGN_DRS);
+		const cmd = MachOBase.prototype.findCommand.call(
+			this,
+			LC_DYLIB_CODE_SIGN_DRS,
+		);
 		if (!cmd) {
 			return null;
 		}
@@ -349,7 +363,7 @@ export class MachOBase {
 	 * @returns Code signature offset, or 0.
 	 */
 	public signingOffset(): number {
-		const lec = this.findCodeSignature();
+		const lec = MachOBase.prototype.findCodeSignature.call(this);
 		return lec ? lec.dataoff : 0;
 	}
 
@@ -359,7 +373,7 @@ export class MachOBase {
 	 * @returns Code signature length, or 0.
 	 */
 	public signingLength(): number {
-		const lec = this.findCodeSignature();
+		const lec = MachOBase.prototype.findCodeSignature.call(this);
 		return lec ? lec.datasize : 0;
 	}
 
@@ -376,7 +390,7 @@ export class MachOBase {
 		minVersion: Uint32Ptr | null,
 		sdkVersion: Uint32Ptr | null,
 	): boolean {
-		const bc = this.findBuildVersion();
+		const bc = MachOBase.prototype.findBuildVersion.call(this);
 		if (bc) {
 			if (platform) {
 				platform[0] = bc.platform;
@@ -390,7 +404,7 @@ export class MachOBase {
 			return true;
 		}
 
-		const vc = this.findMinVersion();
+		const vc = MachOBase.prototype.findMinVersion.call(this);
 		if (vc) {
 			if (platform) {
 				let pf;
@@ -436,7 +450,7 @@ export class MachOBase {
 	 */
 	public platform(): number {
 		const p = new Uint32Ptr(new ArrayBuffer(4));
-		return this.version(p, null, null) ? p[0] : 0;
+		return MachOBase.prototype.version.call(this, p, null, null) ? p[0] : 0;
 	}
 
 	/**
@@ -446,7 +460,7 @@ export class MachOBase {
 	 */
 	public minVersion(): number {
 		const p = new Uint32Ptr(new ArrayBuffer(4));
-		return this.version(null, p, null) ? p[0] : 0;
+		return MachOBase.prototype.version.call(this, null, p, null) ? p[0] : 0;
 	}
 
 	/**
@@ -456,7 +470,7 @@ export class MachOBase {
 	 */
 	public sdkVersion(): number {
 		const p = new Uint32Ptr(new ArrayBuffer(4));
-		return this.version(null, null, p) ? p[0] : 0;
+		return MachOBase.prototype.version.call(this, null, null, p) ? p[0] : 0;
 	}
 
 	/**
@@ -560,7 +574,11 @@ export class MachOBase {
 	 * @returns Minimum version command or null.
 	 */
 	protected findMinVersion(): Const<VersionMinCommand> | null {
-		for (let c = this.loadCommands(); c; c = this.nextCommand(c)) {
+		for (
+			let c = MachOBase.prototype.loadCommands.call(this);
+			c;
+			c = MachOBase.prototype.nextCommand.call(this, c)
+		) {
 			switch (c.cmd) {
 				case LC_VERSION_MIN_MACOSX:
 				case LC_VERSION_MIN_IPHONEOS:
@@ -586,7 +604,11 @@ export class MachOBase {
 	 * @returns Build version command or null.
 	 */
 	protected findBuildVersion(): Const<BuildVersionCommand> | null {
-		for (let c = this.loadCommands(); c; c = this.nextCommand(c)) {
+		for (
+			let c = MachOBase.prototype.loadCommands.call(this);
+			c;
+			c = MachOBase.prototype.nextCommand.call(this, c)
+		) {
 			if (c.cmd === LC_BUILD_VERSION) {
 				if (c.cmdsize < BuildVersionCommand.BYTE_LENGTH) {
 					throw new RangeError('Invalid command size');
