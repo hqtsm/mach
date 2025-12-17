@@ -3,10 +3,10 @@
   "specifiers": {
     "jsr:@david/code-block-writer@^13.0.3": "13.0.3",
     "jsr:@deno/dnt@~0.42.3": "0.42.3",
-    "jsr:@hqtsm/class@^1.2.0": "1.2.0",
+    "jsr:@hqtsm/class@^1.3.0": "1.3.0",
     "jsr:@hqtsm/dataview@2": "2.0.0",
     "jsr:@hqtsm/meek@^2.0.1": "2.0.1",
-    "jsr:@hqtsm/struct@^2.1.2": "2.1.2",
+    "jsr:@hqtsm/struct@^2.1.3": "2.1.3",
     "jsr:@std/assert@^1.0.16": "1.0.16",
     "jsr:@std/fmt@1": "1.0.8",
     "jsr:@std/fs@1": "1.0.19",
@@ -33,8 +33,8 @@
         "jsr:@ts-morph/bootstrap"
       ]
     },
-    "@hqtsm/class@1.2.0": {
-      "integrity": "b15a4dd51946af6a55d5c0cf8a454b329062adb3dec05de383f3091aae65b0a1"
+    "@hqtsm/class@1.3.0": {
+      "integrity": "2a19777a2a74cbade93276f932adaea96bcb4d50e06f858b1fd82b954d6f6969"
     },
     "@hqtsm/dataview@2.0.0": {
       "integrity": "654a84e5553a73b0e9696e44a4d593439bceddf4bb9f5104a5a71ca888b501f6"
@@ -42,8 +42,8 @@
     "@hqtsm/meek@2.0.1": {
       "integrity": "7d87136f8edc9f1885641f8d04116d92a2b658d829f5eca2043b2bd34a6d12f0"
     },
-    "@hqtsm/struct@2.1.2": {
-      "integrity": "22f9bb0061c2e790444709dd498dfa61c249cc55c8d68294d52ee0f188d74cd6",
+    "@hqtsm/struct@2.1.3": {
+      "integrity": "953f26315eca427a172a5ff3ac0d018227ed952262678d10f53ed8af3a35c671",
       "dependencies": [
         "jsr:@hqtsm/class",
         "jsr:@hqtsm/dataview",
@@ -103,8 +103,8 @@
   "workspace": {
     "dependencies": [
       "jsr:@deno/dnt@~0.42.3",
-      "jsr:@hqtsm/class@^1.2.0",
-      "jsr:@hqtsm/struct@^2.1.2",
+      "jsr:@hqtsm/class@^1.3.0",
+      "jsr:@hqtsm/struct@^2.1.3",
       "jsr:@std/assert@^1.0.16"
     ]
   }
