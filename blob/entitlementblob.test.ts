@@ -33,14 +33,17 @@ Deno.test('empty (invalid?)', () => {
 Deno.test('data', () => {
 	const data = new TextEncoder().encode(examplePlist);
 	const eb = new EntitlementBlob(EntitlementBlob.blobify(data));
-	let ptr = eb.body();
-	new Uint8Array(ptr.buffer, ptr.byteOffset).set(data);
+	new Uint8Array(eb.buffer, eb.byteOffset + eb.byteLength)
+		.set(data);
 	const dv = new DataView(eb.buffer, eb.byteOffset, eb.length());
 	assertEquals(dv.getUint32(0), kSecCodeMagicEntitlement);
 	assertEquals(dv.getUint32(4), eb.length());
-	ptr = eb.body();
 	assertEquals(
-		new Uint8Array(ptr.buffer, ptr.byteOffset, eb.bodyLength()),
+		new Uint8Array(
+			eb.buffer,
+			eb.byteOffset + eb.byteLength,
+			eb.length() - eb.byteLength,
+		),
 		data,
 	);
 });

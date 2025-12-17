@@ -1,5 +1,4 @@
 import { type Class, constant, toStringTag } from '@hqtsm/class';
-import { Uint8Ptr } from '@hqtsm/struct';
 import { kSecCodeMagicEntitlement } from '../const.ts';
 import { Blob } from './blob.ts';
 
@@ -8,28 +7,6 @@ import { Blob } from './blob.ts';
  */
 export class EntitlementBlob extends Blob {
 	declare public readonly ['constructor']: Class<typeof EntitlementBlob>;
-
-	/**
-	 * Entitlements data.
-	 *
-	 * @returns Data pointer.
-	 */
-	public body(): Uint8Ptr {
-		return new Uint8Ptr(
-			this.buffer,
-			this.byteOffset + 8,
-			this.littleEndian,
-		);
-	}
-
-	/**
-	 * Entitlements length.
-	 *
-	 * @returns Byte length.
-	 */
-	public bodyLength(): number {
-		return this.length() - 8;
-	}
 
 	public static override readonly typeMagic = kSecCodeMagicEntitlement;
 
