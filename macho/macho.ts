@@ -72,10 +72,10 @@ export class MachO extends MachOBase {
 		if (header.byteLength !== hs) {
 			throw new RangeError('Invalid header');
 		}
-		this.initHeader(header);
+		MachO.prototype.initHeader.call(this, header);
 		offset += hs;
 
-		const fhs = this.headerSize();
+		const fhs = MachO.prototype.headerSize.call(this);
 		const more = fhs - hs;
 		if (more > 0) {
 			const d = await reader.slice(offset, offset + more).arrayBuffer();
@@ -85,19 +85,19 @@ export class MachO extends MachOBase {
 			const full = new Uint8Array(fhs);
 			full.set(new Uint8Array(header));
 			full.set(new Uint8Array(d), hs);
-			this.initHeader(full);
+			MachO.prototype.initHeader.call(this, full);
 			offset += more;
 		}
 
-		const cs = this.commandSize();
+		const cs = MachO.prototype.commandSize.call(this);
 		const commands = await reader.slice(offset, offset + cs).arrayBuffer();
 		if (commands.byteLength !== cs) {
 			throw new RangeError('Invalid commands');
 		}
-		this.initCommands(commands);
+		MachO.prototype.initCommands.call(this, commands);
 
 		if (mLength) {
-			this.validateStructure();
+			MachO.prototype.validateStructure.call(this);
 		}
 		return this;
 	}
@@ -135,7 +135,8 @@ export class MachO extends MachOBase {
 	 * @returns Signing offset or file length if none.
 	 */
 	public signingExtent(): number {
-		return this.signingOffset() || this.length();
+		return MachO.prototype.signingOffset.call(this) ||
+			MachO.prototype.length.call(this);
 	}
 
 	/**
@@ -173,9 +174,9 @@ export class MachO extends MachOBase {
 		}
 
 		LOOP: for (
-			let cmd = this.loadCommands();
+			let cmd = MachO.prototype.loadCommands.call(this);
 			cmd;
-			cmd = this.nextCommand(cmd)
+			cmd = MachO.prototype.nextCommand.call(this, cmd)
 		) {
 			switch (cmd.cmd) {
 				case LC_SEGMENT: {
@@ -194,7 +195,8 @@ export class MachO extends MachOBase {
 							getByteLength(SegmentCommand, 'segname'),
 						)
 					) {
-						isValid = seg.fileoff + seg.filesize === this.length();
+						isValid = seg.fileoff + seg.filesize ===
+							MachO.prototype.length.call(this);
 						break LOOP;
 					}
 					break;
@@ -216,7 +218,7 @@ export class MachO extends MachOBase {
 						)
 					) {
 						isValid = Number(seg64.fileoff + seg64.filesize) ===
-							this.length();
+							MachO.prototype.length.call(this);
 						break LOOP;
 					}
 					break;
@@ -230,7 +232,8 @@ export class MachO extends MachOBase {
 						cmd.byteOffset,
 						cmd.littleEndian,
 					);
-					isValid = symtab.stroff + symtab.strsize === this.length();
+					isValid = symtab.stroff + symtab.strsize ===
+						MachO.prototype.length.call(this);
 					break LOOP;
 				}
 			}
