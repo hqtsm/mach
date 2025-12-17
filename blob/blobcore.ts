@@ -29,6 +29,8 @@ export class BlobCore extends Struct {
 
 	/**
 	 * Magic number.
+	 *
+	 * @returns Magic number.
 	 */
 	public magic(): number {
 		return this.mMagic;
