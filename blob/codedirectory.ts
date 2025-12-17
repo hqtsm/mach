@@ -206,10 +206,7 @@ export class CodeDirectory extends Blob {
 	 * @param preEncrypt Pre-encrypt version.
 	 * @returns Hash value, or null.
 	 */
-	public getSlot(
-		slot: number,
-		preEncrypt: boolean,
-	): Const<Uint8Ptr> | null {
+	public getSlot(slot: number, preEncrypt: boolean): Const<Uint8Ptr> | null {
 		return this.getSlotMutable(slot, preEncrypt);
 	}
 
@@ -257,10 +254,9 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte offset, zero if not supported.
 	 */
 	public execSegmentBase(): bigint {
-		if (this.version >= CodeDirectory.supportsExecSegment) {
-			return this.execSegBase;
-		}
-		return 0n;
+		return this.version >= CodeDirectory.supportsExecSegment
+			? this.execSegBase
+			: 0n;
 	}
 
 	/**
@@ -269,10 +265,9 @@ export class CodeDirectory extends Blob {
 	 * @returns Byte length, zero if not supported.
 	 */
 	public execSegmentLimit(): bigint {
-		if (this.version >= CodeDirectory.supportsExecSegment) {
-			return this.execSegLimit;
-		}
-		return 0n;
+		return this.version >= CodeDirectory.supportsExecSegment
+			? this.execSegLimit
+			: 0n;
 	}
 
 	/**
@@ -281,10 +276,9 @@ export class CodeDirectory extends Blob {
 	 * @returns Flags, zero if not supported.
 	 */
 	public execSegmentFlags(): bigint {
-		if (this.version >= CodeDirectory.supportsExecSegment) {
-			return this.execSegFlags;
-		}
-		return 0n;
+		return this.version >= CodeDirectory.supportsExecSegment
+			? this.execSegFlags
+			: 0n;
 	}
 
 	/**
@@ -293,10 +287,9 @@ export class CodeDirectory extends Blob {
 	 * @returns Version, zero if not supported.
 	 */
 	public runtimeVersion(): number {
-		if (this.version >= CodeDirectory.supportsPreEncrypt) {
-			return this.runtime;
-		}
-		return 0;
+		return this.version >= CodeDirectory.supportsPreEncrypt
+			? this.runtime
+			: 0;
 	}
 
 	public static override readonly typeMagic = kSecCodeMagicCodeDirectory;
