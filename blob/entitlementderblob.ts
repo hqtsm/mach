@@ -1,7 +1,8 @@
 import { type Class, constant, toStringTag } from '@hqtsm/class';
-import { Uint8Ptr } from '@hqtsm/struct';
+import { array, member, Uint8Ptr } from '@hqtsm/struct';
 import { kSecCodeMagicEntitlementDER } from '../const.ts';
 import { Blob } from './blob.ts';
+import { BlobCore } from './blobcore.ts';
 
 /**
  * For embedding entitlement configuration data, in DER format.
@@ -10,14 +11,20 @@ export class EntitlementDERBlob extends Blob {
 	declare public readonly ['constructor']: Class<typeof EntitlementDERBlob>;
 
 	/**
+	 * Data of payload (only).
+	 */
+	declare public readonly dataArea: Uint8Ptr;
+
+	/**
 	 * DER data.
 	 *
 	 * @returns Data pointer.
 	 */
 	public der(): Uint8Ptr {
+		const { dataArea } = this;
 		return new Uint8Ptr(
-			this.buffer,
-			this.byteOffset + 8,
+			dataArea.buffer,
+			dataArea.byteOffset,
 			this.littleEndian,
 		);
 	}
@@ -28,13 +35,16 @@ export class EntitlementDERBlob extends Blob {
 	 * @returns Byte length.
 	 */
 	public derLength(): number {
-		return this.length() - 8;
+		return BlobCore.prototype.length.call<BlobCore, [], number>(this) -
+			BlobCore.BYTE_LENGTH;
 	}
 
 	public static override readonly typeMagic = kSecCodeMagicEntitlementDER;
 
 	static {
 		toStringTag(this, 'EntitlementDERBlob');
+		member(array(Uint8Ptr, 0), this, 'dataArea' as never);
+		constant(this, 'BYTE_LENGTH');
 		constant(this, 'typeMagic');
 	}
 }
