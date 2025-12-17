@@ -58,23 +58,6 @@ class MachOBaseTest extends MachOBase {
 	}
 }
 
-const LC_VERSION_FAKE = 0x12345678;
-
-class MachOBaseTestFMV extends MachOBaseTest {
-	protected override findMinVersion(): Const<VersionMinCommand> | null {
-		for (let c = this.loadCommands(); c; c = this.nextCommand(c)) {
-			if (c.cmd === LC_VERSION_FAKE) {
-				return new VersionMinCommand(
-					c.buffer,
-					c.byteOffset,
-					c.littleEndian,
-				);
-			}
-		}
-		return super.findMinVersion();
-	}
-}
-
 const findCommands = [
 	['findCodeSignature', LinkeditDataCommand, LC_CODE_SIGNATURE],
 	['findLibraryDependencies', LinkeditDataCommand, LC_DYLIB_CODE_SIGN_DRS],
@@ -481,16 +464,30 @@ Deno.test('find version', () => {
 	assertEquals(macho.sdkVersion(), 45);
 
 	// Testing the default case if findMinVersion returns something not cased.
-	const machoFMV = new MachOBaseTestFMV();
-	machoFMV.initHeader(header);
-	machoFMV.initCommands(commands);
-
-	commandB.cmd = LC_VERSION_FAKE;
+	// The default case should be unreachable.
+	commandB.cmd = 0x12345678;
 	p[0] = 1;
-
-	assertEquals(machoFMV.platform(), 0);
-	assertEquals(machoFMV.version(p, null, null), true);
-	assertEquals(p[0], 0);
+	const desc = Object.getOwnPropertyDescriptor(
+		MachOBase.prototype,
+		'findMinVersion',
+	)!;
+	Object.defineProperty(MachOBase.prototype, 'findMinVersion', {
+		...desc,
+		value: function findMinVersion(): Const<VersionMinCommand> | null {
+			return new VersionMinCommand(
+				commandB.buffer,
+				commandB.byteOffset,
+				commandB.littleEndian,
+			);
+		},
+	});
+	try {
+		assertEquals(macho.platform(), 0);
+		assertEquals(macho.version(p, null, null), true);
+		assertEquals(p[0], 0);
+	} finally {
+		Object.defineProperty(MachOBase.prototype, 'findMinVersion', desc);
+	}
 });
 
 Deno.test('signingOffset signingLength', () => {
