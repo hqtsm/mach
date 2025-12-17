@@ -264,18 +264,21 @@ export class Universal {
 	 */
 	public async architecture(a: Const<Architecture> | number): Promise<MachO> {
 		if (typeof a === 'number') {
-			if (this.isUniversal()) {
-				const length = this.lengthOfSlice(a);
-				return this.make(await MachO.MachO(this.mReader!, a, length));
+			if (Universal.prototype.isUniversal.call(this)) {
+				const length = Universal.prototype.lengthOfSlice.call(this, a);
+				return Universal.prototype.make.call(
+					this,
+					await MachO.MachO(this.mReader!, a, length),
+				);
 			}
 			if (a === this.mBase) {
 				return MachO.MachO(this.mReader!);
 			}
 		} else {
-			if (this.isUniversal()) {
-				return this.findImage(a);
+			if (Universal.prototype.isUniversal.call(this)) {
+				return Universal.prototype.findImage.call(this, a);
 			}
-			if (this.mThinArch!.matches(a)) {
+			if (Architecture.prototype.matches.call(a, this.mThinArch!)) {
 				return MachO.MachO(this.mReader!, this.mBase, this.mLength);
 			}
 		}
@@ -289,10 +292,11 @@ export class Universal {
 	 * @returns Architecture offset.
 	 */
 	public archOffset(arch: Const<Architecture>): number {
-		if (this.isUniversal()) {
-			return this.mBase + this.findArch(arch).offset;
+		if (Universal.prototype.isUniversal.call(this)) {
+			return this.mBase +
+				Universal.prototype.findArch.call(this, arch).offset;
 		}
-		if (this.mThinArch!.matches(arch)) {
+		if (Architecture.prototype.matches.call(this.mThinArch!, arch)) {
 			return 0;
 		}
 		throw new RangeError('Architecture not found');
@@ -305,10 +309,10 @@ export class Universal {
 	 * @returns Architecture length.
 	 */
 	public archLength(arch: Const<Architecture>): number {
-		if (this.isUniversal()) {
+		if (Universal.prototype.isUniversal.call(this)) {
 			return this.mBase + this.findArch(arch).size;
 		}
-		if (this.mThinArch!.matches(arch)) {
+		if (Architecture.prototype.matches.call(this.mThinArch!, arch)) {
 			return this.mReader!.size;
 		}
 		throw new RangeError('Architecture not found');
@@ -333,7 +337,7 @@ export class Universal {
 		for (const a of archs) {
 			skip.add(`${a.first}:${a.second}`);
 		}
-		if (this.isUniversal()) {
+		if (Universal.prototype.isUniversal.call(this)) {
 			const mArchList = this.mArchList!;
 			for (let i = 0; i < this.mArchCount; i++) {
 				const { cputype, cpusubtype } = mArchList[i];
@@ -410,8 +414,9 @@ export class Universal {
 		for (let i = 0; i < mArchCount; i++) {
 			const a = mArchList![i];
 			if (
-				a.cputype === arch.cpuType() &&
-				a.cpusubtype === arch.cpuSubtypeFull()
+				a.cputype === Architecture.prototype.cpuType.call(arch) &&
+				a.cpusubtype ===
+					Architecture.prototype.cpuSubtypeFull.call(arch)
 			) {
 				return a;
 			}
@@ -419,8 +424,9 @@ export class Universal {
 		for (let i = 0; i < mArchCount; i++) {
 			const a = mArchList![i];
 			if (
-				a.cputype === arch.cpuType() &&
-				(a.cpusubtype & ~CPU_SUBTYPE_MASK) === arch.cpuSubtype()
+				a.cputype === Architecture.prototype.cpuType.call(arch) &&
+				(a.cpusubtype & ~CPU_SUBTYPE_MASK) ===
+					Architecture.prototype.cpuSubtype.call(arch)
 			) {
 				return a;
 			}
@@ -428,7 +434,7 @@ export class Universal {
 		for (let i = 0; i < mArchCount; i++) {
 			const a = mArchList![i];
 			if (
-				a.cputype === arch.cpuType() &&
+				a.cputype === Architecture.prototype.cpuType.call(arch) &&
 				!(a.cpusubtype & ~CPU_SUBTYPE_MASK)
 			) {
 				return a;
@@ -436,7 +442,7 @@ export class Universal {
 		}
 		for (let i = 0; i < mArchCount; i++) {
 			const a = mArchList![i];
-			if (a.cputype === arch.cpuType()) {
+			if (a.cputype === Architecture.prototype.cpuType.call(arch)) {
 				return a;
 			}
 		}
@@ -450,7 +456,7 @@ export class Universal {
 	 * @returns Mach-O image.
 	 */
 	private async findImage(target: Const<Architecture>): Promise<MachO> {
-		const arch = this.findArch(target);
+		const arch = Universal.prototype.findArch.call(this, target);
 		return this.make(
 			await MachO.MachO(
 				this.mReader!,
