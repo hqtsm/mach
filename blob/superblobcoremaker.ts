@@ -93,17 +93,18 @@ export abstract class SuperBlobCoreMaker {
 			return;
 		}
 
-		const count = SuperBlob.prototype.count.call(type);
-		for (let i = 0; i < count; i++) {
+		const mIndex = type['mIndex'];
+		const count = type['mCount'];
+		for (let ix = 0; ix < count; ix++) {
 			SuperBlobCoreMaker.prototype.add.call<
 				SuperBlobCoreMaker,
 				[number, BlobCore],
 				void
 			>(
 				this,
-				SuperBlob.prototype.type.call(type, i),
+				mIndex[ix].type,
 				BlobCore.prototype.clone.call(
-					SuperBlob.prototype.blob.call(type, i)!,
+					SuperBlob.prototype.blob.call(type, ix)!,
 				)!,
 			);
 		}
@@ -167,22 +168,24 @@ export abstract class SuperBlobCoreMaker {
 	): SuperBlobCoreMakerBlobType<this> {
 		const { mPieces } = this;
 		const count = mPieces.size;
-		let n = SuperBlobCore.BYTE_LENGTH;
-		let pc = n + count * SuperBlobCoreIndex.BYTE_LENGTH;
 		const total = SuperBlobCoreMaker.prototype.size.call(this, []);
 		const buffer = new ArrayBuffer(total);
 		const data = new Uint8Array(buffer);
 		const result = new this.constructor.SuperBlob(buffer);
+		const mIndex = result['mIndex'];
 		result.setup(total, count);
+		let pc = SuperBlobCore.BYTE_LENGTH +
+			count * SuperBlobCoreIndex.BYTE_LENGTH;
+		let n = 0;
 		for (const type of [...mPieces.keys()].sort((a, b) => a - b)) {
-			const index = new SuperBlobCoreIndex(buffer, n);
+			const index = mIndex[n];
 			index.type = type;
 			index.offset = pc;
 			const p = mPieces.get(type)!;
 			const l = BlobCore.prototype.length.call<BlobCore, [], number>(p);
 			data.set(new Uint8Array(p.buffer, p.byteOffset, l), pc);
 			pc += l;
-			n += index.byteLength;
+			n++;
 		}
 		return result;
 	}
