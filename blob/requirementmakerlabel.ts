@@ -1,5 +1,4 @@
 import { type Class, toStringTag } from '@hqtsm/class';
-import type { Const } from '@hqtsm/struct';
 import { RequirementMaker } from './requirementmaker.ts';
 
 /**
@@ -20,7 +19,7 @@ export class RequirementMakerLabel {
 	 *
 	 * @param maker Maker reference.
 	 */
-	constructor(maker: Const<RequirementMaker>) {
+	constructor(maker: RequirementMaker) {
 		this.pos = RequirementMaker.prototype.length.call(maker);
 	}
 

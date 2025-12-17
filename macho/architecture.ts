@@ -1,5 +1,4 @@
 import { type Class, toStringTag } from '@hqtsm/class';
-import type { Const } from '@hqtsm/struct';
 import { CPU_SUBTYPE_MASK, CPU_SUBTYPE_MULTIPLE } from '../const.ts';
 import type { FatArch } from '../mach/fatarch.ts';
 import type { FatArch64 } from '../mach/fatarch64.ts';
@@ -38,10 +37,10 @@ export class Architecture {
 	 *
 	 * @param archInFile FatArch|FatArch64 struct.
 	 */
-	constructor(archInFile: Const<FatArch | FatArch64>);
+	constructor(archInFile: FatArch | FatArch64);
 
 	constructor(
-		type?: number | Const<FatArch | FatArch64>,
+		type?: number | FatArch | FatArch64,
 		sub?: number,
 	) {
 		switch (typeof type) {
@@ -104,7 +103,7 @@ export class Architecture {
 	 * @param arch Architecture to compare.
 	 * @returns Is equal.
 	 */
-	public equals(arch: Const<Architecture>): boolean {
+	public equals(arch: Architecture): boolean {
 		return this.first === arch.first && this.second === arch.second;
 	}
 
@@ -114,7 +113,7 @@ export class Architecture {
 	 * @param arch Architecture to compare.
 	 * @returns Is less than.
 	 */
-	public lessThan(arch: Const<Architecture>): boolean {
+	public lessThan(arch: Architecture): boolean {
 		const x = this.first;
 		const y = arch.first;
 		return x < y || (!(y < x) && this.second < arch.second);
@@ -126,7 +125,7 @@ export class Architecture {
 	 * @param templ Template architecture.
 	 * @returns Matches template.
 	 */
-	public matches(templ: Const<Architecture>): boolean {
+	public matches(templ: Architecture): boolean {
 		if (this.first !== templ.first) {
 			return false;
 		}

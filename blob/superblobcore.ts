@@ -1,5 +1,5 @@
 import { type Class, constant, toStringTag } from '@hqtsm/class';
-import { array, type Const, member, type Ptr, uint32BE } from '@hqtsm/struct';
+import { array, member, type Ptr, uint32BE } from '@hqtsm/struct';
 import { Blob } from './blob.ts';
 import { BlobCore } from './blobcore.ts';
 import { SuperBlobCoreIndex } from './superblobcoreindex.ts';
@@ -57,7 +57,7 @@ export abstract class SuperBlobCore extends Blob {
 	 * @param n Index.
 	 * @returns Blob or null if no offset in index.
 	 */
-	public blob(n: number): Const<BlobCore> | null {
+	public blob(n: number): BlobCore | null {
 		n >>>= 0;
 		const { offset } = this.mIndex[n];
 		return offset
@@ -75,7 +75,7 @@ export abstract class SuperBlobCore extends Blob {
 	 * @param type Index type.
 	 * @returns First match or null.
 	 */
-	public find(type: number): Const<BlobCore> | null {
+	public find(type: number): BlobCore | null {
 		type >>>= 0;
 		const { mCount, mIndex } = this;
 		for (let i = 0; i < mCount; i++) {

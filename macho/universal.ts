@@ -1,5 +1,5 @@
 import { type Class, toStringTag } from '@hqtsm/class';
-import { type Const, pointer, type Ptr } from '@hqtsm/struct';
+import { pointer, type Ptr } from '@hqtsm/struct';
 import {
 	CPU_ARCH_ABI64,
 	CPU_SUBTYPE_MASK,
@@ -246,7 +246,7 @@ export class Universal {
 	 * @param arch Architecture to get.
 	 * @returns Mach-O.
 	 */
-	public async architecture(arch: Const<Architecture>): Promise<MachO>;
+	public async architecture(arch: Architecture): Promise<MachO>;
 
 	/**
 	 * Get Mach-O for offset.
@@ -262,7 +262,7 @@ export class Universal {
 	 * @param a Architecture or offset.
 	 * @returns Mach-O.
 	 */
-	public async architecture(a: Const<Architecture> | number): Promise<MachO> {
+	public async architecture(a: Architecture | number): Promise<MachO> {
 		if (typeof a === 'number') {
 			if (Universal.prototype.isUniversal.call(this)) {
 				const length = Universal.prototype.lengthOfSlice.call(this, a);
@@ -291,7 +291,7 @@ export class Universal {
 	 * @param arch Architecture to get the offset of.
 	 * @returns Architecture offset.
 	 */
-	public archOffset(arch: Const<Architecture>): number {
+	public archOffset(arch: Architecture): number {
 		if (Universal.prototype.isUniversal.call(this)) {
 			return this.mBase +
 				Universal.prototype.findArch.call(this, arch).offset;
@@ -308,7 +308,7 @@ export class Universal {
 	 * @param arch Architecture to get the length of.
 	 * @returns Architecture length.
 	 */
-	public archLength(arch: Const<Architecture>): number {
+	public archLength(arch: Architecture): number {
 		if (Universal.prototype.isUniversal.call(this)) {
 			return this.mBase + this.findArch(arch).size;
 		}
@@ -409,7 +409,7 @@ export class Universal {
 	 * @param arch Architecture to find.
 	 * @returns Matching FAT architecture.
 	 */
-	private findArch(arch: Const<Architecture>): Const<FatArch> {
+	private findArch(arch: Architecture): FatArch {
 		const { mArchList, mArchCount } = this;
 		for (let i = 0; i < mArchCount; i++) {
 			const a = mArchList![i];
@@ -455,7 +455,7 @@ export class Universal {
 	 * @param target Architecture.
 	 * @returns Mach-O image.
 	 */
-	private async findImage(target: Const<Architecture>): Promise<MachO> {
+	private async findImage(target: Architecture): Promise<MachO> {
 		const arch = Universal.prototype.findArch.call(this, target);
 		return this.make(
 			await MachO.MachO(

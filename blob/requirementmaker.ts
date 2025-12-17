@@ -1,10 +1,5 @@
 import { type Class, toStringTag } from '@hqtsm/class';
-import {
-	type ArrayBufferPointer,
-	type Const,
-	dataView,
-	Ptr,
-} from '@hqtsm/struct';
+import { type ArrayBufferPointer, dataView, Ptr } from '@hqtsm/struct';
 import {
 	opAnchorHash,
 	opAppleAnchor,
@@ -224,7 +219,7 @@ export class RequirementMaker {
 	 *
 	 * @param req Requirement.
 	 */
-	public copy(req: Const<Requirement>): void;
+	public copy(req: Requirement): void;
 
 	/**
 	 * Copy data or requirement.
@@ -233,14 +228,14 @@ export class RequirementMaker {
 	 * @param length Undefined for requirement.
 	 */
 	public copy(
-		data: ArrayBufferPointer | Const<Requirement>,
+		data: ArrayBufferPointer | Requirement,
 		length?: number,
 	): void {
 		if (length === undefined) {
-			const req = data as Const<Requirement>;
+			const req = data as Requirement;
 			const Req = req.constructor;
 			const kind = Requirement.prototype.kind.call<
-				Const<Requirement>,
+				Requirement,
 				[],
 				number
 			>(req);
@@ -256,7 +251,7 @@ export class RequirementMaker {
 				this,
 				(Requirement.prototype.at<Ptr>).call(req, Ptr, BYTE_LENGTH),
 				Requirement.prototype.length.call<
-					Const<Requirement>,
+					Requirement,
 					[],
 					number
 				>(
@@ -276,7 +271,7 @@ export class RequirementMaker {
 	 * @param length Byte length.
 	 * @returns Pointer to source data.
 	 */
-	public insert(label: Const<RequirementMakerLabel>, length = 4): Ptr {
+	public insert(label: RequirementMakerLabel, length = 4): Ptr {
 		const { pos } = label;
 		const req = new Requirement(this.mBuffer);
 		RequirementMaker.prototype.require.call(this, length);

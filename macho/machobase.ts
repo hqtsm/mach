@@ -49,12 +49,12 @@ export class MachOBase {
 	/**
 	 * Mach-O header.
 	 */
-	private mHeader: Const<MachHeader> | Const<MachHeader64> | null = null;
+	private mHeader: MachHeader | MachHeader64 | null = null;
 
 	/**
 	 * Mach-O commands.
 	 */
-	private mCommands: Const<LoadCommand> | null = null;
+	private mCommands: LoadCommand | null = null;
 
 	/**
 	 * The end commands offset, from start of commands.
@@ -99,7 +99,7 @@ export class MachOBase {
 	 *
 	 * @returns Header or null.
 	 */
-	public header(): Const<MachHeader> | Const<MachHeader64> | null {
+	public header(): MachHeader | MachHeader64 | null {
 		return this.mHeader;
 	}
 
@@ -136,7 +136,7 @@ export class MachOBase {
 	 *
 	 * @returns Load commands pointer or null.
 	 */
-	public loadCommands(): Const<LoadCommand> | null {
+	public loadCommands(): LoadCommand | null {
 		return this.mCommands;
 	}
 
@@ -146,7 +146,7 @@ export class MachOBase {
 	 * @param command Current load command.
 	 * @returns Next load command or null.
 	 */
-	public nextCommand(command: Const<LoadCommand>): Const<LoadCommand> | null {
+	public nextCommand(command: LoadCommand): LoadCommand | null {
 		const { cmdsize } = command;
 		if (!cmdsize) {
 			throw new RangeError('Invalid command size');
@@ -185,7 +185,7 @@ export class MachOBase {
 	 * @param cmd Command type.
 	 * @returns Load command or null.
 	 */
-	public findCommand(cmd: number): Const<LoadCommand> | null {
+	public findCommand(cmd: number): LoadCommand | null {
 		for (
 			let c = MachOBase.prototype.loadCommands.call(this);
 			c;
@@ -206,7 +206,7 @@ export class MachOBase {
 	 */
 	public findSegment(
 		segname: ArrayBufferLike | ArrayBufferPointer,
-	): Const<SegmentCommand> | Const<SegmentCommand64> | null {
+	): SegmentCommand | SegmentCommand64 | null {
 		let buffer, byteOffset;
 		if ('buffer' in segname) {
 			buffer = segname.buffer;
@@ -256,7 +256,7 @@ export class MachOBase {
 	public findSection(
 		segname: ArrayBufferLike | ArrayBufferPointer,
 		sectname: ArrayBufferLike | ArrayBufferPointer,
-	): Const<Section> | Const<Section64> | null {
+	): Section | Section64 | null {
 		const seg = MachOBase.prototype.findSegment.call(this, segname);
 		if (!seg) {
 			return null;
@@ -295,10 +295,7 @@ export class MachOBase {
 	 * @param str String within load command.
 	 * @returns String pointer or null.
 	 */
-	public string(
-		cmd: Const<LoadCommand>,
-		str: Const<LcStr>,
-	): Const<Int8Ptr> | null {
+	public string(cmd: LoadCommand, str: LcStr): Const<Int8Ptr> | null {
 		const { offset } = str;
 		const sp = new Int8Ptr(
 			cmd.buffer,
@@ -316,7 +313,7 @@ export class MachOBase {
 	 *
 	 * @returns Code signature command or null.
 	 */
-	public findCodeSignature(): Const<LinkeditDataCommand> | null {
+	public findCodeSignature(): LinkeditDataCommand | null {
 		const cmd = MachOBase.prototype.findCommand.call(
 			this,
 			LC_CODE_SIGNATURE,
@@ -339,7 +336,7 @@ export class MachOBase {
 	 *
 	 * @returns Code signing DRs command or null.
 	 */
-	public findLibraryDependencies(): Const<LinkeditDataCommand> | null {
+	public findLibraryDependencies(): LinkeditDataCommand | null {
 		const cmd = MachOBase.prototype.findCommand.call(
 			this,
 			LC_DYLIB_CODE_SIGN_DRS,
@@ -573,7 +570,7 @@ export class MachOBase {
 	 *
 	 * @returns Minimum version command or null.
 	 */
-	protected findMinVersion(): Const<VersionMinCommand> | null {
+	protected findMinVersion(): VersionMinCommand | null {
 		for (
 			let c = MachOBase.prototype.loadCommands.call(this);
 			c;
@@ -603,7 +600,7 @@ export class MachOBase {
 	 *
 	 * @returns Build version command or null.
 	 */
-	protected findBuildVersion(): Const<BuildVersionCommand> | null {
+	protected findBuildVersion(): BuildVersionCommand | null {
 		for (
 			let c = MachOBase.prototype.loadCommands.call(this);
 			c;
