@@ -17,28 +17,34 @@ export class Requirement extends Blob {
 	/**
 	 * Get kind.
 	 *
+	 * @param self This.
 	 * @returns Kind.
 	 */
-	public kind(): number;
+	public static kind(self: Requirement): number;
 
 	/**
 	 * Set kind.
 	 *
+	 * @param self This.
 	 * @param k Kind.
 	 */
-	public kind(k: number): void;
+	public static kind(self: Requirement, k: number): void;
 
 	/**
 	 * Get or set kind.
 	 *
+	 * @param self This.
 	 * @param k Kind to set or undefined to get.
 	 * @returns Kind on get or undefined on set.
 	 */
-	public kind(k?: number | undefined): number | void {
+	public static kind(
+		self: Requirement,
+		k?: number | undefined,
+	): number | void {
 		if (k === undefined) {
-			return this.mKind;
+			return self.mKind;
 		}
-		this.mKind = k >>> 0;
+		self.mKind = k >>> 0;
 	}
 
 	public static override readonly typeMagic = kSecCodeMagicRequirement;

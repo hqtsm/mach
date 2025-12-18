@@ -40,7 +40,7 @@ export class RequirementMaker {
 		const buffer = new ArrayBuffer(1024);
 		const r = new Requirement(buffer);
 		Requirement.initializeLength(r);
-		r.kind(k);
+		Requirement.kind(r, k);
 		this.mBuffer = buffer;
 		this.mPC = r.byteLength;
 	}
@@ -234,11 +234,7 @@ export class RequirementMaker {
 		if (length === undefined) {
 			const req = data as Requirement;
 			const Req = req.constructor;
-			const kind = Requirement.prototype.kind.call<
-				Requirement,
-				[],
-				number
-			>(req);
+			const kind = Requirement.kind(req);
 			if (kind !== Req.exprForm) {
 				throw new RangeError(`Unsupported requirement kind: ${kind}`);
 			}
@@ -285,7 +281,7 @@ export class RequirementMaker {
 	 * @param kind Requirement kind.
 	 */
 	public kind(kind: number): void {
-		new Requirement(this.mBuffer).kind(kind);
+		Requirement.kind(new Requirement(this.mBuffer), kind);
 	}
 
 	/**
