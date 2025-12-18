@@ -13,7 +13,7 @@ export class LaunchConstraintBlob extends Blob {
 	/**
 	 * Data of payload (only).
 	 */
-	declare public readonly dataArea: Uint8Ptr;
+	declare public readonly data: Uint8Ptr;
 
 	/**
 	 * DER data.
@@ -21,12 +21,8 @@ export class LaunchConstraintBlob extends Blob {
 	 * @returns Data pointer.
 	 */
 	public der(): Uint8Ptr {
-		const { dataArea } = this;
-		return new Uint8Ptr(
-			dataArea.buffer,
-			dataArea.byteOffset,
-			this.littleEndian,
-		);
+		const { data } = this;
+		return new Uint8Ptr(data.buffer, data.byteOffset, this.littleEndian);
 	}
 
 	/**
@@ -42,7 +38,7 @@ export class LaunchConstraintBlob extends Blob {
 
 	static {
 		toStringTag(this, 'LaunchConstraintBlob');
-		member(array(Uint8Ptr, 0), this, 'dataArea' as never);
+		member(array(Uint8Ptr, 0), this, 'data' as never);
 		constant(this, 'BYTE_LENGTH');
 		constant(this, 'typeMagic');
 	}
