@@ -97,13 +97,13 @@ Deno.test('anchor apple and identifier "com.apple.simple"', () => {
 	const maker = new RequirementMaker(Requirement.exprForm);
 
 	const and = new RequirementMakerChain(maker, opAnd);
-	assertEquals(and.empty(), true);
+	assertEquals(RequirementMakerChain.empty(and), true);
 	maker.anchor();
-	and.add();
-	assertEquals(and.empty(), false);
+	RequirementMakerChain.add(and);
+	assertEquals(RequirementMakerChain.empty(and), false);
 	maker.ident(new TextEncoder().encode('com.apple.simple'));
-	and.add();
-	assertEquals(and.empty(), false);
+	RequirementMakerChain.add(and);
+	assertEquals(RequirementMakerChain.empty(and), false);
 
 	const r = maker.make();
 	assertEquals(
@@ -124,13 +124,13 @@ Deno.test('identifier "com.apple.simple" or anchor apple generic', () => {
 	const maker = new RequirementMaker(Requirement.exprForm);
 
 	const or = new RequirementMakerChain(maker, opOr);
-	assertEquals(or.empty(), true);
+	assertEquals(RequirementMakerChain.empty(or), true);
 	maker.ident(new TextEncoder().encode('com.apple.simple'));
-	or.add();
-	assertEquals(or.empty(), false);
+	RequirementMakerChain.add(or);
+	assertEquals(RequirementMakerChain.empty(or), false);
 	maker.anchorGeneric();
-	or.add();
-	assertEquals(or.empty(), false);
+	RequirementMakerChain.add(or);
+	assertEquals(RequirementMakerChain.empty(or), false);
 
 	const r = maker.make();
 	assertEquals(
@@ -163,19 +163,19 @@ Deno.test('(a and b) or (c and d)', () => {
 
 	and = new RequirementMakerChain(maker, opAnd);
 	maker.ident(new TextEncoder().encode('com.apple.app'));
-	and.add();
+	RequirementMakerChain.add(and);
 	maker.anchor();
-	and.add();
+	RequirementMakerChain.add(and);
 
-	or.add();
+	RequirementMakerChain.add(or);
 
 	and = new RequirementMakerChain(maker, opAnd);
 	maker.ident(new TextEncoder().encode('com.apple.gen'));
-	and.add();
+	RequirementMakerChain.add(and);
 	maker.anchorGeneric();
-	and.add();
+	RequirementMakerChain.add(and);
 
-	or.add();
+	RequirementMakerChain.add(or);
 
 	const r = maker.make();
 	assertEquals(
@@ -208,19 +208,19 @@ Deno.test('(a or b) and (c or d)', () => {
 
 	or = new RequirementMakerChain(maker, opOr);
 	maker.ident(new TextEncoder().encode('com.apple.app'));
-	or.add();
+	RequirementMakerChain.add(or);
 	maker.anchor();
-	or.add();
+	RequirementMakerChain.add(or);
 
-	and.add();
+	RequirementMakerChain.add(and);
 
 	or = new RequirementMakerChain(maker, opOr);
 	maker.ident(new TextEncoder().encode('com.apple.gen').buffer);
-	or.add();
+	RequirementMakerChain.add(or);
 	maker.anchorGeneric();
-	or.add();
+	RequirementMakerChain.add(or);
 
-	and.add();
+	RequirementMakerChain.add(and);
 
 	const r = maker.make();
 	assertEquals(

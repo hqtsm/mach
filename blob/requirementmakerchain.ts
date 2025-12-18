@@ -14,7 +14,7 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	/**
 	 * Maker reference.
 	 */
-	maker: RequirementMaker;
+	public readonly maker: RequirementMaker;
 
 	/**
 	 * Joiner opcode.
@@ -41,21 +41,24 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 
 	/**
 	 * Add an element to the chain.
+	 *
+	 * @param self This.
 	 */
-	public add(): void {
-		if (this.mCount++) {
-			const p = RequirementMaker.prototype.insert.call(this.maker, this);
-			dataView(p.buffer).setUint32(p.byteOffset, this.mJoiner);
+	public static add(self: RequirementMakerChain): void {
+		if (self.mCount++) {
+			const p = RequirementMaker.prototype.insert.call(self.maker, self);
+			dataView(p.buffer).setUint32(p.byteOffset, self.mJoiner);
 		}
 	}
 
 	/**
 	 * Check if the chain has no elements.
 	 *
+	 * @param self This.
 	 * @returns Is empty.
 	 */
-	public empty(): boolean {
-		return this.mCount === 0;
+	public static empty(self: RequirementMakerChain): boolean {
+		return self.mCount === 0;
 	}
 
 	static {
