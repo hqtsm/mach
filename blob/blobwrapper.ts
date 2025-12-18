@@ -24,40 +24,47 @@ export class BlobWrapper extends Blob {
 	/**
 	 * Data of payload (only).
 	 *
+	 * @param self This.
 	 * @returns Data pointer.
 	 */
-	public data(): Ptr {
+	public static override data(self: BlobWrapper): Ptr {
 		// Overridden to point to payload (only).
-		const { dataArea } = this;
-		return new Ptr(dataArea.buffer, dataArea.byteOffset, this.littleEndian);
+		const { dataArea } = self;
+		return new Ptr(dataArea.buffer, dataArea.byteOffset, self.littleEndian);
 	}
 
 	/**
 	 * Length of payload (only), set length for full blob.
 	 *
+	 * @param self This.
 	 * @returns Byte length.
 	 */
-	public length(): number;
+	public static override length(self: BlobWrapper): number;
 
 	/**
 	 * Set blob length for full blob, including magic and length.
 	 * Unchanged from parent.
 	 *
+	 * @param self This.
 	 * @param size Byte length.
 	 */
-	public length(size: number): void;
+	public static override length(self: BlobWrapper, size: number): void;
 
 	/**
 	 * Get or set blob length.
 	 *
+	 * @param self This.
 	 * @param size Byte length to set or undefined to get.
 	 * @returns Byte length on get or undefined on set.
 	 */
-	public length(size?: number): number | void {
+	public static override length(
+		self: BlobWrapper,
+		size?: number,
+	): number | void {
 		if (size === undefined) {
-			return BlobCore.size(this) - BlobCore.BYTE_LENGTH;
+			return BlobCore.size(self) - BlobCore.BYTE_LENGTH;
 		}
-		Blob.size(this, size);
+		Blob.size(self, size);
 	}
 
 	public static override readonly typeMagic = CSMAGIC_BLOBWRAPPER;
