@@ -53,6 +53,7 @@ export abstract class Blob extends BlobCore {
 	 * @template T Blob type.
 	 * @param this Blob class.
 	 * @param self This.
+	 * @param context Context.
 	 * @returns Cloned blob.
 	 */
 	public static override clone<T extends Concrete<typeof Blob>>(
