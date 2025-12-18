@@ -30,10 +30,11 @@ export class BlobCore extends Struct {
 	/**
 	 * Magic number.
 	 *
+	 * @param self This.
 	 * @returns Magic number.
 	 */
-	public magic(): number {
-		return this.mMagic;
+	public static magic(self: BlobCore): number {
+		return self.mMagic;
 	}
 
 	/**
@@ -41,30 +42,36 @@ export class BlobCore extends Struct {
 	 * By default includes magic and length.
 	 * Child classes may redefine this to be a smaller area.
 	 *
+	 * @param self This.
 	 * @returns Byte length.
 	 */
-	public length(): number;
+	public static size(self: BlobCore): number;
 
 	/**
 	 * Set blob length.
 	 * By default includes magic and length.
 	 * Child classes may redefine this to be a smaller area.
 	 *
+	 * @param self This.
 	 * @param size Byte length.
 	 */
-	public length(size: number): void;
+	public static size(self: BlobCore, size: number): void;
 
 	/**
 	 * Get or set blob length.
 	 *
+	 * @param self This.
 	 * @param size Byte length to set or undefined to get.
 	 * @returns Byte length on get or undefined on set.
 	 */
-	public length(size?: number | undefined): number | void {
+	public static size(
+		self: BlobCore,
+		size?: number | undefined,
+	): number | void {
 		if (size === undefined) {
-			return this.mLength;
+			return self.mLength;
 		}
-		this.mLength = size >>> 0;
+		self.mLength = size >>> 0;
 	}
 
 	/**
@@ -73,28 +80,30 @@ export class BlobCore extends Struct {
 	 * @param magic Magic number.
 	 * @param length Length.
 	 */
-	public initialize(magic: number, length = 0): void {
-		this.mMagic = magic;
-		this.mLength = length >>> 0;
+	public static initialize(self: BlobCore, magic: number, length = 0): void {
+		self.mMagic = magic;
+		self.mLength = length >>> 0;
 	}
 
 	/**
 	 * Validate blob.
 	 *
+	 * @param self This.
 	 * @param magic Magic number.
 	 * @param minSize Minimum size.
 	 * @param maxSize Maximum size.
 	 * @param context Context.
 	 * @returns Is valid.
 	 */
-	public validateBlob(
+	public static validateBlob(
+		self: BlobCore,
 		magic: number,
 		minSize?: number,
 		maxSize?: number,
 		context?: { errno: number },
 	): boolean {
-		const length = this.mLength;
-		if (magic && magic !== this.mMagic) {
+		const length = self.mLength;
+		if (magic && magic !== self.mMagic) {
 			if (context) context.errno = EINVAL;
 			return false;
 		}
@@ -113,12 +122,14 @@ export class BlobCore extends Struct {
 	 * Get view of data at offset, with endian.
 	 *
 	 * @template T View type.
+	 * @param self This.
 	 * @param Type Constructor function.
 	 * @param offset Byte offset.
 	 * @param littleEndian Little endian, big endian, or inherit.
 	 * @returns Data view.
 	 */
-	public at<T>(
+	public static at<T>(
+		self: BlobCore,
 		Type: new (
 			buffer: ArrayBufferLike,
 			byteOffset?: number,
@@ -128,39 +139,43 @@ export class BlobCore extends Struct {
 		littleEndian: boolean | null = null,
 	): T {
 		return new Type(
-			this.buffer,
-			this.byteOffset + offset,
-			littleEndian ?? this.littleEndian,
+			self.buffer,
+			self.byteOffset + offset,
+			littleEndian ?? self.littleEndian,
 		);
 	}
 
 	/**
 	 * Check if blob contains a range.
 	 *
+	 * @param self This.
 	 * @param offset Byte offset.
 	 * @param size Byte size.
 	 * @returns Is contained.
 	 */
-	public contains(offset: number, size: number): boolean {
+	public static contains(
+		self: BlobCore,
+		offset: number,
+		size: number,
+	): boolean {
 		return (
 			offset >= BlobCore.BYTE_LENGTH &&
 			size >= 0 &&
-			(offset + size) <=
-				BlobCore.prototype.length.call<BlobCore, [], number>(this)
+			(offset + size) <= BlobCore.size(self)
 		);
 	}
 
 	/**
 	 * Get string at offset.
 	 *
+	 * @param self This.
 	 * @param offset Byte offset.
 	 * @returns String pointer if null terminated string or null.
 	 */
-	public stringAt(offset: number): Int8Ptr | null {
-		let length = BlobCore.prototype.length.call<BlobCore, [], number>(this);
-		const at = BlobCore.prototype.at;
+	public static stringAt(self: BlobCore, offset: number): Int8Ptr | null {
+		let length = BlobCore.size(self);
 		if (offset >= 0 && offset < length) {
-			const s = at.call(this, Int8Ptr, offset) as Int8Ptr;
+			const s = BlobCore.at(self, Int8Ptr, offset) as Int8Ptr;
 			length -= offset;
 			for (let i = 0; i < length; i++) {
 				if (!s[i]) {
@@ -176,48 +191,54 @@ export class BlobCore extends Struct {
 	 * By default includes magic and length.
 	 * Child classes may redefine this to be a smaller area.
 	 *
+	 * @param self This.
 	 * @returns Data pointer.
 	 */
-	public data(): Ptr {
-		return new Ptr(this.buffer, this.byteOffset, this.littleEndian);
+	public static data(self: BlobCore): Ptr {
+		return new Ptr(self.buffer, self.byteOffset, self.littleEndian);
 	}
 
 	/**
 	 * Clone blob.
 	 *
+	 * @param self This.
 	 * @returns Cloned blob.
 	 */
-	public clone(): BlobCore | null {
-		const l = BlobCore.prototype.length.call<BlobCore, [], number>(this);
-		const o = this.byteOffset;
-		return new BlobCore(this.buffer.slice(o, o + l), 0, this.littleEndian);
+	public static clone(self: BlobCore): BlobCore | null {
+		const l = BlobCore.size(self);
+		const o = self.byteOffset;
+		return new BlobCore(self.buffer.slice(o, o + l), 0, self.littleEndian);
 	}
 
 	/**
 	 * Inner byte data.
 	 *
+	 * @param self This.
 	 * @returns Uint8 byte array.
 	 */
-	public innerData(): Arr<number> {
+	public static innerData(self: BlobCore): Arr<number> {
 		const o = BlobCore.BYTE_LENGTH;
-		const p = (BlobCore.prototype.at<Uint8Ptr>).call(this, Uint8Ptr, o);
-		return new (array(
-			Uint8Ptr,
-			BlobCore.prototype.length.call<BlobCore, [], number>(this) - o,
-		))(p.buffer, p.byteOffset, p.littleEndian);
+		const p = BlobCore.at(self, Uint8Ptr, o);
+		return new (array(Uint8Ptr, BlobCore.size(self) - o))(
+			p.buffer,
+			p.byteOffset,
+			p.littleEndian,
+		);
 	}
 
 	/**
 	 * Check if blob type match the expected magic.
 	 *
 	 * @template T Blob class.
+	 * @param self This.
 	 * @param BlobType Blob type.
 	 * @returns Is the same type.
 	 */
-	public is<T>(
+	public static is<T>(
+		self: BlobCore,
 		BlobType: T & IsClass<T, { readonly typeMagic: number }>,
 	): boolean {
-		return BlobCore.prototype.magic.call(this) === BlobType.typeMagic;
+		return BlobCore.magic(self) === BlobType.typeMagic;
 	}
 
 	/**
@@ -257,7 +278,15 @@ export class BlobCore extends Struct {
 		}
 		const head = await reader.slice(0, 8).arrayBuffer();
 		const header = new BlobCore(head);
-		if (!header.validateBlob(magic || 0, minSize, maxSize, context)) {
+		if (
+			!BlobCore.validateBlob(
+				header,
+				magic || 0,
+				minSize,
+				maxSize,
+				context,
+			)
+		) {
 			return null;
 		}
 		const length = header.mLength;

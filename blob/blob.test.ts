@@ -45,7 +45,7 @@ Deno.test('specific', () => {
 		assertEquals(context.errno, EINVAL);
 	}
 
-	blob.initialize(Example.typeMagic, Example.BYTE_LENGTH);
+	BlobCore.initialize(blob, Example.typeMagic, Example.BYTE_LENGTH);
 	{
 		const example = Example.specific(blob, new NoErrno());
 		assertInstanceOf(example, Example);
@@ -55,7 +55,7 @@ Deno.test('specific', () => {
 Deno.test('clone', () => {
 	const data = new Uint8Array(12);
 	const example = new Example(data.buffer);
-	example.initialize(0xFFFFFFFF, Example.BYTE_LENGTH);
+	Example.initialize(example, 0xFFFFFFFF, Example.BYTE_LENGTH);
 	example.value = 42;
 	{
 		const context = { errno: 0 };
@@ -107,8 +107,8 @@ Deno.test('readBlob regular', async () => {
 	const read = await Example.readBlob(new globalThis.Blob([data]), context);
 	assertInstanceOf(read, Example);
 	assertEquals(context.errno, 0);
-	assertEquals(read.magic(), Example.typeMagic);
-	assertEquals(read.length(), Example.BYTE_LENGTH);
+	assertEquals(Example.magic(read), Example.typeMagic);
+	assertEquals(Example.size(read), Example.BYTE_LENGTH);
 	assertEquals(read.value, 0xAABBCCDD);
 });
 
@@ -140,8 +140,8 @@ Deno.test('readBlob offset', async () => {
 	);
 	assertInstanceOf(read, Example);
 	assertEquals(context.errno, 0);
-	assertEquals(read.magic(), Example.typeMagic);
-	assertEquals(read.length(), Example.BYTE_LENGTH);
+	assertEquals(Example.magic(read), Example.typeMagic);
+	assertEquals(Example.size(read), Example.BYTE_LENGTH);
 	assertEquals(read.value, 0xAABBCCDD);
 });
 
@@ -149,7 +149,7 @@ Deno.test('validateBlobLength', () => {
 	const data = new Uint8Array(22);
 	const blob = new Example(data.buffer, 2);
 
-	blob.initialize(0, 20);
+	Example.initialize(blob, 0, 20);
 	{
 		const context = { errno: 0 };
 		assertEquals(blob.validateBlobLength(undefined, context), false);
@@ -162,7 +162,7 @@ Deno.test('validateBlobLength', () => {
 	blob.initializeLength(11);
 	assertEquals(blob.validateBlobLength(11, new NoErrno()), false);
 
-	blob.initialize(0, 20);
+	Example.initialize(blob, 0, 20);
 	{
 		const context = { errno: 0 };
 		assertEquals(blob.validateBlobLength(20, context), false);

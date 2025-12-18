@@ -14,11 +14,7 @@ export abstract class Blob extends BlobCore {
 	 * @param size Length.
 	 */
 	public initializeLength(size = 0): void {
-		BlobCore.prototype.initialize.call(
-			this,
-			this.constructor.typeMagic,
-			size,
-		);
+		BlobCore.initialize(this, this.constructor.typeMagic, size);
 	}
 
 	/**
@@ -33,7 +29,7 @@ export abstract class Blob extends BlobCore {
 		context?: { errno: number },
 	): boolean {
 		if (length === undefined) {
-			return BlobCore.prototype.validateBlob.call(
+			return BlobCore.validateBlob(
 				this,
 				this.constructor.typeMagic,
 				this.byteLength,
@@ -55,8 +51,8 @@ export abstract class Blob extends BlobCore {
 	 * @param this Blob instance.
 	 * @returns Cloned blob.
 	 */
-	public override clone(context?: { errno: number }): this | null {
-		const c = BlobCore.prototype.clone.call(this);
+	public clone(context?: { errno: number }): this | null {
+		const c = BlobCore.clone(this);
 		return c &&
 			Blob.specific.call(
 				this.constructor as Concrete<typeof Blob>,

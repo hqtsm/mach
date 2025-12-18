@@ -249,14 +249,8 @@ export class RequirementMaker {
 				void
 			>(
 				this,
-				(Requirement.prototype.at<Ptr>).call(req, Ptr, BYTE_LENGTH),
-				Requirement.prototype.length.call<
-					Requirement,
-					[],
-					number
-				>(
-					req,
-				) - BYTE_LENGTH,
+				Requirement.at(req, Ptr, BYTE_LENGTH),
+				Requirement.size(req) - BYTE_LENGTH,
 			);
 		} else {
 			const d = new Uint8Array(data.buffer, data.byteOffset, length);
@@ -276,8 +270,8 @@ export class RequirementMaker {
 		const req = new Requirement(this.mBuffer);
 		RequirementMaker.prototype.require.call(this, length);
 		const len = this.mPC - pos;
-		const reqDest = req.at(Ptr, pos + length);
-		const reqSrc = req.at(Ptr, pos);
+		const reqDest = Requirement.at(req, Ptr, pos + length);
+		const reqSrc = Requirement.at(req, Ptr, pos);
 		new Uint8Array(reqDest.buffer, reqDest.byteOffset, len).set(
 			new Uint8Array(reqSrc.buffer, reqSrc.byteOffset, len),
 		);
@@ -310,7 +304,7 @@ export class RequirementMaker {
 	 */
 	public make(): Requirement {
 		const r = new Requirement(this.mBuffer);
-		r.length(this.mPC);
+		Requirement.size(r, this.mPC);
 		return r;
 	}
 

@@ -9,37 +9,37 @@ Deno.test('BYTE_LENGTH', () => {
 Deno.test('magic', () => {
 	const data = new Uint8Array([0x12, 0x34, 0x56, 0x78]);
 	const blob = new BlobCore(data.buffer);
-	assertEquals(blob.magic(), 0x12345678);
+	assertEquals(BlobCore.magic(blob), 0x12345678);
 });
 
 Deno.test('length', () => {
 	const bw = new BlobCore(new ArrayBuffer(BlobCore.BYTE_LENGTH));
-	assertEquals(bw.length(), 0);
-	assertEquals(bw.length(16), undefined);
-	assertEquals(bw.length(), 16);
+	assertEquals(BlobCore.size(bw), 0);
+	assertEquals(BlobCore.size(bw, 16), undefined);
+	assertEquals(BlobCore.size(bw), 16);
 });
 
 Deno.test('data', () => {
 	const data = new Uint8Array(12);
 	const blob = new BlobCore(data.buffer, 2);
-	assertEquals(blob.data().byteOffset, 2);
+	assertEquals(BlobCore.data(blob).byteOffset, 2);
 });
 
 Deno.test('clone', () => {
 	const data = new Uint8Array(12);
 	const blob = new BlobCore(data.buffer, 2);
-	const clone = blob.clone();
+	const clone = BlobCore.clone(blob);
 	assertInstanceOf(clone, BlobCore);
-	assertEquals(clone.data().byteOffset, 0);
-	new Uint8Array(clone.data().buffer).fill(1);
+	assertEquals(BlobCore.data(clone).byteOffset, 0);
+	new Uint8Array(BlobCore.data(clone).buffer).fill(1);
 	assertEquals(data, new Uint8Array(12));
 });
 
 Deno.test('innerData', () => {
 	const data = new Uint8Array(12);
 	const blob = new BlobCore(data.buffer, 2);
-	blob.length(10);
-	const body = blob.innerData();
+	BlobCore.size(blob, 10);
+	const body = BlobCore.innerData(blob);
 	assertEquals(body.length, 2);
 	body[0] = 1;
 	body[1] = 2;
@@ -49,20 +49,26 @@ Deno.test('innerData', () => {
 Deno.test('initialize', () => {
 	const data = new Uint8Array(12);
 	const blob = new BlobCore(data.buffer, 2);
-	blob.initialize(0x12345678, 10);
-	assertEquals(blob.magic(), 0x12345678);
-	assertEquals(blob.length(), 10);
+	BlobCore.initialize(blob, 0x12345678, 10);
+	assertEquals(BlobCore.magic(blob), 0x12345678);
+	assertEquals(BlobCore.size(blob), 10);
 });
 
 Deno.test('validateBlob', () => {
 	const data = new Uint8Array(12);
 	const blob = new BlobCore(data.buffer, 2);
-	blob.initialize(0x12345678, 10);
-	assertEquals(blob.validateBlob(0x12345678), true);
+	BlobCore.initialize(blob, 0x12345678, 10);
+	assertEquals(BlobCore.validateBlob(blob, 0x12345678), true);
 	{
 		const context = { errno: 0 };
 		assertEquals(
-			blob.validateBlob(0x12345678, undefined, undefined, context),
+			BlobCore.validateBlob(
+				blob,
+				0x12345678,
+				undefined,
+				undefined,
+				context,
+			),
 			true,
 		);
 		assertEquals(context.errno, 0);
@@ -71,34 +77,49 @@ Deno.test('validateBlob', () => {
 	{
 		const context = { errno: 0 };
 		assertEquals(
-			blob.validateBlob(0x12345679, undefined, undefined, context),
+			BlobCore.validateBlob(
+				blob,
+				0x12345679,
+				undefined,
+				undefined,
+				context,
+			),
 			false,
 		);
 		assertEquals(context.errno, EINVAL);
 	}
 
-	assertEquals(blob.validateBlob(0, 9), true);
-	assertEquals(blob.validateBlob(0, 10), true);
+	assertEquals(BlobCore.validateBlob(blob, 0, 9), true);
+	assertEquals(BlobCore.validateBlob(blob, 0, 10), true);
 
 	{
 		const context = { errno: 0 };
-		assertEquals(blob.validateBlob(0, 11, undefined, context), false);
+		assertEquals(
+			BlobCore.validateBlob(blob, 0, 11, undefined, context),
+			false,
+		);
 		assertEquals(context.errno, EINVAL);
 	}
 
 	{
 		const context = { errno: 0 };
-		assertEquals(blob.validateBlob(0, 0, 9, context), false);
+		assertEquals(BlobCore.validateBlob(blob, 0, 0, 9, context), false);
 		assertEquals(context.errno, ENOMEM);
 	}
-	assertEquals(blob.validateBlob(0, 0, 10), true);
-	assertEquals(blob.validateBlob(0, 0, 11), true);
+	assertEquals(BlobCore.validateBlob(blob, 0, 0, 10), true);
+	assertEquals(BlobCore.validateBlob(blob, 0, 0, 11), true);
 
-	blob.initialize(0x12345678, 7);
+	BlobCore.initialize(blob, 0x12345678, 7);
 	{
 		const context = { errno: 0 };
 		assertEquals(
-			blob.validateBlob(0x12345678, undefined, undefined, context),
+			BlobCore.validateBlob(
+				blob,
+				0x12345678,
+				undefined,
+				undefined,
+				context,
+			),
 			false,
 		);
 		assertEquals(context.errno, EINVAL);
@@ -108,40 +129,40 @@ Deno.test('validateBlob', () => {
 Deno.test('contains', () => {
 	const data = new Uint8Array(12);
 	const blob = new BlobCore(data.buffer, 2);
-	blob.initialize(0x12345678, 10);
-	assertEquals(blob.contains(0, 0), false);
-	assertEquals(blob.contains(0, 1), false);
-	assertEquals(blob.contains(0, 2), false);
-	assertEquals(blob.contains(0, 3), false);
-	assertEquals(blob.contains(0, 4), false);
-	assertEquals(blob.contains(0, 5), false);
-	assertEquals(blob.contains(0, 6), false);
-	assertEquals(blob.contains(0, 7), false);
-	assertEquals(blob.contains(0, 8), false);
-	assertEquals(blob.contains(0, 9), false);
-	assertEquals(blob.contains(0, 10), false);
-	assertEquals(blob.contains(0, 11), false);
-	assertEquals(blob.contains(0, 12), false);
-	assertEquals(blob.contains(7, 1), false);
-	assertEquals(blob.contains(8, 0), true);
-	assertEquals(blob.contains(8, 1), true);
-	assertEquals(blob.contains(8, 2), true);
-	assertEquals(blob.contains(8, 3), false);
-	assertEquals(blob.contains(9, 1), true);
-	assertEquals(blob.contains(10, 0), true);
-	assertEquals(blob.contains(9, -1), false);
-	assertEquals(blob.contains(10, -1), false);
+	BlobCore.initialize(blob, 0x12345678, 10);
+	assertEquals(BlobCore.contains(blob, 0, 0), false);
+	assertEquals(BlobCore.contains(blob, 0, 1), false);
+	assertEquals(BlobCore.contains(blob, 0, 2), false);
+	assertEquals(BlobCore.contains(blob, 0, 3), false);
+	assertEquals(BlobCore.contains(blob, 0, 4), false);
+	assertEquals(BlobCore.contains(blob, 0, 5), false);
+	assertEquals(BlobCore.contains(blob, 0, 6), false);
+	assertEquals(BlobCore.contains(blob, 0, 7), false);
+	assertEquals(BlobCore.contains(blob, 0, 8), false);
+	assertEquals(BlobCore.contains(blob, 0, 9), false);
+	assertEquals(BlobCore.contains(blob, 0, 10), false);
+	assertEquals(BlobCore.contains(blob, 0, 11), false);
+	assertEquals(BlobCore.contains(blob, 0, 12), false);
+	assertEquals(BlobCore.contains(blob, 7, 1), false);
+	assertEquals(BlobCore.contains(blob, 8, 0), true);
+	assertEquals(BlobCore.contains(blob, 8, 1), true);
+	assertEquals(BlobCore.contains(blob, 8, 2), true);
+	assertEquals(BlobCore.contains(blob, 8, 3), false);
+	assertEquals(BlobCore.contains(blob, 9, 1), true);
+	assertEquals(BlobCore.contains(blob, 10, 0), true);
+	assertEquals(BlobCore.contains(blob, 9, -1), false);
+	assertEquals(BlobCore.contains(blob, 10, -1), false);
 });
 
 Deno.test('stringAt', () => {
 	const data = new Uint8Array(22);
 	const blob = new BlobCore(data.buffer, 2);
-	blob.initialize(0x12345678, 20);
+	BlobCore.initialize(blob, 0x12345678, 20);
 
-	assertEquals(blob.stringAt(-1), null);
-	assertEquals(blob.stringAt(20), null);
+	assertEquals(BlobCore.stringAt(blob, -1), null);
+	assertEquals(BlobCore.stringAt(blob, 20), null);
 
-	let s = blob.stringAt(0);
+	let s = BlobCore.stringAt(blob, 0);
 	assertNotEquals(s, null);
 	assertEquals(s![0], 0x12);
 	assertEquals(s![1], 0x34);
@@ -149,11 +170,11 @@ Deno.test('stringAt', () => {
 	assertEquals(s![3], 0x78);
 	assertEquals(s![4], 0);
 
-	s = blob.stringAt(8);
+	s = BlobCore.stringAt(blob, 8);
 	assertNotEquals(s, null);
 	assertEquals(s![0], 0);
 
-	s = blob.stringAt(19);
+	s = BlobCore.stringAt(blob, 19);
 	assertNotEquals(s, null);
 	assertEquals(s![0], 0);
 
@@ -161,7 +182,7 @@ Deno.test('stringAt', () => {
 	data[blob.byteOffset + 11] = 'B'.charCodeAt(0);
 	data[blob.byteOffset + 12] = 'C'.charCodeAt(0);
 
-	s = blob.stringAt(10);
+	s = BlobCore.stringAt(blob, 10);
 	assertNotEquals(s, null);
 	assertEquals(s![0], 'A'.charCodeAt(0));
 	assertEquals(s![1], 'B'.charCodeAt(0));
@@ -172,7 +193,7 @@ Deno.test('stringAt', () => {
 	data[blob.byteOffset + 18] = 'B'.charCodeAt(0);
 	data[blob.byteOffset + 19] = 'C'.charCodeAt(0);
 
-	assertEquals(blob.stringAt(17), null);
+	assertEquals(BlobCore.stringAt(blob, 17), null);
 });
 
 Deno.test('is', () => {
@@ -190,17 +211,17 @@ Deno.test('is', () => {
 	class Match {
 		static typeMagic = 0x12345678;
 	}
-	assertEquals(blob.is(Match), true);
+	assertEquals(BlobCore.is(blob, Match), true);
 
 	abstract class MatchAbstract {
 		static typeMagic = 0x12345678;
 	}
-	assertEquals(blob.is(MatchAbstract), true);
+	assertEquals(BlobCore.is(blob, MatchAbstract), true);
 
 	class Mismatch {
 		static typeMagic = 0x12345679;
 	}
-	assertEquals(blob.is(Mismatch), false);
+	assertEquals(BlobCore.is(blob, Mismatch), false);
 });
 
 Deno.test('readBlob', async () => {
@@ -211,16 +232,16 @@ Deno.test('readBlob', async () => {
 
 	const data = new Uint8Array(100);
 	const blob = new BlobCore(data.buffer);
-	blob.initialize(0x12345678, 101);
+	BlobCore.initialize(blob, 0x12345678, 101);
 	{
 		const context = { errno: 0 };
 		await BlobCore.readBlob(new Blob([data]), context);
 		assertEquals(context.errno, EINVAL);
 	}
 
-	blob.initialize(0x12345678, 100);
+	BlobCore.initialize(blob, 0x12345678, 100);
 	const read = await BlobCore.readBlob(new Blob([data]));
 	assertNotEquals(read, null);
-	assertEquals(read!.magic(), 0x12345678);
-	assertEquals(read!.length(), 100);
+	assertEquals(BlobCore.magic(read!), 0x12345678);
+	assertEquals(BlobCore.size(read!), 100);
 });

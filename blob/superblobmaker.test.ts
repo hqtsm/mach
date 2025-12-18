@@ -4,6 +4,7 @@ import { Uint8Ptr } from '@hqtsm/struct';
 import { BlobWrapper } from './blobwrapper.ts';
 import { SuperBlob } from './superblob.ts';
 import { SuperBlobMaker } from './superblobmaker.ts';
+import { BlobCore } from './blobcore.ts';
 
 const MAGIC = 0x12345678;
 
@@ -47,10 +48,10 @@ Deno.test('add SuperBlob', () => {
 	assertEquals(sb2.count(), 2);
 	assertEquals(sb2.type(0), 0x11111111);
 	assertEquals(sb2.type(1), 0x22222222);
-	sb2.blob(0)!.at(Uint8Ptr, 8)[0] = 11;
-	sb2.blob(1)!.at(Uint8Ptr, 8)[0] = 12;
-	assertEquals(maker1.make().blob(0)!.at(Uint8Ptr, 8)[0], 1);
-	assertEquals(maker1.make().blob(1)!.at(Uint8Ptr, 8)[0], 1);
+	BlobCore.at(sb2.blob(0)!, Uint8Ptr, 8)[0] = 11;
+	BlobCore.at(sb2.blob(1)!, Uint8Ptr, 8)[0] = 12;
+	assertEquals(BlobCore.at(maker1.make().blob(0)!, Uint8Ptr, 8)[0], 1);
+	assertEquals(BlobCore.at(maker1.make().blob(1)!, Uint8Ptr, 8)[0], 1);
 });
 
 Deno.test('add SuperBlobMaker', () => {
@@ -64,10 +65,10 @@ Deno.test('add SuperBlobMaker', () => {
 	assertEquals(sb2.count(), 2);
 	assertEquals(sb2.type(0), 0x11111111);
 	assertEquals(sb2.type(1), 0x22222222);
-	sb2.blob(0)!.at(Uint8Ptr, 8)[0] = 11;
-	sb2.blob(1)!.at(Uint8Ptr, 8)[0] = 12;
-	assertEquals(maker1.make().blob(0)!.at(Uint8Ptr, 8)[0], 1);
-	assertEquals(maker1.make().blob(1)!.at(Uint8Ptr, 8)[0], 1);
+	BlobCore.at(sb2.blob(0)!, Uint8Ptr, 8)[0] = 11;
+	BlobCore.at(sb2.blob(1)!, Uint8Ptr, 8)[0] = 12;
+	assertEquals(BlobCore.at(maker1.make().blob(0)!, Uint8Ptr, 8)[0], 1);
+	assertEquals(BlobCore.at(maker1.make().blob(1)!, Uint8Ptr, 8)[0], 1);
 });
 
 Deno.test('contains', () => {
@@ -91,20 +92,20 @@ Deno.test('get', () => {
 Deno.test('size', () => {
 	const maker = new ExampleMaker();
 	assertEquals(maker.size([]), 12);
-	assertEquals(maker.make().length(), maker.size([]));
+	assertEquals(Example.size(maker.make()), maker.size([]));
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	const blob = BlobWrapper.alloc(data, data.byteLength);
 	maker.add(1, blob);
 	assertEquals(maker.size([]), 36);
-	assertEquals(maker.make().length(), maker.size([]));
+	assertEquals(Example.size(maker.make()), maker.size([]));
 	maker.add(1, blob);
 	assertEquals(maker.size([]), 36);
-	assertEquals(maker.make().length(), maker.size([]));
+	assertEquals(Example.size(maker.make()), maker.size([]));
 	maker.add(2, blob);
 	assertEquals(maker.size([]), 60);
-	assertEquals(maker.make().length(), maker.size([]));
+	assertEquals(Example.size(maker.make()), maker.size([]));
 	assertEquals(maker.size([4, 8]), 88);
-	assertEquals(maker.make().length(), maker.size([]));
+	assertEquals(Example.size(maker.make()), maker.size([]));
 	assertEquals(maker.size([4, 8], 4, 8), 116);
-	assertEquals(maker.make().length(), maker.size([]));
+	assertEquals(Example.size(maker.make()), maker.size([]));
 });

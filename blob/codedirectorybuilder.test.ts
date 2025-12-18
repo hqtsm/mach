@@ -121,17 +121,26 @@ Deno.test('teamID', async () => {
 Deno.test('codeSlots', async () => {
 	let builder = await createBuilder(kSecCodeSignatureHashSHA1);
 	builder.executable(new Blob([]), 0, 0, 0);
-	const zero = (await builder.build()).length();
+	const zero = CodeDirectory.size(await builder.build());
 
 	builder.reopen(new Blob([new Uint8Array(1)]), 0, 1);
-	assertEquals((await builder.build()).length(), zero + CS_SHA1_LEN * 1);
+	assertEquals(
+		CodeDirectory.size(await builder.build()),
+		zero + CS_SHA1_LEN * 1,
+	);
 
 	builder = await createBuilder(kSecCodeSignatureHashSHA1);
 	builder.executable(new Blob([new Uint8Array(1024)]), 1024, 0, 1024);
-	assertEquals((await builder.build()).length(), zero + CS_SHA1_LEN * 1);
+	assertEquals(
+		CodeDirectory.size(await builder.build()),
+		zero + CS_SHA1_LEN * 1,
+	);
 
 	builder.reopen(new Blob([new Uint8Array(1025)]), 0, 1025);
-	assertEquals((await builder.build()).length(), zero + CS_SHA1_LEN * 2);
+	assertEquals(
+		CodeDirectory.size(await builder.build()),
+		zero + CS_SHA1_LEN * 2,
+	);
 });
 
 Deno.test('addExecSegFlags', async () => {
@@ -151,16 +160,22 @@ Deno.test('addExecSegFlags', async () => {
 Deno.test('specialSlot', async () => {
 	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
 	builder.executable(new Blob([]), 0, 0, 0);
-	const zero = (await builder.build()).length();
+	const zero = CodeDirectory.size(await builder.build());
 	await assertRejects(
 		() => builder.specialSlot(0, new ArrayBuffer(0)),
 		RangeError,
 		'Invalid slot index: 0',
 	);
-	assertEquals((await builder.build()).length(), zero + CS_SHA1_LEN * 0);
+	assertEquals(
+		CodeDirectory.size(await builder.build()),
+		zero + CS_SHA1_LEN * 0,
+	);
 
 	await builder.specialSlot(1, new ArrayBuffer(0));
-	assertEquals((await builder.build()).length(), zero + CS_SHA1_LEN * 1);
+	assertEquals(
+		CodeDirectory.size(await builder.build()),
+		zero + CS_SHA1_LEN * 1,
+	);
 });
 
 Deno.test('createScatter', async () => {
@@ -231,11 +246,11 @@ Deno.test('generatePreEncryptHashes', async () => {
 	const version = CodeDirectory.supportsPreEncrypt;
 	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
 	builder.executable(new Blob([new Uint8Array(1)]), 0, 0, 1);
-	const zero = (await builder.build(version)).length();
+	const zero = CodeDirectory.size(await builder.build(version));
 
 	builder.generatePreEncryptHashes(true);
 	assertEquals(
-		(await builder.build(version)).length(),
+		CodeDirectory.size(await builder.build(version)),
 		zero + CS_SHA1_LEN * 1,
 	);
 });

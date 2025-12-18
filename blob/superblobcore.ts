@@ -60,13 +60,7 @@ export abstract class SuperBlobCore extends Blob {
 	public blob(n: number): BlobCore | null {
 		n >>>= 0;
 		const { offset } = this.mIndex[n];
-		return offset
-			? (SuperBlobCore.prototype.at<BlobCore>).call(
-				this,
-				BlobCore,
-				offset,
-			)
-			: null;
+		return offset ? SuperBlobCore.at(this, BlobCore, offset) : null;
 	}
 
 	/**
@@ -82,13 +76,7 @@ export abstract class SuperBlobCore extends Blob {
 			const index = mIndex[i];
 			if (index.type === type) {
 				const { offset } = index;
-				return offset
-					? (SuperBlobCore.prototype.at<BlobCore>).call(
-						this,
-						BlobCore,
-						offset,
-					)
-					: null;
+				return offset ? SuperBlobCore.at(this, BlobCore, offset) : null;
 			}
 		}
 		return null;

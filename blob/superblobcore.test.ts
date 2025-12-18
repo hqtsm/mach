@@ -46,8 +46,8 @@ Deno.test('blob', () => {
 	assertEquals(example.blob(0), null);
 	const blob = example.blob(1);
 	assertInstanceOf(blob, BlobCore);
-	assertEquals(blob.magic(), 0x11223344);
-	assertEquals(blob.length(), 8);
+	assertEquals(BlobCore.magic(blob), 0x11223344);
+	assertEquals(BlobCore.size(blob), 8);
 });
 
 Deno.test('find', () => {
@@ -63,6 +63,6 @@ Deno.test('find', () => {
 	assertEquals(example.find(0x11111111), null);
 	const blob = example.find(0x22222222);
 	assertInstanceOf(blob, BlobCore);
-	assertEquals(blob.magic(), 0x11223344);
-	assertEquals(blob.length(), 8);
+	assertEquals(BlobCore.magic(blob), 0x11223344);
+	assertEquals(BlobCore.size(blob), 8);
 });

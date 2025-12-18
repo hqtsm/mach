@@ -26,7 +26,7 @@ export class BlobWrapper extends Blob {
 	 *
 	 * @returns Data pointer.
 	 */
-	public override data(): Ptr {
+	public data(): Ptr {
 		// Overridden to point to payload (only).
 		const { dataArea } = this;
 		return new Ptr(dataArea.buffer, dataArea.byteOffset, this.littleEndian);
@@ -37,7 +37,7 @@ export class BlobWrapper extends Blob {
 	 *
 	 * @returns Byte length.
 	 */
-	public override length(): number;
+	public length(): number;
 
 	/**
 	 * Set blob length for full blob, including magic and length.
@@ -45,7 +45,7 @@ export class BlobWrapper extends Blob {
 	 *
 	 * @param size Byte length.
 	 */
-	public override length(size: number): void;
+	public length(size: number): void;
 
 	/**
 	 * Get or set blob length.
@@ -53,13 +53,11 @@ export class BlobWrapper extends Blob {
 	 * @param size Byte length to set or undefined to get.
 	 * @returns Byte length on get or undefined on set.
 	 */
-	public override length(size?: number): number | void {
+	public length(size?: number): number | void {
 		if (size === undefined) {
-			return BlobCore.prototype.length.call<BlobWrapper, [], number>(
-				this,
-			) - BlobCore.BYTE_LENGTH;
+			return BlobCore.size(this) - BlobCore.BYTE_LENGTH;
 		}
-		super.length(size);
+		Blob.size(this, size);
 	}
 
 	public static override readonly typeMagic = CSMAGIC_BLOBWRAPPER;
@@ -115,7 +113,7 @@ export class BlobWrapper extends Blob {
 		magic ??= BlobWrapper.typeMagic;
 		const buffer = new ArrayBuffer(size);
 		const blob = new BlobWrapper(buffer);
-		blob.initialize(magic, size);
+		BlobWrapper.initialize(blob, magic, size);
 		if (view) {
 			new Uint8Array(buffer, BYTE_LENGTH).set(view);
 		}

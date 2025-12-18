@@ -35,14 +35,18 @@ Deno.test('data', () => {
 	const eb = new EntitlementBlob(EntitlementBlob.blobify(data));
 	new Uint8Array(eb.buffer, eb.byteOffset + eb.byteLength)
 		.set(data);
-	const dv = new DataView(eb.buffer, eb.byteOffset, eb.length());
+	const dv = new DataView(
+		eb.buffer,
+		eb.byteOffset,
+		EntitlementBlob.size(eb),
+	);
 	assertEquals(dv.getUint32(0), kSecCodeMagicEntitlement);
-	assertEquals(dv.getUint32(4), eb.length());
+	assertEquals(dv.getUint32(4), EntitlementBlob.size(eb));
 	assertEquals(
 		new Uint8Array(
 			eb.buffer,
 			eb.byteOffset + eb.byteLength,
-			eb.length() - eb.byteLength,
+			EntitlementBlob.size(eb) - eb.byteLength,
 		),
 		data,
 	);

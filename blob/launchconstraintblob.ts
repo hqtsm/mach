@@ -35,8 +35,7 @@ export class LaunchConstraintBlob extends Blob {
 	 * @returns Byte length.
 	 */
 	public derLength(): number {
-		return BlobCore.prototype.length.call<BlobCore, [], number>(this) -
-			BlobCore.BYTE_LENGTH;
+		return BlobCore.size(this) - BlobCore.BYTE_LENGTH;
 	}
 
 	public static override readonly typeMagic = kSecCodeMagicLaunchConstraint;

@@ -22,6 +22,7 @@ import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import { EmbeddedSignatureBlob } from './embeddedsignatureblob.ts';
 import { EmbeddedSignatureBlobMaker } from './embeddedsignatureblobmaker.ts';
 import { RequirementsMaker } from './requirementsmaker.ts';
+import { Requirements } from './requirements.ts';
 
 const fixtures = fixtureMachos();
 
@@ -29,7 +30,7 @@ const emptyRequirements = new RequirementsMaker().make();
 const emptyRequirementsData = new Uint8Array(
 	emptyRequirements.buffer,
 	emptyRequirements.byteOffset,
-	emptyRequirements.length(),
+	Requirements.size(emptyRequirements),
 );
 
 const createBuilder = async (
@@ -192,12 +193,12 @@ for (const { kind, arch, file, archs } of fixtures) {
 			const csBuffer = new Uint8Array(
 				cs.buffer,
 				cs.byteOffset,
-				cs.length(),
+				EmbeddedSignatureBlob.size(cs),
 			);
 			const expected = new Uint8Array(
 				bin.buffer,
 				bin.byteOffset + info.offset,
-				cs.length(),
+				EmbeddedSignatureBlob.size(cs),
 			);
 			assertEquals(csBuffer, expected, message('compare'));
 		}

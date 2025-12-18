@@ -6,11 +6,12 @@ import {
 import { unhex } from '../spec/hex.ts';
 import { Requirement } from './requirement.ts';
 import { RequirementsMaker } from './requirementsmaker.ts';
+import { Requirements } from './requirements.ts';
 
 Deno.test('empty', () => {
 	const rs = new RequirementsMaker().make();
 	assertEquals(
-		new Uint8Array(rs.buffer, rs.byteOffset, rs.length()),
+		new Uint8Array(rs.buffer, rs.byteOffset, Requirements.size(rs)),
 		unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00'),
 	);
 });
@@ -49,7 +50,7 @@ Deno.test('host + designated', () => {
 	);
 	const rs = rsm.make();
 	assertEquals(
-		new Uint8Array(rs.buffer, rs.byteOffset, rs.length()),
+		new Uint8Array(rs.buffer, rs.byteOffset, Requirements.size(rs)),
 		data,
 	);
 });

@@ -87,7 +87,7 @@ export abstract class SuperBlobCoreMaker {
 				>(
 					this,
 					t,
-					BlobCore.prototype.clone.call(b)!,
+					BlobCore.clone(b)!,
 				);
 			}
 			return;
@@ -103,9 +103,7 @@ export abstract class SuperBlobCoreMaker {
 			>(
 				this,
 				mIndex[ix].type,
-				BlobCore.prototype.clone.call(
-					SuperBlob.prototype.blob.call(type, ix)!,
-				)!,
+				BlobCore.clone(SuperBlob.prototype.blob.call(type, ix)!)!,
 			);
 		}
 	}
@@ -142,7 +140,7 @@ export abstract class SuperBlobCoreMaker {
 		let total = 0;
 		for (const blob of this.mPieces.values()) {
 			count++;
-			total += BlobCore.prototype.length.call<BlobCore, [], number>(blob);
+			total += BlobCore.size(blob);
 		}
 		for (const s of sizes) {
 			count++;
@@ -182,7 +180,7 @@ export abstract class SuperBlobCoreMaker {
 			index.type = type;
 			index.offset = pc;
 			const p = mPieces.get(type)!;
-			const l = BlobCore.prototype.length.call<BlobCore, [], number>(p);
+			const l = BlobCore.size(p);
 			data.set(new Uint8Array(p.buffer, p.byteOffset, l), pc);
 			pc += l;
 			n++;
