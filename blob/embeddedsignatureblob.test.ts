@@ -55,19 +55,29 @@ export async function* createCodeDirectories(
 		const teamID = new TextEncoder().encode(info.teamid);
 		// deno-lint-ignore no-await-in-loop
 		const builder = await createBuilder(hashType);
-		builder.executable(
+		CodeDirectoryBuilder.executable(
+			builder,
 			new Blob([thin.slice(0)]),
 			info.page,
 			0,
 			info.offset,
 		);
-		builder.flags(info.flags);
-		builder.execSeg(info.execsegbase, info.execseglimit, info.execsegflags);
-		builder.identifier(identifier);
-		builder.teamID(teamID);
+		CodeDirectoryBuilder.flags(builder, info.flags);
+		CodeDirectoryBuilder.execSeg(
+			builder,
+			info.execsegbase,
+			info.execseglimit,
+			info.execsegflags,
+		);
+		CodeDirectoryBuilder.identifier(builder, identifier);
+		CodeDirectoryBuilder.teamID(builder, teamID);
 		if (infoPlist) {
 			// deno-lint-ignore no-await-in-loop
-			await builder.specialSlot(cdInfoSlot, infoPlist);
+			await CodeDirectoryBuilder.specialSlot(
+				builder,
+				cdInfoSlot,
+				infoPlist,
+			);
 		}
 		switch (requirements) {
 			case '': {
@@ -76,7 +86,8 @@ export async function* createCodeDirectories(
 			}
 			case 'count=0 size=12': {
 				// deno-lint-ignore no-await-in-loop
-				await builder.specialSlot(
+				await CodeDirectoryBuilder.specialSlot(
+					builder,
 					cdRequirementsSlot,
 					emptyRequirementsData,
 				);
@@ -88,16 +99,23 @@ export async function* createCodeDirectories(
 		}
 		if (codeResources) {
 			// deno-lint-ignore no-await-in-loop
-			await builder.specialSlot(cdResourceDirSlot, codeResources);
+			await CodeDirectoryBuilder.specialSlot(
+				builder,
+				cdResourceDirSlot,
+				codeResources,
+			);
 		}
 
 		// Offical library always minimum supports scatter.
 		assertEquals(
-			Math.max(builder.minVersion(), CodeDirectory.supportsScatter),
+			Math.max(
+				CodeDirectoryBuilder.minVersion(builder),
+				CodeDirectory.supportsScatter,
+			),
 			info.version,
 		);
 
-		yield builder.build(info.version);
+		yield CodeDirectoryBuilder.build(builder, info.version);
 	}
 }
 

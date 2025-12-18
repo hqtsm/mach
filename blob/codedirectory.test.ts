@@ -26,9 +26,12 @@ Deno.test('BYTE_LENGTH', () => {
 Deno.test('identifier', async () => {
 	const identifier = 'Identifier';
 	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
-	builder.executable(new Blob([]), 0, 0, 0);
-	builder.identifier(new TextEncoder().encode(identifier));
-	const cd = await builder.build();
+	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
+	CodeDirectoryBuilder.identifier(
+		builder,
+		new TextEncoder().encode(identifier),
+	);
+	const cd = await CodeDirectoryBuilder.build(builder);
 	const cstr = new TextEncoder().encode(`${identifier}\0`);
 	const ptr = CodeDirectory.identifier(cd);
 	assertEquals(
@@ -39,15 +42,24 @@ Deno.test('identifier', async () => {
 
 Deno.test('signingLimit', async () => {
 	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
-	builder.executable(new Blob([new Uint8Array(1)]), 0, 0, 1);
+	CodeDirectoryBuilder.executable(
+		builder,
+		new Blob([new Uint8Array(1)]),
+		0,
+		0,
+		1,
+	);
 	if (typeof crypto === 'undefined') {
 		builder.crypto = await import('node:crypto');
 	}
-	const cd = await builder.build();
+	const cd = await CodeDirectoryBuilder.build(builder);
 	assertEquals(CodeDirectory.signingLimit(cd), 1n);
 
 	// Test a big directory without big code blob.
-	const cd2 = await builder.build(CodeDirectory.supportsCodeLimit64);
+	const cd2 = await CodeDirectoryBuilder.build(
+		builder,
+		CodeDirectory.supportsCodeLimit64,
+	);
 	cd2.codeLimit64 = BigInt(cd2.codeLimit);
 	cd2.codeLimit = 0;
 	assertEquals(CodeDirectory.signingLimit(cd2), 1n);
@@ -55,19 +67,33 @@ Deno.test('signingLimit', async () => {
 
 Deno.test('scatterVector', async () => {
 	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
-	builder.executable(new Blob([new Uint8Array(1)]), 0, 0, 1);
-	assertEquals(CodeDirectory.scatterVector(await builder.build()), null);
-	builder.scatter(1);
-	assert(CodeDirectory.scatterVector(await builder.build()));
+	CodeDirectoryBuilder.executable(
+		builder,
+		new Blob([new Uint8Array(1)]),
+		0,
+		0,
+		1,
+	);
+	assertEquals(
+		CodeDirectory.scatterVector(await CodeDirectoryBuilder.build(builder)),
+		null,
+	);
+	CodeDirectoryBuilder.scatter(builder, 1);
+	assert(
+		CodeDirectory.scatterVector(await CodeDirectoryBuilder.build(builder)),
+	);
 });
 
 Deno.test('teamID', async () => {
 	const identifier = 'Team-Identifier';
 	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
-	builder.executable(new Blob([]), 0, 0, 0);
-	assertEquals(CodeDirectory.teamID(await builder.build()), null);
-	builder.teamID(new TextEncoder().encode(identifier));
-	const cd = await builder.build();
+	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
+	assertEquals(
+		CodeDirectory.teamID(await CodeDirectoryBuilder.build(builder)),
+		null,
+	);
+	CodeDirectoryBuilder.teamID(builder, new TextEncoder().encode(identifier));
+	const cd = await CodeDirectoryBuilder.build(builder);
 	const cstr = new TextEncoder().encode(`${identifier}\0`);
 	const ptr = CodeDirectory.teamID(cd);
 	assert(ptr);
@@ -79,40 +105,79 @@ Deno.test('teamID', async () => {
 
 Deno.test('execSegmentBase', async () => {
 	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
-	builder.executable(new Blob([]), 0, 0, 0);
-	assertEquals(CodeDirectory.execSegmentBase(await builder.build()), 0n);
-	builder.execSeg(1n, 2n, 3n);
-	assertEquals(CodeDirectory.execSegmentBase(await builder.build()), 1n);
+	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
+	assertEquals(
+		CodeDirectory.execSegmentBase(
+			await CodeDirectoryBuilder.build(builder),
+		),
+		0n,
+	);
+	CodeDirectoryBuilder.execSeg(builder, 1n, 2n, 3n);
+	assertEquals(
+		CodeDirectory.execSegmentBase(
+			await CodeDirectoryBuilder.build(builder),
+		),
+		1n,
+	);
 });
 
 Deno.test('execSegmentLimit', async () => {
 	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
-	builder.executable(new Blob([]), 0, 0, 0);
-	assertEquals(CodeDirectory.execSegmentLimit(await builder.build()), 0n);
-	builder.execSeg(1n, 2n, 3n);
-	assertEquals(CodeDirectory.execSegmentLimit(await builder.build()), 2n);
+	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
+	assertEquals(
+		CodeDirectory.execSegmentLimit(
+			await CodeDirectoryBuilder.build(builder),
+		),
+		0n,
+	);
+	CodeDirectoryBuilder.execSeg(builder, 1n, 2n, 3n);
+	assertEquals(
+		CodeDirectory.execSegmentLimit(
+			await CodeDirectoryBuilder.build(builder),
+		),
+		2n,
+	);
 });
 
 Deno.test('execSegmentFlags', async () => {
 	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
-	builder.executable(new Blob([]), 0, 0, 0);
-	assertEquals(CodeDirectory.execSegmentFlags(await builder.build()), 0n);
-	builder.execSeg(1n, 2n, 3n);
-	assertEquals(CodeDirectory.execSegmentFlags(await builder.build()), 3n);
+	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
+	assertEquals(
+		CodeDirectory.execSegmentFlags(
+			await CodeDirectoryBuilder.build(builder),
+		),
+		0n,
+	);
+	CodeDirectoryBuilder.execSeg(builder, 1n, 2n, 3n);
+	assertEquals(
+		CodeDirectory.execSegmentFlags(
+			await CodeDirectoryBuilder.build(builder),
+		),
+		3n,
+	);
 });
 
 Deno.test('runtimeVersion', async () => {
 	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
-	builder.executable(new Blob([]), 0, 0, 0);
-	assertEquals(CodeDirectory.runtimeVersion(await builder.build()), 0);
-	builder.runTimeVersion(123);
-	assertEquals(CodeDirectory.runtimeVersion(await builder.build()), 123);
+	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
+	assertEquals(
+		CodeDirectory.runtimeVersion(await CodeDirectoryBuilder.build(builder)),
+		0,
+	);
+	CodeDirectoryBuilder.runTimeVersion(builder, 123);
+	assertEquals(
+		CodeDirectory.runtimeVersion(await CodeDirectoryBuilder.build(builder)),
+		123,
+	);
 });
 
 Deno.test('getSlot', async () => {
 	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
-	builder.executable(new Blob([]), 0, 0, 0);
-	const cd = await builder.build(CodeDirectory.supportsPreEncrypt);
+	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
+	const cd = await CodeDirectoryBuilder.build(
+		builder,
+		CodeDirectory.supportsPreEncrypt,
+	);
 	assertEquals(CodeDirectory.getSlot(cd, 0, true), null);
 });
 
