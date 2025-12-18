@@ -14,7 +14,7 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	/**
 	 * Maker reference.
 	 */
-	public readonly maker: RequirementMaker;
+	public maker: RequirementMaker;
 
 	/**
 	 * Joiner opcode.
