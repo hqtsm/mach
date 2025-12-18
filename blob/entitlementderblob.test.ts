@@ -28,9 +28,13 @@ Deno.test('data', () => {
 	);
 	assertEquals(dv.getUint32(0), kSecCodeMagicEntitlementDER);
 	assertEquals(dv.getUint32(4), EntitlementDERBlob.size(edb));
-	const ptr = edb.der();
+	const ptr = EntitlementDERBlob.der(edb);
 	assertEquals(
-		new Uint8Array(ptr.buffer, ptr.byteOffset, edb.derLength()),
+		new Uint8Array(
+			ptr.buffer,
+			ptr.byteOffset,
+			EntitlementDERBlob.derLength(edb),
+		),
 		data,
 	);
 });
