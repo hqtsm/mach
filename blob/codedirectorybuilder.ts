@@ -159,14 +159,14 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Open executable.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param file File reader.
 	 * @param pagesize Page size.
 	 * @param offset Offset in file.
 	 * @param length Length in file.
 	 */
 	public static executable(
-		self: CodeDirectoryBuilder,
+		_this: CodeDirectoryBuilder,
 		file: Reader,
 		pagesize: number,
 		offset: number,
@@ -175,259 +175,262 @@ export class CodeDirectoryBuilder {
 		pagesize = (+pagesize || 0) - (pagesize % 1 || 0);
 		offset = (+offset || 0) - (offset % 1 || 0);
 		length = (+length || 0) - (length % 1 || 0);
-		self.mExec = file;
-		self.mPageSize = pagesize;
-		self.mExecOffset = offset;
-		self.mExecLength = length;
+		_this.mExec = file;
+		_this.mPageSize = pagesize;
+		_this.mExecOffset = offset;
+		_this.mExecLength = length;
 	}
 
 	/**
 	 * Reopen executable.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param file File reader.
 	 * @param offset Offset in file.
 	 * @param length Length in file.
 	 */
 	public static reopen(
-		self: CodeDirectoryBuilder,
+		_this: CodeDirectoryBuilder,
 		file: Reader,
 		offset: number,
 		length: number,
 	): void {
 		offset = (+offset || 0) - (offset % 1 || 0);
 		length = (+length || 0) - (length % 1 || 0);
-		if (!CodeDirectoryBuilder.opened(self)) {
+		if (!CodeDirectoryBuilder.opened(_this)) {
 			throw new Error('Executable not open');
 		}
-		self.mExec = file;
-		self.mExecOffset = offset;
-		self.mExecLength = length;
+		_this.mExec = file;
+		_this.mExecOffset = offset;
+		_this.mExecLength = length;
 	}
 
 	/**
 	 * Is an executable open.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Is open.
 	 */
-	public static opened(self: CodeDirectoryBuilder): boolean {
-		return !!self.mExec;
+	public static opened(_this: CodeDirectoryBuilder): boolean {
+		return !!_this.mExec;
 	}
 
 	/**
 	 * Set special slot.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param slot Slot index, 1 indexed.
 	 * @param hash Hash data.
 	 */
 	public static async specialSlot(
-		self: CodeDirectoryBuilder,
+		_this: CodeDirectoryBuilder,
 		slot: number,
 		data: ArrayBufferLike | ArrayBufferView,
 	): Promise<void> {
 		slot = specialSlot(slot);
-		self.mSpecial.set(
+		_this.mSpecial.set(
 			slot,
-			await CodeDirectoryBuilder.getHash(self).digest(data),
+			await CodeDirectoryBuilder.getHash(_this).digest(data),
 		);
-		if (slot > self.mSpecialSlots) {
-			self.mSpecialSlots = slot;
+		if (slot > _this.mSpecialSlots) {
+			_this.mSpecialSlots = slot;
 		}
 	}
 
 	/**
 	 * Get special slot.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param slot Slot index, 1 indexed.
 	 * @returns Hash data, or null.
 	 */
 	private static getSpecialSlot(
-		self: CodeDirectoryBuilder,
+		_this: CodeDirectoryBuilder,
 		slot: number,
 	): ArrayBuffer | null {
 		slot = specialSlot(slot);
-		return self.mSpecial.get(slot) || null;
+		return _this.mSpecial.get(slot) || null;
 	}
 
 	/**
 	 * Set identifier.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param code Identifier.
 	 */
 	public static identifier(
-		self: CodeDirectoryBuilder,
+		_this: CodeDirectoryBuilder,
 		code: ArrayBufferLike | ArrayBufferView,
 	): void {
 		if ('buffer' in code) {
 			const { buffer, byteOffset, byteLength } = code;
-			self.mIdentifier = buffer.slice(
+			_this.mIdentifier = buffer.slice(
 				byteOffset,
 				byteOffset + byteLength,
 			);
 		} else {
-			self.mIdentifier = code.slice(0);
+			_this.mIdentifier = code.slice(0);
 		}
 	}
 
 	/**
 	 * Set team ID.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param team Team ID.
 	 */
 	public static teamID(
-		self: CodeDirectoryBuilder,
+		_this: CodeDirectoryBuilder,
 		team: ArrayBufferLike | ArrayBufferView,
 	): void {
 		if ('buffer' in team) {
 			const { buffer, byteOffset, byteLength } = team;
-			self.mTeamID = buffer.slice(
+			_this.mTeamID = buffer.slice(
 				byteOffset,
 				byteOffset + byteLength,
 			);
 		} else {
-			self.mTeamID = team.slice(0);
+			_this.mTeamID = team.slice(0);
 		}
 	}
 
 	/**
 	 * Set flags.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param flags Flags.
 	 */
-	public static flags(self: CodeDirectoryBuilder, flags: number): void {
-		self.mFlags = flags;
+	public static flags(_this: CodeDirectoryBuilder, flags: number): void {
+		_this.mFlags = flags;
 	}
 
 	/**
 	 * Set platform.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param platform Platform.
 	 */
-	public static platform(self: CodeDirectoryBuilder, platform: number): void {
-		self.mPlatform = platform;
+	public static platform(
+		_this: CodeDirectoryBuilder,
+		platform: number,
+	): void {
+		_this.mPlatform = platform;
 	}
 
 	/**
 	 * Create a scatter vector with count slots, plus sentinel.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param count Number of slots, excluding sentinel.
 	 * @returns Scatter vector.
 	 */
 	public static scatter(
-		self: CodeDirectoryBuilder,
+		_this: CodeDirectoryBuilder,
 		count: number,
 	): Ptr<CodeDirectoryScatter>;
 
 	/**
 	 * Get existing scatter vector.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Scatter vector.
 	 */
 	public static scatter(
-		self: CodeDirectoryBuilder,
+		_this: CodeDirectoryBuilder,
 	): Ptr<CodeDirectoryScatter> | null;
 
 	/**
 	 * Get or create scatter vector.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param count Number to create or undefined to get existing.
 	 * @returns Scatter vector or null.
 	 */
 	public static scatter(
-		self: CodeDirectoryBuilder,
+		_this: CodeDirectoryBuilder,
 		count?: number,
 	): Ptr<CodeDirectoryScatter> | null {
 		if (count !== undefined) {
 			count = (+count || 0) - (count % 1 || 0);
 			const { BYTE_LENGTH } = CodeDirectoryScatter;
-			const total = self.mScatterSize = (count + 1) * BYTE_LENGTH;
-			return self.mScatter = new (pointer(CodeDirectoryScatter))(
+			const total = _this.mScatterSize = (count + 1) * BYTE_LENGTH;
+			return _this.mScatter = new (pointer(CodeDirectoryScatter))(
 				new ArrayBuffer(total),
 			);
 		}
-		return self.mScatter;
+		return _this.mScatter;
 	}
 
 	/**
 	 * Set exec segment.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param base Base offset.
 	 * @param limit Limit.
 	 * @param flags Flags.
 	 */
 	public static execSeg(
-		self: CodeDirectoryBuilder,
+		_this: CodeDirectoryBuilder,
 		base: bigint,
 		limit: bigint,
 		flags: bigint,
 	): void {
-		self.mExecSegOffset = base;
-		self.mExecSegLimit = limit;
-		self.mExecSegFlags = flags;
+		_this.mExecSegOffset = base;
+		_this.mExecSegLimit = limit;
+		_this.mExecSegFlags = flags;
 	}
 
 	/**
 	 * Add exec segment flags.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param flags Flags.
 	 */
 	public static addExecSegFlags(
-		self: CodeDirectoryBuilder,
+		_this: CodeDirectoryBuilder,
 		flags: bigint,
 	): void {
-		self.mExecSegFlags |= flags;
+		_this.mExecSegFlags |= flags;
 	}
 
 	/**
 	 * Set generate pre-encrypt hashes.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param pre Generate pre-encrypt hashes.
 	 */
 	public static generatePreEncryptHashes(
-		self: CodeDirectoryBuilder,
+		_this: CodeDirectoryBuilder,
 		pre: boolean,
 	): void {
-		self.mGeneratePreEncryptHashes = pre;
+		_this.mGeneratePreEncryptHashes = pre;
 	}
 
 	/**
 	 * Set the runtime version.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param runtime Runtime version.
 	 */
 	public static runTimeVersion(
-		self: CodeDirectoryBuilder,
+		_this: CodeDirectoryBuilder,
 		runtime: number,
 	): void {
-		self.mRuntimeVersion = runtime;
+		_this.mRuntimeVersion = runtime;
 	}
 
 	/**
 	 * Caculate size for CodeDirectory currently described.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param version Compatibility version or null for minimum.
 	 * @returns Byte size.
 	 */
 	public static size(
-		self: CodeDirectoryBuilder,
+		_this: CodeDirectoryBuilder,
 		version: number | null = null,
 	): number {
-		version ??= CodeDirectoryBuilder.minVersion(self);
+		version ??= CodeDirectoryBuilder.minVersion(_this);
 		const {
 			mIdentifier,
 			mTeamID,
@@ -435,10 +438,10 @@ export class CodeDirectoryBuilder {
 			mSpecialSlots,
 			mDigestLength,
 			mGeneratePreEncryptHashes,
-		} = self;
-		let size = CodeDirectoryBuilder.fixedSize(self, version);
+		} = _this;
+		let size = CodeDirectoryBuilder.fixedSize(_this, version);
 		if (!(version < CodeDirectory.supportsScatter)) {
-			size += self.mScatterSize;
+			size += _this.mScatterSize;
 		}
 		size += mIdentifier.byteLength + 1;
 		if (!(version < CodeDirectory.supportsTeamID) && mTeamID.byteLength) {
@@ -457,15 +460,15 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Build CodeDirectory.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param version Compatibility version or null for minimum.
 	 * @returns CodeDirectory instance.
 	 */
 	public static async build(
-		self: CodeDirectoryBuilder,
+		_this: CodeDirectoryBuilder,
 		version: number | null = null,
 	): Promise<CodeDirectory> {
-		version ??= CodeDirectoryBuilder.minVersion(self);
+		version ??= CodeDirectoryBuilder.minVersion(_this);
 		const {
 			mExec,
 			mExecOffset,
@@ -479,17 +482,17 @@ export class CodeDirectoryBuilder {
 			mIdentifier,
 			mTeamID,
 			mGeneratePreEncryptHashes,
-		} = self;
+		} = _this;
 		if (!mExec) {
 			throw new Error('Executable not open');
 		}
-		const size = CodeDirectoryBuilder.size(self, version);
+		const size = CodeDirectoryBuilder.size(_this, version);
 		const buffer = new ArrayBuffer(size);
 		const data = new Uint8Array(buffer);
 		const dir = new CodeDirectory(buffer);
 		CodeDirectory.initializeLength(dir, size);
 		dir.version = version;
-		dir.flags = self.mFlags;
+		dir.flags = _this.mFlags;
 		dir.nSpecialSlots = mSpecialSlots;
 		dir.nCodeSlots = mCodeSlots;
 		if (
@@ -501,19 +504,19 @@ export class CodeDirectoryBuilder {
 		} else {
 			dir.codeLimit = mExecLength;
 		}
-		dir.hashType = self.mHashType;
-		dir.platform = self.mPlatform;
+		dir.hashType = _this.mHashType;
+		dir.platform = _this.mPlatform;
 		dir.hashSize = mDigestLength;
 		dir.pageSize = mPageSize ? Math.log2(mPageSize) : 0;
 		if (!(version < CodeDirectory.supportsExecSegment)) {
-			dir.execSegBase = self.mExecSegOffset;
-			dir.execSegLimit = self.mExecSegLimit;
-			dir.execSegFlags = self.mExecSegFlags;
+			dir.execSegBase = _this.mExecSegOffset;
+			dir.execSegLimit = _this.mExecSegLimit;
+			dir.execSegFlags = _this.mExecSegFlags;
 		}
 		if (!(version < CodeDirectory.supportsPreEncrypt)) {
-			dir.runtime = self.mRuntimeVersion;
+			dir.runtime = _this.mRuntimeVersion;
 		}
-		let offset = CodeDirectoryBuilder.fixedSize(self, version);
+		let offset = CodeDirectoryBuilder.fixedSize(_this, version);
 		if (mScatter && !(version < CodeDirectory.supportsScatter)) {
 			dir.scatterOffset = offset;
 			data.set(
@@ -542,7 +545,7 @@ export class CodeDirectoryBuilder {
 		}
 		dir.hashOffset = offset + mSpecialSlots * mDigestLength;
 		for (let i = 1; i <= mSpecialSlots; i++) {
-			const hash = CodeDirectoryBuilder.getSpecialSlot(self, i);
+			const hash = CodeDirectoryBuilder.getSpecialSlot(_this, i);
 			if (hash) {
 				const slot = CodeDirectory.getSlotMutable(dir, -i, false)!;
 				new Uint8Array(slot.buffer, slot.byteOffset).set(
@@ -557,7 +560,7 @@ export class CodeDirectoryBuilder {
 			if (mPageSize && thisPage > mPageSize) {
 				thisPage = mPageSize;
 			}
-			const hasher = CodeDirectoryBuilder.getHash(self);
+			const hasher = CodeDirectoryBuilder.getHash(_this);
 			// deno-lint-ignore no-await-in-loop
 			const hash = await generateHash(hasher, mExec, position, thisPage);
 			const data = new Uint8Array(hash);
@@ -576,22 +579,22 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Hash type.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Hash type.
 	 */
-	public static hashType(self: CodeDirectoryBuilder): number {
-		return self.mHashType;
+	public static hashType(_this: CodeDirectoryBuilder): number {
+		return _this.mHashType;
 	}
 
 	/**
 	 * Get fixed size for compatibility version.
 	 *
-	 * @param _self This.
+	 * @param __this This.
 	 * @param version Compatibility version.
 	 * @returns Byte size.
 	 */
 	public static fixedSize(
-		_self: CodeDirectoryBuilder,
+		__this: CodeDirectoryBuilder,
 		version: number,
 	): number {
 		let size = CodeDirectory.BYTE_LENGTH;
@@ -616,35 +619,35 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Get hash creation instance.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Hash instance.
 	 */
-	public static getHash(self: CodeDirectoryBuilder): DynamicHash {
-		const hash = CodeDirectory.hashFor(self.mHashType);
-		hash.crypto = self.crypto;
+	public static getHash(_this: CodeDirectoryBuilder): DynamicHash {
+		const hash = CodeDirectory.hashFor(_this.mHashType);
+		hash.crypto = _this.crypto;
 		return hash;
 	}
 
 	/**
 	 * Minimum compatibility version of described CodeDirectory.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Minimum version.
 	 */
-	public static minVersion(self: CodeDirectoryBuilder): number {
-		if (self.mGeneratePreEncryptHashes || self.mRuntimeVersion) {
+	public static minVersion(_this: CodeDirectoryBuilder): number {
+		if (_this.mGeneratePreEncryptHashes || _this.mRuntimeVersion) {
 			return CodeDirectory.supportsPreEncrypt;
 		}
-		if (self.mExecSegLimit > 0) {
+		if (_this.mExecSegLimit > 0) {
 			return CodeDirectory.supportsExecSegment;
 		}
-		if (self.mExecLength > UINT32_MAX) {
+		if (_this.mExecLength > UINT32_MAX) {
 			return CodeDirectory.supportsCodeLimit64;
 		}
-		if (self.mTeamID.byteLength) {
+		if (_this.mTeamID.byteLength) {
 			return CodeDirectory.supportsTeamID;
 		}
-		if (self.mScatterSize) {
+		if (_this.mScatterSize) {
 			return CodeDirectory.supportsScatter;
 		}
 		return CodeDirectory.earliestVersion;

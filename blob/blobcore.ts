@@ -30,11 +30,11 @@ export class BlobCore extends Struct {
 	/**
 	 * Magic number.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Magic number.
 	 */
-	public static magic(self: BlobCore): number {
-		return self.mMagic;
+	public static magic(_this: BlobCore): number {
+		return _this.mMagic;
 	}
 
 	/**
@@ -42,36 +42,36 @@ export class BlobCore extends Struct {
 	 * By default includes magic and length.
 	 * Child classes may redefine this to be a smaller area.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Byte length.
 	 */
-	public static size(self: BlobCore): number;
+	public static size(_this: BlobCore): number;
 
 	/**
 	 * Set blob length.
 	 * By default includes magic and length.
 	 * Child classes may redefine this to be a smaller area.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param size Byte length.
 	 */
-	public static size(self: BlobCore, size: number): void;
+	public static size(_this: BlobCore, size: number): void;
 
 	/**
 	 * Get or set blob length.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param size Byte length to set or undefined to get.
 	 * @returns Byte length on get or undefined on set.
 	 */
 	public static size(
-		self: BlobCore,
+		_this: BlobCore,
 		size?: number | undefined,
 	): number | void {
 		if (size === undefined) {
-			return self.mLength;
+			return _this.mLength;
 		}
-		self.mLength = size >>> 0;
+		_this.mLength = size >>> 0;
 	}
 
 	/**
@@ -80,15 +80,15 @@ export class BlobCore extends Struct {
 	 * @param magic Magic number.
 	 * @param length Length.
 	 */
-	public static initialize(self: BlobCore, magic: number, length = 0): void {
-		self.mMagic = magic;
-		self.mLength = length >>> 0;
+	public static initialize(_this: BlobCore, magic: number, length = 0): void {
+		_this.mMagic = magic;
+		_this.mLength = length >>> 0;
 	}
 
 	/**
 	 * Validate blob.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param magic Magic number.
 	 * @param minSize Minimum size.
 	 * @param maxSize Maximum size.
@@ -96,14 +96,14 @@ export class BlobCore extends Struct {
 	 * @returns Is valid.
 	 */
 	public static validateBlob(
-		self: BlobCore,
+		_this: BlobCore,
 		magic: number,
 		minSize?: number,
 		maxSize?: number,
 		context?: { errno: number },
 	): boolean {
-		const length = self.mLength;
-		if (magic && magic !== self.mMagic) {
+		const length = _this.mLength;
+		if (magic && magic !== _this.mMagic) {
 			if (context) context.errno = EINVAL;
 			return false;
 		}
@@ -122,14 +122,14 @@ export class BlobCore extends Struct {
 	 * Get view of data at offset, with endian.
 	 *
 	 * @template T View type.
-	 * @param self This.
+	 * @param _this This.
 	 * @param Type Constructor function.
 	 * @param offset Byte offset.
 	 * @param littleEndian Little endian, big endian, or inherit.
 	 * @returns Data view.
 	 */
 	public static at<T>(
-		self: BlobCore,
+		_this: BlobCore,
 		Type: new (
 			buffer: ArrayBufferLike,
 			byteOffset?: number,
@@ -139,43 +139,43 @@ export class BlobCore extends Struct {
 		littleEndian: boolean | null = null,
 	): T {
 		return new Type(
-			self.buffer,
-			self.byteOffset + offset,
-			littleEndian ?? self.littleEndian,
+			_this.buffer,
+			_this.byteOffset + offset,
+			littleEndian ?? _this.littleEndian,
 		);
 	}
 
 	/**
 	 * Check if blob contains a range.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param offset Byte offset.
 	 * @param size Byte size.
 	 * @returns Is contained.
 	 */
 	public static contains(
-		self: BlobCore,
+		_this: BlobCore,
 		offset: number,
 		size: number,
 	): boolean {
 		return (
 			offset >= BlobCore.BYTE_LENGTH &&
 			size >= 0 &&
-			(offset + size) <= BlobCore.size(self)
+			(offset + size) <= BlobCore.size(_this)
 		);
 	}
 
 	/**
 	 * Get string at offset.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param offset Byte offset.
 	 * @returns String pointer if null terminated string or null.
 	 */
-	public static stringAt(self: BlobCore, offset: number): Int8Ptr | null {
-		let length = BlobCore.size(self);
+	public static stringAt(_this: BlobCore, offset: number): Int8Ptr | null {
+		let length = BlobCore.size(_this);
 		if (offset >= 0 && offset < length) {
-			const s = BlobCore.at(self, Int8Ptr, offset) as Int8Ptr;
+			const s = BlobCore.at(_this, Int8Ptr, offset) as Int8Ptr;
 			length -= offset;
 			for (let i = 0; i < length; i++) {
 				if (!s[i]) {
@@ -191,35 +191,39 @@ export class BlobCore extends Struct {
 	 * By default includes magic and length.
 	 * Child classes may redefine this to be a smaller area.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Data pointer.
 	 */
-	public static data(self: BlobCore): Ptr {
-		return new Ptr(self.buffer, self.byteOffset, self.littleEndian);
+	public static data(_this: BlobCore): Ptr {
+		return new Ptr(_this.buffer, _this.byteOffset, _this.littleEndian);
 	}
 
 	/**
 	 * Clone blob.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Cloned blob.
 	 */
-	public static clone(self: BlobCore): BlobCore | null {
-		const l = BlobCore.size(self);
-		const o = self.byteOffset;
-		return new BlobCore(self.buffer.slice(o, o + l), 0, self.littleEndian);
+	public static clone(_this: BlobCore): BlobCore | null {
+		const l = BlobCore.size(_this);
+		const o = _this.byteOffset;
+		return new BlobCore(
+			_this.buffer.slice(o, o + l),
+			0,
+			_this.littleEndian,
+		);
 	}
 
 	/**
 	 * Inner byte data.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Uint8 byte array.
 	 */
-	public static innerData(self: BlobCore): Arr<number> {
+	public static innerData(_this: BlobCore): Arr<number> {
 		const o = BlobCore.BYTE_LENGTH;
-		const p = BlobCore.at(self, Uint8Ptr, o);
-		return new (array(Uint8Ptr, BlobCore.size(self) - o))(
+		const p = BlobCore.at(_this, Uint8Ptr, o);
+		return new (array(Uint8Ptr, BlobCore.size(_this) - o))(
 			p.buffer,
 			p.byteOffset,
 			p.littleEndian,
@@ -230,15 +234,15 @@ export class BlobCore extends Struct {
 	 * Check if blob type match the expected magic.
 	 *
 	 * @template T Blob class.
-	 * @param self This.
+	 * @param _this This.
 	 * @param BlobType Blob type.
 	 * @returns Is the same type.
 	 */
 	public static is<T>(
-		self: BlobCore,
+		_this: BlobCore,
 		BlobType: T & IsClass<T, { readonly typeMagic: number }>,
 	): boolean {
-		return BlobCore.magic(self) === BlobType.typeMagic;
+		return BlobCore.magic(_this) === BlobType.typeMagic;
 	}
 
 	/**

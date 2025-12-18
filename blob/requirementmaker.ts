@@ -48,33 +48,33 @@ export class RequirementMaker {
 	/**
 	 * Allocate bytes at end of buffer and return a view of that.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param size Size in bytes.
 	 * @returns View of allocated bytes.
 	 */
 	public static alloc(
-		self: RequirementMaker,
+		_this: RequirementMaker,
 		size: number,
 	): Uint8Array<ArrayBuffer> {
 		const usedSize = alignUp(size, Requirement.baseAlignment);
-		RequirementMaker.require(self, usedSize);
-		const a = new Uint8Array(self.mBuffer, self.mPC, size);
-		self.mPC += usedSize;
+		RequirementMaker.require(_this, usedSize);
+		const a = new Uint8Array(_this.mBuffer, _this.mPC, size);
+		_this.mPC += usedSize;
 		return a;
 	}
 
 	/**
 	 * Put data without length.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param data Data or uint32.
 	 */
 	public static put(
-		self: RequirementMaker,
+		_this: RequirementMaker,
 		data: ArrayBufferLike | ArrayBufferView | number,
 	): void {
 		if (typeof data === 'number') {
-			const a = RequirementMaker.alloc(self, 4);
+			const a = RequirementMaker.alloc(_this, 4);
 			dataView(a.buffer).setUint32(a.byteOffset, data);
 		} else {
 			const d = 'buffer' in data
@@ -84,19 +84,19 @@ export class RequirementMaker {
 					data.byteLength,
 				)
 				: new Uint8Array(data);
-			RequirementMaker.alloc(self, d.byteLength).set(d);
+			RequirementMaker.alloc(_this, d.byteLength).set(d);
 		}
 	}
 
 	/**
 	 * Put data with length.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param data Buffer pointer.
 	 * @param length Length in bytes.
 	 */
 	public static putData(
-		self: RequirementMaker,
+		_this: RequirementMaker,
 		data: ArrayBufferPointer,
 		length: number,
 	): void;
@@ -104,23 +104,23 @@ export class RequirementMaker {
 	/**
 	 * Put data with length.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param data Data.
 	 */
 	public static putData(
-		self: RequirementMaker,
+		_this: RequirementMaker,
 		data: ArrayBufferLike | ArrayBufferView,
 	): void;
 
 	/**
 	 * Put data with length.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param data Data or buffer pointer.
 	 * @param length Length in bytes.
 	 */
 	public static putData(
-		self: RequirementMaker,
+		_this: RequirementMaker,
 		data: ArrayBufferLike | ArrayBufferPointer | ArrayBufferView,
 		length?: number,
 	): void {
@@ -131,132 +131,132 @@ export class RequirementMaker {
 				length ?? (data as ArrayBufferView).byteLength,
 			)
 			: new Uint8Array(data);
-		RequirementMaker.put(self, d.byteLength);
-		RequirementMaker.put(self, d);
+		RequirementMaker.put(_this, d.byteLength);
+		RequirementMaker.put(_this, d);
 	}
 
 	/**
 	 * Anchor Apple.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 */
-	public static anchor(self: RequirementMaker): void {
-		RequirementMaker.put(self, opAppleAnchor);
+	public static anchor(_this: RequirementMaker): void {
+		RequirementMaker.put(_this, opAppleAnchor);
 	}
 
 	/**
 	 * Anchor Apple generic.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 */
-	public static anchorGeneric(self: RequirementMaker): void {
-		RequirementMaker.put(self, opAppleGenericAnchor);
+	public static anchorGeneric(_this: RequirementMaker): void {
+		RequirementMaker.put(_this, opAppleGenericAnchor);
 	}
 
 	/**
 	 * Anchor hash.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param slot Slot index.
 	 * @param digest SHA1 digest.
 	 */
 	public static anchorDigest(
-		self: RequirementMaker,
+		_this: RequirementMaker,
 		slot: number,
 		digest: ArrayBufferPointer,
 	): void {
-		RequirementMaker.put(self, opAnchorHash);
-		RequirementMaker.put(self, slot);
+		RequirementMaker.put(_this, opAnchorHash);
+		RequirementMaker.put(_this, slot);
 		// SHA1 digest length:
-		RequirementMaker.putData(self, digest, 20);
+		RequirementMaker.putData(_this, digest, 20);
 	}
 
 	/**
 	 * Trusted anchor.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param slot Slot index or null.
 	 */
 	public static trustedAnchor(
-		self: RequirementMaker,
+		_this: RequirementMaker,
 		slot: number | null = null,
 	): void {
 		if (slot === null) {
-			RequirementMaker.put(self, opTrustedCerts);
+			RequirementMaker.put(_this, opTrustedCerts);
 		} else {
-			RequirementMaker.put(self, opTrustedCert);
-			RequirementMaker.put(self, slot);
+			RequirementMaker.put(_this, opTrustedCert);
+			RequirementMaker.put(_this, slot);
 		}
 	}
 
 	/**
 	 * Put info key value.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param key Key string.
 	 * @param value Value string.
 	 */
 	public static infoKey(
-		self: RequirementMaker,
+		_this: RequirementMaker,
 		key: ArrayBufferLike | ArrayBufferView,
 		value: ArrayBufferLike | ArrayBufferView,
 	): void {
-		RequirementMaker.put(self, opInfoKeyValue);
-		RequirementMaker.putData(self, key);
-		RequirementMaker.putData(self, value);
+		RequirementMaker.put(_this, opInfoKeyValue);
+		RequirementMaker.putData(_this, key);
+		RequirementMaker.putData(_this, value);
 	}
 
 	/**
 	 * Put identifier.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param identifier Identifier string.
 	 */
 	public static ident(
-		self: RequirementMaker,
+		_this: RequirementMaker,
 		identifier: ArrayBufferLike | ArrayBufferView,
 	): void {
-		RequirementMaker.put(self, opIdent);
-		RequirementMaker.putData(self, identifier);
+		RequirementMaker.put(_this, opIdent);
+		RequirementMaker.putData(_this, identifier);
 	}
 
 	/**
 	 * Put code directory hash.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param digest Hash digest.
 	 */
 	public static cdhash(
-		self: RequirementMaker,
+		_this: RequirementMaker,
 		digest: ArrayBufferLike | ArrayBufferView,
 	): void {
-		RequirementMaker.put(self, opCDHash);
-		RequirementMaker.putData(self, digest);
+		RequirementMaker.put(_this, opCDHash);
+		RequirementMaker.putData(_this, digest);
 	}
 
 	/**
 	 * Put platform identifier.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param platformIdentifier Platform identifier.
 	 */
 	public static platform(
-		self: RequirementMaker,
+		_this: RequirementMaker,
 		platformIdentifier: number,
 	): void {
-		RequirementMaker.put(self, opPlatform);
-		RequirementMaker.put(self, platformIdentifier);
+		RequirementMaker.put(_this, opPlatform);
+		RequirementMaker.put(_this, platformIdentifier);
 	}
 
 	/**
 	 * Copy data.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param data Buffer pointer.
 	 * @param length Length in bytes.
 	 */
 	public static copy(
-		self: RequirementMaker,
+		_this: RequirementMaker,
 		data: ArrayBufferPointer,
 		length: number,
 	): void;
@@ -264,20 +264,20 @@ export class RequirementMaker {
 	/**
 	 * Copy requirement (embed).
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param req Requirement.
 	 */
-	public static copy(self: RequirementMaker, req: Requirement): void;
+	public static copy(_this: RequirementMaker, req: Requirement): void;
 
 	/**
 	 * Copy data or requirement.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param data Buffer pointer or requirement.
 	 * @param length Undefined for requirement.
 	 */
 	public static copy(
-		self: RequirementMaker,
+		_this: RequirementMaker,
 		data: ArrayBufferPointer | Requirement,
 		length?: number,
 	): void {
@@ -290,83 +290,83 @@ export class RequirementMaker {
 			}
 			const { BYTE_LENGTH } = Req;
 			RequirementMaker.copy(
-				self,
+				_this,
 				Requirement.at(req, Ptr, BYTE_LENGTH),
 				Requirement.size(req) - BYTE_LENGTH,
 			);
 		} else {
 			const d = new Uint8Array(data.buffer, data.byteOffset, length);
-			RequirementMaker.alloc(self, d.byteLength).set(d);
+			RequirementMaker.alloc(_this, d.byteLength).set(d);
 		}
 	}
 
 	/**
 	 * Insert data.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param label Label instance.
 	 * @param length Byte length.
 	 * @returns Pointer to source data.
 	 */
 	public static insert(
-		self: RequirementMaker,
+		_this: RequirementMaker,
 		label: RequirementMakerLabel,
 		length = 4,
 	): Ptr {
 		const { pos } = label;
-		const req = new Requirement(self.mBuffer);
-		RequirementMaker.require(self, length);
-		const len = self.mPC - pos;
+		const req = new Requirement(_this.mBuffer);
+		RequirementMaker.require(_this, length);
+		const len = _this.mPC - pos;
 		const reqDest = Requirement.at(req, Ptr, pos + length);
 		const reqSrc = Requirement.at(req, Ptr, pos);
 		new Uint8Array(reqDest.buffer, reqDest.byteOffset, len).set(
 			new Uint8Array(reqSrc.buffer, reqSrc.byteOffset, len),
 		);
-		self.mPC += length;
+		_this.mPC += length;
 		return reqSrc;
 	}
 
 	/**
 	 * Set kind.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param kind Requirement kind.
 	 */
-	public static kind(self: RequirementMaker, kind: number): void {
-		Requirement.kind(new Requirement(self.mBuffer), kind);
+	public static kind(_this: RequirementMaker, kind: number): void {
+		Requirement.kind(new Requirement(_this.mBuffer), kind);
 	}
 
 	/**
 	 * Length of Requirement currently defined.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Byte length.
 	 */
-	public static length(self: RequirementMaker): number {
-		return self.mPC;
+	public static length(_this: RequirementMaker): number {
+		return _this.mPC;
 	}
 
 	/**
 	 * Make requirement.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Requirement instance.
 	 */
-	public static make(self: RequirementMaker): Requirement {
-		const r = new Requirement(self.mBuffer);
-		Requirement.size(r, self.mPC);
+	public static make(_this: RequirementMaker): Requirement {
+		const r = new Requirement(_this.mBuffer);
+		Requirement.size(r, _this.mPC);
 		return r;
 	}
 
 	/**
 	 * Require bytes.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param size Number of bytes required.
 	 */
-	protected static require(self: RequirementMaker, size: number): void {
-		const { mBuffer } = self;
-		const end = self.mPC + size;
+	protected static require(_this: RequirementMaker, size: number): void {
+		const { mBuffer } = _this;
+		const end = _this.mPC + size;
 		let mSize = mBuffer.byteLength;
 		if (end > mSize) {
 			mSize *= 2;
@@ -375,7 +375,7 @@ export class RequirementMaker {
 			}
 			const d = new ArrayBuffer(mSize);
 			new Uint8Array(d).set(new Uint8Array(mBuffer));
-			self.mBuffer = d;
+			_this.mBuffer = d;
 		}
 	}
 

@@ -146,43 +146,43 @@ export class CodeDirectory extends Blob {
 	/**
 	 * Pointer to identifier string.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Char pointer.
 	 */
-	public static identifier(self: CodeDirectory): Int8Ptr {
+	public static identifier(_this: CodeDirectory): Int8Ptr {
 		return new Int8Ptr(
-			self.buffer,
-			self.byteOffset + self.identOffset,
-			self.littleEndian,
+			_this.buffer,
+			_this.byteOffset + _this.identOffset,
+			_this.littleEndian,
 		);
 	}
 
 	/**
 	 * Signed code limit, from codeLimit64 or codeLimit.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Code limit.
 	 */
-	public static signingLimit(self: CodeDirectory): bigint {
-		if (self.version >= CodeDirectory.supportsCodeLimit64) {
-			const { codeLimit64 } = self;
+	public static signingLimit(_this: CodeDirectory): bigint {
+		if (_this.version >= CodeDirectory.supportsCodeLimit64) {
+			const { codeLimit64 } = _this;
 			if (codeLimit64) {
 				return codeLimit64;
 			}
 		}
-		return BigInt(self.codeLimit);
+		return BigInt(_this.codeLimit);
 	}
 
 	/**
 	 * Get slot data view, for writing.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param slot Slot index.
 	 * @param preEncrypt Pre-encrypt version.
 	 * @returns Hash value, or null.
 	 */
 	public static getSlotMutable(
-		self: CodeDirectory,
+		_this: CodeDirectory,
 		slot: number,
 		preEncrypt: boolean,
 	): Uint8Ptr | null {
@@ -190,53 +190,53 @@ export class CodeDirectory extends Blob {
 		let offset;
 		if (preEncrypt) {
 			if (
-				self.version < CodeDirectory.supportsPreEncrypt ||
-				!(offset = self.preEncryptOffset)
+				_this.version < CodeDirectory.supportsPreEncrypt ||
+				!(offset = _this.preEncryptOffset)
 			) {
 				return null;
 			}
 		} else {
-			offset = self.hashOffset;
+			offset = _this.hashOffset;
 		}
 		return new Uint8Ptr(
-			self.buffer,
-			self.byteOffset + offset + self.hashSize * slot,
-			self.littleEndian,
+			_this.buffer,
+			_this.byteOffset + offset + _this.hashSize * slot,
+			_this.littleEndian,
 		);
 	}
 
 	/**
 	 * Get slot data view, for reading.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param slot Slot index.
 	 * @param preEncrypt Pre-encrypt version.
 	 * @returns Hash value, or null.
 	 */
 	public static getSlot(
-		self: CodeDirectory,
+		_this: CodeDirectory,
 		slot: number,
 		preEncrypt: boolean,
 	): Const<Uint8Ptr> | null {
-		return CodeDirectory.getSlotMutable(self, slot, preEncrypt);
+		return CodeDirectory.getSlotMutable(_this, slot, preEncrypt);
 	}
 
 	/**
 	 * Pointer to scatter vector.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Scatter pointer, or null.
 	 */
 	public static scatterVector(
-		self: CodeDirectory,
+		_this: CodeDirectory,
 	): Ptr<CodeDirectoryScatter> | null {
-		if (self.version >= CodeDirectory.supportsScatter) {
-			const { scatterOffset } = self;
+		if (_this.version >= CodeDirectory.supportsScatter) {
+			const { scatterOffset } = _this;
 			if (scatterOffset) {
 				return new (pointer(CodeDirectoryScatter))(
-					self.buffer,
-					self.byteOffset + scatterOffset,
-					self.littleEndian,
+					_this.buffer,
+					_this.byteOffset + scatterOffset,
+					_this.littleEndian,
 				);
 			}
 		}
@@ -246,17 +246,17 @@ export class CodeDirectory extends Blob {
 	/**
 	 * Pointer to team identifier string.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Char pointer, or null.
 	 */
-	public static teamID(self: CodeDirectory): Int8Ptr | null {
-		if (self.version >= CodeDirectory.supportsTeamID) {
-			const { teamIDOffset } = self;
+	public static teamID(_this: CodeDirectory): Int8Ptr | null {
+		if (_this.version >= CodeDirectory.supportsTeamID) {
+			const { teamIDOffset } = _this;
 			if (teamIDOffset) {
 				return new Int8Ptr(
-					self.buffer,
-					self.byteOffset + teamIDOffset,
-					self.littleEndian,
+					_this.buffer,
+					_this.byteOffset + teamIDOffset,
+					_this.littleEndian,
 				);
 			}
 		}
@@ -266,48 +266,48 @@ export class CodeDirectory extends Blob {
 	/**
 	 * Executable segment base.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Byte offset, zero if not supported.
 	 */
-	public static execSegmentBase(self: CodeDirectory): bigint {
-		return self.version >= CodeDirectory.supportsExecSegment
-			? self.execSegBase
+	public static execSegmentBase(_this: CodeDirectory): bigint {
+		return _this.version >= CodeDirectory.supportsExecSegment
+			? _this.execSegBase
 			: 0n;
 	}
 
 	/**
 	 * Executable segment limit.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Byte length, zero if not supported.
 	 */
-	public static execSegmentLimit(self: CodeDirectory): bigint {
-		return self.version >= CodeDirectory.supportsExecSegment
-			? self.execSegLimit
+	public static execSegmentLimit(_this: CodeDirectory): bigint {
+		return _this.version >= CodeDirectory.supportsExecSegment
+			? _this.execSegLimit
 			: 0n;
 	}
 
 	/**
 	 * Executable segment flags.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Flags, zero if not supported.
 	 */
-	public static execSegmentFlags(self: CodeDirectory): bigint {
-		return self.version >= CodeDirectory.supportsExecSegment
-			? self.execSegFlags
+	public static execSegmentFlags(_this: CodeDirectory): bigint {
+		return _this.version >= CodeDirectory.supportsExecSegment
+			? _this.execSegFlags
 			: 0n;
 	}
 
 	/**
 	 * Runtime version.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Version, zero if not supported.
 	 */
-	public static runtimeVersion(self: CodeDirectory): number {
-		return self.version >= CodeDirectory.supportsPreEncrypt
-			? self.runtime
+	public static runtimeVersion(_this: CodeDirectory): number {
+		return _this.version >= CodeDirectory.supportsPreEncrypt
+			? _this.runtime
 			: 0;
 	}
 

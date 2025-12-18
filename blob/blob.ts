@@ -11,39 +11,39 @@ export abstract class Blob extends BlobCore {
 	/**
 	 * Initialize blob with length, using known type magic.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param size Length.
 	 */
-	public static initializeLength(self: Blob, size = 0): void {
-		BlobCore.initialize(self, this.typeMagic, size);
+	public static initializeLength(_this: Blob, size = 0): void {
+		BlobCore.initialize(_this, this.typeMagic, size);
 	}
 
 	/**
 	 * Validate blob with length, using known type magic.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param length Optionally require exact length.
 	 * @param context Context.
 	 * @returns Is valid.
 	 */
 	public static validateBlobLength(
-		self: Blob,
+		_this: Blob,
 		length?: number,
 		context?: { errno: number },
 	): boolean {
 		if (length === undefined) {
 			return BlobCore.validateBlob(
-				self,
-				self.constructor.typeMagic,
-				self.byteLength,
+				_this,
+				_this.constructor.typeMagic,
+				_this.byteLength,
 				undefined,
 				context,
 			);
 		}
 		return (
-			length >= self.byteLength &&
-			Blob.validateBlobLength(self, undefined, context) &&
-			self.mLength === length
+			length >= _this.byteLength &&
+			Blob.validateBlobLength(_this, undefined, context) &&
+			_this.mLength === length
 		);
 	}
 
@@ -52,16 +52,16 @@ export abstract class Blob extends BlobCore {
 	 *
 	 * @template T Blob type.
 	 * @param this Blob class.
-	 * @param self This.
+	 * @param _this This.
 	 * @param context Context.
 	 * @returns Cloned blob.
 	 */
 	public static override clone<T extends Concrete<typeof Blob>>(
 		this: T,
-		self: Blob,
+		_this: Blob,
 		context?: { errno: number },
 	): T['prototype'] | null {
-		const c = BlobCore.clone(self);
+		const c = BlobCore.clone(_this);
 		return c && this.specific(c, context);
 	}
 

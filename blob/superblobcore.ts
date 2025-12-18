@@ -23,69 +23,71 @@ export abstract class SuperBlobCore extends Blob {
 	/**
 	 * Setup size and number of blobs in super blob.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param size Blob length.
 	 * @param count Number of blobs.
 	 */
 	public static setup(
-		self: SuperBlobCore,
+		_this: SuperBlobCore,
 		size: number,
 		count: number,
 	): void {
-		this.initializeLength(self, size);
-		self.mCount = count;
+		this.initializeLength(_this, size);
+		_this.mCount = count;
 	}
 
 	/**
 	 * Number of blobs in super blob.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Blob count.
 	 */
-	public static count(self: SuperBlobCore): number {
-		return self.mCount;
+	public static count(_this: SuperBlobCore): number {
+		return _this.mCount;
 	}
 
 	/**
 	 * Get type of index.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param n Index.
 	 * @returns Type.
 	 */
-	public static type(self: SuperBlobCore, n: number): number {
+	public static type(_this: SuperBlobCore, n: number): number {
 		n >>>= 0;
-		return self.mIndex[n].type;
+		return _this.mIndex[n].type;
 	}
 
 	/**
 	 * Get blob at index.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param n Index.
 	 * @returns Blob or null if no offset in index.
 	 */
-	public static blob(self: SuperBlobCore, n: number): BlobCore | null {
+	public static blob(_this: SuperBlobCore, n: number): BlobCore | null {
 		n >>>= 0;
-		const { offset } = self.mIndex[n];
-		return offset ? SuperBlobCore.at(self, BlobCore, offset) : null;
+		const { offset } = _this.mIndex[n];
+		return offset ? SuperBlobCore.at(_this, BlobCore, offset) : null;
 	}
 
 	/**
 	 * Find blob by type.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param type Index type.
 	 * @returns First match or null.
 	 */
-	public static find(self: SuperBlobCore, type: number): BlobCore | null {
+	public static find(_this: SuperBlobCore, type: number): BlobCore | null {
 		type >>>= 0;
-		const { mCount, mIndex } = self;
+		const { mCount, mIndex } = _this;
 		for (let i = 0; i < mCount; i++) {
 			const index = mIndex[i];
 			if (index.type === type) {
 				const { offset } = index;
-				return offset ? SuperBlobCore.at(self, BlobCore, offset) : null;
+				return offset
+					? SuperBlobCore.at(_this, BlobCore, offset)
+					: null;
 			}
 		}
 		return null;

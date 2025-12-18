@@ -24,47 +24,51 @@ export class BlobWrapper extends Blob {
 	/**
 	 * Data of payload (only).
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Data pointer.
 	 */
-	public static override data(self: BlobWrapper): Ptr {
+	public static override data(_this: BlobWrapper): Ptr {
 		// Overridden to point to payload (only).
-		const { dataArea } = self;
-		return new Ptr(dataArea.buffer, dataArea.byteOffset, self.littleEndian);
+		const { dataArea } = _this;
+		return new Ptr(
+			dataArea.buffer,
+			dataArea.byteOffset,
+			_this.littleEndian,
+		);
 	}
 
 	/**
 	 * Length of payload (only), set length for full blob.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Byte length.
 	 */
-	public static override length(self: BlobWrapper): number;
+	public static override length(_this: BlobWrapper): number;
 
 	/**
 	 * Set blob length for full blob, including magic and length.
 	 * Unchanged from parent.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param size Byte length.
 	 */
-	public static override length(self: BlobWrapper, size: number): void;
+	public static override length(_this: BlobWrapper, size: number): void;
 
 	/**
 	 * Get or set blob length.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @param size Byte length to set or undefined to get.
 	 * @returns Byte length on get or undefined on set.
 	 */
 	public static override length(
-		self: BlobWrapper,
+		_this: BlobWrapper,
 		size?: number,
 	): number | void {
 		if (size === undefined) {
-			return BlobCore.size(self) - BlobCore.BYTE_LENGTH;
+			return BlobCore.size(_this) - BlobCore.BYTE_LENGTH;
 		}
-		Blob.size(self, size);
+		Blob.size(_this, size);
 	}
 
 	public static override readonly typeMagic = CSMAGIC_BLOBWRAPPER;

@@ -18,22 +18,22 @@ export class LaunchConstraintBlob extends Blob {
 	/**
 	 * DER data.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Data pointer.
 	 */
-	public static der(self: LaunchConstraintBlob): Uint8Ptr {
-		const { data } = self;
-		return new Uint8Ptr(data.buffer, data.byteOffset, self.littleEndian);
+	public static der(_this: LaunchConstraintBlob): Uint8Ptr {
+		const { data } = _this;
+		return new Uint8Ptr(data.buffer, data.byteOffset, _this.littleEndian);
 	}
 
 	/**
 	 * DER length.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Byte length.
 	 */
-	public static derLength(self: LaunchConstraintBlob): number {
-		return BlobCore.size(self) - BlobCore.BYTE_LENGTH;
+	public static derLength(_this: LaunchConstraintBlob): number {
+		return BlobCore.size(_this) - BlobCore.BYTE_LENGTH;
 	}
 
 	public static override readonly typeMagic = kSecCodeMagicLaunchConstraint;

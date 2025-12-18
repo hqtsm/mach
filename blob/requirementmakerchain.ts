@@ -42,23 +42,23 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	/**
 	 * Add an element to the chain.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 */
-	public static add(self: RequirementMakerChain): void {
-		if (self.mCount++) {
-			const p = RequirementMaker.insert(self.maker, self);
-			dataView(p.buffer).setUint32(p.byteOffset, self.mJoiner);
+	public static add(_this: RequirementMakerChain): void {
+		if (_this.mCount++) {
+			const p = RequirementMaker.insert(_this.maker, _this);
+			dataView(p.buffer).setUint32(p.byteOffset, _this.mJoiner);
 		}
 	}
 
 	/**
 	 * Check if the chain has no elements.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Is empty.
 	 */
-	public static empty(self: RequirementMakerChain): boolean {
-		return self.mCount === 0;
+	public static empty(_this: RequirementMakerChain): boolean {
+		return _this.mCount === 0;
 	}
 
 	static {

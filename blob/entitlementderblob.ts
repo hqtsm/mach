@@ -18,22 +18,22 @@ export class EntitlementDERBlob extends Blob {
 	/**
 	 * DER data.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Data pointer.
 	 */
-	public static der(self: EntitlementDERBlob): Uint8Ptr {
-		const { data } = self;
-		return new Uint8Ptr(data.buffer, data.byteOffset, self.littleEndian);
+	public static der(_this: EntitlementDERBlob): Uint8Ptr {
+		const { data } = _this;
+		return new Uint8Ptr(data.buffer, data.byteOffset, _this.littleEndian);
 	}
 
 	/**
 	 * DER length.
 	 *
-	 * @param self This.
+	 * @param _this This.
 	 * @returns Byte length.
 	 */
-	public static derLength(self: EntitlementDERBlob): number {
-		return BlobCore.size(self) - BlobCore.BYTE_LENGTH;
+	public static derLength(_this: EntitlementDERBlob): number {
+		return BlobCore.size(_this) - BlobCore.BYTE_LENGTH;
 	}
 
 	public static override readonly typeMagic = kSecCodeMagicEntitlementDER;
