@@ -85,14 +85,14 @@ Deno.test('identifier', async () => {
 	builder.identifier(new Uint8Array([1, ...expected, 1]).slice(1, -1));
 	{
 		const cd = await builder.build();
-		const ptr = cd.identifier();
+		const ptr = CodeDirectory.identifier(cd);
 		const data = new Uint8Array(ptr.buffer, ptr.byteOffset);
 		assertEquals(data.slice(0, data.indexOf(0)), expected);
 	}
 	builder.identifier(expected.buffer);
 	{
 		const cd = await builder.build();
-		const ptr = cd.identifier();
+		const ptr = CodeDirectory.identifier(cd);
 		const data = new Uint8Array(ptr.buffer, ptr.byteOffset);
 		assertEquals(data.slice(0, data.indexOf(0)), expected);
 	}
@@ -105,14 +105,14 @@ Deno.test('teamID', async () => {
 	builder.teamID(new Uint8Array([1, ...expected, 1]).slice(1, -1));
 	{
 		const cd = await builder.build();
-		const ptr = cd.teamID()!;
+		const ptr = CodeDirectory.teamID(cd)!;
 		const data = new Uint8Array(ptr.buffer, ptr.byteOffset);
 		assertEquals(data.slice(0, data.indexOf(0)), expected);
 	}
 	builder.teamID(expected.buffer);
 	{
 		const cd = await builder.build();
-		const ptr = cd.teamID()!;
+		const ptr = CodeDirectory.teamID(cd)!;
 		const data = new Uint8Array(ptr.buffer, ptr.byteOffset);
 		assertEquals(data.slice(0, data.indexOf(0)), expected);
 	}

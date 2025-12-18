@@ -491,7 +491,7 @@ export class CodeDirectoryBuilder {
 				i,
 			);
 			if (hash) {
-				const slot = dir.getSlotMutable(-i, false)!;
+				const slot = CodeDirectory.getSlotMutable(dir, -i, false)!;
 				new Uint8Array(slot.buffer, slot.byteOffset).set(
 					new Uint8Array(hash),
 				);
@@ -508,10 +508,10 @@ export class CodeDirectoryBuilder {
 			// deno-lint-ignore no-await-in-loop
 			const hash = await generateHash(hasher, mExec, position, thisPage);
 			const data = new Uint8Array(hash);
-			const slot = dir.getSlotMutable(i, false)!;
+			const slot = CodeDirectory.getSlotMutable(dir, i, false)!;
 			new Uint8Array(slot.buffer, slot.byteOffset).set(data);
 			if (gpec) {
-				const slot = dir.getSlotMutable(i, true)!;
+				const slot = CodeDirectory.getSlotMutable(dir, i, true)!;
 				new Uint8Array(slot.buffer, slot.byteOffset).set(data);
 			}
 			position += thisPage;
