@@ -37,7 +37,7 @@ Deno.test('empty (invalid?)', () => {
 	const { BYTE_LENGTH } = LaunchConstraintBlob;
 	const buffer = new ArrayBuffer(BYTE_LENGTH);
 	const edb = new LaunchConstraintBlob(buffer);
-	edb.initializeLength(BYTE_LENGTH);
+	LaunchConstraintBlob.initializeLength(edb, BYTE_LENGTH);
 	assertEquals(
 		new Uint8Array(buffer),
 		unhex('FA DE 81 81 00 00 00 08'),

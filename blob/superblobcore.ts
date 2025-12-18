@@ -27,7 +27,7 @@ export abstract class SuperBlobCore extends Blob {
 	 * @param count Number of blobs.
 	 */
 	public setup(size: number, count: number): void {
-		SuperBlobCore.prototype.initializeLength.call(this, size);
+		this.constructor.initializeLength(this, size);
 		this.mCount = count;
 	}
 

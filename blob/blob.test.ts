@@ -59,13 +59,13 @@ Deno.test('clone', () => {
 	example.value = 42;
 	{
 		const context = { errno: 0 };
-		assertEquals(example.clone(context), null);
+		assertEquals(Example.clone(example, context), null);
 		assertEquals(context.errno, EINVAL);
 	}
 
-	example.initializeLength(Example.BYTE_LENGTH);
+	Example.initializeLength(example, Example.BYTE_LENGTH);
 	{
-		const clone = example.clone(new NoErrno());
+		const clone = Example.clone(example, new NoErrno());
 		assertInstanceOf(clone, Example);
 		assertEquals(clone.value, 42);
 	}
@@ -101,7 +101,7 @@ Deno.test('readBlob regular', async () => {
 		assertEquals(context.errno, EINVAL);
 	}
 
-	blob.initializeLength(Example.BYTE_LENGTH);
+	Example.initializeLength(blob, Example.BYTE_LENGTH);
 	blob.value = 0xAABBCCDD;
 	const context = { errno: 0 };
 	const read = await Example.readBlob(new globalThis.Blob([data]), context);
@@ -129,7 +129,7 @@ Deno.test('readBlob offset', async () => {
 		assertEquals(context.errno, EINVAL);
 	}
 
-	blob.initializeLength(Example.BYTE_LENGTH);
+	Example.initializeLength(blob, Example.BYTE_LENGTH);
 	blob.value = 0xAABBCCDD;
 	const context = { errno: 0 };
 	const read = await Example.readBlob(
@@ -152,26 +152,29 @@ Deno.test('validateBlobLength', () => {
 	Example.initialize(blob, 0, 20);
 	{
 		const context = { errno: 0 };
-		assertEquals(blob.validateBlobLength(undefined, context), false);
+		assertEquals(
+			Example.validateBlobLength(blob, undefined, context),
+			false,
+		);
 		assertEquals(context.errno, EINVAL);
 	}
 
-	blob.initializeLength(20);
-	assertEquals(blob.validateBlobLength(), true);
+	Example.initializeLength(blob, 20);
+	assertEquals(Example.validateBlobLength(blob), true);
 
-	blob.initializeLength(11);
-	assertEquals(blob.validateBlobLength(11, new NoErrno()), false);
+	Example.initializeLength(blob, 11);
+	assertEquals(Example.validateBlobLength(blob, 11, new NoErrno()), false);
 
 	Example.initialize(blob, 0, 20);
 	{
 		const context = { errno: 0 };
-		assertEquals(blob.validateBlobLength(20, context), false);
+		assertEquals(Example.validateBlobLength(blob, 20, context), false);
 		assertEquals(context.errno, EINVAL);
 	}
 
-	blob.initializeLength(20);
-	assertEquals(blob.validateBlobLength(20, new NoErrno()), true);
+	Example.initializeLength(blob, 20);
+	assertEquals(Example.validateBlobLength(blob, 20, new NoErrno()), true);
 
-	blob.initializeLength(19);
-	assertEquals(blob.validateBlobLength(19, new NoErrno()), true);
+	Example.initializeLength(blob, 19);
+	assertEquals(Example.validateBlobLength(blob, 19, new NoErrno()), true);
 });

@@ -11,36 +11,39 @@ export abstract class Blob extends BlobCore {
 	/**
 	 * Initialize blob with length, using known type magic.
 	 *
+	 * @param self This.
 	 * @param size Length.
 	 */
-	public initializeLength(size = 0): void {
-		BlobCore.initialize(this, this.constructor.typeMagic, size);
+	public static initializeLength(self: Blob, size = 0): void {
+		BlobCore.initialize(self, this.typeMagic, size);
 	}
 
 	/**
 	 * Validate blob with length, using known type magic.
 	 *
+	 * @param self This.
 	 * @param length Optionally require exact length.
 	 * @param context Context.
 	 * @returns Is valid.
 	 */
-	public validateBlobLength(
+	public static validateBlobLength(
+		self: Blob,
 		length?: number,
 		context?: { errno: number },
 	): boolean {
 		if (length === undefined) {
 			return BlobCore.validateBlob(
-				this,
-				this.constructor.typeMagic,
-				this.byteLength,
+				self,
+				self.constructor.typeMagic,
+				self.byteLength,
 				undefined,
 				context,
 			);
 		}
 		return (
-			length >= this.byteLength &&
-			Blob.prototype.validateBlobLength.call(this, undefined, context) &&
-			this.mLength === length
+			length >= self.byteLength &&
+			Blob.validateBlobLength(self, undefined, context) &&
+			self.mLength === length
 		);
 	}
 
@@ -48,17 +51,17 @@ export abstract class Blob extends BlobCore {
 	 * Clone blob.
 	 *
 	 * @template T Blob type.
-	 * @param this Blob instance.
+	 * @param this Blob class.
+	 * @param self This.
 	 * @returns Cloned blob.
 	 */
-	public clone(context?: { errno: number }): this | null {
-		const c = BlobCore.clone(this);
-		return c &&
-			Blob.specific.call(
-				this.constructor as Concrete<typeof Blob>,
-				c,
-				context,
-			) as this;
+	public static override clone<T extends Concrete<typeof Blob>>(
+		this: T,
+		self: Blob,
+		context?: { errno: number },
+	): T['prototype'] | null {
+		const c = BlobCore.clone(self);
+		return c && this.specific(c, context);
 	}
 
 	/**
@@ -83,9 +86,7 @@ export abstract class Blob extends BlobCore {
 		context?: { errno: number },
 	): T['prototype'] | null {
 		const p = new this(blob.buffer, blob.byteOffset, blob.littleEndian);
-		return Blob.prototype.validateBlobLength.call(p, undefined, context)
-			? p
-			: null;
+		return Blob.validateBlobLength(p, undefined, context) ? p : null;
 	}
 
 	/**
@@ -108,9 +109,10 @@ export abstract class Blob extends BlobCore {
 			: new Uint8Array(content);
 		const size = BYTE_LENGTH + view.byteLength;
 		const buffer = new ArrayBuffer(size);
-		new (class extends Blob {
+		class B extends Blob {
 			public static override readonly typeMagic = typeMagic;
-		})(buffer).initializeLength(size);
+		}
+		B.initializeLength(new B(buffer), size);
 		new Uint8Array(buffer, BYTE_LENGTH).set(view);
 		return buffer;
 	}
