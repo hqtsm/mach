@@ -28,9 +28,9 @@ Deno.test('alloc', () => {
 		'63 6F 6D 2E 61 70 70 6C 65 2E 73 69 6D 70 6C 65',
 	);
 	const maker = new RequirementMaker(Requirement.exprForm);
-	const add = maker.alloc(data.byteLength);
+	const add = RequirementMaker.alloc(maker, data.byteLength);
 	add.set(data);
-	const r = maker.make();
+	const r = RequirementMaker.make(maker);
 	const dv = new DataView(r.buffer, r.byteOffset, Requirement.size(r));
 	assertEquals(dv.getUint32(0), kSecCodeMagicRequirement);
 	assertEquals(dv.getUint32(4), Requirement.size(r));
@@ -46,9 +46,9 @@ Deno.test('alloc grow fibonacci', () => {
 	for (const size of fibinacci(25)) {
 		const d = new Uint8Array(size);
 		d.fill((size % 255) + 1);
-		maker.alloc(size).set(d);
+		RequirementMaker.alloc(maker, size).set(d);
 	}
-	const r = maker.make();
+	const r = RequirementMaker.make(maker);
 	const dv = new DataView(r.buffer, r.byteOffset, Requirement.size(r));
 	assertEquals(dv.getUint32(0), kSecCodeMagicRequirement);
 	assertEquals(dv.getUint32(4), Requirement.size(r));
@@ -60,9 +60,9 @@ Deno.test('alloc grow fast', () => {
 	for (const size of [0xff, 0xfff, 0xffff, 0xfffff, 0xffffff]) {
 		const d = new Uint8Array(size);
 		d.fill((size % 255) + 1);
-		maker.alloc(size).set(d);
+		RequirementMaker.alloc(maker, size).set(d);
 	}
-	const r = maker.make();
+	const r = RequirementMaker.make(maker);
 	const dv = new DataView(r.buffer, r.byteOffset, Requirement.size(r));
 	assertEquals(dv.getUint32(0), kSecCodeMagicRequirement);
 	assertEquals(dv.getUint32(4), Requirement.size(r));
@@ -77,8 +77,8 @@ Deno.test('identifier "com.apple.simple"', () => {
 		'63 6F 6D 2E 61 70 70 6C 65 2E 73 69 6D 70 6C 65',
 	);
 	const maker = new RequirementMaker(Requirement.exprForm);
-	maker.ident(new TextEncoder().encode('com.apple.simple'));
-	const r = maker.make();
+	RequirementMaker.ident(maker, new TextEncoder().encode('com.apple.simple'));
+	const r = RequirementMaker.make(maker);
 	assertEquals(
 		new Uint8Array(r.buffer, r.byteOffset, Requirement.size(r)),
 		data,
@@ -98,14 +98,14 @@ Deno.test('anchor apple and identifier "com.apple.simple"', () => {
 
 	const and = new RequirementMakerChain(maker, opAnd);
 	assertEquals(RequirementMakerChain.empty(and), true);
-	maker.anchor();
+	RequirementMaker.anchor(maker);
 	RequirementMakerChain.add(and);
 	assertEquals(RequirementMakerChain.empty(and), false);
-	maker.ident(new TextEncoder().encode('com.apple.simple'));
+	RequirementMaker.ident(maker, new TextEncoder().encode('com.apple.simple'));
 	RequirementMakerChain.add(and);
 	assertEquals(RequirementMakerChain.empty(and), false);
 
-	const r = maker.make();
+	const r = RequirementMaker.make(maker);
 	assertEquals(
 		new Uint8Array(r.buffer, r.byteOffset, Requirement.size(r)),
 		data,
@@ -125,14 +125,14 @@ Deno.test('identifier "com.apple.simple" or anchor apple generic', () => {
 
 	const or = new RequirementMakerChain(maker, opOr);
 	assertEquals(RequirementMakerChain.empty(or), true);
-	maker.ident(new TextEncoder().encode('com.apple.simple'));
+	RequirementMaker.ident(maker, new TextEncoder().encode('com.apple.simple'));
 	RequirementMakerChain.add(or);
 	assertEquals(RequirementMakerChain.empty(or), false);
-	maker.anchorGeneric();
+	RequirementMaker.anchorGeneric(maker);
 	RequirementMakerChain.add(or);
 	assertEquals(RequirementMakerChain.empty(or), false);
 
-	const r = maker.make();
+	const r = RequirementMaker.make(maker);
 	assertEquals(
 		new Uint8Array(r.buffer, r.byteOffset, Requirement.size(r)),
 		data,
@@ -162,22 +162,22 @@ Deno.test('(a and b) or (c and d)', () => {
 	let and;
 
 	and = new RequirementMakerChain(maker, opAnd);
-	maker.ident(new TextEncoder().encode('com.apple.app'));
+	RequirementMaker.ident(maker, new TextEncoder().encode('com.apple.app'));
 	RequirementMakerChain.add(and);
-	maker.anchor();
+	RequirementMaker.anchor(maker);
 	RequirementMakerChain.add(and);
 
 	RequirementMakerChain.add(or);
 
 	and = new RequirementMakerChain(maker, opAnd);
-	maker.ident(new TextEncoder().encode('com.apple.gen'));
+	RequirementMaker.ident(maker, new TextEncoder().encode('com.apple.gen'));
 	RequirementMakerChain.add(and);
-	maker.anchorGeneric();
+	RequirementMaker.anchorGeneric(maker);
 	RequirementMakerChain.add(and);
 
 	RequirementMakerChain.add(or);
 
-	const r = maker.make();
+	const r = RequirementMaker.make(maker);
 	assertEquals(
 		new Uint8Array(r.buffer, r.byteOffset, Requirement.size(r)),
 		data,
@@ -207,22 +207,25 @@ Deno.test('(a or b) and (c or d)', () => {
 	let or;
 
 	or = new RequirementMakerChain(maker, opOr);
-	maker.ident(new TextEncoder().encode('com.apple.app'));
+	RequirementMaker.ident(maker, new TextEncoder().encode('com.apple.app'));
 	RequirementMakerChain.add(or);
-	maker.anchor();
+	RequirementMaker.anchor(maker);
 	RequirementMakerChain.add(or);
 
 	RequirementMakerChain.add(and);
 
 	or = new RequirementMakerChain(maker, opOr);
-	maker.ident(new TextEncoder().encode('com.apple.gen').buffer);
+	RequirementMaker.ident(
+		maker,
+		new TextEncoder().encode('com.apple.gen').buffer,
+	);
 	RequirementMakerChain.add(or);
-	maker.anchorGeneric();
+	RequirementMaker.anchorGeneric(maker);
 	RequirementMakerChain.add(or);
 
 	RequirementMakerChain.add(and);
 
-	const r = maker.make();
+	const r = RequirementMaker.make(maker);
 	assertEquals(
 		new Uint8Array(r.buffer, r.byteOffset, Requirement.size(r)),
 		data,
@@ -234,54 +237,58 @@ Deno.test('anchorDigest', () => {
 		[1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4],
 	);
 	const maker = new RequirementMaker(Requirement.exprForm);
-	maker.anchorDigest(1, hash);
-	maker.make();
+	RequirementMaker.anchorDigest(maker, 1, hash);
+	RequirementMaker.make(maker);
 });
 
 Deno.test('trustedAnchor', () => {
 	const maker = new RequirementMaker(Requirement.exprForm);
-	maker.trustedAnchor(null);
-	maker.trustedAnchor(1);
-	maker.make();
+	RequirementMaker.trustedAnchor(maker, null);
+	RequirementMaker.trustedAnchor(maker, 1);
+	RequirementMaker.make(maker);
 });
 
 Deno.test('infoKey', () => {
 	const maker = new RequirementMaker(Requirement.exprForm);
-	maker.infoKey(new Uint8Array([1, 2]), new Uint8Array([3, 4]));
-	maker.make();
+	RequirementMaker.infoKey(
+		maker,
+		new Uint8Array([1, 2]),
+		new Uint8Array([3, 4]),
+	);
+	RequirementMaker.make(maker);
 });
 
 Deno.test('cdhash', () => {
 	const maker = new RequirementMaker(Requirement.exprForm);
-	maker.cdhash(new Uint8Array([1, 2, 3, 4]));
-	maker.make();
+	RequirementMaker.cdhash(maker, new Uint8Array([1, 2, 3, 4]));
+	RequirementMaker.make(maker);
 });
 
 Deno.test('platform', () => {
 	const maker = new RequirementMaker(Requirement.exprForm);
-	maker.platform(PLATFORM_MACOS);
-	maker.make();
+	RequirementMaker.platform(maker, PLATFORM_MACOS);
+	RequirementMaker.make(maker);
 });
 
 Deno.test('copy Pointer', () => {
 	const maker = new RequirementMaker(Requirement.exprForm);
-	maker.copy(new Uint8Array([1, 2, 3, 4]), 4);
+	RequirementMaker.copy(maker, new Uint8Array([1, 2, 3, 4]), 4);
 	const ptr = new Uint8Ptr(new Uint8Array([1, 2, 3, 4]).buffer);
-	maker.copy(ptr, 2);
-	maker.make();
+	RequirementMaker.copy(maker, ptr, 2);
+	RequirementMaker.make(maker);
 });
 
 Deno.test('copy Requirement', () => {
 	const a = new RequirementMaker(Requirement.exprForm);
 	const b = new RequirementMaker(Requirement.exprForm);
-	a.copy(b.make());
-	a.make();
+	RequirementMaker.copy(a, RequirementMaker.make(b));
+	RequirementMaker.make(a);
 
 	const c = new RequirementMaker(Requirement.lwcrForm);
 	const d = new RequirementMaker(Requirement.lwcrForm);
-	const dr = d.make();
+	const dr = RequirementMaker.make(d);
 	assertThrows(
-		() => c.copy(dr),
+		() => RequirementMaker.copy(c, dr),
 		RangeError,
 		`Unsupported requirement kind: ${Requirement.kind(dr)}`,
 	);
@@ -289,12 +296,15 @@ Deno.test('copy Requirement', () => {
 
 Deno.test('put', () => {
 	const maker = new RequirementMaker(Requirement.exprForm);
-	maker.put(new Uint8Array([1, 2, 3, 4]).buffer);
-	maker.make();
+	RequirementMaker.put(maker, new Uint8Array([1, 2, 3, 4]).buffer);
+	RequirementMaker.make(maker);
 });
 
 Deno.test('kind', () => {
 	const maker = new RequirementMaker(Requirement.exprForm);
-	maker.kind(Requirement.lwcrForm);
-	assertEquals(Requirement.kind(maker.make()), Requirement.lwcrForm);
+	RequirementMaker.kind(maker, Requirement.lwcrForm);
+	assertEquals(
+		Requirement.kind(RequirementMaker.make(maker)),
+		Requirement.lwcrForm,
+	);
 });
