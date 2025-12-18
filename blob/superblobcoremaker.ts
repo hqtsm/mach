@@ -103,7 +103,7 @@ export abstract class SuperBlobCoreMaker {
 			>(
 				this,
 				mIndex[ix].type,
-				BlobCore.clone(SuperBlob.prototype.blob.call(type, ix)!)!,
+				BlobCore.clone(SuperBlob.blob(type, ix)!)!,
 			);
 		}
 	}
@@ -171,7 +171,7 @@ export abstract class SuperBlobCoreMaker {
 		const data = new Uint8Array(buffer);
 		const result = new this.constructor.SuperBlob(buffer);
 		const mIndex = result['mIndex'];
-		result.setup(total, count);
+		this.constructor.SuperBlob.setup(result, total, count);
 		let pc = SuperBlobCore.BYTE_LENGTH +
 			count * SuperBlobCoreIndex.BYTE_LENGTH;
 		let n = 0;

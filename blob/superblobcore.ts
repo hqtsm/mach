@@ -23,60 +23,69 @@ export abstract class SuperBlobCore extends Blob {
 	/**
 	 * Setup size and number of blobs in super blob.
 	 *
+	 * @param self This.
 	 * @param size Blob length.
 	 * @param count Number of blobs.
 	 */
-	public setup(size: number, count: number): void {
-		this.constructor.initializeLength(this, size);
-		this.mCount = count;
+	public static setup(
+		self: SuperBlobCore,
+		size: number,
+		count: number,
+	): void {
+		this.initializeLength(self, size);
+		self.mCount = count;
 	}
 
 	/**
 	 * Number of blobs in super blob.
 	 *
+	 * @param self This.
 	 * @returns Blob count.
 	 */
-	public count(): number {
-		return this.mCount;
+	public static count(self: SuperBlobCore): number {
+		return self.mCount;
 	}
 
 	/**
 	 * Get type of index.
 	 *
+	 * @param self This.
 	 * @param n Index.
 	 * @returns Type.
 	 */
-	public type(n: number): number {
+	public static type(self: SuperBlobCore, n: number): number {
 		n >>>= 0;
-		return this.mIndex[n].type;
+		return self.mIndex[n].type;
 	}
 
 	/**
 	 * Get blob at index.
 	 *
+	 * @param self This.
 	 * @param n Index.
 	 * @returns Blob or null if no offset in index.
 	 */
-	public blob(n: number): BlobCore | null {
+	public static blob(self: SuperBlobCore, n: number): BlobCore | null {
 		n >>>= 0;
-		const { offset } = this.mIndex[n];
-		return offset ? SuperBlobCore.at(this, BlobCore, offset) : null;
+		const { offset } = self.mIndex[n];
+		return offset ? SuperBlobCore.at(self, BlobCore, offset) : null;
 	}
 
 	/**
 	 * Find blob by type.
 	 *
+	 * @param self This.
 	 * @param type Index type.
 	 * @returns First match or null.
 	 */
-	public find(type: number): BlobCore | null {
+	public static find(self: SuperBlobCore, type: number): BlobCore | null {
 		type >>>= 0;
-		const { mCount, mIndex } = this;
+		const { mCount, mIndex } = self;
 		for (let i = 0; i < mCount; i++) {
 			const index = mIndex[i];
 			if (index.type === type) {
 				const { offset } = index;
-				return offset ? SuperBlobCore.at(this, BlobCore, offset) : null;
+				return offset ? SuperBlobCore.at(self, BlobCore, offset) : null;
 			}
 		}
 		return null;

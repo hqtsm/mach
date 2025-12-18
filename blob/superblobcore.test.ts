@@ -18,33 +18,33 @@ class Example extends SuperBlobCore {
 Deno.test('count', () => {
 	const data = new ArrayBuffer(100);
 	const example = new Example(data);
-	example.setup(12 + 2 * 8, 2);
-	assertEquals(example.count(), 2);
+	Example.setup(example, 12 + 2 * 8, 2);
+	assertEquals(Example.count(example), 2);
 });
 
 Deno.test('type', () => {
 	const data = new ArrayBuffer(100);
 	const view = new DataView(data);
 	const example = new Example(data);
-	example.setup(12 + 2 * 8, 2);
+	Example.setup(example, 12 + 2 * 8, 2);
 	view.setUint32(12, 0x11111111);
 	view.setUint32(20, 0x22222222);
-	assertEquals(example.type(0), 0x11111111);
-	assertEquals(example.type(1), 0x22222222);
+	assertEquals(Example.type(example, 0), 0x11111111);
+	assertEquals(Example.type(example, 1), 0x22222222);
 });
 
 Deno.test('blob', () => {
 	const data = new ArrayBuffer(100);
 	const view = new DataView(data);
 	const example = new Example(data);
-	example.setup(12 + 2 * 8 + 8, 2);
+	Example.setup(example, 12 + 2 * 8 + 8, 2);
 	view.setUint32(12, 0x11111111);
 	view.setUint32(20, 0x22222222);
 	view.setUint32(24, 12 + 2 * 8);
 	view.setUint32(28, 0x11223344);
 	view.setUint32(32, 8);
-	assertEquals(example.blob(0), null);
-	const blob = example.blob(1);
+	assertEquals(Example.blob(example, 0), null);
+	const blob = Example.blob(example, 1);
 	assertInstanceOf(blob, BlobCore);
 	assertEquals(BlobCore.magic(blob), 0x11223344);
 	assertEquals(BlobCore.size(blob), 8);
@@ -54,14 +54,14 @@ Deno.test('find', () => {
 	const data = new ArrayBuffer(100);
 	const view = new DataView(data);
 	const example = new Example(data);
-	example.setup(12 + 2 * 8 + 8, 2);
+	Example.setup(example, 12 + 2 * 8 + 8, 2);
 	view.setUint32(12, 0x11111111);
 	view.setUint32(20, 0x22222222);
 	view.setUint32(24, 12 + 2 * 8);
 	view.setUint32(28, 0x11223344);
 	view.setUint32(32, 8);
-	assertEquals(example.find(0x11111111), null);
-	const blob = example.find(0x22222222);
+	assertEquals(Example.find(example, 0x11111111), null);
+	const blob = Example.find(example, 0x22222222);
 	assertInstanceOf(blob, BlobCore);
 	assertEquals(BlobCore.magic(blob), 0x11223344);
 	assertEquals(BlobCore.size(blob), 8);

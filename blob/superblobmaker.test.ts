@@ -45,13 +45,19 @@ Deno.test('add SuperBlob', () => {
 	const maker2 = new ExampleMaker();
 	maker2.add(maker1.make());
 	const sb2 = maker2.make();
-	assertEquals(sb2.count(), 2);
-	assertEquals(sb2.type(0), 0x11111111);
-	assertEquals(sb2.type(1), 0x22222222);
-	BlobCore.at(sb2.blob(0)!, Uint8Ptr, 8)[0] = 11;
-	BlobCore.at(sb2.blob(1)!, Uint8Ptr, 8)[0] = 12;
-	assertEquals(BlobCore.at(maker1.make().blob(0)!, Uint8Ptr, 8)[0], 1);
-	assertEquals(BlobCore.at(maker1.make().blob(1)!, Uint8Ptr, 8)[0], 1);
+	assertEquals(Example.count(sb2), 2);
+	assertEquals(Example.type(sb2, 0), 0x11111111);
+	assertEquals(Example.type(sb2, 1), 0x22222222);
+	BlobCore.at(Example.blob(sb2, 0)!, Uint8Ptr, 8)[0] = 11;
+	BlobCore.at(Example.blob(sb2, 1)!, Uint8Ptr, 8)[0] = 12;
+	assertEquals(
+		BlobCore.at(Example.blob(maker1.make(), 0)!, Uint8Ptr, 8)[0],
+		1,
+	);
+	assertEquals(
+		BlobCore.at(Example.blob(maker1.make(), 1)!, Uint8Ptr, 8)[0],
+		1,
+	);
 });
 
 Deno.test('add SuperBlobMaker', () => {
@@ -62,13 +68,19 @@ Deno.test('add SuperBlobMaker', () => {
 	const maker2 = new ExampleMaker();
 	maker2.add(maker1);
 	const sb2 = maker2.make();
-	assertEquals(sb2.count(), 2);
-	assertEquals(sb2.type(0), 0x11111111);
-	assertEquals(sb2.type(1), 0x22222222);
-	BlobCore.at(sb2.blob(0)!, Uint8Ptr, 8)[0] = 11;
-	BlobCore.at(sb2.blob(1)!, Uint8Ptr, 8)[0] = 12;
-	assertEquals(BlobCore.at(maker1.make().blob(0)!, Uint8Ptr, 8)[0], 1);
-	assertEquals(BlobCore.at(maker1.make().blob(1)!, Uint8Ptr, 8)[0], 1);
+	assertEquals(Example.count(sb2), 2);
+	assertEquals(Example.type(sb2, 0), 0x11111111);
+	assertEquals(Example.type(sb2, 1), 0x22222222);
+	BlobCore.at(Example.blob(sb2, 0)!, Uint8Ptr, 8)[0] = 11;
+	BlobCore.at(Example.blob(sb2, 1)!, Uint8Ptr, 8)[0] = 12;
+	assertEquals(
+		BlobCore.at(Example.blob(maker1.make(), 0)!, Uint8Ptr, 8)[0],
+		1,
+	);
+	assertEquals(
+		BlobCore.at(Example.blob(maker1.make(), 1)!, Uint8Ptr, 8)[0],
+		1,
+	);
 });
 
 Deno.test('contains', () => {

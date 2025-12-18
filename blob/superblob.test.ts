@@ -38,8 +38,8 @@ Deno.test('type', () => {
 	maker.add(0x01020304, blob);
 	maker.add(0x10203040, blob);
 	const sb = maker.make();
-	assertEquals(sb.type(0), 0x01020304);
-	assertEquals(sb.type(1), 0x10203040);
+	assertEquals(Example.type(sb, 0), 0x01020304);
+	assertEquals(Example.type(sb, 1), 0x10203040);
 });
 
 Deno.test('blob', () => {
@@ -51,8 +51,8 @@ Deno.test('blob', () => {
 	maker.add(1, blob1);
 	maker.add(2, blob2);
 	const sb = maker.make();
-	const get1 = sb.blob(0)!;
-	const get2 = sb.blob(1)!;
+	const get1 = Example.blob(sb, 0)!;
+	const get2 = Example.blob(sb, 1)!;
 
 	assertEquals(
 		new Uint8Array(get1.buffer, get1.byteOffset, BlobCore.size(get1)),
@@ -61,7 +61,7 @@ Deno.test('blob', () => {
 
 	// No offset means null. What would create this?
 	new DataView(sb.buffer).setUint32(16, 0);
-	assertEquals(sb.blob(0), null);
+	assertEquals(Example.blob(sb, 0), null);
 
 	assertEquals(
 		new Uint8Array(get2.buffer, get2.byteOffset, BlobCore.size(get2)),
@@ -78,9 +78,9 @@ Deno.test('find', () => {
 	maker.add(1, blob1);
 	maker.add(2, blob2);
 	const sb = maker.make();
-	const get1 = sb.find(1)!;
-	const get2 = sb.find(2)!;
-	const get3 = sb.find(3)!;
+	const get1 = Example.find(sb, 1)!;
+	const get2 = Example.find(sb, 2)!;
+	const get3 = Example.find(sb, 3)!;
 	assertEquals(
 		new Uint8Array(get1.buffer, get1.byteOffset, BlobCore.size(get1)),
 		new Uint8Array(blob1.buffer, 0, 16),
@@ -102,5 +102,5 @@ Deno.test('count', () => {
 	maker.add(2, blob1);
 	maker.add(2, blob2);
 	const sb = maker.make();
-	assertEquals(sb.count(), 2);
+	assertEquals(Example.count(sb), 2);
 });
