@@ -55,9 +55,13 @@ Deno.test('data', () => {
 	);
 	assertEquals(dv.getUint32(0), kSecCodeMagicLaunchConstraint);
 	assertEquals(dv.getUint32(4), LaunchConstraintBlob.size(edb));
-	const ptr = edb.der();
+	const ptr = LaunchConstraintBlob.der(edb);
 	assertEquals(
-		new Uint8Array(ptr.buffer, ptr.byteOffset, edb.derLength()),
+		new Uint8Array(
+			ptr.buffer,
+			ptr.byteOffset,
+			LaunchConstraintBlob.derLength(edb),
+		),
 		sampleDer,
 	);
 });
