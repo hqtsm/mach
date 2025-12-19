@@ -37,10 +37,7 @@ export class Requirement extends Blob {
 	 * @param k Kind to set or undefined to get.
 	 * @returns Kind on get or undefined on set.
 	 */
-	public static kind(
-		_this: Requirement,
-		k?: number | undefined,
-	): number | void {
+	public static kind(_this: Requirement, k?: number): number | void {
 		if (k === undefined) {
 			return _this.mKind;
 		}

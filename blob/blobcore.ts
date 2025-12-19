@@ -64,10 +64,7 @@ export class BlobCore extends Struct {
 	 * @param size Byte length to set or undefined to get.
 	 * @returns Byte length on get or undefined on set.
 	 */
-	public static size(
-		_this: BlobCore,
-		size?: number | undefined,
-	): number | void {
+	public static size(_this: BlobCore, size?: number): number | void {
 		if (size === undefined) {
 			return _this.mLength;
 		}
