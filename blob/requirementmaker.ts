@@ -283,12 +283,11 @@ export class RequirementMaker {
 	): void {
 		if (length === undefined) {
 			const req = data as Requirement;
-			const Req = req.constructor;
 			const kind = Requirement.kind(req);
-			if (kind !== Req.exprForm) {
+			if (kind !== Requirement.exprForm) {
 				throw new RangeError(`Unsupported requirement kind: ${kind}`);
 			}
-			const { BYTE_LENGTH } = Req;
+			const { BYTE_LENGTH } = Requirement;
 			RequirementMaker.copy(
 				_this,
 				Requirement.at(req, Ptr, BYTE_LENGTH),
