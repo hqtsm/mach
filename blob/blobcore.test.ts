@@ -208,20 +208,15 @@ Deno.test('is', () => {
 
 	const blob = new BlobCore(data);
 
-	class Match {
+	class Match extends BlobCore {
 		static typeMagic = 0x12345678;
 	}
-	assertEquals(BlobCore.is(blob, Match), true);
+	assertEquals(Match.is(blob), true);
 
-	abstract class MatchAbstract {
-		static typeMagic = 0x12345678;
-	}
-	assertEquals(BlobCore.is(blob, MatchAbstract), true);
-
-	class Mismatch {
+	class Mismatch extends BlobCore {
 		static typeMagic = 0x12345679;
 	}
-	assertEquals(BlobCore.is(blob, Mismatch), false);
+	assertEquals(Mismatch.is(blob), false);
 });
 
 Deno.test('readBlob', async () => {

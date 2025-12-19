@@ -1,4 +1,4 @@
-import { type Class, constant, type IsClass, toStringTag } from '@hqtsm/class';
+import { type Class, constant, toStringTag } from '@hqtsm/class';
 import {
 	type Arr,
 	array,
@@ -10,6 +10,13 @@ import {
 } from '@hqtsm/struct';
 import { EINVAL, ENOMEM } from '../const.ts';
 import type { Reader } from '../util/reader.ts';
+
+/**
+ * BlobCore template.
+ */
+export type TemplateBlobCore =
+	& { readonly typeMagic: number }
+	& typeof BlobCore;
 
 /**
  * Polymorphic memory blobs with magics numbers.
@@ -235,11 +242,8 @@ export class BlobCore extends Struct {
 	 * @param BlobType Blob type.
 	 * @returns Is the same type.
 	 */
-	public static is<T>(
-		_this: BlobCore,
-		BlobType: T & IsClass<T, { readonly typeMagic: number }>,
-	): boolean {
-		return BlobCore.magic(_this) === BlobType.typeMagic;
+	public static is(this: TemplateBlobCore, _this: BlobCore): boolean {
+		return BlobCore.magic(_this) === this.typeMagic;
 	}
 
 	/**

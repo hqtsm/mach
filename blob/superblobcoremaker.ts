@@ -5,7 +5,7 @@ import { SuperBlobCore } from './superblobcore.ts';
 import { SuperBlobCoreIndex } from './superblobcoreindex.ts';
 
 /**
- * SuperBlob template.
+ * SuperBlobCoreMaker template.
  */
 export type TemplateSuperBlobCoreMaker =
 	& { readonly SuperBlob: Concrete<typeof SuperBlob> & typeof SuperBlob }
