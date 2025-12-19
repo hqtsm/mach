@@ -5,25 +5,6 @@ import { SuperBlobCore } from './superblobcore.ts';
 import { SuperBlobCoreIndex } from './superblobcoreindex.ts';
 
 /**
- * Instance type for SuperBlobCoreMaker.
- *
- * @template T SuperBlobCoreMaker.
- */
-export type SuperBlobCoreMakerThis<T extends SuperBlobCoreMaker> = {
-	readonly constructor: {
-		readonly SuperBlob: Concrete<T['constructor']['SuperBlob']>;
-	};
-} & T;
-
-/**
- * Blob type for SuperBlobCoreMaker.
- *
- * @template T SuperBlobCoreMaker.
- */
-export type SuperBlobCoreMakerBlobType<T extends SuperBlobCoreMaker> =
-	T['constructor']['SuperBlob']['prototype'];
-
-/**
  * SuperBlob core maker.
  */
 export abstract class SuperBlobCoreMaker {
@@ -37,37 +18,52 @@ export abstract class SuperBlobCoreMaker {
 	/**
 	 * Add blob to super blob, by reference.
 	 *
+	 * @param _this This.
 	 * @param type Index type.
 	 * @param blob Blob.
 	 */
-	public add(type: number, blob: BlobCore): void;
+	public static add(
+		_this: SuperBlobCoreMaker,
+		type: number,
+		blob: BlobCore,
+	): void;
 
 	/**
 	 * Copy blobs to super blob, by value.
 	 *
+	 * @param _this This.
 	 * @param blobs Blobs.
 	 */
-	public add(blobs: SuperBlob): void;
+	public static add(
+		_this: SuperBlobCoreMaker,
+		blobs: SuperBlob,
+	): void;
 
 	/**
 	 * Copy blobs to super blob, by value.
 	 *
+	 * @param _this This.
 	 * @param maker Maker.
 	 */
-	public add(maker: SuperBlobCoreMaker): void;
+	public static add(
+		_this: SuperBlobCoreMaker,
+		maker: SuperBlobCoreMaker,
+	): void;
 
 	/**
 	 * Add a blob to super blob.
 	 *
+	 * @param _this This.
 	 * @param type Type, blobs, or marker.
 	 * @param blob Blob if a type else undefined.
 	 */
-	public add(
+	public static add(
+		_this: SuperBlobCoreMaker,
 		type: number | SuperBlob | SuperBlobCoreMaker,
 		blob?: BlobCore,
 	): void {
 		if (typeof type === 'number') {
-			this.mPieces.set(
+			_this.mPieces.set(
 				type,
 				new BlobCore(
 					blob!.buffer,
@@ -80,15 +76,7 @@ export abstract class SuperBlobCoreMaker {
 
 		if ('mPieces' in type) {
 			for (const [t, b] of type.mPieces) {
-				SuperBlobCoreMaker.prototype.add.call<
-					SuperBlobCoreMaker,
-					[number, BlobCore],
-					void
-				>(
-					this,
-					t,
-					BlobCore.clone(b)!,
-				);
+				SuperBlobCoreMaker.add(_this, t, BlobCore.clone(b)!);
 			}
 			return;
 		}
@@ -96,12 +84,8 @@ export abstract class SuperBlobCoreMaker {
 		const mIndex = type['mIndex'];
 		const mCount = type['mCount'];
 		for (let ix = 0; ix < mCount; ix++) {
-			SuperBlobCoreMaker.prototype.add.call<
-				SuperBlobCoreMaker,
-				[number, BlobCore],
-				void
-			>(
-				this,
+			SuperBlobCoreMaker.add(
+				_this,
 				mIndex[ix].type,
 				BlobCore.clone(SuperBlob.blob(type, ix)!)!,
 			);
@@ -111,34 +95,44 @@ export abstract class SuperBlobCoreMaker {
 	/**
 	 * Check if super blob contains type.
 	 *
+	 * @param _this This.
 	 * @param type Index type.
 	 * @returns Is contained.
 	 */
-	public contains(type: number): boolean {
-		return this.mPieces.has(type);
+	public static contains(_this: SuperBlobCoreMaker, type: number): boolean {
+		return _this.mPieces.has(type);
 	}
 
 	/**
 	 * Get blob by type.
 	 *
+	 * @param _this This.
 	 * @param type Index type.
 	 * @returns Blob or null if not found.
 	 */
-	public get(type: number): BlobCore | null {
-		return this.mPieces.get(type) || null;
+	public static get(
+		_this: SuperBlobCoreMaker,
+		type: number,
+	): BlobCore | null {
+		return _this.mPieces.get(type) || null;
 	}
 
 	/**
 	 * Size of super blob.
 	 *
+	 * @param _this This.
 	 * @param sizes Iterable of additional blob sizes.
 	 * @param size1 Additional blob sizes.
 	 * @returns Byte length.
 	 */
-	public size(sizes: Iterable<number>, ...size1: number[]): number {
+	public static size(
+		_this: SuperBlobCoreMaker,
+		sizes: Iterable<number>,
+		...size1: number[]
+	): number {
 		let count = 0;
 		let total = 0;
-		for (const blob of this.mPieces.values()) {
+		for (const blob of _this.mPieces.values()) {
 			count++;
 			total += BlobCore.size(blob);
 		}
@@ -159,19 +153,22 @@ export abstract class SuperBlobCoreMaker {
 	 * Create the super blob.
 	 *
 	 * @param this Maker instance.
+	 * @param _this This.
 	 * @returns SuperBlob.
 	 */
-	public make(
-		this: SuperBlobCoreMakerThis<this>,
-	): SuperBlobCoreMakerBlobType<this> {
-		const { mPieces } = this;
+	public static make<
+		T extends
+			& { readonly SuperBlob: Concrete<typeof SuperBlob> }
+			& typeof SuperBlobCoreMaker,
+	>(this: T, _this: T['prototype']): T['SuperBlob']['prototype'] {
+		const { mPieces } = _this;
 		const count = mPieces.size;
-		const total = SuperBlobCoreMaker.prototype.size.call(this, []);
+		const total = SuperBlobCoreMaker.size(_this, []);
 		const buffer = new ArrayBuffer(total);
 		const data = new Uint8Array(buffer);
-		const result = new this.constructor.SuperBlob(buffer);
+		const result = new this.SuperBlob(buffer);
 		const mIndex = result['mIndex'];
-		this.constructor.SuperBlob.setup(result, total, count);
+		this.SuperBlob.setup(result, total, count);
 		let pc = SuperBlobCore.BYTE_LENGTH +
 			count * SuperBlobCoreIndex.BYTE_LENGTH;
 		let n = 0;

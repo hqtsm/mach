@@ -32,30 +32,46 @@ Deno.test('add BlobCore', () => {
 	const maker = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	const blob = BlobWrapper.alloc(data, data.byteLength);
-	maker.add(0x01020304, blob);
-	const sb = maker.make();
+	ExampleMaker.add(maker, 0x01020304, blob);
+	const sb = ExampleMaker.make(maker);
 	assertEquals(new Uint8Array(sb.buffer, 20), new Uint8Array(blob.buffer));
 });
 
 Deno.test('add SuperBlob', () => {
 	const maker1 = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
-	maker1.add(0x11111111, BlobWrapper.alloc(data, data.byteLength));
-	maker1.add(0x22222222, BlobWrapper.alloc(data, data.byteLength));
+	ExampleMaker.add(
+		maker1,
+		0x11111111,
+		BlobWrapper.alloc(data, data.byteLength),
+	);
+	ExampleMaker.add(
+		maker1,
+		0x22222222,
+		BlobWrapper.alloc(data, data.byteLength),
+	);
 	const maker2 = new ExampleMaker();
-	maker2.add(maker1.make());
-	const sb2 = maker2.make();
+	ExampleMaker.add(maker2, ExampleMaker.make(maker1));
+	const sb2 = ExampleMaker.make(maker2);
 	assertEquals(Example.count(sb2), 2);
 	assertEquals(Example.type(sb2, 0), 0x11111111);
 	assertEquals(Example.type(sb2, 1), 0x22222222);
 	BlobCore.at(Example.blob(sb2, 0)!, Uint8Ptr, 8)[0] = 11;
 	BlobCore.at(Example.blob(sb2, 1)!, Uint8Ptr, 8)[0] = 12;
 	assertEquals(
-		BlobCore.at(Example.blob(maker1.make(), 0)!, Uint8Ptr, 8)[0],
+		BlobCore.at(
+			Example.blob(ExampleMaker.make(maker1), 0)!,
+			Uint8Ptr,
+			8,
+		)[0],
 		1,
 	);
 	assertEquals(
-		BlobCore.at(Example.blob(maker1.make(), 1)!, Uint8Ptr, 8)[0],
+		BlobCore.at(
+			Example.blob(ExampleMaker.make(maker1), 1)!,
+			Uint8Ptr,
+			8,
+		)[0],
 		1,
 	);
 });
@@ -63,22 +79,38 @@ Deno.test('add SuperBlob', () => {
 Deno.test('add SuperBlobMaker', () => {
 	const maker1 = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
-	maker1.add(0x11111111, BlobWrapper.alloc(data, data.byteLength));
-	maker1.add(0x22222222, BlobWrapper.alloc(data, data.byteLength));
+	ExampleMaker.add(
+		maker1,
+		0x11111111,
+		BlobWrapper.alloc(data, data.byteLength),
+	);
+	ExampleMaker.add(
+		maker1,
+		0x22222222,
+		BlobWrapper.alloc(data, data.byteLength),
+	);
 	const maker2 = new ExampleMaker();
-	maker2.add(maker1);
-	const sb2 = maker2.make();
+	ExampleMaker.add(maker2, maker1);
+	const sb2 = ExampleMaker.make(maker2);
 	assertEquals(Example.count(sb2), 2);
 	assertEquals(Example.type(sb2, 0), 0x11111111);
 	assertEquals(Example.type(sb2, 1), 0x22222222);
 	BlobCore.at(Example.blob(sb2, 0)!, Uint8Ptr, 8)[0] = 11;
 	BlobCore.at(Example.blob(sb2, 1)!, Uint8Ptr, 8)[0] = 12;
 	assertEquals(
-		BlobCore.at(Example.blob(maker1.make(), 0)!, Uint8Ptr, 8)[0],
+		BlobCore.at(
+			Example.blob(ExampleMaker.make(maker1), 0)!,
+			Uint8Ptr,
+			8,
+		)[0],
 		1,
 	);
 	assertEquals(
-		BlobCore.at(Example.blob(maker1.make(), 1)!, Uint8Ptr, 8)[0],
+		BlobCore.at(
+			Example.blob(ExampleMaker.make(maker1), 1)!,
+			Uint8Ptr,
+			8,
+		)[0],
 		1,
 	);
 });
@@ -87,37 +119,55 @@ Deno.test('contains', () => {
 	const maker = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	const blob = BlobWrapper.alloc(data, data.byteLength);
-	assertEquals(maker.contains(0x01020304), false);
-	maker.add(0x01020304, blob);
-	assertEquals(maker.contains(0x01020304), true);
+	assertEquals(ExampleMaker.contains(maker, 0x01020304), false);
+	ExampleMaker.add(maker, 0x01020304, blob);
+	assertEquals(ExampleMaker.contains(maker, 0x01020304), true);
 });
 
 Deno.test('get', () => {
 	const maker = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	const blob = BlobWrapper.alloc(data, data.byteLength);
-	assertEquals(maker.get(0x01020304), null);
-	maker.add(0x01020304, blob);
-	assert(maker.get(0x01020304));
+	assertEquals(ExampleMaker.get(maker, 0x01020304), null);
+	ExampleMaker.add(maker, 0x01020304, blob);
+	assert(ExampleMaker.get(maker, 0x01020304));
 });
 
 Deno.test('size', () => {
 	const maker = new ExampleMaker();
-	assertEquals(maker.size([]), 12);
-	assertEquals(Example.size(maker.make()), maker.size([]));
+	assertEquals(ExampleMaker.size(maker, []), 12);
+	assertEquals(
+		Example.size(ExampleMaker.make(maker)),
+		ExampleMaker.size(maker, []),
+	);
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	const blob = BlobWrapper.alloc(data, data.byteLength);
-	maker.add(1, blob);
-	assertEquals(maker.size([]), 36);
-	assertEquals(Example.size(maker.make()), maker.size([]));
-	maker.add(1, blob);
-	assertEquals(maker.size([]), 36);
-	assertEquals(Example.size(maker.make()), maker.size([]));
-	maker.add(2, blob);
-	assertEquals(maker.size([]), 60);
-	assertEquals(Example.size(maker.make()), maker.size([]));
-	assertEquals(maker.size([4, 8]), 88);
-	assertEquals(Example.size(maker.make()), maker.size([]));
-	assertEquals(maker.size([4, 8], 4, 8), 116);
-	assertEquals(Example.size(maker.make()), maker.size([]));
+	ExampleMaker.add(maker, 1, blob);
+	assertEquals(ExampleMaker.size(maker, []), 36);
+	assertEquals(
+		Example.size(ExampleMaker.make(maker)),
+		ExampleMaker.size(maker, []),
+	);
+	ExampleMaker.add(maker, 1, blob);
+	assertEquals(ExampleMaker.size(maker, []), 36);
+	assertEquals(
+		Example.size(ExampleMaker.make(maker)),
+		ExampleMaker.size(maker, []),
+	);
+	ExampleMaker.add(maker, 2, blob);
+	assertEquals(ExampleMaker.size(maker, []), 60);
+	assertEquals(
+		Example.size(ExampleMaker.make(maker)),
+		ExampleMaker.size(maker, []),
+	);
+	assertEquals(ExampleMaker.size(maker, [4, 8]), 88);
+	assertEquals(
+		Example.size(ExampleMaker.make(maker)),
+		ExampleMaker.size(maker, []),
+	);
+	assertEquals(ExampleMaker.size(maker, [4, 8], 4, 8), 116);
+	assertEquals(
+		Example.size(ExampleMaker.make(maker)),
+		ExampleMaker.size(maker, []),
+	);
 });

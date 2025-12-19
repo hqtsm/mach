@@ -26,7 +26,7 @@ import { Requirements } from './requirements.ts';
 
 const fixtures = fixtureMachos();
 
-const emptyRequirements = new RequirementsMaker().make();
+const emptyRequirements = RequirementsMaker.make(new RequirementsMaker());
 const emptyRequirementsData = new Uint8Array(
 	emptyRequirements.buffer,
 	emptyRequirements.byteOffset,
@@ -173,12 +173,12 @@ for (const { kind, arch, file, archs } of fixtures) {
 			);
 
 			const maker = new EmbeddedSignatureBlobMaker();
-			maker.add(cdCodeDirectorySlot, cd0);
+			EmbeddedSignatureBlobMaker.add(maker, cdCodeDirectorySlot, cd0);
 
 			if (!linkerSigned) {
 				let cdAlt = cdAlternateCodeDirectorySlots;
 				for (const cd of cds) {
-					maker.add(cdAlt++, cd);
+					EmbeddedSignatureBlobMaker.add(maker, cdAlt++, cd);
 				}
 
 				const { requirements } = info;
@@ -188,7 +188,11 @@ for (const { kind, arch, file, archs } of fixtures) {
 						break;
 					}
 					case 'count=0 size=12': {
-						maker.add(cdRequirementsSlot, emptyRequirements);
+						EmbeddedSignatureBlobMaker.add(
+							maker,
+							cdRequirementsSlot,
+							emptyRequirements,
+						);
 						break;
 					}
 					default: {
@@ -199,14 +203,18 @@ for (const { kind, arch, file, archs } of fixtures) {
 				}
 
 				// Empty signature.
-				maker.add(cdSignatureSlot, BlobWrapper.alloc(0));
+				EmbeddedSignatureBlobMaker.add(
+					maker,
+					cdSignatureSlot,
+					BlobWrapper.alloc(0),
+				);
 			} else if (cds.length) {
 				throw new Error(
 					message(`Alt linker code directories: ${cds.length}`),
 				);
 			}
 
-			const cs = maker.make();
+			const cs = EmbeddedSignatureBlobMaker.make(maker);
 
 			const csBuffer = new Uint8Array(
 				cs.buffer,

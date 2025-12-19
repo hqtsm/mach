@@ -35,9 +35,9 @@ Deno.test('type', () => {
 	const maker = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	const blob = BlobWrapper.alloc(data, data.byteLength);
-	maker.add(0x01020304, blob);
-	maker.add(0x10203040, blob);
-	const sb = maker.make();
+	ExampleMaker.add(maker, 0x01020304, blob);
+	ExampleMaker.add(maker, 0x10203040, blob);
+	const sb = ExampleMaker.make(maker);
 	assertEquals(Example.type(sb, 0), 0x01020304);
 	assertEquals(Example.type(sb, 1), 0x10203040);
 });
@@ -48,9 +48,9 @@ Deno.test('blob', () => {
 	const data2 = new Uint8Array([2, 3, 4, 5, 6, 7, 8, 9]);
 	const blob1 = BlobWrapper.alloc(data1, data1.byteLength);
 	const blob2 = BlobWrapper.alloc(data2, data2.byteLength);
-	maker.add(1, blob1);
-	maker.add(2, blob2);
-	const sb = maker.make();
+	ExampleMaker.add(maker, 1, blob1);
+	ExampleMaker.add(maker, 2, blob2);
+	const sb = ExampleMaker.make(maker);
 	const get1 = Example.blob(sb, 0)!;
 	const get2 = Example.blob(sb, 1)!;
 
@@ -75,9 +75,9 @@ Deno.test('find', () => {
 	const data2 = new Uint8Array([2, 3, 4, 5, 6, 7, 8, 9]);
 	const blob1 = BlobWrapper.alloc(data1, data1.byteLength);
 	const blob2 = BlobWrapper.alloc(data2, data2.byteLength);
-	maker.add(1, blob1);
-	maker.add(2, blob2);
-	const sb = maker.make();
+	ExampleMaker.add(maker, 1, blob1);
+	ExampleMaker.add(maker, 2, blob2);
+	const sb = ExampleMaker.make(maker);
 	const get1 = Example.find(sb, 1)!;
 	const get2 = Example.find(sb, 2)!;
 	const get3 = Example.find(sb, 3)!;
@@ -98,9 +98,9 @@ Deno.test('count', () => {
 	const data2 = new Uint8Array([2, 3, 4, 5, 6, 7, 8, 9]);
 	const blob1 = BlobWrapper.alloc(data1, data1.byteLength);
 	const blob2 = BlobWrapper.alloc(data2, data2.byteLength);
-	maker.add(1, blob1);
-	maker.add(2, blob1);
-	maker.add(2, blob2);
-	const sb = maker.make();
+	ExampleMaker.add(maker, 1, blob1);
+	ExampleMaker.add(maker, 2, blob1);
+	ExampleMaker.add(maker, 2, blob2);
+	const sb = ExampleMaker.make(maker);
 	assertEquals(Example.count(sb), 2);
 });

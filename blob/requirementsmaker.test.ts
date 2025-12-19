@@ -9,7 +9,7 @@ import { RequirementsMaker } from './requirementsmaker.ts';
 import { Requirements } from './requirements.ts';
 
 Deno.test('empty', () => {
-	const rs = new RequirementsMaker().make();
+	const rs = RequirementsMaker.make(new RequirementsMaker());
 	assertEquals(
 		new Uint8Array(rs.buffer, rs.byteOffset, Requirements.size(rs)),
 		unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00'),
@@ -40,15 +40,17 @@ Deno.test('host + designated', () => {
 		...designated,
 	]);
 	const rsm = new RequirementsMaker();
-	rsm.add(
+	RequirementsMaker.add(
+		rsm,
 		kSecHostRequirementType,
 		new Requirement(Requirement.blobify(host)),
 	);
-	rsm.add(
+	RequirementsMaker.add(
+		rsm,
 		kSecDesignatedRequirementType,
 		new Requirement(Requirement.blobify(designated)),
 	);
-	const rs = rsm.make();
+	const rs = RequirementsMaker.make(rsm);
 	assertEquals(
 		new Uint8Array(rs.buffer, rs.byteOffset, Requirements.size(rs)),
 		data,
