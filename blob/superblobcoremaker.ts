@@ -158,7 +158,11 @@ export abstract class SuperBlobCoreMaker {
 	 */
 	public static make<
 		T extends
-			& { readonly SuperBlob: Concrete<typeof SuperBlob> }
+			& {
+				readonly SuperBlob:
+					& Concrete<typeof SuperBlob>
+					& typeof SuperBlob;
+			}
 			& typeof SuperBlobCoreMaker,
 	>(this: T, _this: T['prototype']): T['SuperBlob']['prototype'] {
 		const { mPieces } = _this;
