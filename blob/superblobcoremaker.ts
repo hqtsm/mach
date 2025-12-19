@@ -5,6 +5,13 @@ import { SuperBlobCore } from './superblobcore.ts';
 import { SuperBlobCoreIndex } from './superblobcoreindex.ts';
 
 /**
+ * SuperBlob template.
+ */
+export type TemplateSuperBlobCoreMaker =
+	& { readonly SuperBlob: Concrete<typeof SuperBlob> & typeof SuperBlob }
+	& typeof SuperBlobCoreMaker;
+
+/**
  * SuperBlob core maker.
  */
 export abstract class SuperBlobCoreMaker {
@@ -156,15 +163,10 @@ export abstract class SuperBlobCoreMaker {
 	 * @param _this This.
 	 * @returns SuperBlob.
 	 */
-	public static make<
-		T extends
-			& {
-				readonly SuperBlob:
-					& Concrete<typeof SuperBlob>
-					& typeof SuperBlob;
-			}
-			& typeof SuperBlobCoreMaker,
-	>(this: T, _this: T['prototype']): T['SuperBlob']['prototype'] {
+	public static make<T extends TemplateSuperBlobCoreMaker>(
+		this: T,
+		_this: T['prototype'],
+	): T['SuperBlob']['prototype'] {
 		const { mPieces } = _this;
 		const count = mPieces.size;
 		const total = SuperBlobCoreMaker.size(_this, []);

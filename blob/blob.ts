@@ -3,6 +3,11 @@ import type { Reader } from '../util/reader.ts';
 import { BlobCore } from './blobcore.ts';
 
 /**
+ * Blob template.
+ */
+export type TemplateBlob = Concrete<typeof Blob> & typeof Blob;
+
+/**
  * Polymorphic memory blob for magic number.
  */
 export abstract class Blob extends BlobCore {
@@ -56,7 +61,7 @@ export abstract class Blob extends BlobCore {
 	 * @param context Context.
 	 * @returns Cloned blob.
 	 */
-	public static override clone<T extends Concrete<typeof Blob>>(
+	public static override clone<T extends TemplateBlob>(
 		this: T,
 		_this: Blob,
 		context?: { errno: number },
@@ -81,7 +86,7 @@ export abstract class Blob extends BlobCore {
 	 * @param context Context.
 	 * @returns Cast blob or null.
 	 */
-	public static specific<T extends Concrete<typeof Blob>>(
+	public static specific<T extends TemplateBlob>(
 		this: T,
 		blob: BlobCore,
 		context?: { errno: number },
@@ -127,7 +132,7 @@ export abstract class Blob extends BlobCore {
 	 * @param context Context.
 	 * @returns Blob or null if not valid.
 	 */
-	public static override async readBlob<T extends Concrete<typeof Blob>>(
+	public static override async readBlob<T extends TemplateBlob>(
 		this: T,
 		reader: Reader,
 		context?: { errno: number },
@@ -144,7 +149,7 @@ export abstract class Blob extends BlobCore {
 	 * @param context Context.
 	 * @returns Blob or null if not valid.
 	 */
-	public static override async readBlob<T extends Concrete<typeof Blob>>(
+	public static override async readBlob<T extends TemplateBlob>(
 		this: T,
 		reader: Reader,
 		offset: number,
@@ -163,7 +168,7 @@ export abstract class Blob extends BlobCore {
 	 * @param context Context.
 	 * @returns Blob or null if not valid.
 	 */
-	public static override async readBlob<T extends Concrete<typeof Blob>>(
+	public static override async readBlob<T extends TemplateBlob>(
 		this: T,
 		reader: Reader,
 		offset?: number | { errno: number },
