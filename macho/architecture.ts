@@ -39,6 +39,12 @@ export class Architecture {
 	 */
 	constructor(archInFile: FatArch | FatArch64);
 
+	/**
+	 * Create architecture with CPU type and subtype.
+	 *
+	 * @param type CPU type or fat architecture.
+	 * @param sub CPU subtype.
+	 */
 	constructor(
 		type?: number | FatArch | FatArch64,
 		sub?: number,
