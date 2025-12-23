@@ -32,7 +32,7 @@ export abstract class SuperBlobCore extends Blob {
 		size: number,
 		count: number,
 	): void {
-		this.initializeLength(_this, size);
+		SuperBlobCore.initializeLength.call(this, _this, size);
 		_this.mCount = count;
 	}
 

@@ -37,7 +37,7 @@ export abstract class Blob extends BlobCore {
 		context?: { errno: number },
 	): boolean {
 		if (length === undefined) {
-			return this.validateBlob(
+			return BlobCore.validateBlob(
 				_this,
 				this.typeMagic,
 				_this.byteLength,
@@ -47,7 +47,7 @@ export abstract class Blob extends BlobCore {
 		}
 		return (
 			length >= _this.byteLength &&
-			this.validateBlobLength(_this, undefined, context) &&
+			Blob.validateBlobLength.call(this, _this, undefined, context) &&
 			_this.mLength === length
 		);
 	}
@@ -67,7 +67,7 @@ export abstract class Blob extends BlobCore {
 		context?: { errno: number },
 	): T['prototype'] | null {
 		const c = BlobCore.clone(_this);
-		return c && this.specific(c, context);
+		return c && Blob.specific.call(this, c, context);
 	}
 
 	/**
@@ -92,7 +92,9 @@ export abstract class Blob extends BlobCore {
 		context?: { errno: number },
 	): T['prototype'] | null {
 		const p = new this(blob.buffer, blob.byteOffset, blob.littleEndian);
-		return this.validateBlobLength(p, undefined, context) ? p : null;
+		return Blob.validateBlobLength.call(this, p, undefined, context)
+			? p
+			: null;
 	}
 
 	/**
