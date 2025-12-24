@@ -16,6 +16,7 @@ import {
 	CPU_TYPE_ARM,
 	CPU_TYPE_X86,
 	FAT_MAGIC,
+	MAX_ARCH_COUNT,
 	MH_DYLIB,
 	MH_EXECUTE,
 	MH_MAGIC_64,
@@ -125,6 +126,21 @@ Deno.test('open unknown magic', async () => {
 		() => Universal.Universal(blob),
 		RangeError,
 		'Unknown magic: 0x0',
+	);
+});
+
+Deno.test('open too many arch', async () => {
+	const data = new ArrayBuffer(
+		Math.max(FatHeader.BYTE_LENGTH, MachHeader.BYTE_LENGTH),
+	);
+	const header = new FatHeader(data);
+	header.magic = FAT_MAGIC;
+	header.nfatArch = MAX_ARCH_COUNT + 1;
+	const blob = new Blob([data]);
+	await assertRejects(
+		() => Universal.Universal(blob),
+		RangeError,
+		'Too many architectures',
 	);
 });
 
