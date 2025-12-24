@@ -55,7 +55,7 @@ Deno.test('specific', () => {
 Deno.test('clone', () => {
 	const data = new Uint8Array(12);
 	const example = new Example(data.buffer);
-	Example.initialize(example, 0xFFFFFFFF, Example.BYTE_LENGTH);
+	BlobCore.initialize(example, 0xFFFFFFFF, Example.BYTE_LENGTH);
 	example.value = 42;
 	{
 		const context = { errno: 0 };
@@ -149,7 +149,7 @@ Deno.test('validateBlobLength', () => {
 	const data = new Uint8Array(22);
 	const blob = new Example(data.buffer, 2);
 
-	Example.initialize(blob, 0, 20);
+	BlobCore.initialize(blob, 0, 20);
 	{
 		const context = { errno: 0 };
 		assertEquals(
@@ -165,7 +165,7 @@ Deno.test('validateBlobLength', () => {
 	Example.initializeLength(blob, 11);
 	assertEquals(Example.validateBlobLength(blob, 11, new NoErrno()), false);
 
-	Example.initialize(blob, 0, 20);
+	BlobCore.initialize(blob, 0, 20);
 	{
 		const context = { errno: 0 };
 		assertEquals(Example.validateBlobLength(blob, 20, context), false);
