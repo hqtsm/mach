@@ -15,7 +15,7 @@ Deno.test('constructor', () => {
 
 	{
 		const macho = new MachOImage(buffer);
-		const address = macho.address();
+		const address = MachOImage.address(macho);
 		assertEquals(address.byteOffset, 0);
 		assertStrictEquals(address.buffer, buffer);
 	}
@@ -24,7 +24,7 @@ Deno.test('constructor', () => {
 		const data = new Uint8Array(buffer.byteLength + 2);
 		data.subarray(1).set(new Uint8Array(buffer));
 		const macho = new MachOImage(data.subarray(1));
-		const address = macho.address();
+		const address = MachOImage.address(macho);
 		assertEquals(address.byteOffset, 1);
 		assertStrictEquals(address.buffer, data.buffer);
 	}

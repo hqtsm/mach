@@ -35,10 +35,11 @@ export class MachOImage extends MachOBase {
 	/**
 	 * Get address of Mach-O.
 	 *
+	 * @param _this This.
 	 * @returns Pionter to Mach-O header.
 	 */
-	public address(): ArrayBufferPointer {
-		return MachOImage.header(this)!;
+	public static address(_this: MachOImage): ArrayBufferPointer {
+		return MachOImage.header(_this)!;
 	}
 
 	static {
