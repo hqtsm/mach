@@ -122,7 +122,7 @@ export class BlobWrapper extends Blob {
 		magic ??= BlobWrapper.typeMagic;
 		const buffer = new ArrayBuffer(size);
 		const blob = new BlobWrapper(buffer);
-		BlobWrapper.initialize(blob, magic, size);
+		BlobCore.initialize(blob, magic, size);
 		if (view) {
 			new Uint8Array(buffer, BYTE_LENGTH).set(view);
 		}
