@@ -1,12 +1,10 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Minimum OS build version command.
  */
 export class BuildVersionCommand extends Struct {
-	declare public readonly ['constructor']: Class<typeof BuildVersionCommand>;
-
 	/**
 	 * Command type.
 	 */

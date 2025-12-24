@@ -1,12 +1,10 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint64 } from '@hqtsm/struct';
 
 /**
  * Thread local variable entry, 64-bit.
  */
 export class TlvDescriptor64 extends Struct {
-	declare public readonly ['constructor']: Class<typeof TlvDescriptor64>;
-
 	/**
 	 * A pointer.
 	 */

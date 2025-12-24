@@ -1,4 +1,4 @@
-import { type Class, type Concrete, constant, toStringTag } from '@hqtsm/class';
+import { type Concrete, constant, toStringTag } from '@hqtsm/class';
 import type { Reader } from '../util/reader.ts';
 import { BlobCore } from './blobcore.ts';
 
@@ -11,8 +11,6 @@ export type TemplateBlob = Concrete<typeof Blob> & typeof Blob;
  * Polymorphic memory blob for magic number.
  */
 export abstract class Blob extends BlobCore {
-	declare public readonly ['constructor']: Class<typeof Blob>;
-
 	/**
 	 * Initialize blob with length, using known type magic.
 	 *

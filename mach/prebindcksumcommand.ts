@@ -1,12 +1,10 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Prebind checksum command.
  */
 export class PrebindCksumCommand extends Struct {
-	declare public readonly ['constructor']: Class<typeof PrebindCksumCommand>;
-
 	/**
 	 * Command type.
 	 */

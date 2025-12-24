@@ -1,12 +1,10 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32, uint64 } from '@hqtsm/struct';
 
 /**
  * Dylib module table entry, 64-bit.
  */
 export class DylibModule64 extends Struct {
-	declare public readonly ['constructor']: Class<typeof DylibModule64>;
-
 	/**
 	 * Module name index in string table.
 	 */

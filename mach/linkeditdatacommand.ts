@@ -1,12 +1,10 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Linkedit data command.
  */
 export class LinkeditDataCommand extends Struct {
-	declare public readonly ['constructor']: Class<typeof LinkeditDataCommand>;
-
 	/**
 	 * Command type.
 	 */

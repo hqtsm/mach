@@ -1,4 +1,4 @@
-import { type Class, type Concrete, constant, toStringTag } from '@hqtsm/class';
+import { type Concrete, constant, toStringTag } from '@hqtsm/class';
 import { BlobCore } from './blobcore.ts';
 import { SuperBlob } from './superblob.ts';
 import { SuperBlobCore } from './superblobcore.ts';
@@ -15,8 +15,6 @@ export type TemplateSuperBlobCoreMaker =
  * SuperBlob core maker.
  */
 export abstract class SuperBlobCoreMaker {
-	declare public readonly ['constructor']: Class<typeof SuperBlobCoreMaker>;
-
 	/**
 	 * Blobs in super blob.
 	 */

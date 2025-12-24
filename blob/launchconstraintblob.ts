@@ -1,4 +1,4 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { array, member, Uint8Ptr } from '@hqtsm/struct';
 import { kSecCodeMagicLaunchConstraint } from '../const.ts';
 import { Blob } from './blob.ts';
@@ -8,8 +8,6 @@ import { BlobCore } from './blobcore.ts';
  * Launch constraint in DER format.
  */
 export class LaunchConstraintBlob extends Blob {
-	declare public readonly ['constructor']: Class<typeof LaunchConstraintBlob>;
-
 	/**
 	 * Data of payload (only).
 	 */

@@ -1,4 +1,4 @@
-import { type Class, toStringTag } from '@hqtsm/class';
+import { toStringTag } from '@hqtsm/class';
 import { pointer, type Ptr } from '@hqtsm/struct';
 import { UINT32_MAX } from '../const.ts';
 import type { DynamicHash, HashCrypto } from '../hash/dynamichash.ts';
@@ -27,8 +27,6 @@ async function generateHash(
  * Builder for building CodeDirectories from pieces.
  */
 export class CodeDirectoryBuilder {
-	declare public readonly ['constructor']: Class<typeof CodeDirectoryBuilder>;
-
 	/**
 	 * Hash crypto.
 	 */

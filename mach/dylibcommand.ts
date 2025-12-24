@@ -1,4 +1,4 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { member, Struct, uint32 } from '@hqtsm/struct';
 import { Dylib } from './dylib.ts';
 
@@ -6,8 +6,6 @@ import { Dylib } from './dylib.ts';
  * Dynamically linked shared library command.
  */
 export class DylibCommand extends Struct {
-	declare public readonly ['constructor']: Class<typeof DylibCommand>;
-
 	/**
 	 * Command type.
 	 */

@@ -1,4 +1,4 @@
-import { type Class, toStringTag } from '@hqtsm/class';
+import { toStringTag } from '@hqtsm/class';
 import { pointer, type Ptr } from '@hqtsm/struct';
 import {
 	CPU_ARCH_ABI64,
@@ -26,8 +26,6 @@ import { MachO } from './macho.ts';
  * Works for fat binaries and also thin binaries.
  */
 export class Universal {
-	declare public readonly ['constructor']: Class<typeof Universal>;
-
 	/**
 	 * Binary reader.
 	 */

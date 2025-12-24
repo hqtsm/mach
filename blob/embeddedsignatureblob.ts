@@ -1,4 +1,4 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { kSecCodeMagicEmbeddedSignature } from '../const.ts';
 import { SuperBlobCore } from './superblobcore.ts';
 
@@ -7,10 +7,6 @@ import { SuperBlobCore } from './superblobcore.ts';
  * For embedded Mach-O signatures and detached non-Mach-O binaries.
  */
 export class EmbeddedSignatureBlob extends SuperBlobCore {
-	declare public readonly ['constructor']: Class<
-		typeof EmbeddedSignatureBlob
-	>;
-
 	public static override readonly typeMagic = kSecCodeMagicEmbeddedSignature;
 
 	static {

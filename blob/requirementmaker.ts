@@ -1,4 +1,4 @@
-import { type Class, toStringTag } from '@hqtsm/class';
+import { toStringTag } from '@hqtsm/class';
 import { type ArrayBufferPointer, dataView, Ptr } from '@hqtsm/struct';
 import {
 	opAnchorHash,
@@ -19,8 +19,6 @@ import type { RequirementMakerLabel } from './requirementmakerlabel.ts';
  * For creating a new Requirement blob.
  */
 export class RequirementMaker {
-	declare public readonly ['constructor']: Class<typeof RequirementMaker>;
-
 	/**
 	 * Buffer of allocated bytes.
 	 */

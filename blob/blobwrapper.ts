@@ -1,4 +1,4 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import {
 	array,
 	type ArrayBufferPointer,
@@ -14,8 +14,6 @@ import { BlobCore } from './blobcore.ts';
  * Generic blob wrapping arbitrary binary data.
  */
 export class BlobWrapper extends Blob {
-	declare public readonly ['constructor']: Class<typeof BlobWrapper>;
-
 	/**
 	 * Data of payload (only).
 	 */

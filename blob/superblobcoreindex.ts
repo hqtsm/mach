@@ -1,12 +1,10 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32BE } from '@hqtsm/struct';
 
 /**
  * Super blob index entry.
  */
 export class SuperBlobCoreIndex extends Struct {
-	declare public readonly ['constructor']: Class<typeof SuperBlobCoreIndex>;
-
 	/**
 	 * Blob type.
 	 */

@@ -1,12 +1,10 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint24, uint8 } from '@hqtsm/struct';
 
 /**
  * Reference symbol table entry.
  */
 export class DylibReference extends Struct {
-	declare public readonly ['constructor']: Class<typeof DylibReference>;
-
 	/**
 	 * Index in symbol table.
 	 */

@@ -1,12 +1,10 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { int32, Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Mach-O header, 32-bit.
  */
 export class MachHeader extends Struct {
-	declare public readonly ['constructor']: Class<typeof MachHeader>;
-
 	/**
 	 * Mach magic.
 	 */

@@ -1,4 +1,4 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import {
 	type Arr,
 	array,
@@ -22,8 +22,6 @@ export type TemplateBlobCore =
  * Polymorphic memory blobs with magics numbers.
  */
 export class BlobCore extends Struct {
-	declare public readonly ['constructor']: Class<typeof BlobCore>;
-
 	/**
 	 * Magic number.
 	 */

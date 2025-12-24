@@ -1,12 +1,10 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Thread command.
  */
 export class ThreadCommand extends Struct {
-	declare public readonly ['constructor']: Class<typeof ThreadCommand>;
-
 	/**
 	 * Command type.
 	 */

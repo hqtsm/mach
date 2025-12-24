@@ -1,14 +1,10 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Encryption info command, 64-bit.
  */
 export class EncryptionInfoCommand64 extends Struct {
-	declare public readonly ['constructor']: Class<
-		typeof EncryptionInfoCommand64
-	>;
-
 	/**
 	 * Command type.
 	 */

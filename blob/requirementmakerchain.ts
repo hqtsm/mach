@@ -1,4 +1,4 @@
-import { type Class, toStringTag } from '@hqtsm/class';
+import { toStringTag } from '@hqtsm/class';
 import { dataView } from '@hqtsm/struct';
 import { RequirementMaker } from './requirementmaker.ts';
 import { RequirementMakerLabel } from './requirementmakerlabel.ts';
@@ -7,10 +7,6 @@ import { RequirementMakerLabel } from './requirementmakerlabel.ts';
  * RequirementMaker chain.
  */
 export class RequirementMakerChain extends RequirementMakerLabel {
-	declare public readonly ['constructor']: Class<
-		typeof RequirementMakerChain
-	>;
-
 	/**
 	 * Maker reference.
 	 */

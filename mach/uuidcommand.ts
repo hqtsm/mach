@@ -1,4 +1,4 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import {
 	type Arr,
 	array,
@@ -12,8 +12,6 @@ import {
  * UUID command.
  */
 export class UuidCommand extends Struct {
-	declare public readonly ['constructor']: Class<typeof UuidCommand>;
-
 	/**
 	 * Command type.
 	 */

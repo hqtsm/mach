@@ -1,4 +1,4 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import {
 	type Arr,
 	array,
@@ -12,8 +12,6 @@ import {
  * Section, 32-bit.
  */
 export class Section extends Struct {
-	declare public readonly ['constructor']: Class<typeof Section>;
-
 	/**
 	 * Section name.
 	 */

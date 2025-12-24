@@ -1,12 +1,10 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { uint32, Union } from '@hqtsm/struct';
 
 /**
  * Load command string union.
  */
 export class LcStr extends Union {
-	declare public readonly ['constructor']: Class<typeof LcStr>;
-
 	/**
 	 * String offset.
 	 */

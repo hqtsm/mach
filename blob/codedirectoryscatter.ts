@@ -1,12 +1,10 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32BE, uint64BE } from '@hqtsm/struct';
 
 /**
  * CodeDirectory scatter vector element.
  */
 export class CodeDirectoryScatter extends Struct {
-	declare public readonly ['constructor']: Class<typeof CodeDirectoryScatter>;
-
 	/**
 	 * Page count; zero for sentinel (only).
 	 */

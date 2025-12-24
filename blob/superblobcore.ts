@@ -1,4 +1,4 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { array, member, type Ptr, uint32BE } from '@hqtsm/struct';
 import { Blob } from './blob.ts';
 import { BlobCore } from './blobcore.ts';
@@ -8,8 +8,6 @@ import { SuperBlobCoreIndex } from './superblobcoreindex.ts';
  * Multiple Blobs wrapped in a single indexed blob.
  */
 export abstract class SuperBlobCore extends Blob {
-	declare public readonly ['constructor']: Class<typeof SuperBlobCore>;
-
 	/**
 	 * Number of blobs in super blob.
 	 */

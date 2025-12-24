@@ -1,12 +1,10 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint24, uint8 } from '@hqtsm/struct';
 
 /**
  * Two-level namespace lookup hints table entry.
  */
 export class TwolevelHint extends Struct {
-	declare public readonly ['constructor']: Class<typeof TwolevelHint>;
-
 	/**
 	 * Index in symbol table.
 	 */

@@ -1,4 +1,4 @@
-import { type Class, toStringTag } from '@hqtsm/class';
+import { toStringTag } from '@hqtsm/class';
 import {
 	type ArrayBufferPointer,
 	type Const,
@@ -44,8 +44,6 @@ import { Architecture } from './architecture.ts';
  * Common interface of Mach-O binaries features.
  */
 export class MachOBase {
-	declare public readonly ['constructor']: Class<typeof MachOBase>;
-
 	/**
 	 * Mach-O header.
 	 */

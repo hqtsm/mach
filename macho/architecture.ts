@@ -1,4 +1,4 @@
-import { type Class, toStringTag } from '@hqtsm/class';
+import { toStringTag } from '@hqtsm/class';
 import { CPU_SUBTYPE_MASK, CPU_SUBTYPE_MULTIPLE } from '../const.ts';
 import type { FatArch } from '../mach/fatarch.ts';
 import type { FatArch64 } from '../mach/fatarch64.ts';
@@ -7,8 +7,6 @@ import type { FatArch64 } from '../mach/fatarch64.ts';
  * Architecture specification.
  */
 export class Architecture {
-	declare public readonly ['constructor']: Class<typeof Architecture>;
-
 	/**
 	 * CPU type.
 	 */

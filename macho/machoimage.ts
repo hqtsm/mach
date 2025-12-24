@@ -1,4 +1,4 @@
-import { type Class, toStringTag } from '@hqtsm/class';
+import { toStringTag } from '@hqtsm/class';
 import type { ArrayBufferPointer } from '@hqtsm/struct';
 import { MachOBase } from './machobase.ts';
 
@@ -6,8 +6,6 @@ import { MachOBase } from './machobase.ts';
  * A Mach-O binary over a buffer.
  */
 export class MachOImage extends MachOBase {
-	declare public readonly ['constructor']: Class<typeof MachOImage>;
-
 	/**
 	 * Construct a Mach-O binary over a buffer.
 	 *

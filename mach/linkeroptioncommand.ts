@@ -1,12 +1,10 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Linker option command.
  */
 export class LinkerOptionCommand extends Struct {
-	declare public readonly ['constructor']: Class<typeof LinkerOptionCommand>;
-
 	/**
 	 * Command type.
 	 */

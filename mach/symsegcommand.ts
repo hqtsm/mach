@@ -1,12 +1,10 @@
-import { type Class, constant, toStringTag } from '@hqtsm/class';
+import { constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
  * Symbol table command.
  */
 export class SymsegCommand extends Struct {
-	declare public readonly ['constructor']: Class<typeof SymsegCommand>;
-
 	/**
 	 * Command type.
 	 */
