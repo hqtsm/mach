@@ -16,17 +16,17 @@ export class MachOImage extends MachOBase {
 	constructor(address: ArrayBufferLike | ArrayBufferPointer) {
 		super();
 
-		MachOImage.prototype.initHeader.call(this, address);
+		MachOImage.initHeader(this, address);
 
 		let buffer;
-		let byteOffset = MachOImage.prototype.headerSize.call(this);
+		let byteOffset = MachOImage.headerSize(this);
 		if ('buffer' in address) {
 			buffer = address.buffer;
 			byteOffset += address.byteOffset;
 		} else {
 			buffer = address;
 		}
-		MachOImage.prototype.initCommands.call(this, {
+		MachOImage.initCommands(this, {
 			buffer,
 			byteOffset,
 		});
@@ -38,7 +38,7 @@ export class MachOImage extends MachOBase {
 	 * @returns Pionter to Mach-O header.
 	 */
 	public address(): ArrayBufferPointer {
-		return MachOImage.prototype.header.call(this)!;
+		return MachOImage.header(this)!;
 	}
 
 	static {

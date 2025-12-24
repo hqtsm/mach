@@ -472,7 +472,7 @@ export class Universal {
 	 * @returns Mach-O instance.
 	 */
 	private make(macho: MachO): MachO {
-		const type = macho.type();
+		const type = MachO.type(macho);
 		if (!type) {
 			throw new RangeError('Unknown type');
 		}

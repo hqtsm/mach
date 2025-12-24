@@ -2,7 +2,6 @@ import { assertEquals, assertStrictEquals, assertThrows } from '@std/assert';
 import {
 	type Arr,
 	type ArrayBufferPointer,
-	type Const,
 	LITTLE_ENDIAN,
 	Uint8Ptr,
 } from '@hqtsm/struct';
@@ -38,24 +37,26 @@ import { MachOBase } from './machobase.ts';
 import { Architecture } from './mod.ts';
 
 class MachOBaseTest extends MachOBase {
-	public override initHeader(
+	public static override initHeader(
+		_this: MachOBase,
 		header: ArrayBufferPointer | ArrayBufferLike,
 	): void {
-		super.initHeader(header);
+		MachOBase.initHeader(_this, header);
 	}
 
-	public override initCommands(
+	public static override initCommands(
+		_this: MachOBase,
 		commands: ArrayBufferLike | ArrayBufferPointer,
 	): void {
-		super.initCommands(commands);
+		MachOBase.initCommands(_this, commands);
 	}
 
-	public override headerSize(): number {
-		return super.headerSize();
+	public static override headerSize(_this: MachOBase): number {
+		return super.headerSize(_this);
 	}
 
-	public override commandSize(): number {
-		return super.commandSize();
+	public static override commandSize(_this: MachOBase): number {
+		return super.commandSize(_this);
 	}
 }
 
@@ -70,12 +71,12 @@ const findCommands = [
 ] as const;
 
 Deno.test('init', () => {
-	let macho = new MachOBaseTest();
+	let macho = new MachOBase();
 
-	assertEquals(macho.header(), null);
-	assertEquals(macho.loadCommands(), null);
-	assertEquals(macho.is64(), false);
-	assertEquals(macho.isFlipped(), false);
+	assertEquals(MachOBase.header(macho), null);
+	assertEquals(MachOBase.loadCommands(macho), null);
+	assertEquals(MachOBase.is64(macho), false);
+	assertEquals(MachOBase.isFlipped(macho), false);
 
 	// Should work with 32-bit size of 64-bit header.
 	const headerSize = MachHeader.BYTE_LENGTH;
@@ -124,28 +125,28 @@ Deno.test('init', () => {
 
 	// Throws on bad magic, but still updates mHeader.
 	assertThrows(
-		() => macho.initHeader(header32N),
+		() => MachOBaseTest.initHeader(macho, header32N),
 		RangeError,
 		'Unknown magic: 0x0',
 	);
-	assertStrictEquals(macho.header()!.buffer, header32N.buffer);
+	assertStrictEquals(MachOBase.header(macho)!.buffer, header32N.buffer);
 	assertThrows(
-		() => macho.initHeader(header64N),
+		() => MachOBaseTest.initHeader(macho, header64N),
 		RangeError,
 		'Unknown magic: 0x0',
 	);
-	assertStrictEquals(macho.header()!.buffer, header64N.buffer);
+	assertStrictEquals(MachOBase.header(macho)!.buffer, header64N.buffer);
 
 	header32N.magic = 0xabcd1234;
 	header32N.sizeofcmds = 1;
 
 	assertThrows(
-		() => macho.initHeader(header32N),
+		() => MachOBaseTest.initHeader(macho, header32N),
 		RangeError,
 		'Unknown magic: 0x',
 	);
 	assertThrows(
-		() => macho.initCommands(commandN),
+		() => MachOBaseTest.initCommands(macho, commandN),
 		RangeError,
 		'Invalid commands size',
 	);
@@ -167,23 +168,35 @@ Deno.test('init', () => {
 	) {
 		const tag = `bits=${bits} flip=${flip}`;
 
-		macho = new MachOBaseTest();
-		macho.initHeader(flip ? header.buffer : header);
+		macho = new MachOBase();
+		MachOBaseTest.initHeader(macho, flip ? header.buffer : header);
 
-		assertStrictEquals(macho.header()!.buffer, header.buffer, tag);
-		assertEquals(macho.isFlipped(), flip, tag);
-		assertEquals(macho.is64(), bits === 64, tag);
-		assertEquals(Architecture.cpuType(macho.architecture()), 2, tag);
-		assertEquals(Architecture.cpuSubtype(macho.architecture()), 3, tag);
-		assertEquals(macho.type(), 4, tag);
-		assertEquals(macho.flags(), 5, tag);
-		assertEquals(macho.headerSize(), header.byteLength, tag);
-		assertEquals(macho.commandLength(), header.sizeofcmds, tag);
-		assertEquals(macho.commandSize(), header.sizeofcmds, tag);
-		assertEquals(macho.loadCommands(), null, tag);
+		assertStrictEquals(MachOBase.header(macho)!.buffer, header.buffer, tag);
+		assertEquals(MachOBase.isFlipped(macho), flip, tag);
+		assertEquals(MachOBase.is64(macho), bits === 64, tag);
+		assertEquals(
+			Architecture.cpuType(MachOBase.architecture(macho)),
+			2,
+			tag,
+		);
+		assertEquals(
+			Architecture.cpuSubtype(MachOBase.architecture(macho)),
+			3,
+			tag,
+		);
+		assertEquals(MachOBase.type(macho), 4, tag);
+		assertEquals(MachOBase.flags(macho), 5, tag);
+		assertEquals(MachOBaseTest.headerSize(macho), header.byteLength, tag);
+		assertEquals(MachOBase.commandLength(macho), header.sizeofcmds, tag);
+		assertEquals(MachOBaseTest.commandSize(macho), header.sizeofcmds, tag);
+		assertEquals(MachOBase.loadCommands(macho), null, tag);
 
-		macho.initCommands(flip ? command : command.buffer);
-		assertStrictEquals(macho.loadCommands()!.buffer, command.buffer, tag);
+		MachOBaseTest.initCommands(macho, flip ? command : command.buffer);
+		assertStrictEquals(
+			MachOBase.loadCommands(macho)!.buffer,
+			command.buffer,
+			tag,
+		);
 	}
 });
 
@@ -203,17 +216,17 @@ Deno.test('nextCommand valid', () => {
 	header.ncmds = 2;
 	header.sizeofcmds = commands.byteLength;
 
-	const macho = new MachOBaseTest();
-	macho.initHeader(header);
-	macho.initCommands(commands);
+	const macho = new MachOBase();
+	MachOBaseTest.initHeader(macho, header);
+	MachOBaseTest.initCommands(macho, commands);
 
-	const cmdA = macho.loadCommands()!;
+	const cmdA = MachOBase.loadCommands(macho)!;
 	assertEquals(cmdA.cmd, commandA.cmd);
 
-	const cmdB = macho.nextCommand(cmdA)!;
+	const cmdB = MachOBase.nextCommand(macho, cmdA)!;
 	assertEquals(cmdB.cmd, commandB.cmd);
 
-	const cmdC = macho.nextCommand(cmdB);
+	const cmdC = MachOBase.nextCommand(macho, cmdB);
 	assertEquals(cmdC, null);
 });
 
@@ -233,15 +246,15 @@ Deno.test('nextCommand zero', () => {
 	header.ncmds = 2;
 	header.sizeofcmds = commands.byteLength;
 
-	const macho = new MachOBaseTest();
-	macho.initHeader(header);
-	macho.initCommands(commands);
+	const macho = new MachOBase();
+	MachOBaseTest.initHeader(macho, header);
+	MachOBaseTest.initCommands(macho, commands);
 
-	const cmdA = macho.loadCommands()!;
+	const cmdA = MachOBase.loadCommands(macho)!;
 	assertEquals(cmdA.cmd, commandA.cmd);
 
 	assertThrows(
-		() => macho.nextCommand(cmdA),
+		() => MachOBase.nextCommand(macho, cmdA),
 		RangeError,
 		'Invalid command size',
 	);
@@ -262,15 +275,15 @@ Deno.test('nextCommand under', () => {
 	header.ncmds = 2;
 	header.sizeofcmds = commands.byteLength;
 
-	const macho = new MachOBaseTest();
-	macho.initHeader(header);
-	macho.initCommands(commands);
+	const macho = new MachOBase();
+	MachOBaseTest.initHeader(macho, header);
+	MachOBaseTest.initCommands(macho, commands);
 
-	const cmdA = macho.loadCommands()!;
+	const cmdA = MachOBase.loadCommands(macho)!;
 	assertEquals(cmdA.cmd, commandA.cmd);
 
 	assertThrows(
-		() => macho.nextCommand(cmdA),
+		() => MachOBase.nextCommand(macho, cmdA),
 		RangeError,
 		'Invalid command size',
 	);
@@ -292,15 +305,15 @@ Deno.test('nextCommand over', () => {
 	header.ncmds = 2;
 	header.sizeofcmds = commands.byteLength;
 
-	const macho = new MachOBaseTest();
-	macho.initHeader(header);
-	macho.initCommands(commands);
+	const macho = new MachOBase();
+	MachOBaseTest.initHeader(macho, header);
+	MachOBaseTest.initCommands(macho, commands);
 
-	const cmdA = macho.loadCommands()!;
+	const cmdA = MachOBase.loadCommands(macho)!;
 	assertEquals(cmdA.cmd, commandA.cmd);
 
 	assertThrows(
-		() => macho.nextCommand(cmdA),
+		() => MachOBase.nextCommand(macho, cmdA),
 		RangeError,
 		'Invalid command size',
 	);
@@ -326,14 +339,20 @@ Deno.test('findCommand', () => {
 	header.ncmds = 3;
 	header.sizeofcmds = commands.byteLength;
 
-	const macho = new MachOBaseTest();
-	macho.initHeader(header);
-	macho.initCommands(commands);
+	const macho = new MachOBase();
+	MachOBaseTest.initHeader(macho, header);
+	MachOBaseTest.initCommands(macho, commands);
 
-	assertEquals(macho.findCommand(0), null);
-	assertEquals(macho.findCommand(1)!.byteOffset, commandA.byteOffset);
-	assertEquals(macho.findCommand(2)!.byteOffset, commandB.byteOffset);
-	assertEquals(macho.findCommand(3), null);
+	assertEquals(MachOBase.findCommand(macho, 0), null);
+	assertEquals(
+		MachOBase.findCommand(macho, 1)!.byteOffset,
+		commandA.byteOffset,
+	);
+	assertEquals(
+		MachOBase.findCommand(macho, 2)!.byteOffset,
+		commandB.byteOffset,
+	);
+	assertEquals(MachOBase.findCommand(macho, 3), null);
 });
 
 Deno.test('find command valid', () => {
@@ -355,15 +374,15 @@ Deno.test('find command valid', () => {
 		header.ncmds = 2;
 		header.sizeofcmds = commands.byteLength;
 
-		const macho = new MachOBaseTest();
-		macho.initHeader(header);
-		macho.initCommands(commands);
+		const macho = new MachOBase();
+		MachOBaseTest.initHeader(macho, header);
+		MachOBaseTest.initCommands(macho, commands);
 
-		assertEquals(macho[method](), null, tag);
+		assertEquals(MachOBase[method](macho), null, tag);
 
 		commandB.cmd = CMD;
 
-		const found = macho[method]()!;
+		const found = MachOBase[method](macho)!;
 		assertEquals(found.cmd, CMD, tag);
 		assertEquals(found.byteOffset, commandB.byteOffset, tag);
 	}
@@ -387,12 +406,12 @@ Deno.test('find command under', () => {
 		header.ncmds = 2;
 		header.sizeofcmds = commands.byteLength;
 
-		const macho = new MachOBaseTest();
-		macho.initHeader(header);
-		macho.initCommands(commands);
+		const macho = new MachOBase();
+		MachOBaseTest.initHeader(macho, header);
+		MachOBaseTest.initCommands(macho, commands);
 
 		assertThrows(
-			() => macho[method](),
+			() => MachOBase[method](macho),
 			RangeError,
 			'Invalid command size',
 			tag,
@@ -426,14 +445,14 @@ Deno.test('find version', () => {
 	header.ncmds = 3;
 	header.sizeofcmds = commands.byteLength;
 
-	const macho = new MachOBaseTest();
-	macho.initHeader(header);
-	macho.initCommands(commands);
+	const macho = new MachOBase();
+	MachOBaseTest.initHeader(macho, header);
+	MachOBaseTest.initCommands(macho, commands);
 
-	assertEquals(macho.version(null, null, null), false);
-	assertEquals(macho.platform(), 0);
-	assertEquals(macho.minVersion(), 0);
-	assertEquals(macho.sdkVersion(), 0);
+	assertEquals(MachOBase.version(macho, null, null, null), false);
+	assertEquals(MachOBase.platform(macho), 0);
+	assertEquals(MachOBase.minVersion(macho), 0);
+	assertEquals(MachOBase.sdkVersion(macho), 0);
 
 	for (
 		const [LC, PL] of [
@@ -444,14 +463,14 @@ Deno.test('find version', () => {
 		] as const
 	) {
 		commandC.cmd = LC;
-		assertEquals(macho.version(null, null, null), true);
-		assertEquals(macho.platform(), PL);
+		assertEquals(MachOBase.version(macho, null, null, null), true);
+		assertEquals(MachOBase.platform(macho), PL);
 
 		commandC.version = 12;
-		assertEquals(macho.minVersion(), 12);
+		assertEquals(MachOBase.minVersion(macho), 12);
 
 		commandC.sdk = 23;
-		assertEquals(macho.sdkVersion(), 23);
+		assertEquals(MachOBase.sdkVersion(macho), 23);
 	}
 
 	commandB.cmd = LC_BUILD_VERSION;
@@ -459,22 +478,21 @@ Deno.test('find version', () => {
 	commandB.minos = 34;
 	commandB.sdk = 45;
 
-	assertEquals(macho.version(null, null, null), true);
-	assertEquals(macho.platform(), PLATFORM_MACOS);
-	assertEquals(macho.minVersion(), 34);
-	assertEquals(macho.sdkVersion(), 45);
+	assertEquals(MachOBase.version(macho, null, null, null), true);
+	assertEquals(MachOBase.platform(macho), PLATFORM_MACOS);
+	assertEquals(MachOBase.minVersion(macho), 34);
+	assertEquals(MachOBase.sdkVersion(macho), 45);
 
 	// Testing the default case if findMinVersion returns something not cased.
 	// The default case should be unreachable.
 	commandB.cmd = 0x12345678;
 	p[0] = 1;
-	const desc = Object.getOwnPropertyDescriptor(
-		MachOBase.prototype,
-		'findMinVersion',
-	)!;
-	Object.defineProperty(MachOBase.prototype, 'findMinVersion', {
+	const desc = Object.getOwnPropertyDescriptor(MachOBase, 'findMinVersion')!;
+	Object.defineProperty(MachOBase, 'findMinVersion', {
 		...desc,
-		value: function findMinVersion(): Const<VersionMinCommand> | null {
+		value: function findMinVersion(
+			_this: MachOBase,
+		): VersionMinCommand | null {
 			return new VersionMinCommand(
 				commandB.buffer,
 				commandB.byteOffset,
@@ -483,11 +501,11 @@ Deno.test('find version', () => {
 		},
 	});
 	try {
-		assertEquals(macho.platform(), 0);
-		assertEquals(macho.version(p, null, null), true);
+		assertEquals(MachOBase.platform(macho), 0);
+		assertEquals(MachOBase.version(macho, p, null, null), true);
 		assertEquals(p[0], 0);
 	} finally {
-		Object.defineProperty(MachOBase.prototype, 'findMinVersion', desc);
+		Object.defineProperty(MachOBase, 'findMinVersion', desc);
 	}
 });
 
@@ -507,19 +525,19 @@ Deno.test('signingOffset signingLength', () => {
 	header.ncmds = 2;
 	header.sizeofcmds = commands.byteLength;
 
-	const macho = new MachOBaseTest();
-	macho.initHeader(header);
-	macho.initCommands(commands);
+	const macho = new MachOBase();
+	MachOBaseTest.initHeader(macho, header);
+	MachOBaseTest.initCommands(macho, commands);
 
-	assertEquals(macho.signingOffset(), 0);
-	assertEquals(macho.signingLength(), 0);
+	assertEquals(MachOBase.signingOffset(macho), 0);
+	assertEquals(MachOBase.signingLength(macho), 0);
 
 	commandB.cmd = LC_CODE_SIGNATURE;
 	commandB.dataoff = 12;
 	commandB.datasize = 34;
 
-	assertEquals(macho.signingOffset(), 12);
-	assertEquals(macho.signingLength(), 34);
+	assertEquals(MachOBase.signingOffset(macho), 12);
+	assertEquals(MachOBase.signingLength(macho), 34);
 });
 
 Deno.test('findSegment findSection', () => {
@@ -573,38 +591,46 @@ Deno.test('findSegment findSection', () => {
 		header.ncmds = 2;
 		header.sizeofcmds = commands.byteLength;
 
-		const macho = new MachOBaseTest();
-		macho.initHeader(header);
-		macho.initCommands(commands);
+		const macho = new MachOBase();
+		MachOBaseTest.initHeader(macho, header);
+		MachOBaseTest.initCommands(macho, commands);
 
 		assertEquals(
-			macho.findSegment(cstr('GROUP').buffer),
+			MachOBase.findSegment(macho, cstr('GROUP').buffer),
 			null,
 			tag,
 		);
 		assertEquals(
-			macho.findSegment(cstr('group'))!.byteOffset,
+			MachOBase.findSegment(macho, cstr('group'))!.byteOffset,
 			seg.byteOffset,
 			tag,
 		);
 
 		assertEquals(
-			macho.findSection(cstr('GROUP'), cstr('ALPHA')),
+			MachOBase.findSection(macho, cstr('GROUP'), cstr('ALPHA')),
 			null,
 			tag,
 		);
 		assertEquals(
-			macho.findSection(cstr('group'), cstr('alpha').buffer)!.byteOffset,
+			MachOBase.findSection(
+				macho,
+				cstr('group'),
+				cstr('alpha').buffer,
+			)!.byteOffset,
 			secA.byteOffset,
 			tag,
 		);
 		assertEquals(
-			macho.findSection(cstr('group'), cstr('beta'))!.byteOffset,
+			MachOBase.findSection(
+				macho,
+				cstr('group'),
+				cstr('beta'),
+			)!.byteOffset,
 			secB.byteOffset,
 			tag,
 		);
 		assertEquals(
-			macho.findSection(cstr('group'), cstr('gamma')),
+			MachOBase.findSection(macho, cstr('group'), cstr('gamma')),
 			null,
 			tag,
 		);
@@ -612,7 +638,10 @@ Deno.test('findSegment findSection', () => {
 		strSet(seg.segname, cstr('0123456789abcdef').slice(0, 16));
 
 		assertEquals(
-			macho.findSegment(cstr('0123456789abcdefg'))!.byteOffset,
+			MachOBase.findSegment(
+				macho,
+				cstr('0123456789abcdefg'),
+			)!.byteOffset,
 			seg.byteOffset,
 			tag,
 		);
@@ -622,7 +651,7 @@ Deno.test('findSegment findSection', () => {
 		seg.cmdsize = Seg.BYTE_LENGTH - 1;
 
 		assertThrows(
-			() => macho.findSegment(cstr('group')),
+			() => MachOBase.findSegment(macho, cstr('group')),
 			RangeError,
 			'Invalid command size',
 			tag,
@@ -632,7 +661,7 @@ Deno.test('findSegment findSection', () => {
 		seg.nsects++;
 
 		assertEquals(
-			macho.findSection(cstr('group'), cstr('gamma')),
+			MachOBase.findSection(macho, cstr('group'), cstr('gamma')),
 			null,
 			tag,
 		);
@@ -648,8 +677,8 @@ Deno.test('string', () => {
 	command.path.offset = RpathCommand.BYTE_LENGTH;
 	data.set(cstr, command.path.offset);
 
-	const macho = new MachOBaseTest();
-	const chars = macho.string(command, command.path)!;
+	const macho = new MachOBase();
+	const chars = MachOBase.string(macho, command, command.path)!;
 	const charsStr = new Uint8Array(
 		chars.buffer,
 		chars.byteOffset,
@@ -660,5 +689,5 @@ Deno.test('string', () => {
 
 	command.cmdsize--;
 
-	assertEquals(macho.string(command, command.path), null);
+	assertEquals(MachOBase.string(macho, command, command.path), null);
 });

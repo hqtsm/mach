@@ -72,10 +72,10 @@ export class MachO extends MachOBase {
 		if (header.byteLength !== hs) {
 			throw new RangeError('Invalid header');
 		}
-		MachO.prototype.initHeader.call(this, header);
+		MachO.initHeader(this, header);
 		offset += hs;
 
-		const fhs = MachO.prototype.headerSize.call(this);
+		const fhs = MachO.headerSize(this);
 		const more = fhs - hs;
 		if (more > 0) {
 			const d = await reader.slice(offset, offset + more).arrayBuffer();
@@ -85,16 +85,16 @@ export class MachO extends MachOBase {
 			const full = new Uint8Array(fhs);
 			full.set(new Uint8Array(header));
 			full.set(new Uint8Array(d), hs);
-			MachO.prototype.initHeader.call(this, full);
+			MachO.initHeader(this, full);
 			offset += more;
 		}
 
-		const cs = MachO.prototype.commandSize.call(this);
+		const cs = MachO.commandSize(this);
 		const commands = await reader.slice(offset, offset + cs).arrayBuffer();
 		if (commands.byteLength !== cs) {
 			throw new RangeError('Invalid commands');
 		}
-		MachO.prototype.initCommands.call(this, commands);
+		MachO.initCommands(this, commands);
 
 		if (mLength) {
 			MachO.prototype.validateStructure.call(this);
@@ -135,8 +135,7 @@ export class MachO extends MachOBase {
 	 * @returns Signing offset or file length if none.
 	 */
 	public signingExtent(): number {
-		return MachO.prototype.signingOffset.call(this) ||
-			MachO.prototype.length.call(this);
+		return MachO.signingOffset(this) || MachO.prototype.length.call(this);
 	}
 
 	/**
@@ -174,9 +173,9 @@ export class MachO extends MachOBase {
 		}
 
 		LOOP: for (
-			let cmd = MachO.prototype.loadCommands.call(this);
+			let cmd = MachO.loadCommands(this);
 			cmd;
-			cmd = MachO.prototype.nextCommand.call(this, cmd)
+			cmd = MachO.nextCommand(this, cmd)
 		) {
 			switch (cmd.cmd) {
 				case LC_SEGMENT: {

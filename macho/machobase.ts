@@ -79,79 +79,90 @@ export class MachOBase {
 	/**
 	 * If binary endian does not matches the host endian.
 	 *
+	 * @param _this This.
 	 * @returns True if flipped, false if not.
 	 */
-	public isFlipped(): boolean {
-		return this.mFlip;
+	public static isFlipped(_this: MachOBase): boolean {
+		return _this.mFlip;
 	}
 
 	/**
 	 * If binary is 64-bit.
 	 *
+	 * @param _this This.
 	 * @returns True if 64-bit, false if 32-bit.
 	 */
-	public is64(): boolean {
-		return this.m64;
+	public static is64(_this: MachOBase): boolean {
+		return _this.m64;
 	}
 
 	/**
 	 * Get Mach-O header.
 	 *
+	 * @param _this This.
 	 * @returns Header or null.
 	 */
-	public header(): MachHeader | MachHeader64 | null {
-		return this.mHeader;
+	public static header(_this: MachOBase): MachHeader | MachHeader64 | null {
+		return _this.mHeader;
 	}
 
 	/**
 	 * Get architecture from header.
 	 *
+	 * @param _this This.
 	 * @returns Architecture.
 	 */
-	public architecture(): Architecture {
-		const mHeader = this.mHeader!;
+	public static architecture(_this: MachOBase): Architecture {
+		const mHeader = _this.mHeader!;
 		return new Architecture(mHeader.cputype, mHeader.cpusubtype);
 	}
 
 	/**
 	 * Get file type from header.
 	 *
+	 * @param _this This.
 	 * @returns File type.
 	 */
-	public type(): number {
-		return this.mHeader!.filetype;
+	public static type(_this: MachOBase): number {
+		return _this.mHeader!.filetype;
 	}
 
 	/**
 	 * Get flags from header.
 	 *
+	 * @param _this This.
 	 * @returns Flags.
 	 */
-	public flags(): number {
-		return this.mHeader!.flags;
+	public static flags(_this: MachOBase): number {
+		return _this.mHeader!.flags;
 	}
 
 	/**
 	 * Get load commands.
 	 *
+	 * @param _this This.
 	 * @returns Load commands pointer or null.
 	 */
-	public loadCommands(): LoadCommand | null {
-		return this.mCommands;
+	public static loadCommands(_this: MachOBase): LoadCommand | null {
+		return _this.mCommands;
 	}
 
 	/**
 	 * Get next load command.
 	 *
+	 * @param _this This.
 	 * @param command Current load command.
 	 * @returns Next load command or null.
 	 */
-	public nextCommand(command: LoadCommand): LoadCommand | null {
+	public static nextCommand(
+		_this: MachOBase,
+		command: LoadCommand,
+	): LoadCommand | null {
 		const { cmdsize } = command;
 		if (!cmdsize) {
 			throw new RangeError('Invalid command size');
 		}
-		const { mEndCommands } = this;
+		const { mEndCommands } = _this;
 		const byteOffset = command.byteOffset + cmdsize;
 		if (byteOffset >= mEndCommands) {
 			return null;
@@ -175,21 +186,25 @@ export class MachOBase {
 	 *
 	 * @returns Byte length of commands.
 	 */
-	public commandLength(): number {
-		return this.mHeader!.sizeofcmds;
+	public static commandLength(_this: MachOBase): number {
+		return _this.mHeader!.sizeofcmds;
 	}
 
 	/**
 	 * Find load command by type.
 	 *
+	 * @param _this This.
 	 * @param cmd Command type.
 	 * @returns Load command or null.
 	 */
-	public findCommand(cmd: number): LoadCommand | null {
+	public static findCommand(
+		_this: MachOBase,
+		cmd: number,
+	): LoadCommand | null {
 		for (
-			let c = MachOBase.prototype.loadCommands.call(this);
+			let c = MachOBase.loadCommands(_this);
 			c;
-			c = MachOBase.prototype.nextCommand.call(this, c)
+			c = MachOBase.nextCommand(_this, c)
 		) {
 			if (c.cmd === cmd) {
 				return c;
@@ -201,10 +216,12 @@ export class MachOBase {
 	/**
 	 * Find segment by name.
 	 *
+	 * @param _this This.
 	 * @param segname Segment name character pointer, null terminated.
 	 * @returns Segment command or null.
 	 */
-	public findSegment(
+	public static findSegment(
+		_this: MachOBase,
 		segname: ArrayBufferLike | ArrayBufferPointer,
 	): SegmentCommand | SegmentCommand64 | null {
 		let buffer, byteOffset;
@@ -218,9 +235,9 @@ export class MachOBase {
 		const sn = new Int8Ptr(buffer, byteOffset);
 		let SC: typeof SegmentCommand | typeof SegmentCommand64 | null;
 		for (
-			let c = MachOBase.prototype.loadCommands.call(this);
+			let c = MachOBase.loadCommands(_this);
 			c;
-			c = MachOBase.prototype.nextCommand.call(this, c)
+			c = MachOBase.nextCommand(_this, c)
 		) {
 			switch (c.cmd) {
 				case LC_SEGMENT: {
@@ -249,19 +266,21 @@ export class MachOBase {
 	/**
 	 * Find section by name.
 	 *
+	 * @param _this This.
 	 * @param segname Segment name character pointer, null terminated.
 	 * @param sectname Section name character pointer, null terminated.
 	 * @returns Section or null.
 	 */
-	public findSection(
+	public static findSection(
+		_this: MachOBase,
 		segname: ArrayBufferLike | ArrayBufferPointer,
 		sectname: ArrayBufferLike | ArrayBufferPointer,
 	): Section | Section64 | null {
-		const seg = MachOBase.prototype.findSegment.call(this, segname);
+		const seg = MachOBase.findSegment(_this, segname);
 		if (!seg) {
 			return null;
 		}
-		const S = this.m64 ? Section64 : Section;
+		const S = _this.m64 ? Section64 : Section;
 		const SL = S.BYTE_LENGTH;
 		const { byteLength, littleEndian, nsects } = seg;
 		if (byteLength + (nsects * SL) > seg.cmdsize) {
@@ -291,11 +310,16 @@ export class MachOBase {
 	 * Failed bounds check may return null, not throw.
 	 * Reading out of bounds may still throw exception.
 	 *
+	 * @param _this This.
 	 * @param cmd Load command holding string.
 	 * @param str String within load command.
 	 * @returns String pointer or null.
 	 */
-	public string(cmd: LoadCommand, str: LcStr): Const<Int8Ptr> | null {
+	public static string(
+		_this: MachOBase,
+		cmd: LoadCommand,
+		str: LcStr,
+	): Const<Int8Ptr> | null {
 		const { offset } = str;
 		const sp = new Int8Ptr(
 			cmd.buffer,
@@ -311,13 +335,13 @@ export class MachOBase {
 	/**
 	 * Find code signature command.
 	 *
+	 * @param _this This.
 	 * @returns Code signature command or null.
 	 */
-	public findCodeSignature(): LinkeditDataCommand | null {
-		const cmd = MachOBase.prototype.findCommand.call(
-			this,
-			LC_CODE_SIGNATURE,
-		);
+	public static findCodeSignature(
+		_this: MachOBase,
+	): LinkeditDataCommand | null {
+		const cmd = MachOBase.findCommand(_this, LC_CODE_SIGNATURE);
 		if (!cmd) {
 			return null;
 		}
@@ -334,13 +358,13 @@ export class MachOBase {
 	/**
 	 * Find code signing DRs copied from linked dylibs.
 	 *
+	 * @param _this This.
 	 * @returns Code signing DRs command or null.
 	 */
-	public findLibraryDependencies(): LinkeditDataCommand | null {
-		const cmd = MachOBase.prototype.findCommand.call(
-			this,
-			LC_DYLIB_CODE_SIGN_DRS,
-		);
+	public static findLibraryDependencies(
+		_this: MachOBase,
+	): LinkeditDataCommand | null {
+		const cmd = MachOBase.findCommand(_this, LC_DYLIB_CODE_SIGN_DRS);
 		if (!cmd) {
 			return null;
 		}
@@ -357,37 +381,41 @@ export class MachOBase {
 	/**
 	 * Get code signature offset.
 	 *
+	 * @param _this This.
 	 * @returns Code signature offset, or 0.
 	 */
-	public signingOffset(): number {
-		const lec = MachOBase.prototype.findCodeSignature.call(this);
+	public static signingOffset(_this: MachOBase): number {
+		const lec = MachOBase.findCodeSignature(_this);
 		return lec ? lec.dataoff : 0;
 	}
 
 	/**
 	 * Get code signature length.
 	 *
+	 * @param _this This.
 	 * @returns Code signature length, or 0.
 	 */
-	public signingLength(): number {
-		const lec = MachOBase.prototype.findCodeSignature.call(this);
+	public static signingLength(_this: MachOBase): number {
+		const lec = MachOBase.findCodeSignature(_this);
 		return lec ? lec.datasize : 0;
 	}
 
 	/**
 	 * Get version identifer information.
 	 *
+	 * @param _this This.
 	 * @param platform Platform.
 	 * @param minVersion Minimum version.
 	 * @param sdkVersion SDK version.
 	 * @returns True if found, false if not.
 	 */
-	public version(
+	public static version(
+		_this: MachOBase,
 		platform: Uint32Ptr | null,
 		minVersion: Uint32Ptr | null,
 		sdkVersion: Uint32Ptr | null,
 	): boolean {
-		const bc = MachOBase.prototype.findBuildVersion.call(this);
+		const bc = MachOBase.findBuildVersion(_this);
 		if (bc) {
 			if (platform) {
 				platform[0] = bc.platform;
@@ -401,7 +429,7 @@ export class MachOBase {
 			return true;
 		}
 
-		const vc = MachOBase.prototype.findMinVersion.call(this);
+		const vc = MachOBase.findMinVersion(_this);
 		if (vc) {
 			if (platform) {
 				let pf;
@@ -443,39 +471,44 @@ export class MachOBase {
 	/**
 	 * Get platform.
 	 *
+	 * @param _this This.
 	 * @returns Platform or 0.
 	 */
-	public platform(): number {
+	public static platform(_this: MachOBase): number {
 		const p = new Uint32Ptr(new ArrayBuffer(4));
-		return MachOBase.prototype.version.call(this, p, null, null) ? p[0] : 0;
+		return MachOBase.version(_this, p, null, null) ? p[0] : 0;
 	}
 
 	/**
 	 * Get minimum version.
 	 *
+	 * @param _this This.
 	 * @returns Minimum version or 0.
 	 */
-	public minVersion(): number {
+	public static minVersion(_this: MachOBase): number {
 		const p = new Uint32Ptr(new ArrayBuffer(4));
-		return MachOBase.prototype.version.call(this, null, p, null) ? p[0] : 0;
+		return MachOBase.version(_this, null, p, null) ? p[0] : 0;
 	}
 
 	/**
 	 * Get SDK version.
 	 *
+	 * @param _this This.
 	 * @returns SDK version or 0.
 	 */
-	public sdkVersion(): number {
+	public static sdkVersion(_this: MachOBase): number {
 		const p = new Uint32Ptr(new ArrayBuffer(4));
-		return MachOBase.prototype.version.call(this, null, null, p) ? p[0] : 0;
+		return MachOBase.version(_this, null, null, p) ? p[0] : 0;
 	}
 
 	/**
 	 * Initialize header.
 	 *
+	 * @param _this This.
 	 * @param header Mach-O header data.
 	 */
-	protected initHeader(
+	protected static initHeader(
+		_this: MachOBase,
 		header: ArrayBufferLike | ArrayBufferPointer,
 	): void {
 		let buffer, byteOffset;
@@ -486,7 +519,7 @@ export class MachOBase {
 			buffer = header;
 			byteOffset = 0;
 		}
-		let mh = this.mHeader = new MachHeader(buffer, byteOffset);
+		let mh = _this.mHeader = new MachHeader(buffer, byteOffset);
 		let m64 = false;
 		const m = mh.magic;
 		switch (m) {
@@ -513,17 +546,19 @@ export class MachOBase {
 				throw new RangeError(`Unknown magic: 0x${m.toString(16)}`);
 			}
 		}
-		this.mHeader = mh;
-		this.m64 = m64;
-		this.mFlip = mh.littleEndian !== LITTLE_ENDIAN;
+		_this.mHeader = mh;
+		_this.m64 = m64;
+		_this.mFlip = mh.littleEndian !== LITTLE_ENDIAN;
 	}
 
 	/**
 	 * Initialize commands.
 	 *
+	 * @param _this This.
 	 * @param commands Mach-O commands data.
 	 */
-	protected initCommands(
+	protected static initCommands(
+		_this: MachOBase,
 		commands: ArrayBufferLike | ArrayBufferPointer,
 	): void {
 		let buffer, byteOffset;
@@ -534,13 +569,13 @@ export class MachOBase {
 			buffer = commands;
 			byteOffset = 0;
 		}
-		const mHeader = this.mHeader!;
-		const mCommands = this.mCommands = new LoadCommand(
+		const mHeader = _this.mHeader!;
+		const mCommands = _this.mCommands = new LoadCommand(
 			buffer,
 			byteOffset,
 			mHeader.littleEndian,
 		);
-		const mEndCommands = this.mEndCommands = byteOffset +
+		const mEndCommands = _this.mEndCommands = byteOffset +
 			mHeader.sizeofcmds;
 		if (byteOffset + mCommands.byteLength > mEndCommands) {
 			throw new RangeError('Invalid commands size');
@@ -550,31 +585,36 @@ export class MachOBase {
 	/**
 	 * Size of header.
 	 *
+	 * @param _this This.
 	 * @returns Byte length of header.
 	 */
-	protected headerSize(): number {
-		return this.m64 ? MachHeader64.BYTE_LENGTH : MachHeader.BYTE_LENGTH;
+	protected static headerSize(_this: MachOBase): number {
+		return _this.m64 ? MachHeader64.BYTE_LENGTH : MachHeader.BYTE_LENGTH;
 	}
 
 	/**
 	 * Size of commands.
 	 *
+	 * @param _this This.
 	 * @returns Byte length of commands.
 	 */
-	protected commandSize(): number {
-		return this.mHeader!.sizeofcmds;
+	protected static commandSize(_this: MachOBase): number {
+		return _this.mHeader!.sizeofcmds;
 	}
 
 	/**
 	 * Find minimum version command.
 	 *
+	 * @param _this This.
 	 * @returns Minimum version command or null.
 	 */
-	protected findMinVersion(): VersionMinCommand | null {
+	protected static findMinVersion(
+		_this: MachOBase,
+	): VersionMinCommand | null {
 		for (
-			let c = MachOBase.prototype.loadCommands.call(this);
+			let c = MachOBase.loadCommands(_this);
 			c;
-			c = MachOBase.prototype.nextCommand.call(this, c)
+			c = MachOBase.nextCommand(_this, c)
 		) {
 			switch (c.cmd) {
 				case LC_VERSION_MIN_MACOSX:
@@ -598,13 +638,16 @@ export class MachOBase {
 	/**
 	 * Find build version command.
 	 *
+	 * @param _this This.
 	 * @returns Build version command or null.
 	 */
-	protected findBuildVersion(): BuildVersionCommand | null {
+	protected static findBuildVersion(
+		_this: MachOBase,
+	): BuildVersionCommand | null {
 		for (
-			let c = MachOBase.prototype.loadCommands.call(this);
+			let c = MachOBase.loadCommands(_this);
 			c;
-			c = MachOBase.prototype.nextCommand.call(this, c)
+			c = MachOBase.nextCommand(_this, c)
 		) {
 			if (c.cmd === LC_BUILD_VERSION) {
 				if (c.cmdsize < BuildVersionCommand.BYTE_LENGTH) {
