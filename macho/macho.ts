@@ -97,7 +97,7 @@ export class MachO extends MachOBase {
 		MachO.initCommands(this, commands);
 
 		if (mLength) {
-			MachO.prototype.validateStructure.call(this);
+			MachO.validateStructure(this);
 		}
 		return this;
 	}
@@ -105,54 +105,60 @@ export class MachO extends MachOBase {
 	/**
 	 * Is a binary open.
 	 *
+	 * @param _this This.
 	 * @returns Is open.
 	 */
-	public isOpen(): boolean {
-		return !!this.mReader;
+	public static isOpen(_this: MachO): boolean {
+		return !!_this.mReader;
 	}
 
 	/**
 	 * Get binary offset.
 	 *
+	 * @param _this This.
 	 * @returns Offset in reader.
 	 */
-	public offset(): number {
-		return this.mOffset;
+	public static offset(_this: MachO): number {
+		return _this.mOffset;
 	}
 
 	/**
 	 * Get binary length.
 	 *
+	 * @param _this This.
 	 * @returns Length in reader.
 	 */
-	public length(): number {
-		return this.mLength;
+	public static size(_this: MachO): number {
+		return _this.mLength;
 	}
 
 	/**
 	 * Get signing extent.
 	 *
+	 * @param _this This.
 	 * @returns Signing offset or file length if none.
 	 */
-	public signingExtent(): number {
-		return MachO.signingOffset(this) || MachO.prototype.length.call(this);
+	public static signingExtent(_this: MachO): number {
+		return MachO.signingOffset(_this) || MachO.size(_this);
 	}
 
 	/**
 	 * Read data at offset.
 	 *
+	 * @param _this This.
 	 * @param offset Offset in reader.
 	 * @param size Size to read.
 	 * @returns Data.
 	 */
-	public async dataAt(
+	public static async dataAt(
+		_this: MachO,
 		offset: number,
 		size: number,
 	): Promise<ArrayBuffer> {
 		offset = (+offset || 0) - (offset % 1 || 0);
 		size = (+size || 0) - (size % 1 || 0);
-		const o = this.mOffset + offset;
-		const data = await this.mReader!.slice(o, o + size).arrayBuffer();
+		const o = _this.mOffset + offset;
+		const data = await _this.mReader!.slice(o, o + size).arrayBuffer();
 		if (data.byteLength !== size) {
 			throw new RangeError(
 				`Invalid data range: ${offset}:${size}`,
@@ -163,8 +169,10 @@ export class MachO extends MachOBase {
 
 	/**
 	 * Validate structure of binary.
+	 *
+	 * @param _this This.
 	 */
-	public validateStructure(): void {
+	public static validateStructure(_this: MachO): void {
 		let isValid = false;
 
 		const segLinkedit = new Uint8Array(SEG_LINKEDIT.length + 1);
@@ -173,9 +181,9 @@ export class MachO extends MachOBase {
 		}
 
 		LOOP: for (
-			let cmd = MachO.loadCommands(this);
+			let cmd = MachO.loadCommands(_this);
 			cmd;
-			cmd = MachO.nextCommand(this, cmd)
+			cmd = MachO.nextCommand(_this, cmd)
 		) {
 			switch (cmd.cmd) {
 				case LC_SEGMENT: {
@@ -195,7 +203,7 @@ export class MachO extends MachOBase {
 						)
 					) {
 						isValid = seg.fileoff + seg.filesize ===
-							MachO.prototype.length.call(this);
+							MachO.size(_this);
 						break LOOP;
 					}
 					break;
@@ -217,7 +225,7 @@ export class MachO extends MachOBase {
 						)
 					) {
 						isValid = Number(seg64.fileoff + seg64.filesize) ===
-							MachO.prototype.length.call(this);
+							MachO.size(_this);
 						break LOOP;
 					}
 					break;
@@ -232,24 +240,25 @@ export class MachO extends MachOBase {
 						cmd.littleEndian,
 					);
 					isValid = symtab.stroff + symtab.strsize ===
-						MachO.prototype.length.call(this);
+						MachO.size(_this);
 					break LOOP;
 				}
 			}
 		}
 
 		if (!isValid) {
-			this.mSuspicious = true;
+			_this.mSuspicious = true;
 		}
 	}
 
 	/**
 	 * Check if binary structure is suspicious.
 	 *
+	 * @param _this This.
 	 * @returns Is suspicious.
 	 */
-	public isSuspicious(): boolean {
-		return this.mSuspicious;
+	public static isSuspicious(_this: MachO): boolean {
+		return _this.mSuspicious;
 	}
 
 	/**

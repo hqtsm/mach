@@ -35,40 +35,40 @@ for (const { kind, arch, file, archs } of fixtures) {
 				// deno-lint-ignore no-await-in-loop
 				: await MachO.MachO(blob);
 
-			assertEquals(m.isOpen(), true, arc);
-			assertEquals(m.offset(), offset, arc);
-			assertEquals(m.length(), length, arc);
+			assertEquals(MachO.isOpen(m), true, arc);
+			assertEquals(MachO.offset(m), offset, arc);
+			assertEquals(MachO.size(m), length, arc);
 			if (info) {
-				assertEquals(m.signingExtent(), info.offset, arc);
+				assertEquals(MachO.signingExtent(m), info.offset, arc);
 			} else {
-				assertEquals(m.signingExtent(), length, arc);
+				assertEquals(MachO.signingExtent(m), length, arc);
 			}
-			assertEquals(m.isSuspicious(), false, arc);
+			assertEquals(MachO.isSuspicious(m), false, arc);
 
 			assertEquals(
 				// deno-lint-ignore no-await-in-loop
-				new Uint8Array(await m.dataAt(0, 4)),
+				new Uint8Array(await MachO.dataAt(m, 0, 4)),
 				bin.slice(0, 4),
 				arc,
 			);
 
 			assertEquals(
 				// deno-lint-ignore no-await-in-loop
-				new Uint8Array(await m.dataAt(4, 4)),
+				new Uint8Array(await MachO.dataAt(m, 4, 4)),
 				bin.slice(4, 8),
 				arc,
 			);
 
 			assertEquals(
 				// deno-lint-ignore no-await-in-loop
-				(await m.dataAt(4, 0)).byteLength,
+				(await MachO.dataAt(m, 4, 0)).byteLength,
 				0,
 				arc,
 			);
 
 			// deno-lint-ignore no-await-in-loop
 			await assertRejects(
-				() => m.dataAt(blob.size - 1, 2),
+				() => MachO.dataAt(m, blob.size - 1, 2),
 				RangeError,
 				`Invalid data range: ${blob.size - 1}:2`,
 				arc,
@@ -126,19 +126,19 @@ Deno.test('validateStructure LC_SYMTAB', async () => {
 
 	{
 		const macho = await MachO.MachO(new Blob([buffer]));
-		assertEquals(macho.isSuspicious(), false);
+		assertEquals(MachO.isSuspicious(macho), false);
 	}
 
 	{
 		const macho = await MachO.MachO(new Blob([buffer, new ArrayBuffer(1)]));
-		assertEquals(macho.isSuspicious(), true);
+		assertEquals(MachO.isSuspicious(macho), true);
 	}
 
 	{
 		const macho = await MachO.MachO(
 			new Blob([buffer.slice(0, buffer.byteLength - 1)]),
 		);
-		assertEquals(macho.isSuspicious(), true);
+		assertEquals(MachO.isSuspicious(macho), true);
 	}
 });
 

@@ -27,6 +27,7 @@ import { MachHeader } from '../mach/machheader.ts';
 import { MachHeader64 } from '../mach/machheader64.ts';
 import { fixtureMacho, fixtureMachos } from '../spec/fixture.ts';
 import { Architecture } from './architecture.ts';
+import { MachO } from './macho.ts';
 import { Universal } from './universal.ts';
 
 const fixtures = fixtureMachos();
@@ -63,11 +64,11 @@ for (const { kind, arch, file, archs } of fixtures) {
 
 			// deno-lint-ignore no-await-in-loop
 			const ma = await uni.architecture(a);
-			assertEquals(ma.offset(), offset);
+			assertEquals(MachO.offset(ma), offset);
 
 			// deno-lint-ignore no-await-in-loop
 			const mo = await uni.architecture(offset);
-			assertEquals(mo.offset(), offset);
+			assertEquals(MachO.offset(mo), offset);
 		}
 
 		assertThrows(
