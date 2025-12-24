@@ -243,43 +243,55 @@ export class Universal {
 	/**
 	 * Get Mach-O for architecture.
 	 *
+	 * @param _this This.
 	 * @param arch Architecture to get.
 	 * @returns Mach-O.
 	 */
-	public async architecture(arch: Architecture): Promise<MachO>;
+	public static async architecture(
+		_this: Universal,
+		arch: Architecture,
+	): Promise<MachO>;
 
 	/**
 	 * Get Mach-O for offset.
 	 *
+	 * @param _this This.
 	 * @param arch Offset of binary.
 	 * @returns Mach-O.
 	 */
-	public async architecture(offset: number): Promise<MachO>;
+	public static async architecture(
+		_this: Universal,
+		offset: number,
+	): Promise<MachO>;
 
 	/**
 	 * Get Mach-O for architecture or offset.
 	 *
+	 * @param _this This.
 	 * @param a Architecture or offset.
 	 * @returns Mach-O.
 	 */
-	public async architecture(a: Architecture | number): Promise<MachO> {
+	public static async architecture(
+		_this: Universal,
+		a: Architecture | number,
+	): Promise<MachO> {
 		if (typeof a === 'number') {
-			if (Universal.prototype.isUniversal.call(this)) {
-				const length = Universal.prototype.lengthOfSlice.call(this, a);
-				return Universal.prototype.make.call(
-					this,
-					await MachO.MachO(this.mReader!, a, length),
+			if (Universal.isUniversal(_this)) {
+				const length = Universal.lengthOfSlice(_this, a);
+				return Universal.make(
+					_this,
+					await MachO.MachO(_this.mReader!, a, length),
 				);
 			}
-			if (a === this.mBase) {
-				return MachO.MachO(this.mReader!);
+			if (a === _this.mBase) {
+				return MachO.MachO(_this.mReader!);
 			}
 		} else {
-			if (Universal.prototype.isUniversal.call(this)) {
-				return Universal.prototype.findImage.call(this, a);
+			if (Universal.isUniversal(_this)) {
+				return Universal.findImage(_this, a);
 			}
-			if (Architecture.matches(a, this.mThinArch!)) {
-				return MachO.MachO(this.mReader!, this.mBase, this.mLength);
+			if (Architecture.matches(a, _this.mThinArch!)) {
+				return MachO.MachO(_this.mReader!, _this.mBase, _this.mLength);
 			}
 		}
 		throw new RangeError('Architecture not found');
@@ -288,15 +300,15 @@ export class Universal {
 	/**
 	 * Get offset or architecture.
 	 *
+	 * @param _this This.
 	 * @param arch Architecture to get the offset of.
 	 * @returns Architecture offset.
 	 */
-	public archOffset(arch: Architecture): number {
-		if (Universal.prototype.isUniversal.call(this)) {
-			return this.mBase +
-				Universal.prototype.findArch.call(this, arch).offset;
+	public static archOffset(_this: Universal, arch: Architecture): number {
+		if (Universal.isUniversal(_this)) {
+			return _this.mBase + Universal.findArch(_this, arch).offset;
 		}
-		if (Architecture.matches(this.mThinArch!, arch)) {
+		if (Architecture.matches(_this.mThinArch!, arch)) {
 			return 0;
 		}
 		throw new RangeError('Architecture not found');
@@ -305,15 +317,16 @@ export class Universal {
 	/**
 	 * Get length of architecture.
 	 *
+	 * @param _this This.
 	 * @param arch Architecture to get the length of.
 	 * @returns Architecture length.
 	 */
-	public archLength(arch: Architecture): number {
-		if (Universal.prototype.isUniversal.call(this)) {
-			return this.mBase + this.findArch(arch).size;
+	public static archLength(_this: Universal, arch: Architecture): number {
+		if (Universal.isUniversal(_this)) {
+			return _this.mBase + Universal.findArch(_this, arch).size;
 		}
-		if (Architecture.matches(this.mThinArch!, arch)) {
-			return this.mReader!.size;
+		if (Architecture.matches(_this.mThinArch!, arch)) {
+			return _this.mReader!.size;
 		}
 		throw new RangeError('Architecture not found');
 	}
@@ -321,32 +334,37 @@ export class Universal {
 	/**
 	 * Is part of a FAT file.
 	 *
+	 * @param _this This.
 	 * @returns Narrowed range or not.
 	 */
-	public narrowed(): boolean {
-		return !!this.mBase;
+	public static narrowed(_this: Universal): boolean {
+		return !!_this.mBase;
 	}
 
 	/**
 	 * Get set of architectures.
 	 *
+	 * @param _this This.
 	 * @param archs Set of architectures to populate into.
 	 */
-	public architectures(archs: Set<Architecture>): void {
+	public static architectures(
+		_this: Universal,
+		archs: Set<Architecture>,
+	): void {
 		const skip = new Set<string>();
 		for (const a of archs) {
 			skip.add(`${a.first}:${a.second}`);
 		}
-		if (Universal.prototype.isUniversal.call(this)) {
-			const mArchList = this.mArchList!;
-			for (let i = 0; i < this.mArchCount; i++) {
+		if (Universal.isUniversal(_this)) {
+			const mArchList = _this.mArchList!;
+			for (let i = 0; i < _this.mArchCount; i++) {
 				const { cputype, cpusubtype } = mArchList[i];
 				if (!skip.has(`${cputype}:${cpusubtype}`)) {
 					archs.add(new Architecture(cputype, cpusubtype));
 				}
 			}
 		} else {
-			const { first, second } = this.mThinArch!;
+			const { first, second } = _this.mThinArch!;
 			if (!skip.has(`${first}:${second}`)) {
 				archs.add(new Architecture(first, second));
 			}
@@ -356,20 +374,22 @@ export class Universal {
 	/**
 	 * Is a universal binary.
 	 *
+	 * @param _this This.
 	 * @returns True if universal, even if only 1 architecture.
 	 */
-	public isUniversal(): boolean {
-		return !!this.mArchList;
+	public static isUniversal(_this: Universal): boolean {
+		return !!_this.mArchList;
 	}
 
 	/**
 	 * Get length of slice at offset.
 	 *
+	 * @param _this This.
 	 * @param offset Slice offset.
 	 * @returns Slice length.
 	 */
-	public lengthOfSlice(offset: number): number {
-		const value = this.mSizes.get(offset);
+	public static lengthOfSlice(_this: Universal, offset: number): number {
+		const value = _this.mSizes.get(offset);
 		if (value === undefined) {
 			throw new RangeError('Offset not found');
 		}
@@ -379,38 +399,42 @@ export class Universal {
 	/**
 	 * Get offset in reader.
 	 *
+	 * @param _this This.
 	 * @returns Byte offset in reader.
 	 */
-	public offset(): number {
-		return this.mBase;
+	public static offset(_this: Universal): number {
+		return _this.mBase;
 	}
 
 	/**
 	 * Get length in reader.
 	 *
+	 * @param _this This.
 	 * @returns Byte length in reader.
 	 */
-	public length(): number {
-		return this.mLength;
+	public static size(_this: Universal): number {
+		return _this.mLength;
 	}
 
 	/**
 	 * Check if FAT binary is suspicious.
 	 *
+	 * @param _this This.
 	 * @returns Is suspicious.
 	 */
-	public isSuspicious(): boolean {
-		return this.mSuspicious;
+	public static isSuspicious(_this: Universal): boolean {
+		return _this.mSuspicious;
 	}
 
 	/**
 	 * Find matching architecture in FAT file architecture list.
 	 *
+	 * @param _this This.
 	 * @param arch Architecture to find.
 	 * @returns Matching FAT architecture.
 	 */
-	private findArch(arch: Architecture): FatArch {
-		const { mArchList, mArchCount } = this;
+	private static findArch(_this: Universal, arch: Architecture): FatArch {
+		const { mArchList, mArchCount } = _this;
 		for (let i = 0; i < mArchCount; i++) {
 			const a = mArchList![i];
 			if (
@@ -451,15 +475,20 @@ export class Universal {
 	/**
 	 * Find Mach-O image for architecture.
 	 *
+	 * @param _this This.
 	 * @param target Architecture.
 	 * @returns Mach-O image.
 	 */
-	private async findImage(target: Architecture): Promise<MachO> {
-		const arch = Universal.prototype.findArch.call(this, target);
-		return this.make(
+	private static async findImage(
+		_this: Universal,
+		target: Architecture,
+	): Promise<MachO> {
+		const arch = Universal.findArch(_this, target);
+		return Universal.make(
+			_this,
 			await MachO.MachO(
-				this.mReader!,
-				this.mBase + arch.offset,
+				_this.mReader!,
+				_this.mBase + arch.offset,
 				arch.size,
 			),
 		);
@@ -471,16 +500,16 @@ export class Universal {
 	 * @param macho Mach-O instance.
 	 * @returns Mach-O instance.
 	 */
-	private make(macho: MachO): MachO {
+	private static make(_this: Universal, macho: MachO): MachO {
 		const type = MachO.type(macho);
 		if (!type) {
 			throw new RangeError('Unknown type');
 		}
-		const { mMachType } = this;
+		const { mMachType } = _this;
 		if (mMachType && mMachType !== type) {
 			throw new RangeError('Mismatched type');
 		}
-		this.mMachType = type;
+		_this.mMachType = type;
 		return macho;
 	}
 

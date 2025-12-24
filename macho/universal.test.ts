@@ -37,64 +37,66 @@ for (const { kind, arch, file, archs } of fixtures) {
 		const [macho] = await fixtureMacho(kind, arch, [file]);
 		const blob = new Blob([macho]);
 		const uni = await Universal.Universal(blob);
-		assertEquals(uni.offset(), 0);
-		assertEquals(uni.length(), 0);
-		assertEquals(uni.narrowed(), false);
-		assertEquals(uni.isUniversal(), archs.size > 1);
-		assertEquals(uni.isSuspicious(), false);
+		assertEquals(Universal.offset(uni), 0);
+		assertEquals(Universal.size(uni), 0);
+		assertEquals(Universal.narrowed(uni), false);
+		assertEquals(Universal.isUniversal(uni), archs.size > 1);
+		assertEquals(Universal.isSuspicious(uni), false);
 
 		const architectures = new Set<Architecture>();
-		uni.architectures(architectures);
+		Universal.architectures(uni, architectures);
 		assertEquals(architectures.size, archs.size);
-		uni.architectures(architectures);
+		Universal.architectures(uni, architectures);
 		assertEquals(architectures.size, archs.size);
 
 		for (const a of architectures) {
-			const offset = uni.archOffset(a);
-			const length = uni.archLength(a);
-			if (uni.isUniversal()) {
+			const offset = Universal.archOffset(uni, a);
+			const length = Universal.archLength(uni, a);
+			if (Universal.isUniversal(uni)) {
 				assertGreater(offset, 0);
 				assertLess(length, blob.size);
 				assertLessOrEqual(offset + length, blob.size);
-				assertEquals(uni.lengthOfSlice(offset), length);
+				assertEquals(Universal.lengthOfSlice(uni, offset), length);
 			} else {
 				assertEquals(offset, 0);
 				assertEquals(length, blob.size);
 			}
 
 			// deno-lint-ignore no-await-in-loop
-			const ma = await uni.architecture(a);
+			const ma = await Universal.architecture(uni, a);
 			assertEquals(MachO.offset(ma), offset);
 
 			// deno-lint-ignore no-await-in-loop
-			const mo = await uni.architecture(offset);
+			const mo = await Universal.architecture(uni, offset);
 			assertEquals(MachO.offset(mo), offset);
 		}
 
 		assertThrows(
-			() => uni.archOffset(new Architecture()),
+			() => Universal.archOffset(uni, new Architecture()),
 			RangeError,
 			'Architecture not found',
 		);
 		assertThrows(
-			() => uni.archLength(new Architecture()),
+			() => Universal.archLength(uni, new Architecture()),
 			RangeError,
 			'Architecture not found',
 		);
 		assertThrows(
-			() => uni.lengthOfSlice(0),
+			() => Universal.lengthOfSlice(uni, 0),
 			RangeError,
 			'Offset not found',
 		);
 		await assertRejects(
-			() => uni.architecture(new Architecture()),
+			() => Universal.architecture(uni, new Architecture()),
 			RangeError,
 			'Architecture not found',
 		);
 		await assertRejects(
-			() => uni.architecture(1),
+			() => Universal.architecture(uni, 1),
 			RangeError,
-			uni.isUniversal() ? 'Offset not found' : 'Architecture not found',
+			Universal.isUniversal(uni)
+				? 'Offset not found'
+				: 'Architecture not found',
 		);
 
 		if (/\.dylib$|\.framework\//i.test(file)) {
@@ -162,7 +164,7 @@ Deno.test('open under count archs', async () => {
 
 	const uni = await Universal.Universal(new Blob([data]));
 	const archs = new Set<Architecture>();
-	uni.architectures(archs);
+	Universal.architectures(uni, archs);
 	assertEquals(archs.size, 2);
 });
 
@@ -204,7 +206,7 @@ Deno.test('open suspicious gap', async () => {
 	new Uint8Array(data)[256] = 1;
 
 	const uni = await Universal.Universal(new Blob([data]));
-	assertEquals(uni.isSuspicious(), true);
+	assertEquals(Universal.isSuspicious(uni), true);
 });
 
 Deno.test('open suspicious read align', async () => {
@@ -224,7 +226,7 @@ Deno.test('open suspicious read align', async () => {
 	arch2.align = 8;
 
 	const uni = await Universal.Universal(new Blob([data]));
-	assertEquals(uni.isSuspicious(), true);
+	assertEquals(Universal.isSuspicious(uni), true);
 });
 
 Deno.test('open suspicious read after', async () => {
@@ -244,7 +246,7 @@ Deno.test('open suspicious read after', async () => {
 	arch2.align = 8;
 
 	const uni = await Universal.Universal(new Blob([data]));
-	assertEquals(uni.isSuspicious(), true);
+	assertEquals(Universal.isSuspicious(uni), true);
 });
 
 Deno.test('open suspicious read error', async () => {
@@ -264,7 +266,7 @@ Deno.test('open suspicious read error', async () => {
 	arch2.align = 8;
 
 	const uni = await Universal.Universal(new Blob([data]));
-	assertEquals(uni.isSuspicious(), true);
+	assertEquals(Universal.isSuspicious(uni), true);
 });
 
 Deno.test('findArch case 1: prefer full exact match', async () => {
@@ -289,7 +291,8 @@ Deno.test('findArch case 1: prefer full exact match', async () => {
 
 	const uni = await Universal.Universal(new Blob([data]));
 	assertEquals(
-		uni.archOffset(
+		Universal.archOffset(
+			uni,
 			new Architecture(
 				CPU_TYPE_ARM,
 				CPU_SUBTYPE_LIB64 | CPU_SUBTYPE_ARM_V8,
@@ -321,7 +324,8 @@ Deno.test('findArch case 2: prefer masked subtype equal to all', async () => {
 
 	const uni = await Universal.Universal(new Blob([data]));
 	assertEquals(
-		uni.archOffset(
+		Universal.archOffset(
+			uni,
 			new Architecture(
 				CPU_TYPE_ARM,
 				CPU_SUBTYPE_LIB64 | CPU_SUBTYPE_ARM_V8,
@@ -353,7 +357,8 @@ Deno.test('findArch case 3: prefer all subtype to mismatch', async () => {
 
 	const uni = await Universal.Universal(new Blob([data]));
 	assertEquals(
-		uni.archOffset(
+		Universal.archOffset(
+			uni,
 			new Architecture(
 				CPU_TYPE_ARM,
 				CPU_SUBTYPE_ARM_V8,
@@ -385,7 +390,8 @@ Deno.test('findArch case 4: accept equal type as last resort', async () => {
 
 	const uni = await Universal.Universal(new Blob([data]));
 	assertEquals(
-		uni.archOffset(
+		Universal.archOffset(
+			uni,
 			new Architecture(
 				CPU_TYPE_ARM,
 				CPU_SUBTYPE_ARM_V8,
@@ -414,7 +420,7 @@ Deno.test('make unknown type', async () => {
 
 	const uni = await Universal.Universal(new Blob([data]));
 	await assertRejects(
-		() => uni.architecture(256),
+		() => Universal.architecture(uni, 256),
 		RangeError,
 		'Unknown type',
 	);
@@ -453,9 +459,9 @@ Deno.test('make mismatched type', async () => {
 	}
 
 	const uni = await Universal.Universal(new Blob([data]));
-	await uni.architecture(256);
+	await Universal.architecture(uni, 256);
 	await assertRejects(
-		() => uni.architecture(512),
+		() => Universal.architecture(uni, 512),
 		RangeError,
 		'Mismatched type',
 	);
