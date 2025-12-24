@@ -6,6 +6,8 @@ import {
 	CPU_TYPE_ARM,
 	FAT_CIGAM,
 	FAT_MAGIC,
+	MAX_ALIGN,
+	MAX_ARCH_COUNT,
 	MH_CIGAM,
 	MH_CIGAM_64,
 	MH_MAGIC,
@@ -18,11 +20,6 @@ import { MachHeader } from '../mach/machheader.ts';
 import type { Reader } from '../util/reader.ts';
 import { Architecture } from './architecture.ts';
 import { MachO } from './macho.ts';
-
-/**
- * Maximum power of 2 alignment amount.
- */
-const MAX_ALIGN = 30;
 
 /**
  * A universal binary over a readable.
@@ -124,6 +121,9 @@ export class Universal {
 				// In some cases the fat header may be 1 less than needed.
 				// Something about "15001604" whatever that is.
 				let mArchCount = this.mArchCount = header.nfatArch;
+				if (mArchCount > MAX_ARCH_COUNT) {
+					throw new RangeError('Too many architectures');
+				}
 
 				// Read enough for 1 extra arch.
 				const archSize = FatArch.BYTE_LENGTH * (mArchCount + 1);

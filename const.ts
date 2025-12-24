@@ -791,3 +791,13 @@ export const kCCDigestSkein224 = 16;
 export const kCCDigestSkein256 = 17;
 export const kCCDigestSkein384 = 18;
 export const kCCDigestSkein512 = 19;
+
+/**
+ * Maximum number of architectures fat binaries can have.
+ */
+export const MAX_ARCH_COUNT = 100;
+
+/**
+ * Maximum power of 2 a Mach-O can have.
+ */
+export const MAX_ALIGN = 30;
