@@ -278,7 +278,7 @@ export class Universal {
 			if (Universal.prototype.isUniversal.call(this)) {
 				return Universal.prototype.findImage.call(this, a);
 			}
-			if (Architecture.prototype.matches.call(a, this.mThinArch!)) {
+			if (Architecture.matches(a, this.mThinArch!)) {
 				return MachO.MachO(this.mReader!, this.mBase, this.mLength);
 			}
 		}
@@ -296,7 +296,7 @@ export class Universal {
 			return this.mBase +
 				Universal.prototype.findArch.call(this, arch).offset;
 		}
-		if (Architecture.prototype.matches.call(this.mThinArch!, arch)) {
+		if (Architecture.matches(this.mThinArch!, arch)) {
 			return 0;
 		}
 		throw new RangeError('Architecture not found');
@@ -312,7 +312,7 @@ export class Universal {
 		if (Universal.prototype.isUniversal.call(this)) {
 			return this.mBase + this.findArch(arch).size;
 		}
-		if (Architecture.prototype.matches.call(this.mThinArch!, arch)) {
+		if (Architecture.matches(this.mThinArch!, arch)) {
 			return this.mReader!.size;
 		}
 		throw new RangeError('Architecture not found');
@@ -414,9 +414,8 @@ export class Universal {
 		for (let i = 0; i < mArchCount; i++) {
 			const a = mArchList![i];
 			if (
-				a.cputype === Architecture.prototype.cpuType.call(arch) &&
-				a.cpusubtype ===
-					Architecture.prototype.cpuSubtypeFull.call(arch)
+				a.cputype === Architecture.cpuType(arch) &&
+				a.cpusubtype === Architecture.cpuSubtypeFull(arch)
 			) {
 				return a;
 			}
@@ -424,9 +423,9 @@ export class Universal {
 		for (let i = 0; i < mArchCount; i++) {
 			const a = mArchList![i];
 			if (
-				a.cputype === Architecture.prototype.cpuType.call(arch) &&
+				a.cputype === Architecture.cpuType(arch) &&
 				(a.cpusubtype & ~CPU_SUBTYPE_MASK) ===
-					Architecture.prototype.cpuSubtype.call(arch)
+					Architecture.cpuSubtype(arch)
 			) {
 				return a;
 			}
@@ -434,7 +433,7 @@ export class Universal {
 		for (let i = 0; i < mArchCount; i++) {
 			const a = mArchList![i];
 			if (
-				a.cputype === Architecture.prototype.cpuType.call(arch) &&
+				a.cputype === Architecture.cpuType(arch) &&
 				!(a.cpusubtype & ~CPU_SUBTYPE_MASK)
 			) {
 				return a;
@@ -442,7 +441,7 @@ export class Universal {
 		}
 		for (let i = 0; i < mArchCount; i++) {
 			const a = mArchList![i];
-			if (a.cputype === Architecture.prototype.cpuType.call(arch)) {
+			if (a.cputype === Architecture.cpuType(arch)) {
 				return a;
 			}
 		}

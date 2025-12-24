@@ -70,75 +70,82 @@ export class Architecture {
 	/**
 	 * CPU type.
 	 *
+	 * @param _this This.
 	 * @returns Type ID.
 	 */
-	public cpuType(): number {
-		return this.first;
+	public static cpuType(_this: Architecture): number {
+		return _this.first;
 	}
 
 	/**
 	 * CPU subtype.
 	 *
+	 * @param _this This.
 	 * @returns Masked subtype ID.
 	 */
-	public cpuSubtype(): number {
-		return this.second & ~CPU_SUBTYPE_MASK;
+	public static cpuSubtype(_this: Architecture): number {
+		return _this.second & ~CPU_SUBTYPE_MASK;
 	}
 
 	/**
 	 * Full CPU subtype.
 	 *
+	 * @param _this This.
 	 * @returns Full subtype ID.
 	 */
-	public cpuSubtypeFull(): number {
-		return this.second;
+	public static cpuSubtypeFull(_this: Architecture): number {
+		return _this.second;
 	}
 
 	/**
 	 * Is architecture valid.
 	 *
+	 * @param _this This.
 	 * @returns Is valid.
 	 */
-	public bool(): boolean {
-		return !!this.first;
+	public static bool(_this: Architecture): boolean {
+		return !!_this.first;
 	}
 
 	/**
 	 * If architectures are equal.
 	 *
-	 * @param arch Architecture to compare.
+	 * @param a1 Architecture A.
+	 * @param a2 Architecture B.
 	 * @returns Is equal.
 	 */
-	public equals(arch: Architecture): boolean {
-		return this.first === arch.first && this.second === arch.second;
+	public static equals(a1: Architecture, a2: Architecture): boolean {
+		return a1.first === a2.first && a1.second === a2.second;
 	}
 
 	/**
 	 * If architecture is less than another.
 	 *
-	 * @param arch Architecture to compare.
+	 * @param a1 Architecture A.
+	 * @param a2 Architecture B.
 	 * @returns Is less than.
 	 */
-	public lessThan(arch: Architecture): boolean {
-		const x = this.first;
-		const y = arch.first;
-		return x < y || (!(y < x) && this.second < arch.second);
+	public static lessThan(a1: Architecture, a2: Architecture): boolean {
+		const x = a1.first;
+		const y = a2.first;
+		return x < y || (!(y < x) && a1.second < a2.second);
 	}
 
 	/**
 	 * Check is architecture matches template, asymmetric comparison.
 	 *
+	 * @param _this This.
 	 * @param templ Template architecture.
 	 * @returns Matches template.
 	 */
-	public matches(templ: Architecture): boolean {
-		if (this.first !== templ.first) {
+	public static matches(_this: Architecture, templ: Architecture): boolean {
+		if (_this.first !== templ.first) {
 			return false;
 		}
 		if (templ.second === CPU_SUBTYPE_MULTIPLE) {
 			return true;
 		}
-		return !((this.second ^ templ.second) & ~CPU_SUBTYPE_MASK);
+		return !((_this.second ^ templ.second) & ~CPU_SUBTYPE_MASK);
 	}
 
 	static {

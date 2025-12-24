@@ -12,23 +12,23 @@ import { Architecture } from './architecture.ts';
 
 Deno.test('constructor()', () => {
 	const a = new Architecture();
-	assertEquals(a.cpuType(), 0);
-	assertEquals(a.cpuSubtype(), 0);
-	assertEquals(a.cpuSubtypeFull(), 0);
+	assertEquals(Architecture.cpuType(a), 0);
+	assertEquals(Architecture.cpuSubtype(a), 0);
+	assertEquals(Architecture.cpuSubtypeFull(a), 0);
 });
 
 Deno.test('constructor(type)', () => {
 	const a = new Architecture(0x12345678);
-	assertEquals(a.cpuType(), 0x12345678);
-	assertEquals(a.cpuSubtype(), 0xffffff);
-	assertEquals(a.cpuSubtypeFull(), -1);
+	assertEquals(Architecture.cpuType(a), 0x12345678);
+	assertEquals(Architecture.cpuSubtype(a), 0xffffff);
+	assertEquals(Architecture.cpuSubtypeFull(a), -1);
 });
 
 Deno.test('constructor(type, sub)', () => {
 	const a = new Architecture(0x12345678, 0x23456789);
-	assertEquals(a.cpuType(), 0x12345678);
-	assertEquals(a.cpuSubtype(), 0x456789);
-	assertEquals(a.cpuSubtypeFull(), 0x23456789);
+	assertEquals(Architecture.cpuType(a), 0x12345678);
+	assertEquals(Architecture.cpuSubtype(a), 0x456789);
+	assertEquals(Architecture.cpuSubtypeFull(a), 0x23456789);
 });
 
 Deno.test('constructor(archInFile: FatArch)', () => {
@@ -36,9 +36,9 @@ Deno.test('constructor(archInFile: FatArch)', () => {
 	f.cputype = 0x12345678;
 	f.cpusubtype = 0x23456789;
 	const a = new Architecture(f);
-	assertEquals(a.cpuType(), 0x12345678);
-	assertEquals(a.cpuSubtype(), 0x456789);
-	assertEquals(a.cpuSubtypeFull(), 0x23456789);
+	assertEquals(Architecture.cpuType(a), 0x12345678);
+	assertEquals(Architecture.cpuSubtype(a), 0x456789);
+	assertEquals(Architecture.cpuSubtypeFull(a), 0x23456789);
 });
 
 Deno.test('constructor(archInFile: FatArch64)', () => {
@@ -46,43 +46,52 @@ Deno.test('constructor(archInFile: FatArch64)', () => {
 	f.cputype = 0x12345678;
 	f.cpusubtype = 0x23456789;
 	const a = new Architecture(f);
-	assertEquals(a.cpuType(), 0x12345678);
-	assertEquals(a.cpuSubtype(), 0x456789);
-	assertEquals(a.cpuSubtypeFull(), 0x23456789);
+	assertEquals(Architecture.cpuType(a), 0x12345678);
+	assertEquals(Architecture.cpuSubtype(a), 0x456789);
+	assertEquals(Architecture.cpuSubtypeFull(a), 0x23456789);
 });
 
 Deno.test('bool', () => {
-	assertEquals(new Architecture(0, 0).bool(), false);
-	assertEquals(new Architecture(0, 1).bool(), false);
-	assertEquals(new Architecture(1, 0).bool(), true);
-	assertEquals(new Architecture(1, 1).bool(), true);
+	assertEquals(Architecture.bool(new Architecture(0, 0)), false);
+	assertEquals(Architecture.bool(new Architecture(0, 1)), false);
+	assertEquals(Architecture.bool(new Architecture(1, 0)), true);
+	assertEquals(Architecture.bool(new Architecture(1, 1)), true);
 });
 
 Deno.test('equals', () => {
-	assertEquals(new Architecture(1, 2).equals(new Architecture(1, 2)), true);
-	assertEquals(new Architecture(1, 2).equals(new Architecture(1, 3)), false);
-	assertEquals(new Architecture(2, 2).equals(new Architecture(1, 2)), false);
+	assertEquals(
+		Architecture.equals(new Architecture(1, 2), new Architecture(1, 2)),
+		true,
+	);
+	assertEquals(
+		Architecture.equals(new Architecture(1, 2), new Architecture(1, 3)),
+		false,
+	);
+	assertEquals(
+		Architecture.equals(new Architecture(2, 2), new Architecture(1, 2)),
+		false,
+	);
 });
 
 Deno.test('lessThan', () => {
 	assertEquals(
-		new Architecture(1, 2).lessThan(new Architecture(2, 2)),
+		Architecture.lessThan(new Architecture(1, 2), new Architecture(2, 2)),
 		true,
 	);
 	assertEquals(
-		new Architecture(1, 2).lessThan(new Architecture(1, 3)),
+		Architecture.lessThan(new Architecture(1, 2), new Architecture(1, 3)),
 		true,
 	);
 	assertEquals(
-		new Architecture(1, 2).lessThan(new Architecture(1, 2)),
+		Architecture.lessThan(new Architecture(1, 2), new Architecture(1, 2)),
 		false,
 	);
 	assertEquals(
-		new Architecture(2, 2).lessThan(new Architecture(1, 2)),
+		Architecture.lessThan(new Architecture(2, 2), new Architecture(1, 2)),
 		false,
 	);
 	assertEquals(
-		new Architecture(1, 2).lessThan(new Architecture(1, 2)),
+		Architecture.lessThan(new Architecture(1, 2), new Architecture(1, 2)),
 		false,
 	);
 });
@@ -91,15 +100,15 @@ Deno.test('matches', () => {
 	{
 		const arch = new Architecture(CPU_TYPE_X86_64, CPU_SUBTYPE_MULTIPLE);
 		const tmpl = new Architecture(CPU_TYPE_I386, CPU_SUBTYPE_MULTIPLE);
-		assertEquals(arch.matches(tmpl), false);
+		assertEquals(Architecture.matches(arch, tmpl), false);
 	}
 	{
 		const arch = new Architecture(CPU_TYPE_X86_64, CPU_SUBTYPE_X86_64_H);
 		const tmpl = new Architecture(CPU_TYPE_X86_64, CPU_SUBTYPE_MULTIPLE);
-		assertEquals(arch.matches(tmpl), true);
+		assertEquals(Architecture.matches(arch, tmpl), true);
 
 		// Not symmetric.
-		assertEquals(tmpl.matches(arch), false);
+		assertEquals(Architecture.matches(tmpl, arch), false);
 	}
 	{
 		const arch = new Architecture(
@@ -110,6 +119,6 @@ Deno.test('matches', () => {
 			CPU_TYPE_X86_64,
 			CPU_SUBTYPE_X86_64_H,
 		);
-		assertEquals(arch.matches(tmpl), true);
+		assertEquals(Architecture.matches(arch, tmpl), true);
 	}
 });

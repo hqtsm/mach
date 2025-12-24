@@ -35,6 +35,7 @@ import { SegmentCommand } from '../mach/segmentcommand.ts';
 import { SegmentCommand64 } from '../mach/segmentcommand64.ts';
 import { VersionMinCommand } from '../mach/versionmincommand.ts';
 import { MachOBase } from './machobase.ts';
+import { Architecture } from './mod.ts';
 
 class MachOBaseTest extends MachOBase {
 	public override initHeader(
@@ -172,8 +173,8 @@ Deno.test('init', () => {
 		assertStrictEquals(macho.header()!.buffer, header.buffer, tag);
 		assertEquals(macho.isFlipped(), flip, tag);
 		assertEquals(macho.is64(), bits === 64, tag);
-		assertEquals(macho.architecture().cpuType(), 2, tag);
-		assertEquals(macho.architecture().cpuSubtype(), 3, tag);
+		assertEquals(Architecture.cpuType(macho.architecture()), 2, tag);
+		assertEquals(Architecture.cpuSubtype(macho.architecture()), 3, tag);
 		assertEquals(macho.type(), 4, tag);
 		assertEquals(macho.flags(), 5, tag);
 		assertEquals(macho.headerSize(), header.byteLength, tag);
