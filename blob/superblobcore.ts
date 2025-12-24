@@ -96,6 +96,5 @@ export abstract class SuperBlobCore extends Blob {
 		uint32BE(this, 'mCount' as never);
 		member(array(SuperBlobCoreIndex, 0), this, 'mIndex' as never);
 		constant(this, 'BYTE_LENGTH');
-		constant(this, 'typeMagic');
 	}
 }
