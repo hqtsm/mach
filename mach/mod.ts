@@ -45,6 +45,7 @@ export * from './sublibrarycommand.ts';
 export * from './subumbrellacommand.ts';
 export * from './symsegcommand.ts';
 export * from './symtabcommand.ts';
+export * from './targettriplecommand.ts';
 export * from './threadcommand.ts';
 export * from './tlvdescriptor.ts';
 export * from './tlvdescriptor64.ts';

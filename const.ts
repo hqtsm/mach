@@ -232,6 +232,9 @@ export const LC_DYLD_EXPORTS_TRIE = (0x33 | LC_REQ_DYLD) >>> 0;
 export const LC_DYLD_CHAINED_FIXUPS = (0x34 | LC_REQ_DYLD) >>> 0;
 export const LC_FILESET_ENTRY = (0x35 | LC_REQ_DYLD) >>> 0;
 export const LC_ATOM_INFO = 0x36;
+export const LC_FUNCTION_VARIANTS = 0x37;
+export const LC_FUNCTION_VARIANT_FIXUPS = 0x38;
+export const LC_TARGET_TRIPLE = 0x39;
 
 // Segment flags.
 export const SG_HIGHVM = 0x1;
