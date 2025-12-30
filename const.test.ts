@@ -56,6 +56,17 @@ Deno.test('constants expressions', () => {
 	assertEquals(C.CPU_SUBTYPE_ITANIUM_2, C.CPU_SUBTYPE_INTEL(11, 1));
 	assertEquals(C.CPU_SUBTYPE_XEON, C.CPU_SUBTYPE_INTEL(12, 0));
 	assertEquals(C.CPU_SUBTYPE_XEON_MP, C.CPU_SUBTYPE_INTEL(12, 1));
+
+	assertEquals(C.VM_PROT_DEFAULT, C.VM_PROT_READ | C.VM_PROT_WRITE);
+	assertEquals(
+		C.VM_PROT_ALL,
+		C.VM_PROT_READ | C.VM_PROT_WRITE | C.VM_PROT_EXECUTE,
+	);
+	assertEquals(
+		C.VM_PROT_EXECUTE_ONLY,
+		C.VM_PROT_EXECUTE | C.VM_PROT_STRIP_READ,
+	);
+	assertEquals(C.VM_PROT_ALLEXEC_X86_64, C.VM_PROT_EXECUTE | C.VM_PROT_UEXEC);
 });
 
 Deno.test('constant: CPU_SUBTYPE_INTEL', () => {

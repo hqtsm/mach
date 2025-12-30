@@ -662,19 +662,19 @@ export const VM_PROT_NONE = 0x0;
 export const VM_PROT_READ = 0x1;
 export const VM_PROT_WRITE = 0x2;
 export const VM_PROT_EXECUTE = 0x4;
-export const VM_PROT_DEFAULT = VM_PROT_READ | VM_PROT_WRITE;
-export const VM_PROT_ALL = VM_PROT_READ | VM_PROT_WRITE | VM_PROT_EXECUTE;
+export const VM_PROT_DEFAULT = 0x3; // VM_PROT_READ | VM_PROT_WRITE
+export const VM_PROT_ALL = 0x7; // VM_PROT_READ | VM_PROT_WRITE | VM_PROT_EXECUTE
 export const VM_PROT_NO_CHANGE_LEGACY = 0x8;
 export const VM_PROT_NO_CHANGE = 0x01000000;
 export const VM_PROT_COPY = 0x10;
 export const VM_PROT_WANTS_COPY = 0x10;
 export const VM_PROT_IS_MASK = 0x40;
 export const VM_PROT_STRIP_READ = 0x80;
-export const VM_PROT_EXECUTE_ONLY = VM_PROT_EXECUTE | VM_PROT_STRIP_READ;
+export const VM_PROT_EXECUTE_ONLY = 0x84; // VM_PROT_EXECUTE | VM_PROT_STRIP_READ
 export const VM_PROT_TPRO = 0x200;
 export const VM_PROT_UEXEC = 0x8;
 export const VM_PROT_ALLEXEC = VM_PROT_EXECUTE;
-export const VM_PROT_ALLEXEC_X86_64 = VM_PROT_EXECUTE | VM_PROT_UEXEC;
+export const VM_PROT_ALLEXEC_X86_64 = 0xc; // VM_PROT_EXECUTE | VM_PROT_UEXEC
 
 // Executable segment flags:
 export const CS_EXECSEG_MAIN_BINARY = 0x1;
