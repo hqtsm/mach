@@ -31,6 +31,11 @@ Deno.test('constants expressions', () => {
 	assertEquals(C.LC_DYLD_CHAINED_FIXUPS, (0x34 | LC_REQ_DYLD) >>> 0);
 	assertEquals(C.LC_FILESET_ENTRY, (0x35 | LC_REQ_DYLD) >>> 0);
 
+	assertEquals(C.CPU_TYPE_X86_64, C.CPU_TYPE_X86 | C.CPU_ARCH_ABI64);
+	assertEquals(C.CPU_TYPE_ARM64, C.CPU_TYPE_ARM | C.CPU_ARCH_ABI64);
+	assertEquals(C.CPU_TYPE_ARM64_32, C.CPU_TYPE_ARM | C.CPU_ARCH_ABI64_32);
+	assertEquals(C.CPU_TYPE_POWERPC64, C.CPU_TYPE_POWERPC | C.CPU_ARCH_ABI64);
+
 	assertEquals(C.CPU_SUBTYPE_I386_ALL, C.CPU_SUBTYPE_INTEL(3, 0));
 	assertEquals(C.CPU_SUBTYPE_386, C.CPU_SUBTYPE_INTEL(3, 0));
 	assertEquals(C.CPU_SUBTYPE_486, C.CPU_SUBTYPE_INTEL(4, 0));

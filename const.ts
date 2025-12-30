@@ -442,17 +442,17 @@ export const CPU_TYPE_VAX = 1;
 export const CPU_TYPE_MC680x0 = 6;
 export const CPU_TYPE_X86 = 7;
 export const CPU_TYPE_I386 = CPU_TYPE_X86;
-export const CPU_TYPE_X86_64 = CPU_TYPE_X86 | CPU_ARCH_ABI64;
+export const CPU_TYPE_X86_64 = 0x1000007; // CPU_TYPE_X86 | CPU_ARCH_ABI64
 export const CPU_TYPE_MC98000 = 10;
 export const CPU_TYPE_HPPA = 11;
 export const CPU_TYPE_ARM = 12;
-export const CPU_TYPE_ARM64 = CPU_TYPE_ARM | CPU_ARCH_ABI64;
-export const CPU_TYPE_ARM64_32 = CPU_TYPE_ARM | CPU_ARCH_ABI64_32;
+export const CPU_TYPE_ARM64 = 0x100000c; // CPU_TYPE_ARM | CPU_ARCH_ABI64
+export const CPU_TYPE_ARM64_32 = 0x200000c; // CPU_TYPE_ARM | CPU_ARCH_ABI64_32
 export const CPU_TYPE_MC88000 = 13;
 export const CPU_TYPE_SPARC = 14;
 export const CPU_TYPE_I860 = 15;
 export const CPU_TYPE_POWERPC = 18;
-export const CPU_TYPE_POWERPC64 = CPU_TYPE_POWERPC | CPU_ARCH_ABI64;
+export const CPU_TYPE_POWERPC64 = 0x1000012; // CPU_TYPE_POWERPC | CPU_ARCH_ABI64
 
 // CPU subtypes:
 export const CPU_SUBTYPE_MASK = 0xff000000;
