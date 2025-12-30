@@ -31,7 +31,6 @@ export * from './machheader64.ts';
 export * from './notecommand.ts';
 export * from './prebindcksumcommand.ts';
 export * from './prebounddylibcommand.ts';
-export * from './preloaddylibcommand.ts';
 export * from './routinescommand.ts';
 export * from './routinescommand64.ts';
 export * from './rpathcommand.ts';
