@@ -2,7 +2,7 @@ import { constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
- * Thread local variable entry, 64-bit.
+ * Thread local variable entry, 32-bit.
  */
 export class TlvDescriptor extends Struct {
 	/**
