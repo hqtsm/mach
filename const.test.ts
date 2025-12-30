@@ -67,6 +67,12 @@ Deno.test('constants expressions', () => {
 		C.VM_PROT_EXECUTE | C.VM_PROT_STRIP_READ,
 	);
 	assertEquals(C.VM_PROT_ALLEXEC_X86_64, C.VM_PROT_EXECUTE | C.VM_PROT_UEXEC);
+
+	assertEquals(
+		C.CSSLOT_ALTERNATE_CODEDIRECTORY_LIMIT,
+		C.CSSLOT_ALTERNATE_CODEDIRECTORIES +
+			C.CSSLOT_ALTERNATE_CODEDIRECTORY_MAX,
+	);
 });
 
 Deno.test('constant: CPU_SUBTYPE_INTEL', () => {
