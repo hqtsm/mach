@@ -2,9 +2,9 @@ import { constant, toStringTag } from '@hqtsm/class';
 import { Struct, uint32 } from '@hqtsm/struct';
 
 /**
- * Dylib info command.
+ * Dyld info command.
  */
-export class DylibInfoCommand extends Struct {
+export class DyldInfoCommand extends Struct {
 	/**
 	 * Command type.
 	 */
@@ -66,7 +66,7 @@ export class DylibInfoCommand extends Struct {
 	declare public exportSize: number;
 
 	static {
-		toStringTag(this, 'DylibInfoCommand');
+		toStringTag(this, 'DyldInfoCommand');
 		uint32(this, 'cmd');
 		uint32(this, 'cmdsize');
 		uint32(this, 'rebaseOff');
