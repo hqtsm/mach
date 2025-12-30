@@ -424,11 +424,19 @@ export const DICE_KIND_JUMP_TABLE16 = 0x0003;
 export const DICE_KIND_JUMP_TABLE32 = 0x0004;
 export const DICE_KIND_ABS_JUMP_TABLE32 = 0x0005;
 
-// CPU types:
+// CPU states:
+export const CPU_STATE_MAX = 4;
+export const CPU_STATE_USER = 0;
+export const CPU_STATE_SYSTEM = 1;
+export const CPU_STATE_IDLE = 2;
+export const CPU_STATE_NICE = 3;
+
+// CPU architecture compatibility bits:
 export const CPU_ARCH_MASK = 0xff000000;
 export const CPU_ARCH_ABI64 = 0x01000000;
 export const CPU_ARCH_ABI64_32 = 0x02000000;
 
+// CPU types:
 export const CPU_TYPE_ANY = -1;
 export const CPU_TYPE_VAX = 1;
 export const CPU_TYPE_MC680x0 = 6;
@@ -456,6 +464,10 @@ export const CPU_SUBTYPE_MULTIPLE = -1;
 export const CPU_SUBTYPE_LITTLE_ENDIAN = 0;
 export const CPU_SUBTYPE_BIG_ENDIAN = 1;
 
+// CPU thread types:
+export const CPU_THREADTYPE_NONE = 0;
+
+// CPU subtype for VAX:
 export const CPU_SUBTYPE_VAX_ALL = 0;
 export const CPU_SUBTYPE_VAX780 = 1;
 export const CPU_SUBTYPE_VAX785 = 2;
@@ -470,39 +482,48 @@ export const CPU_SUBTYPE_VAX8650 = 10;
 export const CPU_SUBTYPE_VAX8800 = 11;
 export const CPU_SUBTYPE_UVAXIII = 12;
 
+// CPU subtype for 680x0:
 export const CPU_SUBTYPE_MC680x0_ALL = 1;
 export const CPU_SUBTYPE_MC68030 = 1;
 export const CPU_SUBTYPE_MC68040 = 2;
 export const CPU_SUBTYPE_MC68030_ONLY = 3;
 
-// const CPU_SUBTYPE_INTEL = (f: number, m: number) => f + (m << 4);
-export const CPU_SUBTYPE_I386_ALL = 3; // CPU_SUBTYPE_INTEL(3, 0);
-export const CPU_SUBTYPE_386 = 3; // CPU_SUBTYPE_INTEL(3, 0);
-export const CPU_SUBTYPE_486 = 4; // CPU_SUBTYPE_INTEL(4, 0);
-export const CPU_SUBTYPE_486SX = 132; // CPU_SUBTYPE_INTEL(4, 8);
-export const CPU_SUBTYPE_586 = 5; // CPU_SUBTYPE_INTEL(5, 0);
-export const CPU_SUBTYPE_PENT = 5; // CPU_SUBTYPE_INTEL(5, 0);
-export const CPU_SUBTYPE_PENTPRO = 22; // CPU_SUBTYPE_INTEL(6, 1);
-export const CPU_SUBTYPE_PENTII_M3 = 54; // CPU_SUBTYPE_INTEL(6, 3);
-export const CPU_SUBTYPE_PENTII_M5 = 86; // CPU_SUBTYPE_INTEL(6, 5);
-export const CPU_SUBTYPE_CELERON = 103; // CPU_SUBTYPE_INTEL(7, 6);
-export const CPU_SUBTYPE_CELERON_MOBILE = 119; // CPU_SUBTYPE_INTEL(7, 7);
-export const CPU_SUBTYPE_PENTIUM_3 = 8; // CPU_SUBTYPE_INTEL(8, 0);
-export const CPU_SUBTYPE_PENTIUM_3_M = 24; // CPU_SUBTYPE_INTEL(8, 1);
-export const CPU_SUBTYPE_PENTIUM_3_XEON = 40; // CPU_SUBTYPE_INTEL(8, 2);
-export const CPU_SUBTYPE_PENTIUM_M = 9; // CPU_SUBTYPE_INTEL(9, 0);
-export const CPU_SUBTYPE_PENTIUM_4 = 10; // CPU_SUBTYPE_INTEL(10, 0);
-export const CPU_SUBTYPE_PENTIUM_4_M = 26; // CPU_SUBTYPE_INTEL(10, 1);
-export const CPU_SUBTYPE_ITANIUM = 11; // CPU_SUBTYPE_INTEL(11, 0);
-export const CPU_SUBTYPE_ITANIUM_2 = 27; // CPU_SUBTYPE_INTEL(11, 1);
-export const CPU_SUBTYPE_XEON = 12; // CPU_SUBTYPE_INTEL(12, 0);
-export const CPU_SUBTYPE_XEON_MP = 28; // CPU_SUBTYPE_INTEL(12, 1);
+// CPU subtype for I386:
+export const CPU_SUBTYPE_INTEL = (f: number, m: number): number =>
+	(f + (m << 4)) >>> 0;
+export const CPU_SUBTYPE_I386_ALL = CPU_SUBTYPE_INTEL(3, 0);
+export const CPU_SUBTYPE_386 = CPU_SUBTYPE_INTEL(3, 0);
+export const CPU_SUBTYPE_486 = CPU_SUBTYPE_INTEL(4, 0);
+export const CPU_SUBTYPE_486SX = CPU_SUBTYPE_INTEL(4, 8);
+export const CPU_SUBTYPE_586 = CPU_SUBTYPE_INTEL(5, 0);
+export const CPU_SUBTYPE_PENT = CPU_SUBTYPE_INTEL(5, 0);
+export const CPU_SUBTYPE_PENTPRO = CPU_SUBTYPE_INTEL(6, 1);
+export const CPU_SUBTYPE_PENTII_M3 = CPU_SUBTYPE_INTEL(6, 3);
+export const CPU_SUBTYPE_PENTII_M5 = CPU_SUBTYPE_INTEL(6, 5);
+export const CPU_SUBTYPE_CELERON = CPU_SUBTYPE_INTEL(7, 6);
+export const CPU_SUBTYPE_CELERON_MOBILE = CPU_SUBTYPE_INTEL(7, 7);
+export const CPU_SUBTYPE_PENTIUM_3 = CPU_SUBTYPE_INTEL(8, 0);
+export const CPU_SUBTYPE_PENTIUM_3_M = CPU_SUBTYPE_INTEL(8, 1);
+export const CPU_SUBTYPE_PENTIUM_3_XEON = CPU_SUBTYPE_INTEL(8, 2);
+export const CPU_SUBTYPE_PENTIUM_M = CPU_SUBTYPE_INTEL(9, 0);
+export const CPU_SUBTYPE_PENTIUM_4 = CPU_SUBTYPE_INTEL(10, 0);
+export const CPU_SUBTYPE_PENTIUM_4_M = CPU_SUBTYPE_INTEL(10, 1);
+export const CPU_SUBTYPE_ITANIUM = CPU_SUBTYPE_INTEL(11, 0);
+export const CPU_SUBTYPE_ITANIUM_2 = CPU_SUBTYPE_INTEL(11, 1);
+export const CPU_SUBTYPE_XEON = CPU_SUBTYPE_INTEL(12, 0);
+export const CPU_SUBTYPE_XEON_MP = CPU_SUBTYPE_INTEL(12, 1);
+export const CPU_SUBTYPE_INTEL_FAMILY = (x: number): number => (x & 15);
+export const CPU_SUBTYPE_INTEL_FAMILY_MAX = 15;
+export const CPU_SUBTYPE_INTEL_MODEL = (x: number): number => (x >>> 4);
+export const CPU_SUBTYPE_INTEL_MODEL_MAX = 15;
 
+// CPU subtype for X86:
 export const CPU_SUBTYPE_X86_ALL = 3;
 export const CPU_SUBTYPE_X86_64_ALL = 3;
 export const CPU_SUBTYPE_X86_ARCH1 = 4;
 export const CPU_SUBTYPE_X86_64_H = 8;
 
+// CPU subtype for Mips:
 export const CPU_SUBTYPE_MIPS_ALL = 0;
 export const CPU_SUBTYPE_MIPS_R2300 = 1;
 export const CPU_SUBTYPE_MIPS_R2600 = 2;
@@ -512,22 +533,28 @@ export const CPU_SUBTYPE_MIPS_R2000 = 5;
 export const CPU_SUBTYPE_MIPS_R3000a = 6;
 export const CPU_SUBTYPE_MIPS_R3000 = 7;
 
+// CPU subtype for MC98000 (PowerPC):
 export const CPU_SUBTYPE_MC98000_ALL = 0;
 export const CPU_SUBTYPE_MC98601 = 1;
 
+// CPU subtype for HPPA:
 export const CPU_SUBTYPE_HPPA_ALL = 0;
 export const CPU_SUBTYPE_HPPA_7100 = 0;
 export const CPU_SUBTYPE_HPPA_7100LC = 1;
 
+// CPU subtype for MC88000:
 export const CPU_SUBTYPE_MC88000_ALL = 0;
 export const CPU_SUBTYPE_MC88100 = 1;
 export const CPU_SUBTYPE_MC88110 = 2;
 
+// CPU subtype for SPARC:
 export const CPU_SUBTYPE_SPARC_ALL = 0;
 
+// CPU subtype for I860:
 export const CPU_SUBTYPE_I860_ALL = 0;
 export const CPU_SUBTYPE_I860_860 = 1;
 
+// CPU subtype for PowerPC:
 export const CPU_SUBTYPE_POWERPC_ALL = 0;
 export const CPU_SUBTYPE_POWERPC_601 = 1;
 export const CPU_SUBTYPE_POWERPC_602 = 2;
@@ -542,6 +569,7 @@ export const CPU_SUBTYPE_POWERPC_7400 = 10;
 export const CPU_SUBTYPE_POWERPC_7450 = 11;
 export const CPU_SUBTYPE_POWERPC_970 = 100;
 
+// CPU subtype for ARM:
 export const CPU_SUBTYPE_ARM_ALL = 0;
 export const CPU_SUBTYPE_ARM_V4T = 5;
 export const CPU_SUBTYPE_ARM_V6 = 6;
@@ -557,12 +585,77 @@ export const CPU_SUBTYPE_ARM_V7M = 15;
 export const CPU_SUBTYPE_ARM_V7EM = 16;
 export const CPU_SUBTYPE_ARM_V8M = 17;
 
+// CPU subtype for ARM64:
 export const CPU_SUBTYPE_ARM64_ALL = 0;
 export const CPU_SUBTYPE_ARM64_V8 = 1;
 export const CPU_SUBTYPE_ARM64E = 2;
 
+// CPU subtype for ptrauth on arm64e:
+export const CPU_SUBTYPE_ARM64_PTR_AUTH_MASK = 0x0f000000;
+export const CPU_SUBTYPE_ARM64_PTR_AUTH_VERSION = (x: number): number =>
+	(x & CPU_SUBTYPE_ARM64_PTR_AUTH_MASK) >>> 24;
+
+// CPU subtype for ARM64_32:
 export const CPU_SUBTYPE_ARM64_32_ALL = 0;
 export const CPU_SUBTYPE_ARM64_32_V8 = 1;
+
+// CPU families:
+export const CPUFAMILY_UNKNOWN = 0;
+export const CPUFAMILY_POWERPC_G3 = 0xcee41549;
+export const CPUFAMILY_POWERPC_G4 = 0x77c184ae;
+export const CPUFAMILY_POWERPC_G5 = 0xed76d8aa;
+export const CPUFAMILY_INTEL_6_13 = 0xaa33392b;
+export const CPUFAMILY_INTEL_PENRYN = 0x78ea4fbc;
+export const CPUFAMILY_INTEL_NEHALEM = 0x6b5a4cd2;
+export const CPUFAMILY_INTEL_WESTMERE = 0x573b5eec;
+export const CPUFAMILY_INTEL_SANDYBRIDGE = 0x5490b78c;
+export const CPUFAMILY_INTEL_IVYBRIDGE = 0x1f65e835;
+export const CPUFAMILY_INTEL_HASWELL = 0x10b282dc;
+export const CPUFAMILY_INTEL_BROADWELL = 0x582ed09c;
+export const CPUFAMILY_INTEL_SKYLAKE = 0x37fc219f;
+export const CPUFAMILY_INTEL_KABYLAKE = 0x0f817246;
+export const CPUFAMILY_INTEL_ICELAKE = 0x38435547;
+export const CPUFAMILY_INTEL_COMETLAKE = 0x1cf8a03e;
+export const CPUFAMILY_ARM_9 = 0xe73283ae;
+export const CPUFAMILY_ARM_11 = 0x8ff620d8;
+export const CPUFAMILY_ARM_XSCALE = 0x53b005f5;
+export const CPUFAMILY_ARM_12 = 0xbd1b0ae9;
+export const CPUFAMILY_ARM_13 = 0x0cc90e64;
+export const CPUFAMILY_ARM_14 = 0x96077ef1;
+export const CPUFAMILY_ARM_15 = 0xa8511bca;
+export const CPUFAMILY_ARM_SWIFT = 0x1e2d6381;
+export const CPUFAMILY_ARM_CYCLONE = 0x37a09642;
+export const CPUFAMILY_ARM_TYPHOON = 0x2c91a47e;
+export const CPUFAMILY_ARM_TWISTER = 0x92fb37c8;
+export const CPUFAMILY_ARM_HURRICANE = 0x67ceee93;
+export const CPUFAMILY_ARM_MONSOON_MISTRAL = 0xe81e7ef6;
+export const CPUFAMILY_ARM_VORTEX_TEMPEST = 0x07d34b9f;
+export const CPUFAMILY_ARM_LIGHTNING_THUNDER = 0x462504d2;
+export const CPUFAMILY_ARM_FIRESTORM_ICESTORM = 0x1b588bb3;
+export const CPUFAMILY_ARM_BLIZZARD_AVALANCHE = 0xda33d83d;
+export const CPUFAMILY_ARM_EVEREST_SAWTOOTH = 0x8765edea;
+export const CPUFAMILY_ARM_IBIZA = 0xfa33415e;
+export const CPUFAMILY_ARM_PALMA = 0x72015832;
+export const CPUFAMILY_ARM_COLL = 0x2876f5b5;
+export const CPUFAMILY_ARM_LOBOS = 0x5f4dea93;
+export const CPUFAMILY_ARM_DONAN = 0x6f5129ac;
+export const CPUFAMILY_ARM_BRAVA = 0x17d5b93a;
+export const CPUFAMILY_ARM_TAHITI = 0x75d4acb9;
+export const CPUFAMILY_ARM_TUPAI = 0x204526d0;
+export const CPUFAMILY_ARM_HIDRA = 0x1d5a87e8;
+export const CPUFAMILY_ARM_THERA = 0xab345f09;
+export const CPUFAMILY_ARM_TILOS = 0x01d7a72b;
+export const CPUFAMILY_INTEL_6_23 = CPUFAMILY_INTEL_PENRYN;
+export const CPUFAMILY_INTEL_6_26 = CPUFAMILY_INTEL_NEHALEM;
+
+// CPU subfamilies:
+export const CPUSUBFAMILY_UNKNOWN = 0;
+export const CPUSUBFAMILY_ARM_HP = 1;
+export const CPUSUBFAMILY_ARM_HG = 2;
+export const CPUSUBFAMILY_ARM_M = 3;
+export const CPUSUBFAMILY_ARM_HS = 4;
+export const CPUSUBFAMILY_ARM_HC_HD = 5;
+export const CPUSUBFAMILY_ARM_HA = 6;
 
 // Executable segment flags:
 export const CS_EXECSEG_MAIN_BINARY = 0x1;
