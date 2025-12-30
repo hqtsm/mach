@@ -20,16 +20,15 @@ Deno.test('constants sign', () => {
 });
 
 Deno.test('constants expressions', () => {
-	const { LC_REQ_DYLD } = C;
-	assertEquals(C.LC_LOAD_WEAK_DYLIB, (0x18 | LC_REQ_DYLD) >>> 0);
-	assertEquals(C.LC_RPATH, (0x1c | LC_REQ_DYLD) >>> 0);
-	assertEquals(C.LC_REEXPORT_DYLIB, (0x1f | LC_REQ_DYLD) >>> 0);
-	assertEquals(C.LC_DYLD_INFO_ONLY, (0x22 | LC_REQ_DYLD) >>> 0);
-	assertEquals(C.LC_LOAD_UPWARD_DYLIB, (0x23 | LC_REQ_DYLD) >>> 0);
-	assertEquals(C.LC_MAIN, (0x28 | LC_REQ_DYLD) >>> 0);
-	assertEquals(C.LC_DYLD_EXPORTS_TRIE, (0x33 | LC_REQ_DYLD) >>> 0);
-	assertEquals(C.LC_DYLD_CHAINED_FIXUPS, (0x34 | LC_REQ_DYLD) >>> 0);
-	assertEquals(C.LC_FILESET_ENTRY, (0x35 | LC_REQ_DYLD) >>> 0);
+	assertEquals(C.LC_LOAD_WEAK_DYLIB, (0x18 | C.LC_REQ_DYLD) >>> 0);
+	assertEquals(C.LC_RPATH, (0x1c | C.LC_REQ_DYLD) >>> 0);
+	assertEquals(C.LC_REEXPORT_DYLIB, (0x1f | C.LC_REQ_DYLD) >>> 0);
+	assertEquals(C.LC_DYLD_INFO_ONLY, (0x22 | C.LC_REQ_DYLD) >>> 0);
+	assertEquals(C.LC_LOAD_UPWARD_DYLIB, (0x23 | C.LC_REQ_DYLD) >>> 0);
+	assertEquals(C.LC_MAIN, (0x28 | C.LC_REQ_DYLD) >>> 0);
+	assertEquals(C.LC_DYLD_EXPORTS_TRIE, (0x33 | C.LC_REQ_DYLD) >>> 0);
+	assertEquals(C.LC_DYLD_CHAINED_FIXUPS, (0x34 | C.LC_REQ_DYLD) >>> 0);
+	assertEquals(C.LC_FILESET_ENTRY, (0x35 | C.LC_REQ_DYLD) >>> 0);
 
 	assertEquals(C.CPU_TYPE_X86_64, C.CPU_TYPE_X86 | C.CPU_ARCH_ABI64);
 	assertEquals(C.CPU_TYPE_ARM64, C.CPU_TYPE_ARM | C.CPU_ARCH_ABI64);
