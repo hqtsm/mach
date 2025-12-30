@@ -20,6 +20,17 @@ Deno.test('constants sign', () => {
 });
 
 Deno.test('constants expressions', () => {
+	const { LC_REQ_DYLD } = C;
+	assertEquals(C.LC_LOAD_WEAK_DYLIB, (0x18 | LC_REQ_DYLD) >>> 0);
+	assertEquals(C.LC_RPATH, (0x1c | LC_REQ_DYLD) >>> 0);
+	assertEquals(C.LC_REEXPORT_DYLIB, (0x1f | LC_REQ_DYLD) >>> 0);
+	assertEquals(C.LC_DYLD_INFO_ONLY, (0x22 | LC_REQ_DYLD) >>> 0);
+	assertEquals(C.LC_LOAD_UPWARD_DYLIB, (0x23 | LC_REQ_DYLD) >>> 0);
+	assertEquals(C.LC_MAIN, (0x28 | LC_REQ_DYLD) >>> 0);
+	assertEquals(C.LC_DYLD_EXPORTS_TRIE, (0x33 | LC_REQ_DYLD) >>> 0);
+	assertEquals(C.LC_DYLD_CHAINED_FIXUPS, (0x34 | LC_REQ_DYLD) >>> 0);
+	assertEquals(C.LC_FILESET_ENTRY, (0x35 | LC_REQ_DYLD) >>> 0);
+
 	assertEquals(C.CPU_SUBTYPE_I386_ALL, C.CPU_SUBTYPE_INTEL(3, 0));
 	assertEquals(C.CPU_SUBTYPE_386, C.CPU_SUBTYPE_INTEL(3, 0));
 	assertEquals(C.CPU_SUBTYPE_486, C.CPU_SUBTYPE_INTEL(4, 0));
