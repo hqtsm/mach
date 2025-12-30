@@ -69,7 +69,7 @@ function isFunction(arg: unknown): arg is (...args: unknown[]) => unknown {
 function isClass(arg: unknown): arg is Class {
 	return (
 		typeof arg === 'function' &&
-		!Object.getOwnPropertyDescriptor(arg, 'prototype')?.writable
+		Object.getOwnPropertyDescriptor(arg, 'prototype')?.writable === false
 	);
 }
 
