@@ -10,7 +10,7 @@ Deno.test('empty kind 0 (invalid?)', () => {
 	const { BYTE_LENGTH } = Requirement;
 	const buffer = new ArrayBuffer(BYTE_LENGTH);
 	const r = new Requirement(buffer);
-	Requirement.initializeLength(r, BYTE_LENGTH);
+	Requirement.initializeSize(r, BYTE_LENGTH);
 	assertEquals(
 		new Uint8Array(buffer),
 		unhex('FA DE 0C 00 00 00 00 0C 00 00 00 00'),
@@ -21,7 +21,7 @@ Deno.test('empty kind 1 (invalid?)', () => {
 	const { BYTE_LENGTH } = Requirement;
 	const buffer = new ArrayBuffer(BYTE_LENGTH);
 	const r = new Requirement(buffer);
-	Requirement.initializeLength(r, BYTE_LENGTH);
+	Requirement.initializeSize(r, BYTE_LENGTH);
 	Requirement.kind(r, Requirement.exprForm);
 	assertEquals(
 		new Uint8Array(buffer),
@@ -33,7 +33,7 @@ Deno.test('empty kind 2 (invalid?)', () => {
 	const { BYTE_LENGTH } = Requirement;
 	const buffer = new ArrayBuffer(BYTE_LENGTH);
 	const r = new Requirement(buffer);
-	Requirement.initializeLength(r, BYTE_LENGTH);
+	Requirement.initializeSize(r, BYTE_LENGTH);
 	Requirement.kind(r, Requirement.lwcrForm);
 	assertEquals(
 		new Uint8Array(buffer),

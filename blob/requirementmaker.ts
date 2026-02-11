@@ -37,7 +37,7 @@ export class RequirementMaker {
 	constructor(k: number) {
 		const buffer = new ArrayBuffer(1024);
 		const r = new Requirement(buffer);
-		Requirement.initializeLength(r);
+		Requirement.initializeSize(r);
 		Requirement.kind(r, k);
 		this.mBuffer = buffer;
 		this.mPC = r.byteLength;

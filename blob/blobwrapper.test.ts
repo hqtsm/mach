@@ -20,7 +20,7 @@ Deno.test('empty', () => {
 	const { BYTE_LENGTH } = BlobWrapper;
 	const buffer = new ArrayBuffer(BYTE_LENGTH);
 	const bw = new BlobWrapper(buffer);
-	BlobWrapper.initializeLength(bw, BYTE_LENGTH);
+	BlobWrapper.initializeSize(bw, BYTE_LENGTH);
 	assertEquals(
 		new Uint8Array(buffer),
 		unhex('FA DE 0B 01 00 00 00 08'),

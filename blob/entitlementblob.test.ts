@@ -23,7 +23,7 @@ Deno.test('empty (invalid?)', () => {
 	const { BYTE_LENGTH } = EntitlementBlob;
 	const buffer = new ArrayBuffer(BYTE_LENGTH);
 	const eb = new EntitlementBlob(buffer);
-	EntitlementBlob.initializeLength(eb, BYTE_LENGTH);
+	EntitlementBlob.initializeSize(eb, BYTE_LENGTH);
 	assertEquals(
 		new Uint8Array(buffer),
 		unhex('FA DE 71 71 00 00 00 08'),

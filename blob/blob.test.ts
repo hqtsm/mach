@@ -63,7 +63,7 @@ Deno.test('clone', () => {
 		assertEquals(context.errno, EINVAL);
 	}
 
-	Example.initializeLength(example, Example.BYTE_LENGTH);
+	Example.initializeSize(example, Example.BYTE_LENGTH);
 	{
 		const clone = Example.clone(example, new NoErrno());
 		assertInstanceOf(clone, Example);
@@ -101,7 +101,7 @@ Deno.test('readBlob regular', async () => {
 		assertEquals(context.errno, EINVAL);
 	}
 
-	Example.initializeLength(blob, Example.BYTE_LENGTH);
+	Example.initializeSize(blob, Example.BYTE_LENGTH);
 	blob.value = 0xAABBCCDD;
 	const context = { errno: 0 };
 	const read = await Example.readBlob(new globalThis.Blob([data]), context);
@@ -129,7 +129,7 @@ Deno.test('readBlob offset', async () => {
 		assertEquals(context.errno, EINVAL);
 	}
 
-	Example.initializeLength(blob, Example.BYTE_LENGTH);
+	Example.initializeSize(blob, Example.BYTE_LENGTH);
 	blob.value = 0xAABBCCDD;
 	const context = { errno: 0 };
 	const read = await Example.readBlob(
@@ -159,10 +159,10 @@ Deno.test('validateBlobLength', () => {
 		assertEquals(context.errno, EINVAL);
 	}
 
-	Example.initializeLength(blob, 20);
+	Example.initializeSize(blob, 20);
 	assertEquals(Example.validateBlobLength(blob), true);
 
-	Example.initializeLength(blob, 11);
+	Example.initializeSize(blob, 11);
 	assertEquals(Example.validateBlobLength(blob, 11, new NoErrno()), false);
 
 	BlobCore.initialize(blob, 0, 20);
@@ -172,9 +172,9 @@ Deno.test('validateBlobLength', () => {
 		assertEquals(context.errno, EINVAL);
 	}
 
-	Example.initializeLength(blob, 20);
+	Example.initializeSize(blob, 20);
 	assertEquals(Example.validateBlobLength(blob, 20, new NoErrno()), true);
 
-	Example.initializeLength(blob, 19);
+	Example.initializeSize(blob, 19);
 	assertEquals(Example.validateBlobLength(blob, 19, new NoErrno()), true);
 });

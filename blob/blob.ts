@@ -17,7 +17,7 @@ export abstract class Blob extends BlobCore {
 	 * @param _this This.
 	 * @param size Length.
 	 */
-	public static initializeLength(_this: Blob, size = 0): void {
+	public static initializeSize(_this: Blob, size = 0): void {
 		BlobCore.initialize(_this, this.typeMagic, size);
 	}
 
@@ -118,7 +118,7 @@ export abstract class Blob extends BlobCore {
 		class B extends Blob {
 			public static override readonly typeMagic = typeMagic;
 		}
-		B.initializeLength(new B(buffer), size);
+		B.initializeSize(new B(buffer), size);
 		new Uint8Array(buffer, BYTE_LENGTH).set(view);
 		return buffer;
 	}
