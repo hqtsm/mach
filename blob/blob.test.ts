@@ -145,7 +145,7 @@ Deno.test('readBlob offset', async () => {
 	assertEquals(read.value, 0xAABBCCDD);
 });
 
-Deno.test('validateBlobLength', () => {
+Deno.test('validateBlobSize', () => {
 	const data = new Uint8Array(22);
 	const blob = new Example(data.buffer, 2);
 
