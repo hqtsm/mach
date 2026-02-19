@@ -208,12 +208,11 @@ export class BlobCore extends Struct {
 	 */
 	public static clone(_this: BlobCore): BlobCore | null {
 		const l = BlobCore.size(_this);
-		const o = _this.byteOffset;
-		return new BlobCore(
-			_this.buffer.slice(o, o + l),
-			0,
-			_this.littleEndian,
+		const b = new ArrayBuffer(l);
+		new Uint8Array(b).set(
+			new Uint8Array(_this.buffer, _this.byteOffset, l),
 		);
+		return new BlobCore(b, 0, _this.littleEndian);
 	}
 
 	/**
