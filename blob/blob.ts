@@ -51,7 +51,7 @@ export abstract class Blob extends BlobCore {
 	 * Validate blob with length, using known type magic.
 	 *
 	 * @param _this This.
-	 * @param length Optionally require exact length, or context.
+	 * @param length Exact length or context.
 	 * @param context Context.
 	 * @returns Is valid.
 	 */
