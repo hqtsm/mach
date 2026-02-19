@@ -208,7 +208,7 @@ export class BlobCore extends Struct {
 	}
 
 	/**
-	 * Inner byte data.
+	 * Copy inner byte data.
 	 *
 	 * @param _this This.
 	 * @returns Array buffer.
