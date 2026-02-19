@@ -4,9 +4,9 @@ import { EINVAL, ENOMEM } from '../const.ts';
 import type { Reader } from '../util/reader.ts';
 
 /**
- * BlobCore template.
+ * BlobCore BlobType.
  */
-export type TemplateBlobCore =
+export type BlobCoreBlobType =
 	& { readonly typeMagic: number }
 	& typeof BlobCore;
 
@@ -230,7 +230,7 @@ export class BlobCore extends Struct {
 	 * @param BlobType Blob type.
 	 * @returns Is the same type.
 	 */
-	public static is(this: TemplateBlobCore, _this: BlobCore): boolean {
+	public static is(this: BlobCoreBlobType, _this: BlobCore): boolean {
 		return BlobCore.magic(_this) === this.typeMagic;
 	}
 
