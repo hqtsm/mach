@@ -153,28 +153,28 @@ Deno.test('validateBlobLength', () => {
 	{
 		const context = { errno: 0 };
 		assertEquals(
-			Example.validateBlobLength(blob, undefined, context),
+			Example.validateBlobSize(blob, undefined, context),
 			false,
 		);
 		assertEquals(context.errno, EINVAL);
 	}
 
 	Example.initializeSize(blob, 20);
-	assertEquals(Example.validateBlobLength(blob), true);
+	assertEquals(Example.validateBlobSize(blob), true);
 
 	Example.initializeSize(blob, 11);
-	assertEquals(Example.validateBlobLength(blob, 11, new NoErrno()), false);
+	assertEquals(Example.validateBlobSize(blob, 11, new NoErrno()), false);
 
 	BlobCore.initialize(blob, 0, 20);
 	{
 		const context = { errno: 0 };
-		assertEquals(Example.validateBlobLength(blob, 20, context), false);
+		assertEquals(Example.validateBlobSize(blob, 20, context), false);
 		assertEquals(context.errno, EINVAL);
 	}
 
 	Example.initializeSize(blob, 20);
-	assertEquals(Example.validateBlobLength(blob, 20, new NoErrno()), true);
+	assertEquals(Example.validateBlobSize(blob, 20, new NoErrno()), true);
 
 	Example.initializeSize(blob, 19);
-	assertEquals(Example.validateBlobLength(blob, 19, new NoErrno()), true);
+	assertEquals(Example.validateBlobSize(blob, 19, new NoErrno()), true);
 });

@@ -29,7 +29,7 @@ export abstract class Blob extends BlobCore {
 	 * @param context Context.
 	 * @returns Is valid.
 	 */
-	public static validateBlobLength(
+	public static validateBlobSize(
 		_this: Blob,
 		length?: number,
 		context?: { errno: number },
@@ -45,7 +45,7 @@ export abstract class Blob extends BlobCore {
 		}
 		return (
 			length >= _this.byteLength &&
-			Blob.validateBlobLength.call(this, _this, undefined, context) &&
+			Blob.validateBlobSize.call(this, _this, undefined, context) &&
 			_this.mLength === length
 		);
 	}
@@ -90,7 +90,7 @@ export abstract class Blob extends BlobCore {
 		context?: { errno: number },
 	): T['prototype'] | null {
 		const p = new this(blob.buffer, blob.byteOffset, blob.littleEndian);
-		return Blob.validateBlobLength.call(this, p, undefined, context)
+		return Blob.validateBlobSize.call(this, p, undefined, context)
 			? p
 			: null;
 	}
