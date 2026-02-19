@@ -39,11 +39,14 @@ Deno.test('innerData', () => {
 	const data = new Uint8Array(12);
 	const blob = new BlobCore(data.buffer, 2);
 	BlobCore.size(blob, 10);
-	const body = BlobCore.innerData(blob);
-	assertEquals(body.length, 2);
-	body[0] = 1;
-	body[1] = 2;
-	assertEquals(data.slice(10), new Uint8Array([1, 2]));
+	const bodyA = BlobCore.innerData(blob);
+	data[10] = 1;
+	data[11] = 2;
+	const bodyB = BlobCore.innerData(blob);
+	assertEquals(bodyA.byteLength, 2);
+	assertEquals(new Uint8Array(bodyA), new Uint8Array([0, 0]));
+	assertEquals(bodyB.byteLength, 2);
+	assertEquals(new Uint8Array(bodyB), new Uint8Array([1, 2]));
 });
 
 Deno.test('initialize', () => {
