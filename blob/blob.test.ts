@@ -153,7 +153,7 @@ Deno.test('validateBlobLength', () => {
 	{
 		const context = { errno: 0 };
 		assertEquals(
-			Example.validateBlobSize(blob, undefined, context),
+			Example.validateBlobSize(blob, context),
 			false,
 		);
 		assertEquals(context.errno, EINVAL);

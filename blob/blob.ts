@@ -25,28 +25,58 @@ export abstract class Blob extends BlobCore {
 	 * Validate blob with length, using known type magic.
 	 *
 	 * @param _this This.
+	 * @param context Context.
+	 * @returns Is valid.
+	 */
+	public static validateBlobSize(
+		_this: Blob,
+		context?: { errno: number },
+	): boolean;
+
+	/**
+	 * Validate blob with length, using known type magic.
+	 *
+	 * @param _this This.
+	 * @param length Require exact length.
+	 * @param context Context.
+	 * @returns Is valid.
+	 */
+	public static validateBlobSize(
+		_this: Blob,
+		length: number,
+		context?: { errno: number },
+	): boolean;
+
+	/**
+	 * Validate blob with length, using known type magic.
+	 *
+	 * @param _this This.
 	 * @param length Optionally require exact length.
 	 * @param context Context.
 	 * @returns Is valid.
 	 */
 	public static validateBlobSize(
 		_this: Blob,
-		length?: number,
+		length?: number | { errno: number },
 		context?: { errno: number },
 	): boolean {
-		if (length === undefined) {
-			return BlobCore.validateBlob(
-				_this,
-				this.typeMagic,
-				_this.byteLength,
-				undefined,
-				context,
+		if (typeof length === 'number') {
+			return (
+				length >= _this.byteLength &&
+				Blob.validateBlobSize.call<
+					typeof this,
+					[typeof _this, typeof context],
+					boolean
+				>(this, _this, context) &&
+				_this.mLength === length
 			);
 		}
-		return (
-			length >= _this.byteLength &&
-			Blob.validateBlobSize.call(this, _this, undefined, context) &&
-			_this.mLength === length
+		return BlobCore.validateBlob(
+			_this,
+			this.typeMagic,
+			_this.byteLength,
+			undefined,
+			length,
 		);
 	}
 
@@ -90,7 +120,11 @@ export abstract class Blob extends BlobCore {
 		context?: { errno: number },
 	): T['prototype'] | null {
 		const p = new this(blob.buffer, blob.byteOffset, blob.littleEndian);
-		return Blob.validateBlobSize.call(this, p, undefined, context)
+		return Blob.validateBlobSize.call<
+				typeof this,
+				[typeof p, typeof context],
+				boolean
+			>(this, p, context)
 			? p
 			: null;
 	}
