@@ -42,7 +42,7 @@ Deno.test('innerData', () => {
 	const inner = BlobCore.innerData(blob);
 	data[10] = 1;
 	data[11] = 2;
-	assertEquals(inner.byteLength, 2);
+	assertEquals(inner.length, 2);
 	assertEquals(inner[0], 1);
 	assertEquals(inner[1], 2);
 });
