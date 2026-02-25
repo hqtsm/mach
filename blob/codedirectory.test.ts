@@ -1,6 +1,7 @@
 import { assert, assertEquals, assertThrows } from '@std/assert';
 import {
 	cdSlotMax,
+	kSecCodeCDHashLength,
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
 	kSecCodeSignatureHashSHA256Truncated,
@@ -207,6 +208,38 @@ Deno.test('getHash', () => {
 		() => CodeDirectory.getHash(cd),
 		RangeError,
 		`Unsupported hash type: ${kSecCodeSignatureHashSHA512}`,
+	);
+});
+
+Deno.test('cdhash', async () => {
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
+	const cd = await CodeDirectoryBuilder.build(builder);
+	cd.hashType = kSecCodeSignatureHashSHA1;
+	assertEquals(
+		(await CodeDirectory.cdhash(cd)).byteLength,
+		20,
+	);
+	assertEquals(
+		(await CodeDirectory.cdhash(cd, true)).byteLength,
+		kSecCodeCDHashLength,
+	);
+	assertEquals(
+		(await CodeDirectory.cdhash(cd, true, crypto.subtle)).byteLength,
+		kSecCodeCDHashLength,
+	);
+	cd.hashType = kSecCodeSignatureHashSHA256;
+	assertEquals(
+		(await CodeDirectory.cdhash(cd)).byteLength,
+		32,
+	);
+	assertEquals(
+		(await CodeDirectory.cdhash(cd, true)).byteLength,
+		kSecCodeCDHashLength,
+	);
+	assertEquals(
+		(await CodeDirectory.cdhash(cd, true, crypto.subtle)).byteLength,
+		kSecCodeCDHashLength,
 	);
 });
 

@@ -14,6 +14,7 @@ import {
 	kCCDigestSHA1,
 	kCCDigestSHA256,
 	kCCDigestSHA384,
+	kSecCodeCDHashLength,
 	kSecCodeMagicCodeDirectory,
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
@@ -21,7 +22,7 @@ import {
 	kSecCodeSignatureHashSHA384,
 } from '../const.ts';
 import { CCHashInstance } from '../hash/cchashinstance.ts';
-import type { DynamicHash } from '../hash/dynamichash.ts';
+import type { DynamicHash, HashCrypto } from '../hash/dynamichash.ts';
 import { Blob } from './blob.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
 
@@ -341,6 +342,36 @@ export class CodeDirectory extends Blob {
 	 */
 	public static getHash(_this: CodeDirectory): DynamicHash {
 		return CodeDirectory.hashFor(_this.hashType);
+	}
+
+	/**
+	 * Create code directory hash.
+	 *
+	 * @param _this This.
+	 * @param truncate Truncate to kSecCodeCDHashLength.
+	 * @param crypto Hash crypto.
+	 * @returns Hash digest.
+	 */
+	public static async cdhash(
+		_this: CodeDirectory,
+		truncate = false,
+		crypto: HashCrypto | null = null,
+	): Promise<ArrayBuffer> {
+		const hash = CodeDirectory.getHash(_this);
+		hash.crypto = crypto;
+		const digest = await hash.digest(
+			new Uint8Array(
+				_this.buffer,
+				_this.byteOffset,
+				CodeDirectory.size(_this),
+			),
+		);
+		return truncate
+			? digest.slice(
+				0,
+				Math.min(hash.digestLength(), kSecCodeCDHashLength),
+			)
+			: digest;
 	}
 
 	public static override readonly typeMagic = kSecCodeMagicCodeDirectory;
