@@ -28,8 +28,6 @@ import type { Reader } from '../util/reader.ts';
 import { CCHashInstance } from './cchashinstance.ts';
 import type { HashCryptoNodeSync } from './dynamichash.ts';
 
-const noSubtle = typeof crypto === 'undefined';
-
 class ShortReader implements Reader {
 	#size: number;
 
@@ -177,10 +175,6 @@ Deno.test('CCHashInstance full', async () => {
 				const tag = `alg=${alg} engine=${name} view=${view}`;
 				const hash = new CCHashInstance(alg);
 				hash.crypto = crypto;
-				if (crypto === null && noSubtle) {
-					// deno-lint-ignore no-await-in-loop
-					hash.crypto = await import('node:crypto');
-				}
 				// deno-lint-ignore no-await-in-loop
 				const result = await hash.digest(view ? ABCD : ABCD.buffer);
 				assertEquals(result.byteLength, hash.digestLength(), tag);
@@ -198,10 +192,6 @@ Deno.test('CCHashInstance truncate', async () => {
 			const exptHex = expt.slice(0, truncate * 2);
 			const hash = new CCHashInstance(alg, truncate);
 			hash.crypto = crypto;
-			if (crypto === null && noSubtle) {
-				// deno-lint-ignore no-await-in-loop
-				hash.crypto = await import('node:crypto');
-			}
 			// deno-lint-ignore no-await-in-loop
 			const result = await hash.digest(ABCD);
 			assertEquals(result.byteLength, truncate, tag);
@@ -216,10 +206,6 @@ Deno.test('CCHashInstance paged', async () => {
 			const tag = `alg=${alg} engine=${name}`;
 			const hash = new CCHashInstance(alg);
 			hash.crypto = crypto;
-			if (crypto === null && noSubtle) {
-				// deno-lint-ignore no-await-in-loop
-				hash.crypto = await import('node:crypto');
-			}
 			// deno-lint-ignore no-await-in-loop
 			const result = await hash.digest(new Blob([PAGED]));
 			assertEquals(result.byteLength, hash.digestLength(), tag);
@@ -233,10 +219,6 @@ Deno.test('CCHashInstance short read', async () => {
 		const tag = `engine=${name}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
-		if (crypto === null && noSubtle) {
-			// deno-lint-ignore no-await-in-loop
-			hash.crypto = await import('node:crypto');
-		}
 		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
 			() => hash.digest(new ShortReader(1024)),
@@ -252,10 +234,6 @@ Deno.test('CCHashInstance long read', async () => {
 		const tag = `engine=${name}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
-		if (crypto === null && noSubtle) {
-			// deno-lint-ignore no-await-in-loop
-			hash.crypto = await import('node:crypto');
-		}
 		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
 			() => hash.digest(new LongReader(1024)),
