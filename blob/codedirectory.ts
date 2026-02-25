@@ -310,6 +310,18 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
+	 * Pointer to pre-encrypt hashes.
+	 *
+	 * @param _this This.
+	 * @returns Hash pointer, or null.
+	 */
+	public static preEncryptHashes(
+		_this: CodeDirectory,
+	): Const<Uint8Ptr> | null {
+		return CodeDirectory.getSlot(_this, 0, true);
+	}
+
+	/**
 	 * Runtime version.
 	 *
 	 * @param _this This.

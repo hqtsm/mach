@@ -197,6 +197,7 @@ Deno.test('getSlot', async () => {
 		CodeDirectory.supportsPreEncrypt,
 	);
 	assertEquals(CodeDirectory.getSlot(cd, 0, true), null);
+	assertEquals(CodeDirectory.preEncryptHashes(cd), null);
 });
 
 Deno.test('hashFor', () => {
