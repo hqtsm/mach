@@ -27,6 +27,14 @@ const algorithims = new Map<number, [number, string, string]>([
 	[kCCDigestSHA512, [64, 'SHA-512', 'sha512']],
 ]);
 
+const algorithm = (alg: number): [number, string, string] => {
+	const info = algorithims.get(alg);
+	if (!info) {
+		throw new RangeError(`Unsupported hash algorithm: ${alg}`);
+	}
+	return info;
+};
+
 /**
  * CCHashInstance dynamic hash.
  */
@@ -48,16 +56,14 @@ export class CCHashInstance extends DynamicHash {
 	 * @param truncate Truncate length if any.
 	 */
 	constructor(alg: number, truncate = 0) {
-		if (!algorithims.has(alg)) {
-			throw new RangeError(`Unsupported hash algorithm: ${alg}`);
-		}
+		algorithm(alg);
 		super();
 		this.mDigest = alg;
 		this.mTruncate = truncate;
 	}
 
 	public digestLength(): number {
-		return this.mTruncate || algorithims.get(this.mDigest)![0];
+		return this.mTruncate || algorithm(this.mDigest)[0];
 	}
 
 	public async digest(
@@ -65,7 +71,7 @@ export class CCHashInstance extends DynamicHash {
 	): Promise<ArrayBuffer> {
 		const { mTruncate } = this;
 		const cry = this.crypto || crypto.subtle;
-		const [, NAME, name] = algorithims.get(this.mDigest)!;
+		const [, NAME, name] = algorithm(this.mDigest);
 
 		if ('createHash' in cry) {
 			let digest: {
