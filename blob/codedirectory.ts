@@ -333,6 +333,16 @@ export class CodeDirectory extends Blob {
 			: 0;
 	}
 
+	/**
+	 * Get hash for current hash type.
+	 *
+	 * @param _this This.
+	 * @returns Hash instance.
+	 */
+	public static getHash(_this: CodeDirectory): DynamicHash {
+		return CodeDirectory.hashFor(_this.hashType);
+	}
+
 	public static override readonly typeMagic = kSecCodeMagicCodeDirectory;
 
 	/**
