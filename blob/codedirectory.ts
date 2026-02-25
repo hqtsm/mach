@@ -312,12 +312,12 @@ export class CodeDirectory extends Blob {
 	public static override readonly typeMagic = kSecCodeMagicCodeDirectory;
 
 	/**
-	 * Current version, subject to future change.
+	 * Current version, subject to change.
 	 */
 	public static readonly currentVersion = 0x20500;
 
 	/**
-	 * Compatibility limit, subject to future change.
+	 * Compatibility limit, subject to change.
 	 */
 	public static readonly compatibilityLimit = 0x2F000;
 

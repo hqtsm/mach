@@ -838,6 +838,8 @@ export const cdLaunchConstraintSelf = 8;
 export const cdLaunchConstraintParent = 9;
 export const cdLaunchConstraintResponsible = 10;
 export const cdLibraryConstraint = 11;
+export const cdSlotCount = 12; // Subject to change.
+export const cdSlotMax = 11; // Subject to change.
 
 export const cdCodeDirectorySlot = 0;
 export const cdAlternateCodeDirectorySlots = 0x1000;
