@@ -10,6 +10,7 @@ import {
 	Uint8Ptr,
 } from '@hqtsm/struct';
 import {
+	cdSlotMax,
 	kCCDigestSHA1,
 	kCCDigestSHA256,
 	kCCDigestSHA384,
@@ -169,6 +170,17 @@ export class CodeDirectory extends Blob {
 			}
 		}
 		return BigInt(_this.codeLimit);
+	}
+
+	/**
+	 * Get maximum special slot index.
+	 *
+	 * @param _this This.
+	 * @returns Slot index.
+	 */
+	public static maxSpecialSlot(_this: CodeDirectory): number {
+		const slot = _this.nSpecialSlots;
+		return slot > cdSlotMax ? cdSlotMax : slot;
 	}
 
 	/**

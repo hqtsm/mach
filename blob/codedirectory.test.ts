@@ -1,5 +1,6 @@
 import { assert, assertEquals, assertThrows } from '@std/assert';
 import {
+	cdSlotMax,
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
 	kSecCodeSignatureHashSHA256Truncated,
@@ -63,6 +64,23 @@ Deno.test('signingLimit', async () => {
 	cd2.codeLimit64 = BigInt(cd2.codeLimit);
 	cd2.codeLimit = 0;
 	assertEquals(CodeDirectory.signingLimit(cd2), 1n);
+});
+
+Deno.test('maxSpecialSlot', async () => {
+	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	CodeDirectoryBuilder.executable(
+		builder,
+		new Blob([new Uint8Array(1)]),
+		0,
+		0,
+		1,
+	);
+	const cd = await CodeDirectoryBuilder.build(builder);
+	assertEquals(CodeDirectory.maxSpecialSlot(cd), 0);
+	cd.nSpecialSlots = cdSlotMax;
+	assertEquals(CodeDirectory.maxSpecialSlot(cd), cdSlotMax);
+	cd.nSpecialSlots = cdSlotMax + 1;
+	assertEquals(CodeDirectory.maxSpecialSlot(cd), cdSlotMax);
 });
 
 Deno.test('scatterVector', async () => {
