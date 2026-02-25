@@ -335,6 +335,27 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
+	 * Check if slot is present and non-zero filled.
+	 *
+	 * @param _this This.
+	 * @param slot Slot index.
+	 * @returns True if present.
+	 */
+	public static slotIsPresent(_this: CodeDirectory, slot: number): boolean {
+		if (slot >= -_this.nSpecialSlots && slot < _this.nCodeSlots) {
+			const digest = CodeDirectory.getSlot(_this, slot, false);
+			if (digest) {
+				for (let i = 0, l = _this.hashSize; i < l; i++) {
+					if (digest[i]) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Get hash for current hash type.
 	 *
 	 * @param _this This.

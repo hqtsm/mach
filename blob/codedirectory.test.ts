@@ -180,6 +180,16 @@ Deno.test('runtimeVersion', async () => {
 	);
 });
 
+Deno.test('slotIsPresent', async () => {
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	await CodeDirectoryBuilder.specialSlot(builder, 2, new ArrayBuffer(0));
+	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
+	const cd = await CodeDirectoryBuilder.build(builder);
+	assertEquals(CodeDirectory.slotIsPresent(cd, -1), false);
+	assertEquals(CodeDirectory.slotIsPresent(cd, -2), true);
+	assertEquals(CodeDirectory.slotIsPresent(cd, -3), false);
+});
+
 Deno.test('getSlot', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
