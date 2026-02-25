@@ -10,23 +10,13 @@ import {
 import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 
-const createBuilder = async (
-	hashType: number,
-): Promise<CodeDirectoryBuilder> => {
-	const builder = new CodeDirectoryBuilder(hashType);
-	if (typeof crypto === 'undefined') {
-		builder.crypto = await import('node:crypto');
-	}
-	return builder;
-};
-
 Deno.test('BYTE_LENGTH', () => {
 	assertEquals(CodeDirectory.BYTE_LENGTH, 96);
 });
 
 Deno.test('identifier', async () => {
 	const identifier = 'Identifier';
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	CodeDirectoryBuilder.identifier(
 		builder,
@@ -42,7 +32,7 @@ Deno.test('identifier', async () => {
 });
 
 Deno.test('signingLimit', async () => {
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(
 		builder,
 		new Blob([new Uint8Array(1)]),
@@ -67,7 +57,7 @@ Deno.test('signingLimit', async () => {
 });
 
 Deno.test('maxSpecialSlot', async () => {
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(
 		builder,
 		new Blob([new Uint8Array(1)]),
@@ -84,7 +74,7 @@ Deno.test('maxSpecialSlot', async () => {
 });
 
 Deno.test('scatterVector', async () => {
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(
 		builder,
 		new Blob([new Uint8Array(1)]),
@@ -104,7 +94,7 @@ Deno.test('scatterVector', async () => {
 
 Deno.test('teamID', async () => {
 	const identifier = 'Team-Identifier';
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	assertEquals(
 		CodeDirectory.teamID(await CodeDirectoryBuilder.build(builder)),
@@ -122,7 +112,7 @@ Deno.test('teamID', async () => {
 });
 
 Deno.test('execSegmentBase', async () => {
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	assertEquals(
 		CodeDirectory.execSegmentBase(
@@ -140,7 +130,7 @@ Deno.test('execSegmentBase', async () => {
 });
 
 Deno.test('execSegmentLimit', async () => {
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	assertEquals(
 		CodeDirectory.execSegmentLimit(
@@ -158,7 +148,7 @@ Deno.test('execSegmentLimit', async () => {
 });
 
 Deno.test('execSegmentFlags', async () => {
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	assertEquals(
 		CodeDirectory.execSegmentFlags(
@@ -176,7 +166,7 @@ Deno.test('execSegmentFlags', async () => {
 });
 
 Deno.test('runtimeVersion', async () => {
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	assertEquals(
 		CodeDirectory.runtimeVersion(await CodeDirectoryBuilder.build(builder)),
@@ -190,7 +180,7 @@ Deno.test('runtimeVersion', async () => {
 });
 
 Deno.test('getSlot', async () => {
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	const cd = await CodeDirectoryBuilder.build(
 		builder,
