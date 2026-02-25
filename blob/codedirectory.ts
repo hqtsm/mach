@@ -312,6 +312,16 @@ export class CodeDirectory extends Blob {
 	public static override readonly typeMagic = kSecCodeMagicCodeDirectory;
 
 	/**
+	 * Current version, subject to future change.
+	 */
+	public static readonly currentVersion = 0x20500;
+
+	/**
+	 * Compatibility limit, subject to future change.
+	 */
+	public static readonly compatibilityLimit = 0x2F000;
+
+	/**
 	 * Earliest supported version.
 	 */
 	public static readonly earliestVersion = 0x20001;
@@ -390,6 +400,8 @@ export class CodeDirectory extends Blob {
 		uint32BE(this, 'preEncryptOffset');
 		constant(this, 'BYTE_LENGTH');
 		constant(this, 'typeMagic');
+		constant(this, 'currentVersion');
+		constant(this, 'compatibilityLimit');
 		constant(this, 'earliestVersion');
 		constant(this, 'supportsScatter');
 		constant(this, 'supportsTeamID');
