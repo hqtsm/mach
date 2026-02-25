@@ -200,6 +200,26 @@ Deno.test('getSlot', async () => {
 	assertEquals(CodeDirectory.preEncryptHashes(cd), null);
 });
 
+Deno.test('getHash', () => {
+	const cd = new CodeDirectory(new ArrayBuffer(CodeDirectory.BYTE_LENGTH));
+	cd.hashType = kSecCodeSignatureHashSHA1;
+	assertEquals(CodeDirectory.getHash(cd).digestLength(), 20);
+	cd.hashType = kSecCodeSignatureHashSHA256;
+	assertEquals(CodeDirectory.getHash(cd).digestLength(), 32);
+	cd.hashType = kSecCodeSignatureHashSHA384;
+	assertEquals(CodeDirectory.getHash(cd).digestLength(), 48);
+	cd.hashType = kSecCodeSignatureHashSHA256Truncated;
+	assertEquals(CodeDirectory.getHash(cd).digestLength(), 20);
+
+	// Not supported, intentional or an oversight?
+	cd.hashType = kSecCodeSignatureHashSHA512;
+	assertThrows(
+		() => CodeDirectory.getHash(cd),
+		RangeError,
+		`Unsupported hash type: ${kSecCodeSignatureHashSHA512}`,
+	);
+});
+
 Deno.test('hashFor', () => {
 	assertEquals(
 		CodeDirectory.hashFor(kSecCodeSignatureHashSHA1).digestLength(),
@@ -222,26 +242,6 @@ Deno.test('hashFor', () => {
 	// Not supported, intentional or an oversight?
 	assertThrows(
 		() => CodeDirectory.hashFor(kSecCodeSignatureHashSHA512),
-		RangeError,
-		`Unsupported hash type: ${kSecCodeSignatureHashSHA512}`,
-	);
-});
-
-Deno.test('getHash', () => {
-	const cd = new CodeDirectory(new ArrayBuffer(CodeDirectory.BYTE_LENGTH));
-	cd.hashType = kSecCodeSignatureHashSHA1;
-	assertEquals(CodeDirectory.getHash(cd).digestLength(), 20);
-	cd.hashType = kSecCodeSignatureHashSHA256;
-	assertEquals(CodeDirectory.getHash(cd).digestLength(), 32);
-	cd.hashType = kSecCodeSignatureHashSHA384;
-	assertEquals(CodeDirectory.getHash(cd).digestLength(), 48);
-	cd.hashType = kSecCodeSignatureHashSHA256Truncated;
-	assertEquals(CodeDirectory.getHash(cd).digestLength(), 20);
-
-	// Not supported, intentional or an oversight?
-	cd.hashType = kSecCodeSignatureHashSHA512;
-	assertThrows(
-		() => CodeDirectory.getHash(cd),
 		RangeError,
 		`Unsupported hash type: ${kSecCodeSignatureHashSHA512}`,
 	);
