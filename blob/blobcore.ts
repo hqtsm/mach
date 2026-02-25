@@ -1,5 +1,14 @@
 import { constant, toStringTag } from '@hqtsm/class';
-import { Int8Ptr, Ptr, Struct, uint32BE, Uint8Ptr } from '@hqtsm/struct';
+import {
+	type Arr,
+	array,
+	type Const,
+	Int8Ptr,
+	Ptr,
+	Struct,
+	uint32BE,
+	Uint8Ptr,
+} from '@hqtsm/struct';
 import { EINVAL, ENOMEM } from '../const.ts';
 import type { Reader } from '../util/reader.ts';
 
@@ -208,18 +217,19 @@ export class BlobCore extends Struct {
 	}
 
 	/**
-	 * Copy inner byte data.
+	 * Inner byte data.
 	 *
 	 * @param _this This.
-	 * @returns Array buffer.
+	 * @returns Uint8 byte array.
 	 */
-	public static innerData(_this: BlobCore): ArrayBuffer {
+	public static innerData(_this: BlobCore): Const<Arr<number>> {
 		const o = BlobCore.BYTE_LENGTH;
 		const p = BlobCore.at(_this, Uint8Ptr, o);
-		const l = BlobCore.size(_this) - o;
-		const b = new ArrayBuffer(l);
-		new Uint8Array(b).set(new Uint8Array(p.buffer, p.byteOffset, l));
-		return b;
+		return new (array(Uint8Ptr, BlobCore.size(_this) - o))(
+			p.buffer,
+			p.byteOffset,
+			p.littleEndian,
+		);
 	}
 
 	/**
