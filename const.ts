@@ -841,12 +841,17 @@ export const cdLibraryConstraint = 11;
 export const cdSlotCount = 12; // Subject to change.
 export const cdSlotMax = 11; // Subject to change.
 
+// Virtual slots:
 export const cdCodeDirectorySlot = 0;
 export const cdAlternateCodeDirectorySlots = 0x1000;
 export const cdAlternateCodeDirectoryLimit = 0x1005;
 export const cdSignatureSlot = 0x10000;
 export const cdIdentificationSlot = 0x10001;
 export const cdTicketSlot = 0x10002;
+
+// Special hash slot flags:
+export const cdComponentPerArchitecture = 1;
+export const cdComponentIsBlob = 2;
 
 // Opcodes exprForm:
 export const opFlagMask = 0xff000000;
