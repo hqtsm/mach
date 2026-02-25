@@ -1,5 +1,6 @@
 import { constant, toStringTag } from '@hqtsm/class';
 import {
+	type ArrayBufferPointer,
 	type Const,
 	Int8Ptr,
 	pointer,
@@ -23,6 +24,7 @@ import {
 } from '../const.ts';
 import { CCHashInstance } from '../hash/cchashinstance.ts';
 import type { DynamicHash, HashCrypto } from '../hash/dynamichash.ts';
+import type { Reader } from '../util/reader.ts';
 import { Blob } from './blob.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
 
@@ -332,6 +334,48 @@ export class CodeDirectory extends Blob {
 		return _this.version >= CodeDirectory.supportsPreEncrypt
 			? _this.runtime
 			: 0;
+	}
+
+	/**
+	 * Validate slot against source.
+	 *
+	 * @param _this This.
+	 * @param source Source data.
+	 * @param size Source size.
+	 * @param slot Slot index.
+	 * @param preEncrypted Pre-encrypt version.
+	 * @param crypto Hash crypto.
+	 * @returns True if valid.
+	 */
+	public static async validateSlot(
+		_this: CodeDirectory,
+		source: ArrayBufferLike | ArrayBufferPointer | Reader,
+		size: number,
+		slot: number,
+		preEncrypted: boolean,
+		crypto: HashCrypto | null = null,
+	): Promise<boolean> {
+		const hasher = CodeDirectory.getHash(_this);
+		hasher.crypto = crypto;
+		const digest = new Uint8Array(
+			await hasher.digest(
+				'arrayBuffer' in source ? source.slice(0, size) : (
+					'buffer' in source
+						? new Uint8Array(source.buffer, source.byteOffset, size)
+						: new Uint8Array(source, 0, size)
+				),
+			),
+		);
+		const slotDigest = CodeDirectory.getSlot(_this, slot, preEncrypted);
+		if (!slotDigest) {
+			throw new RangeError('Invalid slot');
+		}
+		for (let i = 0, l = hasher.digestLength(); i < l; i++) {
+			if (digest[i] !== slotDigest[i]) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**

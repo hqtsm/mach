@@ -1,4 +1,4 @@
-import { assert, assertEquals, assertThrows } from '@std/assert';
+import { assert, assertEquals, assertRejects, assertThrows } from '@std/assert';
 import {
 	cdSlotMax,
 	kSecCodeCDHashLength,
@@ -177,6 +177,50 @@ Deno.test('runtimeVersion', async () => {
 	assertEquals(
 		CodeDirectory.runtimeVersion(await CodeDirectoryBuilder.build(builder)),
 		123,
+	);
+});
+
+Deno.test('validateSlot', async () => {
+	const view = new TextEncoder().encode('TESTING 123');
+	const buff = view.buffer;
+	const blob = new Blob([buff]);
+	const len = view.length;
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	await CodeDirectoryBuilder.specialSlot(builder, 2, buff);
+	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
+	const cd = await CodeDirectoryBuilder.build(builder);
+	for (const [name, data] of Object.entries({ view, blob, buff })) {
+		assertEquals(
+			// deno-lint-ignore no-await-in-loop
+			await CodeDirectory.validateSlot(cd, data, len, -2, false),
+			true,
+			name,
+		);
+		assertEquals(
+			// deno-lint-ignore no-await-in-loop
+			await CodeDirectory.validateSlot(cd, data, len - 1, -2, false),
+			false,
+			name,
+		);
+		assertEquals(
+			// deno-lint-ignore no-await-in-loop
+			await CodeDirectory.validateSlot(
+				cd,
+				data,
+				len,
+				-2,
+				false,
+				crypto.subtle,
+			),
+			true,
+			name,
+		);
+	}
+
+	await assertRejects(
+		() => CodeDirectory.validateSlot(cd, view, len, 0, true),
+		RangeError,
+		'Invalid slot',
 	);
 });
 
