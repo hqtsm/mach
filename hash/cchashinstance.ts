@@ -111,7 +111,7 @@ export class CCHashInstance extends DynamicHash {
 				const hash = cry.createHash(name);
 				if ('write' in hash) {
 					algosA.push([alg, hash]);
-					writeA.push((data, done = false) =>
+					writeA.push((data, done = true) =>
 						new Promise<void>((p, f) =>
 							hash.write(
 								data,
@@ -157,7 +157,7 @@ export class CCHashInstance extends DynamicHash {
 						source.byteLength,
 					)
 					: new Uint8Array(source);
-				await Promise.all(writeA.map((w) => w(view, true)));
+				await Promise.all(writeA.map((w) => w(view)));
 				for (const [, hash] of algosS) {
 					hash.update(view);
 				}
