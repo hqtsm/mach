@@ -108,10 +108,10 @@ export class CCHashInstance extends DynamicHash {
 		if ('createHash' in cry) {
 			const algosA: [number, HashCryptoNodeStream][] = [];
 			const algosS: [number, HashCryptoNodeSync][] = [];
+			let hasA = false;
+			let hasS = false;
 			const writes: ((data: Uint8Array) => Promise<void>)[] = [];
 			const ends: ((data: Uint8Array) => Promise<void>)[] = [];
-			let asyncs = false;
-			let syncs = false;
 			for (const [alg, [, , name]] of algos) {
 				const h = cry.createHash(name);
 				if ('write' in h) {
@@ -126,10 +126,10 @@ export class CCHashInstance extends DynamicHash {
 							h.end((e) => e ? f(e) : p())
 						)
 					);
-					asyncs = true;
+					hasA = true;
 				} else {
 					algosS.push([alg, h]);
-					syncs = true;
+					hasS = true;
 				}
 			}
 			if ('arrayBuffer' in source) {
@@ -144,11 +144,11 @@ export class CCHashInstance extends DynamicHash {
 						throw new RangeError(`Read size off by: ${diff}`);
 					}
 					const view = new Uint8Array(data);
-					if (asyncs) {
+					if (hasA) {
 						// deno-lint-ignore no-await-in-loop
 						await Promise.all(writes.map(callOnThis, view));
 					}
-					if (syncs) {
+					if (hasS) {
 						for (const [, hash] of algosS) {
 							hash.update(view);
 						}
@@ -163,22 +163,22 @@ export class CCHashInstance extends DynamicHash {
 						source.byteLength,
 					)
 					: new Uint8Array(source);
-				if (asyncs) {
+				if (hasA) {
 					await Promise.all(writes.map(callOnThis, view));
 				}
-				if (syncs) {
+				if (hasS) {
 					for (const [, hash] of algosS) {
 						hash.update(view);
 					}
 				}
 			}
-			if (asyncs) {
+			if (hasA) {
 				await Promise.all(ends.map(callOnThis));
 				for (const [alg, hash] of algosA) {
 					r.set(alg, hash.read().buffer as ArrayBuffer);
 				}
 			}
-			if (syncs) {
+			if (hasS) {
 				for (const [alg, hash] of algosS) {
 					r.set(alg, hash.digest().buffer as ArrayBuffer);
 				}
