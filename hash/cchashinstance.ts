@@ -40,6 +40,9 @@ const algorithm = (alg: number): [number, string, string] => {
 	return info;
 };
 
+const ender = (hash: HashCryptoNodeStream) =>
+	new Promise<void>((p, f) => hash.end((e) => e ? f(e) : p()));
+
 function callOnThis<T, U>(this: T, f: (t: T) => U): U {
 	return f(this);
 }
@@ -108,27 +111,25 @@ export class CCHashInstance extends DynamicHash {
 		if ('createHash' in cry) {
 			const algosA: [number, HashCryptoNodeStream][] = [];
 			const algosS: [number, HashCryptoNodeSync][] = [];
+			const hashA: HashCryptoNodeStream[] = [];
+			const hashS: HashCryptoNodeSync[] = [];
+			const writes: ((data: Uint8Array) => Promise<void>)[] = [];
 			let hasA = false;
 			let hasS = false;
-			const writes: ((data: Uint8Array) => Promise<void>)[] = [];
-			const ends: ((data: Uint8Array) => Promise<void>)[] = [];
 			for (const [alg, [, , name]] of algos) {
-				const h = cry.createHash(name);
-				if ('write' in h) {
-					algosA.push([alg, h]);
+				const hash = cry.createHash(name);
+				if ('write' in hash) {
+					algosA.push([alg, hash]);
+					hashA.push(hash);
 					writes.push((data) =>
 						new Promise<void>((p, f) =>
-							h.write(data, (e) => e ? f(e) : p())
-						)
-					);
-					ends.push(() =>
-						new Promise<void>((p, f) =>
-							h.end((e) => e ? f(e) : p())
+							hash.write(data, (e) => e ? f(e) : p())
 						)
 					);
 					hasA = true;
 				} else {
-					algosS.push([alg, h]);
+					algosS.push([alg, hash]);
+					hashS.push(hash);
 					hasS = true;
 				}
 			}
@@ -149,7 +150,7 @@ export class CCHashInstance extends DynamicHash {
 						await Promise.all(writes.map(callOnThis, view));
 					}
 					if (hasS) {
-						for (const [, hash] of algosS) {
+						for (const hash of hashS) {
 							hash.update(view);
 						}
 					}
@@ -167,13 +168,13 @@ export class CCHashInstance extends DynamicHash {
 					await Promise.all(writes.map(callOnThis, view));
 				}
 				if (hasS) {
-					for (const [, hash] of algosS) {
+					for (const hash of hashS) {
 						hash.update(view);
 					}
 				}
 			}
 			if (hasA) {
-				await Promise.all(ends.map(callOnThis));
+				await Promise.all(hashA.map(ender));
 				for (const [alg, hash] of algosA) {
 					r.set(alg, hash.read().buffer as ArrayBuffer);
 				}
