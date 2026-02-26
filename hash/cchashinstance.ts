@@ -102,14 +102,14 @@ export class CCHashInstance extends DynamicHash {
 		}
 
 		if ('createHash' in cry) {
-			const hashersA = new Map<number, HashCryptoNodeStream>();
-			const hashersS = new Map<number, HashCryptoNodeSync>();
+			const hashersA: [number, HashCryptoNodeStream][] = [];
+			const hashersS: [number, HashCryptoNodeSync][] = [];
 			for (const [alg, [, , name]] of algos) {
 				const hash = cry.createHash(name);
 				if ('write' in hash) {
-					hashersA.set(alg, hash);
+					hashersA.push([alg, hash]);
 				} else {
-					hashersS.set(alg, hash);
+					hashersS.push([alg, hash]);
 				}
 			}
 			if ('arrayBuffer' in source) {
@@ -124,13 +124,13 @@ export class CCHashInstance extends DynamicHash {
 						throw new RangeError(`Read size off by: ${diff}`);
 					}
 					const view = new Uint8Array(data);
-					for (const hash of hashersA.values()) {
+					for (const [, hash] of hashersA) {
 						// deno-lint-ignore no-await-in-loop
 						await new Promise<void>((p, f) =>
 							hash.write(view, (e) => e ? f(e) : p())
 						);
 					}
-					for (const hash of hashersS.values()) {
+					for (const [, hash] of hashersS) {
 						hash.update(view);
 					}
 					remaining -= l;
