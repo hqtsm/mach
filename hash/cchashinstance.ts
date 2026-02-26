@@ -111,6 +111,7 @@ export class CCHashInstance extends DynamicHash {
 			const writes: ((data: Uint8Array) => Promise<void>)[] = [];
 			const ends: ((data: Uint8Array) => Promise<void>)[] = [];
 			let asyncs = false;
+			let syncs = false;
 			for (const [alg, [, , name]] of algos) {
 				const h = cry.createHash(name);
 				if ('write' in h) {
@@ -128,6 +129,7 @@ export class CCHashInstance extends DynamicHash {
 					asyncs = true;
 				} else {
 					algosS.push([alg, h]);
+					syncs = true;
 				}
 			}
 			if ('arrayBuffer' in source) {
@@ -146,8 +148,10 @@ export class CCHashInstance extends DynamicHash {
 						// deno-lint-ignore no-await-in-loop
 						await Promise.all(writes.map(callOnThis, view));
 					}
-					for (const [, hash] of algosS) {
-						hash.update(view);
+					if (syncs) {
+						for (const [, hash] of algosS) {
+							hash.update(view);
+						}
 					}
 					remaining -= l;
 				}
@@ -162,18 +166,22 @@ export class CCHashInstance extends DynamicHash {
 				if (asyncs) {
 					await Promise.all(writes.map(callOnThis, view));
 				}
-				for (const [, hash] of algosS) {
-					hash.update(view);
+				if (syncs) {
+					for (const [, hash] of algosS) {
+						hash.update(view);
+					}
 				}
 			}
 			if (asyncs) {
 				await Promise.all(ends.map(callOnThis));
+				for (const [alg, hash] of algosA) {
+					r.set(alg, hash.read().buffer as ArrayBuffer);
+				}
 			}
-			for (const [alg, hash] of algosA) {
-				r.set(alg, hash.read().buffer as ArrayBuffer);
-			}
-			for (const [alg, hash] of algosS) {
-				r.set(alg, hash.digest().buffer as ArrayBuffer);
+			if (syncs) {
+				for (const [alg, hash] of algosS) {
+					r.set(alg, hash.digest().buffer as ArrayBuffer);
+				}
 			}
 			return r as Map<number, ArrayBuffer>;
 		}
