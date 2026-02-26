@@ -157,7 +157,9 @@ export class CCHashInstance extends DynamicHash {
 						source.byteLength,
 					)
 					: new Uint8Array(source);
-				await Promise.all(writeA.map((w) => w(view)));
+				if (writeA.length) {
+					await Promise.all(writeA.map((w) => w(view)));
+				}
 				for (const [, hash] of algosS) {
 					hash.update(view);
 				}
