@@ -40,6 +40,10 @@ const algorithm = (alg: number): [number, string, string] => {
 	return info;
 };
 
+function callOnThis<T, U>(this: T, f: (t: T) => U): U {
+	return f(this);
+}
+
 /**
  * CCHashInstance dynamic hash.
  */
@@ -104,28 +108,32 @@ export class CCHashInstance extends DynamicHash {
 		if ('createHash' in cry) {
 			const algosA: [number, HashCryptoNodeStream][] = [];
 			const algosS: [number, HashCryptoNodeSync][] = [];
-			const writeA: (
-				(data: Uint8Array, done?: boolean) => Promise<void>
-			)[] = [];
+			const writes: ((data: Uint8Array) => Promise<void>)[] = [];
+			const ends: ((data: Uint8Array) => Promise<void>)[] = [];
+			let asyncs = false;
 			for (const [alg, [, , name]] of algos) {
-				const hash = cry.createHash(name);
-				if ('write' in hash) {
-					algosA.push([alg, hash]);
-					writeA.push((data, done = true) =>
+				const h = cry.createHash(name);
+				if ('write' in h) {
+					algosA.push([alg, h]);
+					writes.push((data) =>
 						new Promise<void>((p, f) =>
-							hash.write(
+							h.write(
 								data,
-								(e) =>
-									e
-										? f(e)
-										: done
-										? hash.end((e) => e ? f(e) : p())
-										: p(),
+								(e) => e ? f(e) : p(),
 							)
 						)
 					);
+					ends.push((data) =>
+						new Promise<void>((p, f) =>
+							h.write(
+								data,
+								(e) => e ? f(e) : h.end((e) => e ? f(e) : p()),
+							)
+						)
+					);
+					asyncs = true;
 				} else {
-					algosS.push([alg, hash]);
+					algosS.push([alg, h]);
 				}
 			}
 			if ('arrayBuffer' in source) {
@@ -140,10 +148,12 @@ export class CCHashInstance extends DynamicHash {
 						throw new RangeError(`Read size off by: ${diff}`);
 					}
 					const view = new Uint8Array(data);
-					const done = !(remaining -= l);
-					if (writeA.length) {
+					remaining -= l;
+					if (asyncs) {
 						// deno-lint-ignore no-await-in-loop
-						await Promise.all(writeA.map((w) => w(view, done)));
+						await Promise.all(
+							(remaining ? writes : ends).map(callOnThis, view),
+						);
 					}
 					for (const [, hash] of algosS) {
 						hash.update(view);
@@ -157,8 +167,8 @@ export class CCHashInstance extends DynamicHash {
 						source.byteLength,
 					)
 					: new Uint8Array(source);
-				if (writeA.length) {
-					await Promise.all(writeA.map((w) => w(view)));
+				if (asyncs) {
+					await Promise.all(ends.map(callOnThis, view));
 				}
 				for (const [, hash] of algosS) {
 					hash.update(view);
