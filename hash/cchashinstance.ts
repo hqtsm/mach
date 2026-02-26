@@ -156,13 +156,10 @@ export class CCHashInstance extends DynamicHash {
 				for (const [alg, hash] of hashersA) {
 					// deno-lint-ignore no-await-in-loop
 					await new Promise<void>((p, f) =>
-						hash.write(data, (e) => {
-							if (e) {
-								f(e);
-							} else {
-								hash.end((e) => e ? f(e) : p());
-							}
-						})
+						hash.write(
+							data,
+							(e) => e ? f(e) : hash.end((e) => e ? f(e) : p()),
+						)
 					);
 					r.set(alg, hash.read().buffer as ArrayBuffer);
 				}
