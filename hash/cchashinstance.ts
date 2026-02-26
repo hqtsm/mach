@@ -123,17 +123,15 @@ export class CCHashInstance extends DynamicHash {
 					if (diff) {
 						throw new RangeError(`Read size off by: ${diff}`);
 					}
+					const view = new Uint8Array(data);
 					for (const hash of hashersA.values()) {
 						// deno-lint-ignore no-await-in-loop
 						await new Promise<void>((p, f) =>
-							hash.write(
-								new Uint8Array(data),
-								(e) => e ? f(e) : p(),
-							)
+							hash.write(view, (e) => e ? f(e) : p())
 						);
 					}
 					for (const hash of hashersS.values()) {
-						hash.update(new Uint8Array(data));
+						hash.update(view);
 					}
 					remaining -= l;
 				}
