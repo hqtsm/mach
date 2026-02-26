@@ -7,7 +7,12 @@ import {
 	PAGE_SIZE,
 } from '../const.ts';
 import type { Reader } from '../util/reader.ts';
-import { DynamicHash, type HashCrypto } from './dynamichash.ts';
+import {
+	DynamicHash,
+	type HashCrypto,
+	type HashCryptoNodeStream,
+	type HashCryptoNodeSync,
+} from './dynamichash.ts';
 
 // Workaround for missing types.
 declare const crypto: {
@@ -90,18 +95,22 @@ export class CCHashInstance extends DynamicHash {
 	): Promise<Map<number, ArrayBuffer>> {
 		cry ||= crypto.subtle;
 		const algos = new Map<number, [number, string, string]>();
+		const r = new Map<number, ArrayBuffer | null>();
 		for (const alg of algorithms) {
 			algos.set(alg, algorithm(alg));
+			r.set(alg, null);
 		}
-		const r = new Map<number, ArrayBuffer>();
 
 		if ('createHash' in cry) {
-			const hashers = new Map<
-				number,
-				ReturnType<typeof cry.createHash>
-			>();
+			const hashersA = new Map<number, HashCryptoNodeStream>();
+			const hashersS = new Map<number, HashCryptoNodeSync>();
 			for (const [alg, [, , name]] of algos) {
-				hashers.set(alg, cry.createHash(name));
+				const hash = cry.createHash(name);
+				if ('write' in hash) {
+					hashersA.set(alg, hash);
+				} else {
+					hashersS.set(alg, hash);
+				}
 			}
 			if ('arrayBuffer' in source) {
 				const { size } = source;
@@ -114,33 +123,29 @@ export class CCHashInstance extends DynamicHash {
 					if (diff) {
 						throw new RangeError(`Read size off by: ${diff}`);
 					}
-					for (const hash of hashers.values()) {
-						if ('write' in hash) {
-							// deno-lint-ignore no-await-in-loop
-							await new Promise<void>((p, f) =>
-								hash.write(
-									new Uint8Array(data),
-									(e) => e ? f(e) : p(),
-								)
-							);
-						} else {
-							hash.update(new Uint8Array(data));
-						}
+					for (const hash of hashersA.values()) {
+						// deno-lint-ignore no-await-in-loop
+						await new Promise<void>((p, f) =>
+							hash.write(
+								new Uint8Array(data),
+								(e) => e ? f(e) : p(),
+							)
+						);
+					}
+					for (const hash of hashersS.values()) {
+						hash.update(new Uint8Array(data));
 					}
 					remaining -= l;
 				}
-				for (const [alg, hash] of hashers) {
-					let b;
-					if ('write' in hash) {
-						// deno-lint-ignore no-await-in-loop
-						await new Promise<void>((p, f) =>
-							hash.end((e) => e ? f(e) : p())
-						);
-						b = hash.read();
-					} else {
-						b = hash.digest();
-					}
-					r.set(alg, b.buffer as ArrayBuffer);
+				for (const [alg, hash] of hashersA) {
+					// deno-lint-ignore no-await-in-loop
+					await new Promise<void>((p, f) =>
+						hash.end((e) => e ? f(e) : p())
+					);
+					r.set(alg, hash.read().buffer as ArrayBuffer);
+				}
+				for (const [alg, hash] of hashersS) {
+					r.set(alg, hash.digest().buffer as ArrayBuffer);
 				}
 			} else {
 				const data = 'buffer' in source
@@ -150,28 +155,25 @@ export class CCHashInstance extends DynamicHash {
 						source.byteLength,
 					)
 					: new Uint8Array(source);
-				for (const [alg, hash] of hashers) {
-					let b;
-					if ('write' in hash) {
-						// deno-lint-ignore no-await-in-loop
-						await new Promise<void>((p, f) =>
-							hash.write(data, (e) => {
-								if (e) {
-									f(e);
-								} else {
-									hash.end((e) => e ? f(e) : p());
-								}
-							})
-						);
-						b = hash.read();
-					} else {
-						hash.update(data);
-						b = hash.digest();
-					}
-					r.set(alg, b.buffer as ArrayBuffer);
+				for (const [alg, hash] of hashersA) {
+					// deno-lint-ignore no-await-in-loop
+					await new Promise<void>((p, f) =>
+						hash.write(data, (e) => {
+							if (e) {
+								f(e);
+							} else {
+								hash.end((e) => e ? f(e) : p());
+							}
+						})
+					);
+					r.set(alg, hash.read().buffer as ArrayBuffer);
+				}
+				for (const [alg, hash] of hashersS) {
+					hash.update(data);
+					r.set(alg, hash.digest().buffer as ArrayBuffer);
 				}
 			}
-			return r;
+			return r as Map<number, ArrayBuffer>;
 		}
 
 		let data;
@@ -197,7 +199,7 @@ export class CCHashInstance extends DynamicHash {
 			// deno-lint-ignore no-await-in-loop
 			r.set(alg, await cry.digest(NAME, data));
 		}
-		return r;
+		return r as Map<number, ArrayBuffer>;
 	}
 
 	static {
