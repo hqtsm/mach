@@ -135,15 +135,11 @@ export class CCHashInstance extends DynamicHash {
 					}
 					remaining -= l;
 				}
-				for (const [alg, hash] of hashersA) {
+				for (const [, hash] of hashersA) {
 					// deno-lint-ignore no-await-in-loop
 					await new Promise<void>((p, f) =>
 						hash.end((e) => e ? f(e) : p())
 					);
-					r.set(alg, hash.read().buffer as ArrayBuffer);
-				}
-				for (const [alg, hash] of hashersS) {
-					r.set(alg, hash.digest().buffer as ArrayBuffer);
 				}
 			} else {
 				const data = 'buffer' in source
@@ -153,7 +149,7 @@ export class CCHashInstance extends DynamicHash {
 						source.byteLength,
 					)
 					: new Uint8Array(source);
-				for (const [alg, hash] of hashersA) {
+				for (const [, hash] of hashersA) {
 					// deno-lint-ignore no-await-in-loop
 					await new Promise<void>((p, f) =>
 						hash.write(
@@ -161,12 +157,16 @@ export class CCHashInstance extends DynamicHash {
 							(e) => e ? f(e) : hash.end((e) => e ? f(e) : p()),
 						)
 					);
-					r.set(alg, hash.read().buffer as ArrayBuffer);
 				}
-				for (const [alg, hash] of hashersS) {
+				for (const [, hash] of hashersS) {
 					hash.update(data);
-					r.set(alg, hash.digest().buffer as ArrayBuffer);
 				}
+			}
+			for (const [alg, hash] of hashersA) {
+				r.set(alg, hash.read().buffer as ArrayBuffer);
+			}
+			for (const [alg, hash] of hashersS) {
+				r.set(alg, hash.digest().buffer as ArrayBuffer);
 			}
 			return r as Map<number, ArrayBuffer>;
 		}
