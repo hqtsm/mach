@@ -7,7 +7,7 @@ import {
 	PAGE_SIZE,
 } from '../const.ts';
 import type { Reader } from '../util/reader.ts';
-import { DynamicHash } from './dynamichash.ts';
+import { DynamicHash, type HashCrypto } from './dynamichash.ts';
 
 // Workaround for missing types.
 declare const crypto: {
@@ -69,19 +69,40 @@ export class CCHashInstance extends DynamicHash {
 	public async digest(
 		source: Reader | ArrayBufferLike | ArrayBufferView,
 	): Promise<ArrayBuffer> {
-		const { mTruncate } = this;
-		const cry = this.crypto || crypto.subtle;
-		const [, NAME, name] = algorithm(this.mDigest);
+		const { mDigest, mTruncate } = this;
+		const m = await CCHashInstance.digests(source, [mDigest], this.crypto);
+		const digest = m.get(mDigest)!;
+		return mTruncate ? digest.slice(0, mTruncate) : digest;
+	}
+
+	/**
+	 * Hash digest multiple algorithms.
+	 *
+	 * @param source Source data.
+	 * @param algorithms Hash algorithms.
+	 * @param cry Hash crypto.
+	 * @returns Hash digests.
+	 */
+	static async digests(
+		source: Reader | ArrayBufferLike | ArrayBufferView,
+		algorithms: Iterable<number>,
+		cry: HashCrypto | null = null,
+	): Promise<Map<number, ArrayBuffer>> {
+		cry ||= crypto.subtle;
+		const algos = new Map<number, [number, string, string]>();
+		for (const alg of algorithms) {
+			algos.set(alg, algorithm(alg));
+		}
+		const r = new Map<number, ArrayBuffer>();
 
 		if ('createHash' in cry) {
-			let digest: {
-				buffer: ArrayBuffer;
-				byteLength: number;
-				byteOffset: number;
-			};
-			const hash = cry.createHash(name);
-			const asyn = 'write' in hash;
-
+			const hashers = new Map<
+				number,
+				ReturnType<typeof cry.createHash>
+			>();
+			for (const [alg, [, , name]] of algos) {
+				hashers.set(alg, cry.createHash(name));
+			}
 			if ('arrayBuffer' in source) {
 				const { size } = source;
 				let remaining = size;
@@ -93,26 +114,33 @@ export class CCHashInstance extends DynamicHash {
 					if (diff) {
 						throw new RangeError(`Read size off by: ${diff}`);
 					}
-					if (asyn) {
-						// deno-lint-ignore no-await-in-loop
-						await new Promise<void>((p, f) =>
-							hash.write(
-								new Uint8Array(data),
-								(e) => e ? f(e) : p(),
-							)
-						);
-					} else {
-						hash.update(new Uint8Array(data));
+					for (const hash of hashers.values()) {
+						if ('write' in hash) {
+							// deno-lint-ignore no-await-in-loop
+							await new Promise<void>((p, f) =>
+								hash.write(
+									new Uint8Array(data),
+									(e) => e ? f(e) : p(),
+								)
+							);
+						} else {
+							hash.update(new Uint8Array(data));
+						}
 					}
 					remaining -= l;
 				}
-				if (asyn) {
-					await new Promise<void>((p, f) =>
-						hash.end((e) => e ? f(e) : p())
-					);
-					digest = hash.read() as typeof digest;
-				} else {
-					digest = hash.digest() as typeof digest;
+				for (const [alg, hash] of hashers) {
+					let b;
+					if ('write' in hash) {
+						// deno-lint-ignore no-await-in-loop
+						await new Promise<void>((p, f) =>
+							hash.end((e) => e ? f(e) : p())
+						);
+						b = hash.read();
+					} else {
+						b = hash.digest();
+					}
+					r.set(alg, b.buffer as ArrayBuffer);
 				}
 			} else {
 				const data = 'buffer' in source
@@ -122,51 +150,54 @@ export class CCHashInstance extends DynamicHash {
 						source.byteLength,
 					)
 					: new Uint8Array(source);
-				if (asyn) {
-					await new Promise<void>((p, f) =>
-						hash.write(data, (e) => {
-							if (e) {
-								f(e);
-							} else {
-								hash.end((e) => e ? f(e) : p());
-							}
-						})
-					);
-					digest = hash.read() as typeof digest;
-				} else {
-					hash.update(data);
-					digest = hash.digest() as typeof digest;
+				for (const [alg, hash] of hashers) {
+					let b;
+					if ('write' in hash) {
+						// deno-lint-ignore no-await-in-loop
+						await new Promise<void>((p, f) =>
+							hash.write(data, (e) => {
+								if (e) {
+									f(e);
+								} else {
+									hash.end((e) => e ? f(e) : p());
+								}
+							})
+						);
+						b = hash.read();
+					} else {
+						hash.update(data);
+						b = hash.digest();
+					}
+					r.set(alg, b.buffer as ArrayBuffer);
 				}
 			}
-			const o = digest.byteOffset;
-			return digest.buffer.slice(o, o + (mTruncate || digest.byteLength));
+			return r;
 		}
 
-		let digest: ArrayBuffer;
+		let data;
 		if ('arrayBuffer' in source) {
 			const { size } = source;
-			digest = await source.arrayBuffer().then((data) => {
-				const diff = data.byteLength - size;
-				if (diff) {
-					throw new RangeError(`Read size off by: ${diff}`);
-				}
-				return cry.digest(NAME, data);
-			});
+			data = await source.arrayBuffer();
+			const diff = data.byteLength - size;
+			if (diff) {
+				throw new RangeError(`Read size off by: ${diff}`);
+			}
 		} else {
-			digest = await cry.digest(
-				NAME,
-				(
-					'buffer' in source
-						? new Uint8Array(
-							source.buffer,
-							source.byteOffset,
-							source.byteLength,
-						)
-						: new Uint8Array(source)
-				).slice(0),
-			);
+			data = (
+				'buffer' in source
+					? new Uint8Array(
+						source.buffer,
+						source.byteOffset,
+						source.byteLength,
+					)
+					: new Uint8Array(source)
+			).slice(0);
 		}
-		return mTruncate ? digest.slice(0, mTruncate) : digest;
+		for (const [alg, [, NAME]] of algos) {
+			// deno-lint-ignore no-await-in-loop
+			r.set(alg, await cry.digest(NAME, data));
+		}
+		return r;
 	}
 
 	static {
