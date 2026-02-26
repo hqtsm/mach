@@ -117,18 +117,12 @@ export class CCHashInstance extends DynamicHash {
 					algosA.push([alg, h]);
 					writes.push((data) =>
 						new Promise<void>((p, f) =>
-							h.write(
-								data,
-								(e) => e ? f(e) : p(),
-							)
+							h.write(data, (e) => e ? f(e) : p())
 						)
 					);
-					ends.push((data) =>
+					ends.push(() =>
 						new Promise<void>((p, f) =>
-							h.write(
-								data,
-								(e) => e ? f(e) : h.end((e) => e ? f(e) : p()),
-							)
+							h.end((e) => e ? f(e) : p())
 						)
 					);
 					asyncs = true;
@@ -148,16 +142,14 @@ export class CCHashInstance extends DynamicHash {
 						throw new RangeError(`Read size off by: ${diff}`);
 					}
 					const view = new Uint8Array(data);
-					remaining -= l;
 					if (asyncs) {
 						// deno-lint-ignore no-await-in-loop
-						await Promise.all(
-							(remaining ? writes : ends).map(callOnThis, view),
-						);
+						await Promise.all(writes.map(callOnThis, view));
 					}
 					for (const [, hash] of algosS) {
 						hash.update(view);
 					}
+					remaining -= l;
 				}
 			} else {
 				const view = 'buffer' in source
@@ -168,11 +160,14 @@ export class CCHashInstance extends DynamicHash {
 					)
 					: new Uint8Array(source);
 				if (asyncs) {
-					await Promise.all(ends.map(callOnThis, view));
+					await Promise.all(writes.map(callOnThis, view));
 				}
 				for (const [, hash] of algosS) {
 					hash.update(view);
 				}
+			}
+			if (asyncs) {
+				await Promise.all(ends.map(callOnThis));
 			}
 			for (const [alg, hash] of algosA) {
 				r.set(alg, hash.read().buffer as ArrayBuffer);
