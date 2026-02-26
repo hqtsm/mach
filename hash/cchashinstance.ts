@@ -102,14 +102,14 @@ export class CCHashInstance extends DynamicHash {
 		}
 
 		if ('createHash' in cry) {
-			const hashersA: [number, HashCryptoNodeStream][] = [];
-			const hashersS: [number, HashCryptoNodeSync][] = [];
+			const algosA: [number, HashCryptoNodeStream][] = [];
+			const algosS: [number, HashCryptoNodeSync][] = [];
 			for (const [alg, [, , name]] of algos) {
 				const hash = cry.createHash(name);
 				if ('write' in hash) {
-					hashersA.push([alg, hash]);
+					algosA.push([alg, hash]);
 				} else {
-					hashersS.push([alg, hash]);
+					algosS.push([alg, hash]);
 				}
 			}
 			if ('arrayBuffer' in source) {
@@ -124,18 +124,18 @@ export class CCHashInstance extends DynamicHash {
 						throw new RangeError(`Read size off by: ${diff}`);
 					}
 					const view = new Uint8Array(data);
-					for (const [, hash] of hashersA) {
+					for (const [, hash] of algosA) {
 						// deno-lint-ignore no-await-in-loop
 						await new Promise<void>((p, f) =>
 							hash.write(view, (e) => e ? f(e) : p())
 						);
 					}
-					for (const [, hash] of hashersS) {
+					for (const [, hash] of algosS) {
 						hash.update(view);
 					}
 					remaining -= l;
 				}
-				for (const [, hash] of hashersA) {
+				for (const [, hash] of algosA) {
 					// deno-lint-ignore no-await-in-loop
 					await new Promise<void>((p, f) =>
 						hash.end((e) => e ? f(e) : p())
@@ -149,7 +149,7 @@ export class CCHashInstance extends DynamicHash {
 						source.byteLength,
 					)
 					: new Uint8Array(source);
-				for (const [, hash] of hashersA) {
+				for (const [, hash] of algosA) {
 					// deno-lint-ignore no-await-in-loop
 					await new Promise<void>((p, f) =>
 						hash.write(
@@ -158,14 +158,14 @@ export class CCHashInstance extends DynamicHash {
 						)
 					);
 				}
-				for (const [, hash] of hashersS) {
+				for (const [, hash] of algosS) {
 					hash.update(data);
 				}
 			}
-			for (const [alg, hash] of hashersA) {
+			for (const [alg, hash] of algosA) {
 				r.set(alg, hash.read().buffer as ArrayBuffer);
 			}
-			for (const [alg, hash] of hashersS) {
+			for (const [alg, hash] of algosS) {
 				r.set(alg, hash.digest().buffer as ArrayBuffer);
 			}
 			return r as Map<number, ArrayBuffer>;
