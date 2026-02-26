@@ -176,12 +176,28 @@ export class CCHashInstance extends DynamicHash {
 			if (hasA) {
 				await Promise.all(hashA.map(ender));
 				for (const [alg, hash] of algosA) {
-					r.set(alg, hash.read().buffer as ArrayBuffer);
+					const b = hash.read();
+					r.set(
+						alg,
+						new Uint8Array(
+							b.buffer,
+							b.byteOffset,
+							b.byteLength,
+						).slice().buffer,
+					);
 				}
 			}
 			if (hasS) {
 				for (const [alg, hash] of algosS) {
-					r.set(alg, hash.digest().buffer as ArrayBuffer);
+					const b = hash.digest();
+					r.set(
+						alg,
+						new Uint8Array(
+							b.buffer,
+							b.byteOffset,
+							b.byteLength,
+						).slice().buffer,
+					);
 				}
 			}
 			return r as Map<number, ArrayBuffer>;
