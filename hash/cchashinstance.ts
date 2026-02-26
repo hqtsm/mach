@@ -104,10 +104,26 @@ export class CCHashInstance extends DynamicHash {
 		if ('createHash' in cry) {
 			const algosA: [number, HashCryptoNodeStream][] = [];
 			const algosS: [number, HashCryptoNodeSync][] = [];
+			const writeA: (
+				(data: Uint8Array, done?: boolean) => Promise<void>
+			)[] = [];
 			for (const [alg, [, , name]] of algos) {
 				const hash = cry.createHash(name);
 				if ('write' in hash) {
 					algosA.push([alg, hash]);
+					writeA.push((data, done = false) =>
+						new Promise<void>((p, f) =>
+							hash.write(
+								data,
+								(e) =>
+									e
+										? f(e)
+										: done
+										? hash.end((e) => e ? f(e) : p())
+										: p(),
+							)
+						)
+					);
 				} else {
 					algosS.push([alg, hash]);
 				}
@@ -124,22 +140,14 @@ export class CCHashInstance extends DynamicHash {
 						throw new RangeError(`Read size off by: ${diff}`);
 					}
 					const view = new Uint8Array(data);
-					for (const [, hash] of algosA) {
+					const done = !(remaining -= l);
+					for (const w of writeA) {
 						// deno-lint-ignore no-await-in-loop
-						await new Promise<void>((p, f) =>
-							hash.write(view, (e) => e ? f(e) : p())
-						);
+						await w(view, done);
 					}
 					for (const [, hash] of algosS) {
 						hash.update(view);
 					}
-					remaining -= l;
-				}
-				for (const [, hash] of algosA) {
-					// deno-lint-ignore no-await-in-loop
-					await new Promise<void>((p, f) =>
-						hash.end((e) => e ? f(e) : p())
-					);
 				}
 			} else {
 				const data = 'buffer' in source
@@ -149,14 +157,9 @@ export class CCHashInstance extends DynamicHash {
 						source.byteLength,
 					)
 					: new Uint8Array(source);
-				for (const [, hash] of algosA) {
+				for (const w of writeA) {
 					// deno-lint-ignore no-await-in-loop
-					await new Promise<void>((p, f) =>
-						hash.write(
-							data,
-							(e) => e ? f(e) : hash.end((e) => e ? f(e) : p()),
-						)
-					);
+					await w(data, true);
 				}
 				for (const [, hash] of algosS) {
 					hash.update(data);
