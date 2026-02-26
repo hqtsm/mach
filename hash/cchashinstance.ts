@@ -141,28 +141,25 @@ export class CCHashInstance extends DynamicHash {
 					}
 					const view = new Uint8Array(data);
 					const done = !(remaining -= l);
-					for (const w of writeA) {
+					if (writeA.length) {
 						// deno-lint-ignore no-await-in-loop
-						await w(view, done);
+						await Promise.all(writeA.map((w) => w(view, done)));
 					}
 					for (const [, hash] of algosS) {
 						hash.update(view);
 					}
 				}
 			} else {
-				const data = 'buffer' in source
+				const view = 'buffer' in source
 					? new Uint8Array(
 						source.buffer,
 						source.byteOffset,
 						source.byteLength,
 					)
 					: new Uint8Array(source);
-				for (const w of writeA) {
-					// deno-lint-ignore no-await-in-loop
-					await w(data, true);
-				}
+				await Promise.all(writeA.map((w) => w(view, true)));
 				for (const [, hash] of algosS) {
-					hash.update(data);
+					hash.update(view);
 				}
 			}
 			for (const [alg, hash] of algosA) {
