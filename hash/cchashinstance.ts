@@ -7,7 +7,11 @@ import {
 	PAGE_SIZE,
 } from '../const.ts';
 import type { Reader } from '../util/reader.ts';
-import { DynamicHash, type HashCryptoSubtle } from './dynamichash.ts';
+import {
+	DynamicHash,
+	type HashCryptoNodeStream,
+	type HashCryptoSubtle,
+} from './dynamichash.ts';
 
 // Workaround for missing types.
 declare const crypto: {
@@ -80,63 +84,63 @@ export class CCHashInstance extends DynamicHash {
 		if (s) {
 			throw new Error('Already updated');
 		}
-		mDigest.s = s + 1;
+		mDigest.s = 1;
 		const c = this.crypto || crypto.subtle;
+		let data: Uint8Array;
 		let digest;
 
 		if ('createHash' in c) {
 			const hash = c.createHash(n);
-			const asyn = 'write' in hash;
+			const write = (p: () => void, f: (e?: unknown) => void) =>
+				(hash as HashCryptoNodeStream).write(
+					data,
+					(e) => e ? f(e) : p(),
+				);
 
 			if ('arrayBuffer' in source) {
 				const { size } = source;
-				let remaining = size;
-				for (let o = 0; o < size; o += PAGE_SIZE) {
-					const l = remaining > PAGE_SIZE ? PAGE_SIZE : remaining;
-					// deno-lint-ignore no-await-in-loop
-					const data = await source.slice(o, o + l).arrayBuffer();
+				const read = async (o: number, l: number) => {
+					data = new Uint8Array(
+						await source.slice(o, o + l).arrayBuffer(),
+					);
 					const diff = data.byteLength - l;
 					if (diff) {
 						throw new RangeError(`Read size off by: ${diff}`);
 					}
-					if (asyn) {
+				};
+				if ('write' in hash) {
+					for (let o = 0, r = size, l; o < size; o += PAGE_SIZE) {
 						// deno-lint-ignore no-await-in-loop
-						await new Promise<void>((p, f) =>
-							hash.write(
-								new Uint8Array(data),
-								(e) => e ? f(e) : p(),
-							)
-						);
-					} else {
-						hash.update(new Uint8Array(data));
+						await read(o, l = r > PAGE_SIZE ? PAGE_SIZE : r);
+						// deno-lint-ignore no-await-in-loop
+						await new Promise<void>(write);
+						r -= l;
 					}
-					remaining -= l;
-				}
-				if (asyn) {
 					await new Promise<void>((p, f) =>
 						hash.end((e) => e ? f(e) : p())
 					);
 					digest = hash.read();
 				} else {
+					for (let o = 0, r = size, l; o < size; o += PAGE_SIZE) {
+						// deno-lint-ignore no-await-in-loop
+						await read(o, l = r > PAGE_SIZE ? PAGE_SIZE : r);
+						hash.update(new Uint8Array(data!));
+						r -= l;
+					}
 					digest = hash.digest();
 				}
 			} else {
-				const data = 'buffer' in source
+				data = 'buffer' in source
 					? new Uint8Array(
 						source.buffer,
 						source.byteOffset,
 						source.byteLength,
 					)
 					: new Uint8Array(source);
-				if (asyn) {
+				if ('write' in hash) {
+					await new Promise<void>(write);
 					await new Promise<void>((p, f) =>
-						hash.write(data, (e) => {
-							if (e) {
-								f(e);
-							} else {
-								hash.end((e) => e ? f(e) : p());
-							}
-						})
+						hash.end((e) => e ? f(e) : p())
 					);
 					digest = hash.read();
 				} else {
@@ -145,7 +149,7 @@ export class CCHashInstance extends DynamicHash {
 				}
 			}
 
-			mDigest.d = new Uint8Array(
+			digest = new Uint8Array(
 				digest.buffer,
 				digest.byteOffset,
 				digest.byteLength,
@@ -160,7 +164,7 @@ export class CCHashInstance extends DynamicHash {
 				}
 				digest = await c.digest(N, data);
 			} else {
-				const view = 'buffer' in source
+				data = 'buffer' in source
 					? new Uint8Array(
 						source.buffer,
 						source.byteOffset,
@@ -168,14 +172,15 @@ export class CCHashInstance extends DynamicHash {
 					)
 					: new Uint8Array(source);
 				try {
-					digest = await c.digest(N, view as Uint8Array<ArrayBuffer>);
+					digest = await c.digest(N, data as Uint8Array<ArrayBuffer>);
 				} catch (_) {
-					digest = await c.digest(N, view.slice(0));
+					digest = await c.digest(N, data.slice(0));
 				}
 			}
-			mDigest.d = digest;
 		}
-		mDigest.s = s + 2;
+
+		mDigest.d = digest;
+		mDigest.s = 2;
 	}
 
 	// deno-lint-ignore require-await
@@ -193,7 +198,7 @@ export class CCHashInstance extends DynamicHash {
 				throw new Error('Already finished');
 			}
 		}
-		mDigest.s = s + 1;
+		mDigest.s = 3;
 		mDigest.d = null;
 		return mTruncate ? d!.slice(0, mTruncate) : d!;
 	}
