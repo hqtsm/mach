@@ -124,7 +124,7 @@ export class CCHashInstance extends DynamicHash {
 					for (let o = 0, r = size, l; o < size; o += PAGE_SIZE) {
 						// deno-lint-ignore no-await-in-loop
 						await read(o, l = r > PAGE_SIZE ? PAGE_SIZE : r);
-						hash.update(new Uint8Array(data!));
+						hash.update(data!);
 						r -= l;
 					}
 					digest = hash.digest();
