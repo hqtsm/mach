@@ -14,15 +14,6 @@ function specialSlot(slot: number): number {
 	return slot;
 }
 
-async function generateHash(
-	hasher: DynamicHash,
-	reader: Reader,
-	offset: number,
-	length: number,
-): Promise<ArrayBuffer> {
-	return await hasher.digest(reader.slice(offset, offset + length));
-}
-
 /**
  * Builder for building CodeDirectories from pieces.
  */
@@ -560,7 +551,9 @@ export class CodeDirectoryBuilder {
 			}
 			const hasher = CodeDirectoryBuilder.getHash(_this);
 			// deno-lint-ignore no-await-in-loop
-			const hash = await generateHash(hasher, mExec, position, thisPage);
+			const hash = await hasher.digest(
+				mExec.slice(position, position + thisPage),
+			);
 			const data = new Uint8Array(hash);
 			const slot = CodeDirectory.getSlotMutable(dir, i, false)!;
 			new Uint8Array(slot.buffer, slot.byteOffset).set(data);
