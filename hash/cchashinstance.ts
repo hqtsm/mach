@@ -100,18 +100,20 @@ export class CCHashInstance extends DynamicHash {
 			if ('arrayBuffer' in source) {
 				const { size } = source;
 				const read = async (o: number, l: number) => {
-					data = new Uint8Array(
+					const data = new Uint8Array(
 						await source.slice(o, o + l).arrayBuffer(),
 					);
 					const diff = data.byteLength - l;
 					if (diff) {
 						throw new RangeError(`Read size off by: ${diff}`);
 					}
+					return data;
 				};
 				if ('write' in hash) {
 					for (let o = 0, r = size, l; o < size; o += PAGE_SIZE) {
+						l = r > PAGE_SIZE ? PAGE_SIZE : r;
 						// deno-lint-ignore no-await-in-loop
-						await read(o, l = r > PAGE_SIZE ? PAGE_SIZE : r);
+						data = await read(o, l);
 						// deno-lint-ignore no-await-in-loop
 						await new Promise<void>(write);
 						r -= l;
@@ -122,9 +124,9 @@ export class CCHashInstance extends DynamicHash {
 					digest = hash.read();
 				} else {
 					for (let o = 0, r = size, l; o < size; o += PAGE_SIZE) {
+						l = r > PAGE_SIZE ? PAGE_SIZE : r;
 						// deno-lint-ignore no-await-in-loop
-						await read(o, l = r > PAGE_SIZE ? PAGE_SIZE : r);
-						hash.update(data!);
+						hash.update(await read(o, l));
 						r -= l;
 					}
 					digest = hash.digest();
