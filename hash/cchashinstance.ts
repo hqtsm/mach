@@ -7,16 +7,11 @@ import {
 	PAGE_SIZE,
 } from '../const.ts';
 import type { Reader } from '../util/reader.ts';
-import { DynamicHash } from './dynamichash.ts';
+import { DynamicHash, type HashCryptoSubtle } from './dynamichash.ts';
 
 // Workaround for missing types.
 declare const crypto: {
-	subtle: {
-		digest: (
-			alg: string,
-			data: ArrayBufferView | ArrayBuffer,
-		) => Promise<ArrayBuffer>;
-	};
+	subtle: HashCryptoSubtle;
 };
 
 // Supported hash algorithms with their names and lengths.
