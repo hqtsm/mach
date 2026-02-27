@@ -143,13 +143,12 @@ export class CCHashInstance extends DynamicHash {
 		let digest: ArrayBuffer;
 		if ('arrayBuffer' in source) {
 			const { size } = source;
-			digest = await source.arrayBuffer().then((data) => {
-				const diff = data.byteLength - size;
-				if (diff) {
-					throw new RangeError(`Read size off by: ${diff}`);
-				}
-				return cry.digest(NAME, data);
-			});
+			const data = await source.arrayBuffer();
+			const diff = data.byteLength - size;
+			if (diff) {
+				throw new RangeError(`Read size off by: ${diff}`);
+			}
+			digest = await cry.digest(NAME, data);
 		} else {
 			const view = 'buffer' in source
 				? new Uint8Array(
