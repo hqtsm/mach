@@ -86,16 +86,10 @@ export class CCHashInstance extends DynamicHash {
 		}
 		mDigest.s = 1;
 		const c = this.crypto || crypto.subtle;
-		let data: Uint8Array;
 		let digest;
 
 		if ('createHash' in c) {
 			const hash = c.createHash(n);
-			const write = (p: () => void, f: (e?: unknown) => void) =>
-				(hash as HashCryptoNodeStream).write(
-					data,
-					(e) => e ? f(e) : p(),
-				);
 
 			if ('arrayBuffer' in source) {
 				const { size } = source;
@@ -111,11 +105,15 @@ export class CCHashInstance extends DynamicHash {
 				};
 				if ('write' in hash) {
 					for (let o = 0, r = size, l; o < size; o += PAGE_SIZE) {
-						l = r > PAGE_SIZE ? PAGE_SIZE : r;
 						// deno-lint-ignore no-await-in-loop
-						data = await read(o, l);
+						const data = await read(
+							o,
+							l = r > PAGE_SIZE ? PAGE_SIZE : r,
+						);
 						// deno-lint-ignore no-await-in-loop
-						await new Promise<void>(write);
+						await new Promise<void>((p, f) =>
+							hash.write(data, (e) => e ? f(e) : p())
+						);
 						r -= l;
 					}
 					await new Promise<void>((p, f) =>
@@ -124,15 +122,19 @@ export class CCHashInstance extends DynamicHash {
 					digest = hash.read();
 				} else {
 					for (let o = 0, r = size, l; o < size; o += PAGE_SIZE) {
-						l = r > PAGE_SIZE ? PAGE_SIZE : r;
-						// deno-lint-ignore no-await-in-loop
-						hash.update(await read(o, l));
+						hash.update(
+							// deno-lint-ignore no-await-in-loop
+							await read(
+								o,
+								l = r > PAGE_SIZE ? PAGE_SIZE : r,
+							),
+						);
 						r -= l;
 					}
 					digest = hash.digest();
 				}
 			} else {
-				data = 'buffer' in source
+				const data = 'buffer' in source
 					? new Uint8Array(
 						source.buffer,
 						source.byteOffset,
@@ -140,7 +142,9 @@ export class CCHashInstance extends DynamicHash {
 					)
 					: new Uint8Array(source);
 				if ('write' in hash) {
-					await new Promise<void>(write);
+					await new Promise<void>((p, f) =>
+						hash.write(data, (e) => e ? f(e) : p())
+					);
 					await new Promise<void>((p, f) =>
 						hash.end((e) => e ? f(e) : p())
 					);
@@ -166,7 +170,7 @@ export class CCHashInstance extends DynamicHash {
 				}
 				digest = await c.digest(N, data);
 			} else {
-				data = 'buffer' in source
+				const data = 'buffer' in source
 					? new Uint8Array(
 						source.buffer,
 						source.byteOffset,
