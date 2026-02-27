@@ -7,12 +7,7 @@ import {
 	PAGE_SIZE,
 } from '../const.ts';
 import type { Reader } from '../util/reader.ts';
-import {
-	DynamicHash,
-	type HashCrypto,
-	type HashCryptoNodeStream,
-	type HashCryptoNodeSync,
-} from './dynamichash.ts';
+import { DynamicHash } from './dynamichash.ts';
 
 // Workaround for missing types.
 declare const crypto: {
@@ -39,13 +34,6 @@ const algorithm = (alg: number): [number, string, string] => {
 	}
 	return info;
 };
-
-const ender = (hash: HashCryptoNodeStream) =>
-	new Promise<void>((p, f) => hash.end((e) => e ? f(e) : p()));
-
-function callOnThis<T, U>(this: T, f: (t: T) => U): U {
-	return f(this);
-}
 
 /**
  * CCHashInstance dynamic hash.
@@ -81,58 +69,19 @@ export class CCHashInstance extends DynamicHash {
 	public async digest(
 		source: Reader | ArrayBufferLike | ArrayBufferView,
 	): Promise<ArrayBuffer> {
-		const { mDigest, mTruncate } = this;
-		const m = await CCHashInstance.digests(source, [mDigest], this.crypto);
-		const digest = m.get(mDigest)!;
-		return mTruncate ? digest.slice(0, mTruncate) : digest;
-	}
-
-	/**
-	 * Hash digest multiple algorithms.
-	 *
-	 * @param source Source data.
-	 * @param algorithms Hash algorithms.
-	 * @param cry Hash crypto.
-	 * @returns Hash digests.
-	 */
-	static async digests(
-		source: Reader | ArrayBufferLike | ArrayBufferView,
-		algorithms: Iterable<number>,
-		cry: HashCrypto | null = null,
-	): Promise<Map<number, ArrayBuffer>> {
-		cry ||= crypto.subtle;
-		const algos = new Map<number, [number, string, string]>();
-		const r = new Map<number, ArrayBuffer | null>();
-		for (const alg of algorithms) {
-			algos.set(alg, algorithm(alg));
-			r.set(alg, null);
-		}
+		const { mTruncate } = this;
+		const cry = this.crypto || crypto.subtle;
+		const [, NAME, name] = algorithm(this.mDigest);
 
 		if ('createHash' in cry) {
-			const algosA: [number, HashCryptoNodeStream][] = [];
-			const algosS: [number, HashCryptoNodeSync][] = [];
-			const hashA: HashCryptoNodeStream[] = [];
-			const hashS: HashCryptoNodeSync[] = [];
-			const writes: ((data: Uint8Array) => Promise<void>)[] = [];
-			let hasA = false;
-			let hasS = false;
-			for (const [alg, [, , name]] of algos) {
-				const hash = cry.createHash(name);
-				if ('write' in hash) {
-					algosA.push([alg, hash]);
-					hashA.push(hash);
-					writes.push((data) =>
-						new Promise<void>((p, f) =>
-							hash.write(data, (e) => e ? f(e) : p())
-						)
-					);
-					hasA = true;
-				} else {
-					algosS.push([alg, hash]);
-					hashS.push(hash);
-					hasS = true;
-				}
-			}
+			let digest: {
+				buffer: ArrayBuffer;
+				byteLength: number;
+				byteOffset: number;
+			};
+			const hash = cry.createHash(name);
+			const asyn = 'write' in hash;
+
 			if ('arrayBuffer' in source) {
 				const { size } = source;
 				let remaining = size;
@@ -144,89 +93,80 @@ export class CCHashInstance extends DynamicHash {
 					if (diff) {
 						throw new RangeError(`Read size off by: ${diff}`);
 					}
-					const view = new Uint8Array(data);
-					if (hasA) {
+					if (asyn) {
 						// deno-lint-ignore no-await-in-loop
-						await Promise.all(writes.map(callOnThis, view));
-					}
-					if (hasS) {
-						for (const hash of hashS) {
-							hash.update(view);
-						}
+						await new Promise<void>((p, f) =>
+							hash.write(
+								new Uint8Array(data),
+								(e) => e ? f(e) : p(),
+							)
+						);
+					} else {
+						hash.update(new Uint8Array(data));
 					}
 					remaining -= l;
 				}
+				if (asyn) {
+					await new Promise<void>((p, f) =>
+						hash.end((e) => e ? f(e) : p())
+					);
+					digest = hash.read() as typeof digest;
+				} else {
+					digest = hash.digest() as typeof digest;
+				}
 			} else {
-				const view = 'buffer' in source
+				const data = 'buffer' in source
 					? new Uint8Array(
 						source.buffer,
 						source.byteOffset,
 						source.byteLength,
 					)
 					: new Uint8Array(source);
-				if (hasA) {
-					await Promise.all(writes.map(callOnThis, view));
-				}
-				if (hasS) {
-					for (const hash of hashS) {
-						hash.update(view);
-					}
-				}
-			}
-			if (hasA) {
-				await Promise.all(hashA.map(ender));
-				for (const [alg, hash] of algosA) {
-					const b = hash.read();
-					r.set(
-						alg,
-						new Uint8Array(
-							b.buffer,
-							b.byteOffset,
-							b.byteLength,
-						).slice().buffer,
+				if (asyn) {
+					await new Promise<void>((p, f) =>
+						hash.write(data, (e) => {
+							if (e) {
+								f(e);
+							} else {
+								hash.end((e) => e ? f(e) : p());
+							}
+						})
 					);
+					digest = hash.read() as typeof digest;
+				} else {
+					hash.update(data);
+					digest = hash.digest() as typeof digest;
 				}
 			}
-			if (hasS) {
-				for (const [alg, hash] of algosS) {
-					const b = hash.digest();
-					r.set(
-						alg,
-						new Uint8Array(
-							b.buffer,
-							b.byteOffset,
-							b.byteLength,
-						).slice().buffer,
-					);
-				}
-			}
-			return r as Map<number, ArrayBuffer>;
+			const o = digest.byteOffset;
+			return digest.buffer.slice(o, o + (mTruncate || digest.byteLength));
 		}
 
-		let data;
+		let digest: ArrayBuffer;
 		if ('arrayBuffer' in source) {
 			const { size } = source;
-			data = await source.arrayBuffer();
-			const diff = data.byteLength - size;
-			if (diff) {
-				throw new RangeError(`Read size off by: ${diff}`);
-			}
+			digest = await source.arrayBuffer().then((data) => {
+				const diff = data.byteLength - size;
+				if (diff) {
+					throw new RangeError(`Read size off by: ${diff}`);
+				}
+				return cry.digest(NAME, data);
+			});
 		} else {
-			data = (
-				'buffer' in source
-					? new Uint8Array(
-						source.buffer,
-						source.byteOffset,
-						source.byteLength,
-					)
-					: new Uint8Array(source)
-			).slice(0);
+			digest = await cry.digest(
+				NAME,
+				(
+					'buffer' in source
+						? new Uint8Array(
+							source.buffer,
+							source.byteOffset,
+							source.byteLength,
+						)
+						: new Uint8Array(source)
+				).slice(0),
+			);
 		}
-		for (const [alg, [, NAME]] of algos) {
-			// deno-lint-ignore no-await-in-loop
-			r.set(alg, await cry.digest(NAME, data));
-		}
-		return r as Map<number, ArrayBuffer>;
+		return mTruncate ? digest.slice(0, mTruncate) : digest;
 	}
 
 	static {
