@@ -7,11 +7,7 @@ import {
 	PAGE_SIZE,
 } from '../const.ts';
 import type { Reader } from '../util/reader.ts';
-import {
-	DynamicHash,
-	type HashCryptoNodeStream,
-	type HashCryptoSubtle,
-} from './dynamichash.ts';
+import { DynamicHash, type HashCryptoSubtle } from './dynamichash.ts';
 
 // Workaround for missing types.
 declare const crypto: {
@@ -86,52 +82,52 @@ export class CCHashInstance extends DynamicHash {
 		}
 		mDigest.s = 1;
 		const c = this.crypto || crypto.subtle;
-		let digest;
+		let d;
 
 		if ('createHash' in c) {
 			const hash = c.createHash(n);
 
 			if ('arrayBuffer' in source) {
 				const { size } = source;
-				const read = async (o: number, l: number) => {
-					const data = new Uint8Array(
-						await source.slice(o, o + l).arrayBuffer(),
-					);
-					const diff = data.byteLength - l;
-					if (diff) {
-						throw new RangeError(`Read size off by: ${diff}`);
-					}
-					return data;
-				};
 				if ('write' in hash) {
-					for (let o = 0, r = size, l; o < size; o += PAGE_SIZE) {
+					for (
+						let i = 0, r = size, l;
+						i < size;
+						r -= l, i += PAGE_SIZE
+					) {
+						l = r > PAGE_SIZE ? PAGE_SIZE : r;
 						// deno-lint-ignore no-await-in-loop
-						const data = await read(
-							o,
-							l = r > PAGE_SIZE ? PAGE_SIZE : r,
-						);
+						const b = await source.slice(i, i + l).arrayBuffer();
+						const o = b.byteLength - l;
+						if (o) {
+							throw new RangeError(`Read size off by: ${o}`);
+						}
+						const v = new Uint8Array(b);
 						// deno-lint-ignore no-await-in-loop
 						await new Promise<void>((p, f) =>
-							hash.write(data, (e) => e ? f(e) : p())
+							hash.write(v, (e) => e ? f(e) : p())
 						);
-						r -= l;
 					}
 					await new Promise<void>((p, f) =>
 						hash.end((e) => e ? f(e) : p())
 					);
-					digest = hash.read();
+					d = hash.read();
 				} else {
-					for (let o = 0, r = size, l; o < size; o += PAGE_SIZE) {
-						hash.update(
-							// deno-lint-ignore no-await-in-loop
-							await read(
-								o,
-								l = r > PAGE_SIZE ? PAGE_SIZE : r,
-							),
-						);
-						r -= l;
+					for (
+						let i = 0, r = size, l;
+						i < size;
+						r -= l, i += PAGE_SIZE
+					) {
+						l = r > PAGE_SIZE ? PAGE_SIZE : r;
+						// deno-lint-ignore no-await-in-loop
+						const b = await source.slice(i, i + l).arrayBuffer();
+						const o = b.byteLength - l;
+						if (o) {
+							throw new RangeError(`Read size off by: ${o}`);
+						}
+						hash.update(new Uint8Array(b));
 					}
-					digest = hash.digest();
+					d = hash.digest();
 				}
 			} else {
 				const data = 'buffer' in source
@@ -148,29 +144,27 @@ export class CCHashInstance extends DynamicHash {
 					await new Promise<void>((p, f) =>
 						hash.end((e) => e ? f(e) : p())
 					);
-					digest = hash.read();
+					d = hash.read();
 				} else {
 					hash.update(data);
-					digest = hash.digest();
+					d = hash.digest();
 				}
 			}
 
-			digest = new Uint8Array(
-				digest.buffer,
-				digest.byteOffset,
-				digest.byteLength,
-			).slice(0).buffer;
+			d = new Uint8Array(d.buffer, d.byteOffset, d.byteLength)
+				.slice(0)
+				.buffer;
 		} else {
 			if ('arrayBuffer' in source) {
 				const { size } = source;
-				const data = await source.arrayBuffer();
-				const diff = data.byteLength - size;
-				if (diff) {
-					throw new RangeError(`Read size off by: ${diff}`);
+				const v = await source.arrayBuffer();
+				const o = v.byteLength - size;
+				if (o) {
+					throw new RangeError(`Read size off by: ${o}`);
 				}
-				digest = await c.digest(N, data);
+				d = await c.digest(N, v);
 			} else {
-				const data = 'buffer' in source
+				const v = 'buffer' in source
 					? new Uint8Array(
 						source.buffer,
 						source.byteOffset,
@@ -178,14 +172,14 @@ export class CCHashInstance extends DynamicHash {
 					)
 					: new Uint8Array(source);
 				try {
-					digest = await c.digest(N, data as Uint8Array<ArrayBuffer>);
+					d = await c.digest(N, v as Uint8Array<ArrayBuffer>);
 				} catch (_) {
-					digest = await c.digest(N, data.slice(0));
+					d = await c.digest(N, v.slice(0));
 				}
 			}
 		}
 
-		mDigest.d = digest;
+		mDigest.d = d;
 		mDigest.s = 2;
 	}
 
