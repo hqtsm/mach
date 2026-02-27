@@ -151,18 +151,21 @@ export class CCHashInstance extends DynamicHash {
 				return cry.digest(NAME, data);
 			});
 		} else {
-			digest = await cry.digest(
-				NAME,
-				(
-					'buffer' in source
-						? new Uint8Array(
-							source.buffer,
-							source.byteOffset,
-							source.byteLength,
-						)
-						: new Uint8Array(source)
-				).slice(0),
-			);
+			const view = 'buffer' in source
+				? new Uint8Array(
+					source.buffer,
+					source.byteOffset,
+					source.byteLength,
+				)
+				: new Uint8Array(source);
+			try {
+				digest = await cry.digest(
+					NAME,
+					view as Uint8Array<ArrayBuffer>,
+				);
+			} catch (_) {
+				digest = await cry.digest(NAME, view.slice(0));
+			}
 		}
 		return mTruncate ? digest.slice(0, mTruncate) : digest;
 	}

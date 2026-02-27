@@ -93,6 +93,8 @@ function hashed(algo: string, data: Uint8Array): string {
 }
 
 const ABCD = new TextEncoder().encode('ABCD');
+const ABCD_SAB = new Uint8Array(new SharedArrayBuffer(ABCD.byteLength));
+ABCD_SAB.set(ABCD);
 
 // 'ABCD':
 const expectedABCD = [
@@ -176,9 +178,16 @@ Deno.test('CCHashInstance full', async () => {
 				const hash = new CCHashInstance(alg);
 				hash.crypto = crypto;
 				// deno-lint-ignore no-await-in-loop
-				const result = await hash.digest(view ? ABCD : ABCD.buffer);
-				assertEquals(result.byteLength, hash.digestLength(), tag);
-				assertEquals(hex(new Uint8Array(result)), expt, tag);
+				const rab = await hash.digest(view ? ABCD : ABCD.buffer);
+				assertEquals(rab.byteLength, hash.digestLength(), tag);
+				assertEquals(hex(new Uint8Array(rab)), expt, tag);
+
+				// deno-lint-ignore no-await-in-loop
+				const rsab = await hash.digest(
+					view ? ABCD_SAB : ABCD_SAB.buffer,
+				);
+				assertEquals(rsab.byteLength, hash.digestLength(), tag);
+				assertEquals(hex(new Uint8Array(rsab)), expt, tag);
 			}
 		}
 	}
