@@ -75,7 +75,7 @@ export class CCHashInstance extends DynamicHash {
 	public async update(
 		source: Reader | ArrayBufferLike | ArrayBufferView,
 	): Promise<void> {
-		const { mTruncate, mDigest } = this;
+		const { mDigest } = this;
 		const { N, n, s } = mDigest;
 		if (s) {
 			throw new Error('Already updated');
@@ -145,12 +145,11 @@ export class CCHashInstance extends DynamicHash {
 				}
 			}
 
-			const { byteLength } = digest;
 			mDigest.d = new Uint8Array(
 				digest.buffer,
 				digest.byteOffset,
-				byteLength,
-			).slice(0, mTruncate || byteLength).buffer;
+				digest.byteLength,
+			).slice(0).buffer;
 		} else {
 			if ('arrayBuffer' in source) {
 				const { size } = source;
@@ -174,14 +173,14 @@ export class CCHashInstance extends DynamicHash {
 					digest = await c.digest(N, view.slice(0));
 				}
 			}
-			mDigest.d = mTruncate ? digest.slice(0, mTruncate) : digest;
+			mDigest.d = digest;
 		}
 		mDigest.s = s + 2;
 	}
 
 	// deno-lint-ignore require-await
 	public async finish(): Promise<ArrayBuffer> {
-		const { mDigest } = this;
+		const { mTruncate, mDigest } = this;
 		const { s, d } = mDigest;
 		switch (s) {
 			case 0: {
@@ -196,7 +195,7 @@ export class CCHashInstance extends DynamicHash {
 		}
 		mDigest.s = s + 1;
 		mDigest.d = null;
-		return d!;
+		return mTruncate ? d!.slice(0, mTruncate) : d!;
 	}
 
 	static {
