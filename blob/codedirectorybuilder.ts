@@ -217,10 +217,9 @@ export class CodeDirectoryBuilder {
 		data: ArrayBufferLike | ArrayBufferView,
 	): Promise<void> {
 		slot = specialSlot(slot);
-		_this.mSpecial.set(
-			slot,
-			await CodeDirectoryBuilder.getHash(_this).digest(data),
-		);
+		const hash = CodeDirectoryBuilder.getHash(_this);
+		await hash.update(data);
+		_this.mSpecial.set(slot, await hash.finish());
 		if (slot > _this.mSpecialSlots) {
 			_this.mSpecialSlots = slot;
 		}
@@ -549,12 +548,11 @@ export class CodeDirectoryBuilder {
 			if (mPageSize && thisPage > mPageSize) {
 				thisPage = mPageSize;
 			}
-			const hasher = CodeDirectoryBuilder.getHash(_this);
+			const hash = CodeDirectoryBuilder.getHash(_this);
 			// deno-lint-ignore no-await-in-loop
-			const hash = await hasher.digest(
-				mExec.slice(position, position + thisPage),
-			);
-			const data = new Uint8Array(hash);
+			await hash.update(mExec.slice(position, position + thisPage));
+			// deno-lint-ignore no-await-in-loop
+			const data = new Uint8Array(await hash.finish());
 			const slot = CodeDirectory.getSlotMutable(dir, i, false)!;
 			new Uint8Array(slot.buffer, slot.byteOffset).set(data);
 			if (gpec) {

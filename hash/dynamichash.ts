@@ -118,14 +118,21 @@ export abstract class DynamicHash {
 	public abstract digestLength(): number;
 
 	/**
-	 * Create digest.
+	 * Update digest, can only be called once.
 	 *
 	 * @param source Source data.
 	 * @returns Hash digest.
 	 */
-	public abstract digest(
+	public abstract update(
 		source: Reader | ArrayBufferLike | ArrayBufferView,
-	): Promise<ArrayBuffer>;
+	): Promise<void>;
+
+	/**
+	 * Finish hash, can only be called once.
+	 *
+	 * @returns Hash digest.
+	 */
+	public abstract finish(): Promise<ArrayBuffer>;
 
 	static {
 		toStringTag(this, 'DynamicHash');

@@ -355,22 +355,21 @@ export class CodeDirectory extends Blob {
 		preEncrypted: boolean,
 		crypto: HashCrypto | null = null,
 	): Promise<boolean> {
-		const hasher = CodeDirectory.getHash(_this);
-		hasher.crypto = crypto;
-		const digest = new Uint8Array(
-			await hasher.digest(
-				'arrayBuffer' in source ? source.slice(0, size) : (
-					'buffer' in source
-						? new Uint8Array(source.buffer, source.byteOffset, size)
-						: new Uint8Array(source, 0, size)
-				),
+		const hash = CodeDirectory.getHash(_this);
+		hash.crypto = crypto;
+		await hash.update(
+			'arrayBuffer' in source ? source.slice(0, size) : (
+				'buffer' in source
+					? new Uint8Array(source.buffer, source.byteOffset, size)
+					: new Uint8Array(source, 0, size)
 			),
 		);
+		const digest = new Uint8Array(await hash.finish());
 		const slotDigest = CodeDirectory.getSlot(_this, slot, preEncrypted);
 		if (!slotDigest) {
 			throw new RangeError('Invalid slot');
 		}
-		for (let i = 0, l = hasher.digestLength(); i < l; i++) {
+		for (let i = 0, l = hash.digestLength(); i < l; i++) {
 			if (digest[i] !== slotDigest[i]) {
 				return false;
 			}
@@ -424,13 +423,14 @@ export class CodeDirectory extends Blob {
 	): Promise<ArrayBuffer> {
 		const hash = CodeDirectory.getHash(_this);
 		hash.crypto = crypto;
-		const digest = await hash.digest(
+		await hash.update(
 			new Uint8Array(
 				_this.buffer,
 				_this.byteOffset,
 				CodeDirectory.size(_this),
 			),
 		);
+		const digest = await hash.finish();
 		return truncate
 			? digest.slice(
 				0,

@@ -14,15 +14,26 @@ declare const crypto: {
 	subtle: HashCryptoSubtle;
 };
 
+interface Algo {
+	l: number;
+	N: string;
+	n: string;
+}
+
+interface Digest extends Algo {
+	d: ArrayBuffer | null;
+	s: number;
+}
+
 // Supported hash algorithms with their names and lengths.
-const algorithims = new Map<number, [number, string, string]>([
-	[kCCDigestSHA1, [20, 'SHA-1', 'sha1']],
-	[kCCDigestSHA256, [32, 'SHA-256', 'sha256']],
-	[kCCDigestSHA384, [48, 'SHA-384', 'sha384']],
-	[kCCDigestSHA512, [64, 'SHA-512', 'sha512']],
+const algorithims = new Map<number, Algo>([
+	[kCCDigestSHA1, { l: 20, N: 'SHA-1', n: 'sha1' }],
+	[kCCDigestSHA256, { l: 32, N: 'SHA-256', n: 'sha256' }],
+	[kCCDigestSHA384, { l: 48, N: 'SHA-384', n: 'sha384' }],
+	[kCCDigestSHA512, { l: 64, N: 'SHA-512', n: 'sha512' }],
 ]);
 
-const algorithm = (alg: number): [number, string, string] => {
+const algorithm = (alg: number): Algo => {
 	const info = algorithims.get(alg);
 	if (!info) {
 		throw new RangeError(`Unsupported hash algorithm: ${alg}`);
@@ -37,7 +48,7 @@ export class CCHashInstance extends DynamicHash {
 	/**
 	 * Digest algorithm.
 	 */
-	private mDigest: number;
+	private mDigest: Digest;
 
 	/**
 	 * Truncate length.
@@ -51,26 +62,30 @@ export class CCHashInstance extends DynamicHash {
 	 * @param truncate Truncate length if any.
 	 */
 	constructor(alg: number, truncate = 0) {
-		algorithm(alg);
+		const a = algorithm(alg);
 		super();
-		this.mDigest = alg;
+		this.mDigest = { ...a, d: null, s: 0 };
 		this.mTruncate = truncate;
 	}
 
 	public digestLength(): number {
-		return this.mTruncate || algorithm(this.mDigest)[0];
+		return this.mTruncate || this.mDigest.l;
 	}
 
-	public async digest(
+	public async update(
 		source: Reader | ArrayBufferLike | ArrayBufferView,
-	): Promise<ArrayBuffer> {
-		const { mTruncate } = this;
-		const cry = this.crypto || crypto.subtle;
-		const [, NAME, name] = algorithm(this.mDigest);
+	): Promise<void> {
+		const { mTruncate, mDigest } = this;
+		const { N, n, s } = mDigest;
+		if (s) {
+			throw new Error('Already updated');
+		}
+		mDigest.s = s + 1;
+		const c = this.crypto || crypto.subtle;
+		let digest;
 
-		if ('createHash' in cry) {
-			let digest;
-			const hash = cry.createHash(name);
+		if ('createHash' in c) {
+			const hash = c.createHash(n);
 			const asyn = 'write' in hash;
 
 			if ('arrayBuffer' in source) {
@@ -131,37 +146,57 @@ export class CCHashInstance extends DynamicHash {
 			}
 
 			const { byteLength } = digest;
-			return new Uint8Array(digest.buffer, digest.byteOffset, byteLength)
-				.slice(0, mTruncate || byteLength).buffer;
-		}
-
-		let digest: ArrayBuffer;
-		if ('arrayBuffer' in source) {
-			const { size } = source;
-			const data = await source.arrayBuffer();
-			const diff = data.byteLength - size;
-			if (diff) {
-				throw new RangeError(`Read size off by: ${diff}`);
-			}
-			digest = await cry.digest(NAME, data);
+			mDigest.d = new Uint8Array(
+				digest.buffer,
+				digest.byteOffset,
+				byteLength,
+			).slice(0, mTruncate || byteLength).buffer;
 		} else {
-			const view = 'buffer' in source
-				? new Uint8Array(
-					source.buffer,
-					source.byteOffset,
-					source.byteLength,
-				)
-				: new Uint8Array(source);
-			try {
-				digest = await cry.digest(
-					NAME,
-					view as Uint8Array<ArrayBuffer>,
-				);
-			} catch (_) {
-				digest = await cry.digest(NAME, view.slice(0));
+			if ('arrayBuffer' in source) {
+				const { size } = source;
+				const data = await source.arrayBuffer();
+				const diff = data.byteLength - size;
+				if (diff) {
+					throw new RangeError(`Read size off by: ${diff}`);
+				}
+				digest = await c.digest(N, data);
+			} else {
+				const view = 'buffer' in source
+					? new Uint8Array(
+						source.buffer,
+						source.byteOffset,
+						source.byteLength,
+					)
+					: new Uint8Array(source);
+				try {
+					digest = await c.digest(N, view as Uint8Array<ArrayBuffer>);
+				} catch (_) {
+					digest = await c.digest(N, view.slice(0));
+				}
+			}
+			mDigest.d = mTruncate ? digest.slice(0, mTruncate) : digest;
+		}
+		mDigest.s = s + 2;
+	}
+
+	// deno-lint-ignore require-await
+	public async finish(): Promise<ArrayBuffer> {
+		const { mDigest } = this;
+		const { s, d } = mDigest;
+		switch (s) {
+			case 0: {
+				throw new Error('Not updated');
+			}
+			case 1: {
+				throw new Error('Incomplete updated');
+			}
+			case 3: {
+				throw new Error('Already finished');
 			}
 		}
-		return mTruncate ? digest.slice(0, mTruncate) : digest;
+		mDigest.s = s + 1;
+		mDigest.d = null;
+		return d!;
 	}
 
 	static {
