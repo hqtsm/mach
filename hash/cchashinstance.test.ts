@@ -345,62 +345,6 @@ Deno.test('Hash Iterator<Uint8Array<SharedArrayBuffer>>', async () => {
 	}
 });
 
-Deno.test('Hash Iterator<ArrayBuffer>', async () => {
-	for (const { tag, alg, crypto, output, data } of cases()) {
-		const hash = new CCHashInstance(alg);
-		hash.crypto = crypto;
-		const it = toIterator(data);
-		// deno-lint-ignore no-await-in-loop
-		await hash.update(it, data.byteLength);
-		// deno-lint-ignore no-await-in-loop
-		const rab = await hash.finish();
-		assertEquals(rab.byteLength, hash.digestLength(), tag);
-		assertEquals(hex(new Uint8Array(rab)), output, tag);
-	}
-});
-
-Deno.test('Hash Iterator<Uint8Array<ArrayBuffer>>', async () => {
-	for (const { tag, alg, crypto, output, data } of cases()) {
-		const hash = new CCHashInstance(alg);
-		hash.crypto = crypto;
-		const it = toIterator(data, 0, (d) => new Uint8Array(ab2sab(d)));
-		// deno-lint-ignore no-await-in-loop
-		await hash.update(it, data.byteLength);
-		// deno-lint-ignore no-await-in-loop
-		const rab = await hash.finish();
-		assertEquals(rab.byteLength, hash.digestLength(), tag);
-		assertEquals(hex(new Uint8Array(rab)), output, tag);
-	}
-});
-
-Deno.test('Hash Iterator<SharedArrayBuffer>', async () => {
-	for (const { tag, alg, crypto, output, data } of cases()) {
-		const hash = new CCHashInstance(alg);
-		hash.crypto = crypto;
-		const it = toIterator(data, 0, ab2sab);
-		// deno-lint-ignore no-await-in-loop
-		await hash.update(it, data.byteLength);
-		// deno-lint-ignore no-await-in-loop
-		const rab = await hash.finish();
-		assertEquals(rab.byteLength, hash.digestLength(), tag);
-		assertEquals(hex(new Uint8Array(rab)), output, tag);
-	}
-});
-
-Deno.test('Hash Iterator<Uint8Array<SharedArrayBuffer>>', async () => {
-	for (const { tag, alg, crypto, output, data } of cases()) {
-		const hash = new CCHashInstance(alg);
-		hash.crypto = crypto;
-		const it = toIterator(data, 0, (d) => new Uint8Array(ab2sab(d)));
-		// deno-lint-ignore no-await-in-loop
-		await hash.update(it, data.byteLength);
-		// deno-lint-ignore no-await-in-loop
-		const rab = await hash.finish();
-		assertEquals(rab.byteLength, hash.digestLength(), tag);
-		assertEquals(hex(new Uint8Array(rab)), output, tag);
-	}
-});
-
 Deno.test('Hash truncate', async () => {
 	for (const { tag, alg, crypto, output, data } of cases()) {
 		const truncate = Math.floor(output.length / 2);
