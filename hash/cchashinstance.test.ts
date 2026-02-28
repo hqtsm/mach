@@ -333,9 +333,6 @@ Deno.test('Repeat update', async () => {
 
 Deno.test('No update', async () => {
 	for (const { name, crypto } of engines) {
-		if (name === 'node-sync') {
-			continue;
-		}
 		const tag = `engine=${name}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
@@ -351,9 +348,6 @@ Deno.test('No update', async () => {
 
 Deno.test('Incomplete update', async () => {
 	for (const { name, crypto } of engines) {
-		if (name === 'node-sync') {
-			continue;
-		}
 		const tag = `engine=${name}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
@@ -369,9 +363,6 @@ Deno.test('Incomplete update', async () => {
 
 Deno.test('Already finished', async () => {
 	for (const { name, crypto } of engines) {
-		if (name === 'node-sync') {
-			continue;
-		}
 		const tag = `engine=${name}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;

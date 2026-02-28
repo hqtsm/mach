@@ -167,6 +167,7 @@ export class CCHashInstance extends DynamicHash {
 						hash.update(new Uint8Array(b));
 					}
 					d = hash.digest();
+					await Promise.resolve();
 				}
 			} else if ('next' in source) {
 				let o = -size;
@@ -225,6 +226,7 @@ export class CCHashInstance extends DynamicHash {
 						throw new RangeError(`Read size off by: ${o}`);
 					}
 					d = hash.digest();
+					await Promise.resolve();
 				}
 			} else {
 				const b = view(source);
@@ -239,6 +241,7 @@ export class CCHashInstance extends DynamicHash {
 				} else {
 					hash.update(b);
 					d = hash.digest();
+					await Promise.resolve();
 				}
 			}
 
