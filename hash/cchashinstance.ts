@@ -280,7 +280,7 @@ export class CCHashInstance extends DynamicHash {
 				if (o) {
 					throw new RangeError(`Read size off by: ${o}`);
 				}
-				throw new Error('TODO');
+				d = await c.digest(N, all || new ArrayBuffer(0));
 			} else {
 				d = await c.digest(N, viewab(view(source)));
 			}
