@@ -247,6 +247,7 @@ export class CCHashInstance extends DynamicHash {
 			} else if ('next' in source) {
 				let all: Uint8Array<ArrayBuffer> | undefined;
 				let ps = size;
+				let o = -size;
 				for (
 					let n = source.next(ps), a = ip(n);;
 					n = source.next(ps)
@@ -259,19 +260,25 @@ export class CCHashInstance extends DynamicHash {
 					const b = n.value;
 					const l = b.byteLength;
 					if (l) {
+						o += l;
+						if (o > 0) {
+							break;
+						}
 						if (all) {
 							// TODO: Append.
 						} else {
-							// TODO: Check if over.
-							if (l === size) {
-								all = viewab(view(b));
-							} else {
+							if (o) {
 								all = new Uint8Array(size);
 								all.set(view(b));
+							} else {
+								all = viewab(view(b));
 							}
 							ps = PAGE_SIZE;
 						}
 					}
+				}
+				if (o) {
+					throw new RangeError(`Read size off by: ${o}`);
 				}
 				throw new Error('TODO');
 			} else {
