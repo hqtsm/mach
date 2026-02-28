@@ -145,9 +145,11 @@ export class CCHashInstance extends DynamicHash {
 					d = hash.digest();
 				}
 			} else if ('next' in source) {
-				const next = () => source.next(PAGE_SIZE);
 				if ('write' in hash) {
-					for (let n = next(), a = ip(n);; n = next()) {
+					for (
+						let n = source.next(PAGE_SIZE), a = ip(n);;
+						n = source.next(PAGE_SIZE)
+					) {
 						// deno-lint-ignore no-await-in-loop
 						n = (a ? await n : n) as IR;
 						if (n.done) {
@@ -164,7 +166,10 @@ export class CCHashInstance extends DynamicHash {
 					);
 					d = hash.read();
 				} else {
-					for (let n = next(), a = ip(n);; n = next()) {
+					for (
+						let n = source.next(PAGE_SIZE), a = ip(n);;
+						n = source.next(PAGE_SIZE)
+					) {
 						// deno-lint-ignore no-await-in-loop
 						n = (a ? await n : n) as IR;
 						if (n.done) {
