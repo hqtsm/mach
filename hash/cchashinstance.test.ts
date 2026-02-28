@@ -117,12 +117,13 @@ function hashed(algo: string, data: Uint8Array): string {
 
 const EMPTY = new Uint8Array(0);
 const ABCD = new TextEncoder().encode('ABCD');
-const PAGED = new Uint8Array(new ArrayBuffer(PAGE_SIZE * 1.5));
+const PAGED = new Uint8Array(new ArrayBuffer(Math.floor(PAGE_SIZE * 1.5)));
 
 const ITTER_SIZES = [
 	0,
 	Math.floor(PAGE_SIZE / 2),
 	PAGE_SIZE,
+	Math.floor(PAGE_SIZE * 1.5),
 	PAGE_SIZE * 2,
 ];
 
