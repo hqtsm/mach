@@ -153,7 +153,21 @@ export abstract class DynamicHash {
 	 * @param source Source data.
 	 * @returns Hash digest.
 	 */
-	public abstract update(source: HashSource): Promise<void>;
+	public abstract update(
+		source: Reader | ArrayBufferLike | ArrayBufferView,
+	): Promise<void>;
+
+	/**
+	 * Update digest, can only be called once.
+	 *
+	 * @param source Source data.
+	 * @param size Source size.
+	 * @returns Hash digest.
+	 */
+	public abstract update(
+		source: HashSourceIterator | HashSourceAsyncIterator,
+		size: number,
+	): Promise<void>;
 
 	/**
 	 * Finish hash, can only be called once.

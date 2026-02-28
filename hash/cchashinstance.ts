@@ -89,13 +89,21 @@ export class CCHashInstance extends DynamicHash {
 		return this.mTruncate || this.mDigest.l;
 	}
 
-	public async update(source: HashSource): Promise<void> {
+	/**
+	 * Update digest, can only be called once.
+	 *
+	 * @param source Source data.
+	 * @param size Source size.
+	 * @returns Hash digest.
+	 */
+	public async update(source: HashSource, size?: number): Promise<void> {
 		const { mDigest } = this;
 		const { N, n, s } = mDigest;
 		if (s) {
 			throw new Error('Already updated');
 		}
 		mDigest.s = 1;
+		size ||= 0;
 		const c = this.crypto || crypto.subtle;
 		let d;
 
@@ -145,6 +153,7 @@ export class CCHashInstance extends DynamicHash {
 					d = hash.digest();
 				}
 			} else if ('next' in source) {
+				let o = -size;
 				if ('write' in hash) {
 					for (
 						let n = source.next(PAGE_SIZE), a = ip(n);;
@@ -155,11 +164,19 @@ export class CCHashInstance extends DynamicHash {
 						if (n.done) {
 							break;
 						}
-						const d = view(n.value);
+						const b = n.value;
+						o += b.byteLength;
+						if (o > 0) {
+							break;
+						}
+						const d = view(b);
 						// deno-lint-ignore no-await-in-loop
 						await new Promise<void>((p, f) =>
 							hash.write(d, (e) => e ? f(e) : p())
 						);
+					}
+					if (o) {
+						throw new RangeError(`Read size off by: ${o}`);
 					}
 					await new Promise<void>((p, f) =>
 						hash.end((e) => e ? f(e) : p())
@@ -175,7 +192,15 @@ export class CCHashInstance extends DynamicHash {
 						if (n.done) {
 							break;
 						}
-						hash.update(view(n.value));
+						const b = n.value;
+						o += b.byteLength;
+						if (o > 0) {
+							break;
+						}
+						hash.update(view(b));
+					}
+					if (o) {
+						throw new RangeError(`Read size off by: ${o}`);
 					}
 					d = hash.digest();
 				}
