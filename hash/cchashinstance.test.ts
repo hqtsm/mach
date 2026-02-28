@@ -381,63 +381,83 @@ Deno.test('Already finished', async () => {
 });
 
 Deno.test('CCHashInstance node async write error', async () => {
-	for (const blob of [true, false]) {
-		const tag = `blob=${blob}`;
+	const crypto = {
+		createHash: (algo: string) => {
+			const hash = createHash(algo);
+			return {
+				write(_: Uint8Array, cb: (err?: unknown) => void): void {
+					cb(new Error('Write fail'));
+				},
+				end(cb: (err?: unknown) => void): void {
+					hash.end(cb);
+				},
+				read(): ArrayBufferView {
+					return hash.read();
+				},
+			};
+		},
+	};
+	for (
+		const [name, source] of [
+			[
+				'ArrayBuffer',
+				new ArrayBuffer(1),
+			],
+			[
+				'Blob',
+				new Blob([new ArrayBuffer(1)]),
+			],
+		] as const
+	) {
 		const hash = new CCHashInstance(kCCDigestSHA1);
-		hash.crypto = {
-			createHash: (algo: string) => {
-				const hash = createHash(algo);
-				return {
-					write(_: Uint8Array, cb: (err?: unknown) => void): void {
-						cb(new Error('Write fail'));
-					},
-					end(cb: (err?: unknown) => void): void {
-						hash.end(cb);
-					},
-					read(): ArrayBufferView {
-						return hash.read();
-					},
-				};
-			},
-		};
-		const data = new ArrayBuffer(1);
+		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
-			() => hash.update(blob ? new Blob([data]) : data),
+			() => hash.update(source),
 			Error,
 			'Write fail',
-			tag,
+			name,
 		);
 	}
 });
 
 Deno.test('CCHashInstance node async end error', async () => {
-	for (const blob of [true, false]) {
-		const tag = `blob=${blob}`;
+	const crypto = {
+		createHash: (algo: string) => {
+			const hash = createHash(algo);
+			return {
+				write(data: Uint8Array, cb: (err?: unknown) => void): void {
+					hash.write(data, cb);
+				},
+				end(cb: (err?: unknown) => void): void {
+					cb(new Error('End fail'));
+				},
+				read(): ArrayBufferView {
+					return hash.read();
+				},
+			};
+		},
+	};
+	for (
+		const [name, source] of [
+			[
+				'ArrayBuffer',
+				new ArrayBuffer(1),
+			],
+			[
+				'Blob',
+				new Blob([new ArrayBuffer(1)]),
+			],
+		] as const
+	) {
 		const hash = new CCHashInstance(kCCDigestSHA1);
-		hash.crypto = {
-			createHash: (algo: string) => {
-				const hash = createHash(algo);
-				return {
-					write(data: Uint8Array, cb: (err?: unknown) => void): void {
-						hash.write(data, cb);
-					},
-					end(cb: (err?: unknown) => void): void {
-						cb(new Error('End fail'));
-					},
-					read(): ArrayBufferView {
-						return hash.read();
-					},
-				};
-			},
-		};
-		const data = new ArrayBuffer(1);
+		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
-			() => hash.update(blob ? new Blob([data]) : data),
+			() => hash.update(source),
 			Error,
 			'End fail',
-			tag,
+			name,
 		);
 	}
 });
