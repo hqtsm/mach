@@ -246,10 +246,9 @@ export class CCHashInstance extends DynamicHash {
 				d = await c.digest(N, v);
 			} else if ('next' in source) {
 				let all: Uint8Array<ArrayBuffer> | undefined;
-				let ps = size;
 				let o = -size;
 				for (
-					let n = source.next(ps), a = ip(n);;
+					let i = 0, ps = size, n = source.next(ps), a = ip(n);;
 					n = source.next(ps)
 				) {
 					// deno-lint-ignore no-await-in-loop
@@ -265,7 +264,7 @@ export class CCHashInstance extends DynamicHash {
 							break;
 						}
 						if (all) {
-							// TODO: Append.
+							all.set(view(b), i);
 						} else {
 							if (o) {
 								all = new Uint8Array(size);
@@ -275,6 +274,7 @@ export class CCHashInstance extends DynamicHash {
 							}
 							ps = PAGE_SIZE;
 						}
+						i += l;
 					}
 				}
 				if (o) {
