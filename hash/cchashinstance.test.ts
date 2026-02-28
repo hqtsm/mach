@@ -28,7 +28,7 @@ import type { Reader } from '../util/reader.ts';
 import { CCHashInstance } from './cchashinstance.ts';
 import type { HashCryptoNodeSync } from './dynamichash.ts';
 
-class ShortReader implements Reader {
+class OverReader implements Reader {
 	#size: number;
 
 	#type: string;
@@ -49,7 +49,7 @@ class ShortReader implements Reader {
 	public slice(start?: number, end?: number, contentType?: string): Reader {
 		start ??= 0;
 		end ??= this.#size;
-		return new ShortReader(start < end ? end - start : 0, contentType);
+		return new OverReader(start < end ? end - start : 0, contentType);
 	}
 
 	// deno-lint-ignore require-await
@@ -58,7 +58,7 @@ class ShortReader implements Reader {
 	}
 }
 
-class LongReader implements Reader {
+class UnderReader implements Reader {
 	#size: number;
 
 	#type: string;
@@ -79,7 +79,7 @@ class LongReader implements Reader {
 	public slice(start?: number, end?: number, contentType?: string): Reader {
 		start ??= 0;
 		end ??= this.#size;
-		return new LongReader(start < end ? end - start : 0, contentType);
+		return new UnderReader(start < end ? end - start : 0, contentType);
 	}
 
 	// deno-lint-ignore require-await
@@ -284,14 +284,14 @@ Deno.test('CCHashInstance truncate', async () => {
 	}
 });
 
-Deno.test('CCHashInstance short read', async () => {
+Deno.test('CCHashInstance Blob over-read', async () => {
 	for (const { name, crypto } of engines) {
 		const tag = `engine=${name}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
-			() => hash.update(new ShortReader(1024)),
+			() => hash.update(new OverReader(1024)),
 			RangeError,
 			'Read size off by: -1',
 			tag,
@@ -299,14 +299,14 @@ Deno.test('CCHashInstance short read', async () => {
 	}
 });
 
-Deno.test('CCHashInstance long read', async () => {
+Deno.test('CCHashInstance Blob under-read', async () => {
 	for (const { name, crypto } of engines) {
 		const tag = `engine=${name}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
-			() => hash.update(new LongReader(1024)),
+			() => hash.update(new UnderReader(1024)),
 			RangeError,
 			'Read size off by: 1',
 			tag,
