@@ -27,7 +27,7 @@ interface Algo {
 
 interface Digest extends Algo {
 	d: ArrayBuffer | null;
-	s: number;
+	s: 0 | 1 | 2 | 3;
 }
 
 type IR = IteratorResult<ArrayBufferLike | ArrayBufferView>;
