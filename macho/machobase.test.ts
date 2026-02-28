@@ -33,8 +33,8 @@ import { Section64 } from '../mach/section64.ts';
 import { SegmentCommand } from '../mach/segmentcommand.ts';
 import { SegmentCommand64 } from '../mach/segmentcommand64.ts';
 import { VersionMinCommand } from '../mach/versionmincommand.ts';
+import { Architecture } from './architecture.ts';
 import { MachOBase } from './machobase.ts';
-import { Architecture } from './mod.ts';
 
 class MachOBaseTest extends MachOBase {
 	public static override initHeader(
