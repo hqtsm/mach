@@ -54,6 +54,12 @@ const view = (b: ArrayBufferLike | ArrayBufferView): Uint8Array =>
 const shared = (b: SharedArrayBuffer | ArrayBuffer): b is SharedArrayBuffer =>
 	Object.prototype.toString.call(b) === '[object SharedArrayBuffer]';
 
+const viewab = (
+	view: Uint8Array,
+): Uint8Array<
+	ArrayBuffer
+> => (shared(view.buffer) ? view.slice() : view as Uint8Array<ArrayBuffer>);
+
 const ip = (
 	v: IteratorResult<unknown> | Promise<unknown>,
 ): v is Promise<unknown> => 'then' in v;
@@ -233,11 +239,35 @@ export class CCHashInstance extends DynamicHash {
 				}
 				d = await c.digest(N, v);
 			} else if ('next' in source) {
+				let all: Uint8Array<ArrayBuffer> | undefined;
+				let n = source.next(size);
+				const a = ip(n);
+				n = (a ? await n : n) as IR;
+				for (
+					;
+					!n.done;
+					// deno-lint-ignore no-await-in-loop
+					n = source.next(size), n = (a ? await n : n) as IR
+				) {
+					const b = n.value;
+					if (!b.byteLength) {
+						continue;
+					}
+					if (all) {
+						// TODO
+					} else {
+						// TODO: What is over?
+						if (b.byteLength === size) {
+							all = viewab(view(b));
+						} else {
+							all = new Uint8Array(size);
+							all.set(view(b));
+						}
+					}
+				}
 				throw new Error('TODO');
 			} else {
-				let v = view(source);
-				v = shared(v.buffer) ? v.slice(0) : v;
-				d = await c.digest(N, v as Uint8Array<ArrayBuffer>);
+				d = await c.digest(N, viewab(view(source)));
 			}
 		}
 
