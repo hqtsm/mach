@@ -317,7 +317,7 @@ Deno.test('Incomplete update', async () => {
 	}
 });
 
-Deno.test('Already finsished', async () => {
+Deno.test('Already finished', async () => {
 	for (const { name, crypto } of engines) {
 		if (name === 'node-sync') {
 			continue;
