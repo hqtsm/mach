@@ -41,6 +41,14 @@ const algorithm = (alg: number): Algo => {
 	return info;
 };
 
+const view = (b: ArrayBufferLike | ArrayBufferView): Uint8Array =>
+	'buffer' in b
+		? new Uint8Array(b.buffer, b.byteOffset, b.byteLength)
+		: new Uint8Array(b);
+
+const shared = (b: SharedArrayBuffer | ArrayBuffer): b is SharedArrayBuffer =>
+	Object.prototype.toString.call(b) === '[object SharedArrayBuffer]';
+
 /**
  * CCHashInstance dynamic hash.
  */
@@ -130,23 +138,17 @@ export class CCHashInstance extends DynamicHash {
 					d = hash.digest();
 				}
 			} else {
-				const data = 'buffer' in source
-					? new Uint8Array(
-						source.buffer,
-						source.byteOffset,
-						source.byteLength,
-					)
-					: new Uint8Array(source);
+				const b = view(source);
 				if ('write' in hash) {
 					await new Promise<void>((p, f) =>
-						hash.write(data, (e) => e ? f(e) : p())
+						hash.write(b, (e) => e ? f(e) : p())
 					);
 					await new Promise<void>((p, f) =>
 						hash.end((e) => e ? f(e) : p())
 					);
 					d = hash.read();
 				} else {
-					hash.update(data);
+					hash.update(b);
 					d = hash.digest();
 				}
 			}
@@ -164,18 +166,13 @@ export class CCHashInstance extends DynamicHash {
 				}
 				d = await c.digest(N, v);
 			} else {
-				const v = 'buffer' in source
-					? new Uint8Array(
-						source.buffer,
-						source.byteOffset,
-						source.byteLength,
-					)
-					: new Uint8Array(source);
-				try {
-					d = await c.digest(N, v as Uint8Array<ArrayBuffer>);
-				} catch (_) {
-					d = await c.digest(N, v.slice(0));
-				}
+				const v = view(source);
+				d = await c.digest(
+					N,
+					shared(v.buffer) ? v.slice(0) : v as Uint8Array<
+						ArrayBuffer
+					>,
+				);
 			}
 		}
 
