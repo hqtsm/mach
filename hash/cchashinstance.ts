@@ -138,6 +138,37 @@ export class CCHashInstance extends DynamicHash {
 					}
 					d = hash.digest();
 				}
+			} else if ('next' in source) {
+				if ('write' in hash) {
+					for (let n;;) {
+						n = source.next(PAGE_SIZE);
+						// deno-lint-ignore no-await-in-loop
+						n = 'then' in n ? await n : n;
+						if (n.done) {
+							break;
+						}
+						const d = view(n.value);
+						// deno-lint-ignore no-await-in-loop
+						await new Promise<void>((p, f) =>
+							hash.write(d, (e) => e ? f(e) : p())
+						);
+					}
+					await new Promise<void>((p, f) =>
+						hash.end((e) => e ? f(e) : p())
+					);
+					d = hash.read();
+				} else {
+					for (let n;;) {
+						n = source.next(PAGE_SIZE);
+						// deno-lint-ignore no-await-in-loop
+						n = 'then' in n ? await n : n;
+						if (n.done) {
+							break;
+						}
+						hash.update(view(n.value));
+					}
+					d = hash.digest();
+				}
 			} else {
 				const b = view(source);
 				if ('write' in hash) {
@@ -166,6 +197,8 @@ export class CCHashInstance extends DynamicHash {
 					throw new RangeError(`Read size off by: ${o}`);
 				}
 				d = await c.digest(N, v);
+			} else if ('next' in source) {
+				throw new Error('TODO');
 			} else {
 				let v = view(source);
 				v = shared(v.buffer) ? v.slice(0) : v;

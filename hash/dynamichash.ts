@@ -2,10 +2,32 @@ import { toStringTag } from '@hqtsm/class/symbol';
 import type { Reader } from '../util/reader.ts';
 
 /**
+ * Hash source generator.
+ */
+export type HashSourceGenerator = Generator<
+	ArrayBufferLike | ArrayBufferView,
+	// deno-lint-ignore no-explicit-any
+	any,
+	number
+>;
+
+/**
+ * Hash source async generator.
+ */
+export type HashSourceAsyncGenerator = AsyncGenerator<
+	ArrayBufferLike | ArrayBufferView,
+	// deno-lint-ignore no-explicit-any
+	any,
+	number
+>;
+
+/**
  * Hash source.
  */
 export type HashSource =
 	| Reader
+	| HashSourceGenerator
+	| HashSourceAsyncGenerator
 	| ArrayBufferLike
 	| ArrayBufferView;
 
