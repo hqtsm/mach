@@ -100,8 +100,9 @@ function* toIterator(
 	transform?: (data: ArrayBuffer) => ArrayBufferLike | ArrayBufferView,
 ): HashSourceIterator {
 	const size = data.byteLength;
-	let ask =
-		yield (transform ? transform(new ArrayBuffer(0)) : new ArrayBuffer(0));
+	let ask = page ? page : (
+		yield (transform ? transform(new ArrayBuffer(0)) : new ArrayBuffer(0))
+	);
 	for (let i = 0; i < size;) {
 		const ps = page || ask || PAGE_SIZE;
 		const d = data.slice(i, i + ps);
@@ -300,10 +301,11 @@ Deno.test('Hash Iterator<ArrayBuffer>', async () => {
 });
 
 Deno.test('Hash Iterator<Uint8Array<ArrayBuffer>>', async () => {
+	const transform = (d: ArrayBuffer) => new Uint8Array(ab2sab(d));
 	for (const { tag, alg, crypto, output, data } of cases()) {
 		const hash = new CCHashInstance(alg);
 		hash.crypto = crypto;
-		const it = toIterator(data, 0, (d) => new Uint8Array(ab2sab(d)));
+		const it = toIterator(data, 0, transform);
 		// deno-lint-ignore no-await-in-loop
 		await hash.update(it, data.byteLength);
 		// deno-lint-ignore no-await-in-loop
@@ -314,10 +316,11 @@ Deno.test('Hash Iterator<Uint8Array<ArrayBuffer>>', async () => {
 });
 
 Deno.test('Hash Iterator<SharedArrayBuffer>', async () => {
+	const transform = ab2sab;
 	for (const { tag, alg, crypto, output, data } of cases()) {
 		const hash = new CCHashInstance(alg);
 		hash.crypto = crypto;
-		const it = toIterator(data, 0, ab2sab);
+		const it = toIterator(data, 0, transform);
 		// deno-lint-ignore no-await-in-loop
 		await hash.update(it, data.byteLength);
 		// deno-lint-ignore no-await-in-loop
@@ -328,10 +331,11 @@ Deno.test('Hash Iterator<SharedArrayBuffer>', async () => {
 });
 
 Deno.test('Hash Iterator<Uint8Array<SharedArrayBuffer>>', async () => {
+	const transform = (d: ArrayBuffer) => new Uint8Array(ab2sab(d));
 	for (const { tag, alg, crypto, output, data } of cases()) {
 		const hash = new CCHashInstance(alg);
 		hash.crypto = crypto;
-		const it = toIterator(data, 0, (d) => new Uint8Array(ab2sab(d)));
+		const it = toIterator(data, 0, transform);
 		// deno-lint-ignore no-await-in-loop
 		await hash.update(it, data.byteLength);
 		// deno-lint-ignore no-await-in-loop
