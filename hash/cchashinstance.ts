@@ -28,6 +28,8 @@ interface Digest extends Algo {
 	s: number;
 }
 
+type IR = IteratorResult<ArrayBufferLike | ArrayBufferView>;
+
 // Supported hash algorithms with their names and lengths.
 const algorithims = new Map<number, Algo>([
 	[kCCDigestSHA1, { l: 20, N: 'SHA-1', n: 'sha1' }],
@@ -51,6 +53,10 @@ const view = (b: ArrayBufferLike | ArrayBufferView): Uint8Array =>
 
 const shared = (b: SharedArrayBuffer | ArrayBuffer): b is SharedArrayBuffer =>
 	Object.prototype.toString.call(b) === '[object SharedArrayBuffer]';
+
+const ip = (
+	v: { done?: unknown; value?: unknown } | Promise<unknown>,
+): v is Promise<unknown> => 'then' in v;
 
 /**
  * CCHashInstance dynamic hash.
@@ -139,11 +145,11 @@ export class CCHashInstance extends DynamicHash {
 					d = hash.digest();
 				}
 			} else if ('next' in source) {
+				const next = () => source.next(PAGE_SIZE);
 				if ('write' in hash) {
-					for (let n;;) {
-						n = source.next(PAGE_SIZE);
+					for (let n = next(), a = ip(n);; n = next()) {
 						// deno-lint-ignore no-await-in-loop
-						n = 'then' in n ? await n : n;
+						n = (a ? await n : n) as IR;
 						if (n.done) {
 							break;
 						}
@@ -158,10 +164,9 @@ export class CCHashInstance extends DynamicHash {
 					);
 					d = hash.read();
 				} else {
-					for (let n;;) {
-						n = source.next(PAGE_SIZE);
+					for (let n = next(), a = ip(n);; n = next()) {
 						// deno-lint-ignore no-await-in-loop
-						n = 'then' in n ? await n : n;
+						n = (a ? await n : n) as IR;
 						if (n.done) {
 							break;
 						}
