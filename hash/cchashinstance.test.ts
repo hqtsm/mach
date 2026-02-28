@@ -118,6 +118,13 @@ function hashed(algo: string, data: Uint8Array): string {
 const ABCD = new TextEncoder().encode('ABCD');
 const PAGED = new Uint8Array(new ArrayBuffer(PAGE_SIZE * 1.5));
 
+const ITTER_SIZES = [
+	0,
+	Math.floor(PAGE_SIZE / 2),
+	PAGE_SIZE,
+	PAGE_SIZE * 2,
+];
+
 const unsupported = [
 	kCCDigestNone,
 	kCCDigestMD2,
@@ -287,61 +294,73 @@ Deno.test('Hash Blob', async () => {
 });
 
 Deno.test('Hash Iterator<ArrayBuffer>', async () => {
-	for (const { tag, alg, crypto, output, data } of cases()) {
-		const hash = new CCHashInstance(alg);
-		hash.crypto = crypto;
-		const it = toIterator(data);
-		// deno-lint-ignore no-await-in-loop
-		await hash.update(it, data.byteLength);
-		// deno-lint-ignore no-await-in-loop
-		const rab = await hash.finish();
-		assertEquals(rab.byteLength, hash.digestLength(), tag);
-		assertEquals(hex(new Uint8Array(rab)), output, tag);
+	for (const size of ITTER_SIZES) {
+		for (const { tag, alg, crypto, output, data } of cases()) {
+			const tags = `${tag} size=${size}`;
+			const hash = new CCHashInstance(alg);
+			hash.crypto = crypto;
+			const it = toIterator(data, size);
+			// deno-lint-ignore no-await-in-loop
+			await hash.update(it, data.byteLength);
+			// deno-lint-ignore no-await-in-loop
+			const rab = await hash.finish();
+			assertEquals(rab.byteLength, hash.digestLength(), tags);
+			assertEquals(hex(new Uint8Array(rab)), output, tags);
+		}
 	}
 });
 
 Deno.test('Hash Iterator<Uint8Array<ArrayBuffer>>', async () => {
 	const transform = (d: ArrayBuffer) => new Uint8Array(ab2sab(d));
-	for (const { tag, alg, crypto, output, data } of cases()) {
-		const hash = new CCHashInstance(alg);
-		hash.crypto = crypto;
-		const it = toIterator(data, 0, transform);
-		// deno-lint-ignore no-await-in-loop
-		await hash.update(it, data.byteLength);
-		// deno-lint-ignore no-await-in-loop
-		const rab = await hash.finish();
-		assertEquals(rab.byteLength, hash.digestLength(), tag);
-		assertEquals(hex(new Uint8Array(rab)), output, tag);
+	for (const size of ITTER_SIZES) {
+		for (const { tag, alg, crypto, output, data } of cases()) {
+			const tags = `${tag} size=${size}`;
+			const hash = new CCHashInstance(alg);
+			hash.crypto = crypto;
+			const it = toIterator(data, 0, transform);
+			// deno-lint-ignore no-await-in-loop
+			await hash.update(it, data.byteLength);
+			// deno-lint-ignore no-await-in-loop
+			const rab = await hash.finish();
+			assertEquals(rab.byteLength, hash.digestLength(), tags);
+			assertEquals(hex(new Uint8Array(rab)), output, tags);
+		}
 	}
 });
 
 Deno.test('Hash Iterator<SharedArrayBuffer>', async () => {
 	const transform = ab2sab;
-	for (const { tag, alg, crypto, output, data } of cases()) {
-		const hash = new CCHashInstance(alg);
-		hash.crypto = crypto;
-		const it = toIterator(data, 0, transform);
-		// deno-lint-ignore no-await-in-loop
-		await hash.update(it, data.byteLength);
-		// deno-lint-ignore no-await-in-loop
-		const rab = await hash.finish();
-		assertEquals(rab.byteLength, hash.digestLength(), tag);
-		assertEquals(hex(new Uint8Array(rab)), output, tag);
+	for (const size of ITTER_SIZES) {
+		for (const { tag, alg, crypto, output, data } of cases()) {
+			const tags = `${tag} size=${size}`;
+			const hash = new CCHashInstance(alg);
+			hash.crypto = crypto;
+			const it = toIterator(data, size, transform);
+			// deno-lint-ignore no-await-in-loop
+			await hash.update(it, data.byteLength);
+			// deno-lint-ignore no-await-in-loop
+			const rab = await hash.finish();
+			assertEquals(rab.byteLength, hash.digestLength(), tags);
+			assertEquals(hex(new Uint8Array(rab)), output, tags);
+		}
 	}
 });
 
 Deno.test('Hash Iterator<Uint8Array<SharedArrayBuffer>>', async () => {
 	const transform = (d: ArrayBuffer) => new Uint8Array(ab2sab(d));
-	for (const { tag, alg, crypto, output, data } of cases()) {
-		const hash = new CCHashInstance(alg);
-		hash.crypto = crypto;
-		const it = toIterator(data, 0, transform);
-		// deno-lint-ignore no-await-in-loop
-		await hash.update(it, data.byteLength);
-		// deno-lint-ignore no-await-in-loop
-		const rab = await hash.finish();
-		assertEquals(rab.byteLength, hash.digestLength(), tag);
-		assertEquals(hex(new Uint8Array(rab)), output, tag);
+	for (const size of ITTER_SIZES) {
+		for (const { tag, alg, crypto, output, data } of cases()) {
+			const tags = `${tag} size=${size}`;
+			const hash = new CCHashInstance(alg);
+			hash.crypto = crypto;
+			const it = toIterator(data, size, transform);
+			// deno-lint-ignore no-await-in-loop
+			await hash.update(it, data.byteLength);
+			// deno-lint-ignore no-await-in-loop
+			const rab = await hash.finish();
+			assertEquals(rab.byteLength, hash.digestLength(), tags);
+			assertEquals(hex(new Uint8Array(rab)), output, tags);
+		}
 	}
 });
 
