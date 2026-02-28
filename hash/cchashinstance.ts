@@ -257,12 +257,13 @@ export class CCHashInstance extends DynamicHash {
 						break;
 					}
 					const b = n.value;
-					if (b.byteLength) {
+					const l = b.byteLength;
+					if (l) {
 						if (all) {
 							// TODO: Append.
 						} else {
 							// TODO: Check if over.
-							if (b.byteLength === size) {
+							if (l === size) {
 								all = viewab(view(b));
 							} else {
 								all = new Uint8Array(size);
