@@ -2,6 +2,14 @@ import { toStringTag } from '@hqtsm/class/symbol';
 import type { Reader } from '../util/reader.ts';
 
 /**
+ * Hash source.
+ */
+export type HashSource =
+	| Reader
+	| ArrayBufferLike
+	| ArrayBufferView;
+
+/**
  * Subtle crypto hash view.
  */
 export interface HashCryptoSubtleView {
@@ -123,9 +131,7 @@ export abstract class DynamicHash {
 	 * @param source Source data.
 	 * @returns Hash digest.
 	 */
-	public abstract update(
-		source: Reader | ArrayBufferLike | ArrayBufferView,
-	): Promise<void>;
+	public abstract update(source: HashSource): Promise<void>;
 
 	/**
 	 * Finish hash, can only be called once.

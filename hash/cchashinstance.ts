@@ -6,8 +6,11 @@ import {
 	kCCDigestSHA512,
 	PAGE_SIZE,
 } from '../const.ts';
-import type { Reader } from '../util/reader.ts';
-import { DynamicHash, type HashCryptoSubtle } from './dynamichash.ts';
+import {
+	DynamicHash,
+	type HashCryptoSubtle,
+	type HashSource,
+} from './dynamichash.ts';
 
 // Workaround for missing types.
 declare const crypto: {
@@ -80,9 +83,7 @@ export class CCHashInstance extends DynamicHash {
 		return this.mTruncate || this.mDigest.l;
 	}
 
-	public async update(
-		source: Reader | ArrayBufferLike | ArrayBufferView,
-	): Promise<void> {
+	public async update(source: HashSource): Promise<void> {
 		const { mDigest } = this;
 		const { N, n, s } = mDigest;
 		if (s) {
