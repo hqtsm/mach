@@ -22,16 +22,6 @@ export type HashSourceAsyncIterator = AsyncIterator<
 >;
 
 /**
- * Hash source.
- */
-export type HashSource =
-	| Reader
-	| HashSourceIterator
-	| HashSourceAsyncIterator
-	| ArrayBufferLike
-	| ArrayBufferView;
-
-/**
  * Subtle crypto hash view.
  */
 export interface HashCryptoSubtleView {

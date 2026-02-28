@@ -6,10 +6,12 @@ import {
 	kCCDigestSHA512,
 	PAGE_SIZE,
 } from '../const.ts';
+import type { Reader } from '../util/reader.ts';
 import {
 	DynamicHash,
 	type HashCryptoSubtle,
-	type HashSource,
+	type HashSourceAsyncIterator,
+	type HashSourceIterator,
 } from './dynamichash.ts';
 
 // Workaround for missing types.
@@ -102,7 +104,15 @@ export class CCHashInstance extends DynamicHash {
 	 * @param size Source size.
 	 * @returns Hash digest.
 	 */
-	public async update(source: HashSource, size?: number): Promise<void> {
+	public async update(
+		source:
+			| Reader
+			| ArrayBufferLike
+			| ArrayBufferView
+			| HashSourceIterator
+			| HashSourceAsyncIterator,
+		size?: number,
+	): Promise<void> {
 		const { mDigest } = this;
 		const { N, n, s } = mDigest;
 		if (s) {
