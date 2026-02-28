@@ -93,25 +93,7 @@ function hashed(algo: string, data: Uint8Array): string {
 }
 
 const ABCD = new TextEncoder().encode('ABCD');
-const ABCD_SAB = new Uint8Array(new SharedArrayBuffer(ABCD.byteLength));
-ABCD_SAB.set(ABCD);
-
-// 'ABCD':
-const expectedABCD = [
-	[kCCDigestSHA1, hashed('sha1', ABCD)],
-	[kCCDigestSHA256, hashed('sha256', ABCD)],
-	[kCCDigestSHA384, hashed('sha384', ABCD)],
-	[kCCDigestSHA512, hashed('sha512', ABCD)],
-] as const;
-
 const PAGED = new Uint8Array(new ArrayBuffer(PAGE_SIZE * 1.5));
-
-const expectedPAGED = [
-	[kCCDigestSHA1, hashed('sha1', PAGED)],
-	[kCCDigestSHA256, hashed('sha256', PAGED)],
-	[kCCDigestSHA384, hashed('sha384', PAGED)],
-	[kCCDigestSHA512, hashed('sha512', PAGED)],
-] as const;
 
 const unsupported = [
 	kCCDigestNone,
@@ -130,6 +112,25 @@ const unsupported = [
 	kCCDigestSkein384,
 	kCCDigestSkein512,
 ];
+
+const expected = [
+	[kCCDigestSHA1, {
+		ABCD: [ABCD.buffer, hashed('sha1', ABCD)] as const,
+		PAGED: [PAGED.buffer, hashed('sha1', PAGED)] as const,
+	}],
+	[kCCDigestSHA256, {
+		ABCD: [ABCD.buffer, hashed('sha256', ABCD)] as const,
+		PAGED: [PAGED.buffer, hashed('sha256', PAGED)] as const,
+	}],
+	[kCCDigestSHA384, {
+		ABCD: [ABCD.buffer, hashed('sha384', ABCD)] as const,
+		PAGED: [PAGED.buffer, hashed('sha384', PAGED)] as const,
+	}],
+	[kCCDigestSHA512, {
+		ABCD: [ABCD.buffer, hashed('sha512', ABCD)] as const,
+		PAGED: [PAGED.buffer, hashed('sha512', PAGED)] as const,
+	}],
+] as const;
 
 const engines = [
 	{
@@ -158,6 +159,32 @@ const engines = [
 	},
 ] as const;
 
+function* cases(): Iterable<{
+	tag: string;
+	alg: number;
+	input: string;
+	output: string;
+	data: ArrayBuffer;
+	name: (typeof engines)[number]['name'];
+	crypto: (typeof engines)[number]['crypto'];
+}> {
+	for (const [alg, expect] of expected) {
+		for (const { name, crypto } of engines) {
+			for (const [input, [data, output]] of Object.entries(expect)) {
+				yield {
+					tag: `alg=${alg} crypto=${name} in=${input} out=${output}`,
+					alg,
+					name,
+					crypto,
+					input,
+					output,
+					data,
+				};
+			}
+		}
+	}
+}
+
 Deno.test('CCHashInstance unsupported', () => {
 	for (const alg of unsupported) {
 		const tag = `alg=${alg}`;
@@ -170,67 +197,89 @@ Deno.test('CCHashInstance unsupported', () => {
 	}
 });
 
-Deno.test('CCHashInstance full', async () => {
-	for (const [alg, expt] of expectedABCD) {
-		for (const { name, crypto } of engines) {
-			for (const view of [true, false]) {
-				const tag = `alg=${alg} engine=${name} view=${view}`;
-				{
-					const hash = new CCHashInstance(alg);
-					hash.crypto = crypto;
-					// deno-lint-ignore no-await-in-loop
-					await hash.update(view ? ABCD : ABCD.buffer);
-					// deno-lint-ignore no-await-in-loop
-					const rab = await hash.finish();
-					assertEquals(rab.byteLength, hash.digestLength(), tag);
-					assertEquals(hex(new Uint8Array(rab)), expt, tag);
-				}
-				{
-					const hash = new CCHashInstance(alg);
-					hash.crypto = crypto;
-					// deno-lint-ignore no-await-in-loop
-					await hash.update(view ? ABCD_SAB : ABCD_SAB.buffer);
-					// deno-lint-ignore no-await-in-loop
-					const rsab = await hash.finish();
-					assertEquals(rsab.byteLength, hash.digestLength(), tag);
-					assertEquals(hex(new Uint8Array(rsab)), expt, tag);
-				}
-			}
-		}
+Deno.test('CCHashInstance ArrayBuffer', async () => {
+	for (const { tag, alg, crypto, output, data } of cases()) {
+		const hash = new CCHashInstance(alg);
+		hash.crypto = crypto;
+		// deno-lint-ignore no-await-in-loop
+		await hash.update(data);
+		// deno-lint-ignore no-await-in-loop
+		const rab = await hash.finish();
+		assertEquals(rab.byteLength, hash.digestLength(), tag);
+		assertEquals(hex(new Uint8Array(rab)), output, tag);
+	}
+});
+
+Deno.test('CCHashInstance SharedArrayBuffer', async () => {
+	for (const { tag, alg, crypto, output, data } of cases()) {
+		const hash = new CCHashInstance(alg);
+		hash.crypto = crypto;
+		const sab = new SharedArrayBuffer(data.byteLength);
+		new Uint8Array(sab).set(new Uint8Array(data));
+		// deno-lint-ignore no-await-in-loop
+		await hash.update(sab);
+		// deno-lint-ignore no-await-in-loop
+		const rab = await hash.finish();
+		assertEquals(rab.byteLength, hash.digestLength(), tag);
+		assertEquals(hex(new Uint8Array(rab)), output, tag);
+	}
+});
+
+Deno.test('CCHashInstance Uint8Array<ArrayBuffer>', async () => {
+	for (const { tag, alg, crypto, output, data } of cases()) {
+		const hash = new CCHashInstance(alg);
+		hash.crypto = crypto;
+		// deno-lint-ignore no-await-in-loop
+		await hash.update(new Uint8Array(data));
+		// deno-lint-ignore no-await-in-loop
+		const rab = await hash.finish();
+		assertEquals(rab.byteLength, hash.digestLength(), tag);
+		assertEquals(hex(new Uint8Array(rab)), output, tag);
+	}
+});
+
+Deno.test('CCHashInstance Uint8Array<SharedArrayBuffer>', async () => {
+	for (const { tag, alg, crypto, output, data } of cases()) {
+		const hash = new CCHashInstance(alg);
+		hash.crypto = crypto;
+		const sab = new SharedArrayBuffer(data.byteLength);
+		const bytes = new Uint8Array(sab);
+		bytes.set(new Uint8Array(data));
+		// deno-lint-ignore no-await-in-loop
+		await hash.update(bytes);
+		// deno-lint-ignore no-await-in-loop
+		const rab = await hash.finish();
+		assertEquals(rab.byteLength, hash.digestLength(), tag);
+		assertEquals(hex(new Uint8Array(rab)), output, tag);
+	}
+});
+
+Deno.test('CCHashInstance Blob', async () => {
+	for (const { tag, alg, crypto, output, data } of cases()) {
+		const hash = new CCHashInstance(alg);
+		hash.crypto = crypto;
+		const blob = new Blob([data]);
+		// deno-lint-ignore no-await-in-loop
+		await hash.update(blob);
+		// deno-lint-ignore no-await-in-loop
+		const rab = await hash.finish();
+		assertEquals(rab.byteLength, hash.digestLength(), tag);
+		assertEquals(hex(new Uint8Array(rab)), output, tag);
 	}
 });
 
 Deno.test('CCHashInstance truncate', async () => {
 	const truncate = 8;
-	for (const [alg, expt] of expectedABCD) {
-		for (const { name, crypto } of engines) {
-			const tag = `alg=${alg} engine=${name} truncate=${truncate}`;
-			const exptHex = expt.slice(0, truncate * 2);
-			const hash = new CCHashInstance(alg, truncate);
-			hash.crypto = crypto;
-			// deno-lint-ignore no-await-in-loop
-			await hash.update(ABCD);
-			// deno-lint-ignore no-await-in-loop
-			const digest = await hash.finish();
-			assertEquals(digest.byteLength, truncate, tag);
-			assertEquals(hex(new Uint8Array(digest)), exptHex, tag);
-		}
-	}
-});
-
-Deno.test('CCHashInstance paged', async () => {
-	for (const [alg, expt] of expectedPAGED) {
-		for (const { name, crypto } of engines) {
-			const tag = `alg=${alg} engine=${name}`;
-			const hash = new CCHashInstance(alg);
-			hash.crypto = crypto;
-			// deno-lint-ignore no-await-in-loop
-			await hash.update(new Blob([PAGED]));
-			// deno-lint-ignore no-await-in-loop
-			const digest = await hash.finish();
-			assertEquals(digest.byteLength, hash.digestLength(), tag);
-			assertEquals(hex(new Uint8Array(digest)), expt, tag);
-		}
+	for (const { tag, alg, crypto, output, data } of cases()) {
+		const hext = output.slice(0, truncate * 2);
+		const hash = new CCHashInstance(alg, truncate);
+		hash.crypto = crypto;
+		// deno-lint-ignore no-await-in-loop
+		await hash.update(data);
+		// deno-lint-ignore no-await-in-loop
+		const digest = await hash.finish();
+		assertEquals(digest.byteLength, truncate, tag);
+		assertEquals(hex(new Uint8Array(digest)), hext, tag);
 	}
 });
 
