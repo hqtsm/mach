@@ -260,8 +260,9 @@ export class CCHashInstance extends DynamicHash {
 			} else if ('next' in source) {
 				let all: Uint8Array<ArrayBuffer> | undefined;
 				let o = -size;
+				let ps = size > 0 ? size : PAGE_SIZE;
 				for (
-					let i = 0, ps = size, n = source.next(ps), a = ip(n);;
+					let i = 0, n = source.next(ps), a = ip(n);;
 					n = source.next(ps)
 				) {
 					// deno-lint-ignore no-await-in-loop
