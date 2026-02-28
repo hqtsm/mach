@@ -278,6 +278,7 @@ Deno.test('CCHashInstance truncate', async () => {
 		await hash.update(data);
 		// deno-lint-ignore no-await-in-loop
 		const digest = await hash.finish();
+		assertEquals(hash.digestLength(), truncate, tag);
 		assertEquals(digest.byteLength, truncate, tag);
 		assertEquals(hex(new Uint8Array(digest)), hext, tag);
 	}
