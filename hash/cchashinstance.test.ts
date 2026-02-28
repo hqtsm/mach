@@ -115,6 +115,7 @@ function hashed(algo: string, data: Uint8Array): string {
 	return createHash(algo).update(data).digest('hex');
 }
 
+const EMPTY = new Uint8Array(0);
 const ABCD = new TextEncoder().encode('ABCD');
 const PAGED = new Uint8Array(new ArrayBuffer(PAGE_SIZE * 1.5));
 
@@ -145,20 +146,24 @@ const unsupported = [
 
 const expected = [
 	[kCCDigestSHA1, {
-		ABCD: [ABCD.buffer, hashed('sha1', ABCD)] as const,
-		PAGED: [PAGED.buffer, hashed('sha1', PAGED)] as const,
+		EMPTY: [EMPTY.buffer, hashed('sha1', EMPTY)],
+		ABCD: [ABCD.buffer, hashed('sha1', ABCD)],
+		PAGED: [PAGED.buffer, hashed('sha1', PAGED)],
 	}],
 	[kCCDigestSHA256, {
-		ABCD: [ABCD.buffer, hashed('sha256', ABCD)] as const,
-		PAGED: [PAGED.buffer, hashed('sha256', PAGED)] as const,
+		EMPTY: [EMPTY.buffer, hashed('sha256', EMPTY)],
+		ABCD: [ABCD.buffer, hashed('sha256', ABCD)],
+		PAGED: [PAGED.buffer, hashed('sha256', PAGED)],
 	}],
 	[kCCDigestSHA384, {
-		ABCD: [ABCD.buffer, hashed('sha384', ABCD)] as const,
-		PAGED: [PAGED.buffer, hashed('sha384', PAGED)] as const,
+		EMPTY: [EMPTY.buffer, hashed('sha384', EMPTY)],
+		ABCD: [ABCD.buffer, hashed('sha384', ABCD)],
+		PAGED: [PAGED.buffer, hashed('sha384', PAGED)],
 	}],
 	[kCCDigestSHA512, {
-		ABCD: [ABCD.buffer, hashed('sha512', ABCD)] as const,
-		PAGED: [PAGED.buffer, hashed('sha512', PAGED)] as const,
+		EMPTY: [EMPTY.buffer, hashed('sha512', EMPTY)],
+		ABCD: [ABCD.buffer, hashed('sha512', ABCD)],
+		PAGED: [PAGED.buffer, hashed('sha512', PAGED)],
 	}],
 ] as const;
 
