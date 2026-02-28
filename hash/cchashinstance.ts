@@ -171,15 +171,18 @@ export class CCHashInstance extends DynamicHash {
 							break;
 						}
 						const b = n.value;
-						o += b.byteLength;
-						if (o > 0) {
-							break;
+						const l = b.byteLength;
+						if (l) {
+							o += l;
+							if (o > 0) {
+								break;
+							}
+							const d = view(b);
+							// deno-lint-ignore no-await-in-loop
+							await new Promise<void>((p, f) =>
+								hash.write(d, (e) => e ? f(e) : p())
+							);
 						}
-						const d = view(b);
-						// deno-lint-ignore no-await-in-loop
-						await new Promise<void>((p, f) =>
-							hash.write(d, (e) => e ? f(e) : p())
-						);
 					}
 					if (o) {
 						throw new RangeError(`Read size off by: ${o}`);
@@ -199,11 +202,14 @@ export class CCHashInstance extends DynamicHash {
 							break;
 						}
 						const b = n.value;
-						o += b.byteLength;
-						if (o > 0) {
-							break;
+						const l = b.byteLength;
+						if (l) {
+							o += l;
+							if (o > 0) {
+								break;
+							}
+							hash.update(view(b));
 						}
-						hash.update(view(b));
 					}
 					if (o) {
 						throw new RangeError(`Read size off by: ${o}`);
@@ -251,21 +257,20 @@ export class CCHashInstance extends DynamicHash {
 						break;
 					}
 					const b = n.value;
-					if (!b.byteLength) {
-						continue;
-					}
-					if (all) {
-						// TODO: Append.
-					} else {
-						// TODO: Check if over.
-						if (b.byteLength === size) {
-							all = viewab(view(b));
+					if (b.byteLength) {
+						if (all) {
+							// TODO: Append.
 						} else {
-							all = new Uint8Array(size);
-							all.set(view(b));
+							// TODO: Check if over.
+							if (b.byteLength === size) {
+								all = viewab(view(b));
+							} else {
+								all = new Uint8Array(size);
+								all.set(view(b));
+							}
 						}
+						ps = PAGE_SIZE;
 					}
-					ps = PAGE_SIZE;
 				}
 				throw new Error('TODO');
 			} else {
