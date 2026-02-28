@@ -240,23 +240,24 @@ export class CCHashInstance extends DynamicHash {
 				d = await c.digest(N, v);
 			} else if ('next' in source) {
 				let all: Uint8Array<ArrayBuffer> | undefined;
-				let n = source.next(size);
-				const a = ip(n);
-				n = (a ? await n : n) as IR;
+				let ps = size;
 				for (
-					;
-					!n.done;
-					// deno-lint-ignore no-await-in-loop
-					n = source.next(size), n = (a ? await n : n) as IR
+					let n = source.next(ps), a = ip(n);;
+					n = source.next(ps)
 				) {
+					// deno-lint-ignore no-await-in-loop
+					n = (a ? await n : n) as IR;
+					if (n.done) {
+						break;
+					}
 					const b = n.value;
 					if (!b.byteLength) {
 						continue;
 					}
 					if (all) {
-						// TODO
+						// TODO: Append.
 					} else {
-						// TODO: What is over?
+						// TODO: Check if over.
 						if (b.byteLength === size) {
 							all = viewab(view(b));
 						} else {
@@ -264,6 +265,7 @@ export class CCHashInstance extends DynamicHash {
 							all.set(view(b));
 						}
 					}
+					ps = PAGE_SIZE;
 				}
 				throw new Error('TODO');
 			} else {
