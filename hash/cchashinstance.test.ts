@@ -185,7 +185,7 @@ function* cases(): Iterable<{
 	}
 }
 
-Deno.test('CCHashInstance unsupported', () => {
+Deno.test('Unsupported', () => {
 	for (const alg of unsupported) {
 		const tag = `alg=${alg}`;
 		assertThrows(
@@ -197,7 +197,7 @@ Deno.test('CCHashInstance unsupported', () => {
 	}
 });
 
-Deno.test('CCHashInstance ArrayBuffer', async () => {
+Deno.test('Hash ArrayBuffer', async () => {
 	for (const { tag, alg, crypto, output, data } of cases()) {
 		const hash = new CCHashInstance(alg);
 		hash.crypto = crypto;
@@ -210,7 +210,7 @@ Deno.test('CCHashInstance ArrayBuffer', async () => {
 	}
 });
 
-Deno.test('CCHashInstance SharedArrayBuffer', async () => {
+Deno.test('Hash SharedArrayBuffer', async () => {
 	for (const { tag, alg, crypto, output, data } of cases()) {
 		const hash = new CCHashInstance(alg);
 		hash.crypto = crypto;
@@ -225,7 +225,7 @@ Deno.test('CCHashInstance SharedArrayBuffer', async () => {
 	}
 });
 
-Deno.test('CCHashInstance Uint8Array<ArrayBuffer>', async () => {
+Deno.test('Hash Uint8Array<ArrayBuffer>', async () => {
 	for (const { tag, alg, crypto, output, data } of cases()) {
 		const hash = new CCHashInstance(alg);
 		hash.crypto = crypto;
@@ -238,7 +238,7 @@ Deno.test('CCHashInstance Uint8Array<ArrayBuffer>', async () => {
 	}
 });
 
-Deno.test('CCHashInstance Uint8Array<SharedArrayBuffer>', async () => {
+Deno.test('Hash Uint8Array<SharedArrayBuffer>', async () => {
 	for (const { tag, alg, crypto, output, data } of cases()) {
 		const hash = new CCHashInstance(alg);
 		hash.crypto = crypto;
@@ -254,7 +254,7 @@ Deno.test('CCHashInstance Uint8Array<SharedArrayBuffer>', async () => {
 	}
 });
 
-Deno.test('CCHashInstance Blob', async () => {
+Deno.test('Hash Blob', async () => {
 	for (const { tag, alg, crypto, output, data } of cases()) {
 		const hash = new CCHashInstance(alg);
 		hash.crypto = crypto;
@@ -268,7 +268,7 @@ Deno.test('CCHashInstance Blob', async () => {
 	}
 });
 
-Deno.test('CCHashInstance truncate', async () => {
+Deno.test('Hash truncate', async () => {
 	for (const { tag, alg, crypto, output, data } of cases()) {
 		const truncate = Math.floor(output.length / 2);
 		const hext = output.slice(0, truncate * 2);
@@ -284,7 +284,7 @@ Deno.test('CCHashInstance truncate', async () => {
 	}
 });
 
-Deno.test('CCHashInstance Blob over-read', async () => {
+Deno.test('Hash Blob over-read', async () => {
 	for (const { name, crypto } of engines) {
 		const tag = `engine=${name}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
@@ -299,7 +299,7 @@ Deno.test('CCHashInstance Blob over-read', async () => {
 	}
 });
 
-Deno.test('CCHashInstance Blob under-read', async () => {
+Deno.test('Hash Blob under-read', async () => {
 	for (const { name, crypto } of engines) {
 		const tag = `engine=${name}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
@@ -380,7 +380,7 @@ Deno.test('Already finished', async () => {
 	}
 });
 
-Deno.test('CCHashInstance node async write error', async () => {
+Deno.test('Hash node async write error', async () => {
 	const crypto = {
 		createHash: (algo: string) => {
 			const hash = createHash(algo);
@@ -421,7 +421,7 @@ Deno.test('CCHashInstance node async write error', async () => {
 	}
 });
 
-Deno.test('CCHashInstance node async end error', async () => {
+Deno.test('Hash node async end error', async () => {
 	const crypto = {
 		createHash: (algo: string) => {
 			const hash = createHash(algo);
