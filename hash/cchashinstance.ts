@@ -55,7 +55,7 @@ const shared = (b: SharedArrayBuffer | ArrayBuffer): b is SharedArrayBuffer =>
 	Object.prototype.toString.call(b) === '[object SharedArrayBuffer]';
 
 const ip = (
-	v: { done?: unknown; value?: unknown } | Promise<unknown>,
+	v: IteratorResult<unknown> | Promise<unknown>,
 ): v is Promise<unknown> => 'then' in v;
 
 /**
