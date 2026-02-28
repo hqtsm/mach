@@ -166,13 +166,9 @@ export class CCHashInstance extends DynamicHash {
 				}
 				d = await c.digest(N, v);
 			} else {
-				const v = view(source);
-				d = await c.digest(
-					N,
-					shared(v.buffer) ? v.slice(0) : v as Uint8Array<
-						ArrayBuffer
-					>,
-				);
+				let v = view(source);
+				v = shared(v.buffer) ? v.slice(0) : v;
+				d = await c.digest(N, v as Uint8Array<ArrayBuffer>);
 			}
 		}
 
