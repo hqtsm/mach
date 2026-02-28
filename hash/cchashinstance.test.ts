@@ -269,8 +269,8 @@ Deno.test('CCHashInstance Blob', async () => {
 });
 
 Deno.test('CCHashInstance truncate', async () => {
-	const truncate = 8;
 	for (const { tag, alg, crypto, output, data } of cases()) {
+		const truncate = Math.floor(output.length / 2);
 		const hext = output.slice(0, truncate * 2);
 		const hash = new CCHashInstance(alg, truncate);
 		hash.crypto = crypto;
