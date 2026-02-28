@@ -268,8 +268,8 @@ export class CCHashInstance extends DynamicHash {
 								all = new Uint8Array(size);
 								all.set(view(b));
 							}
+							ps = PAGE_SIZE;
 						}
-						ps = PAGE_SIZE;
 					}
 				}
 				throw new Error('TODO');
