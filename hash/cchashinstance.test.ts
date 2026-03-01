@@ -248,15 +248,44 @@ const engines = [
 	},
 ] as const;
 
-type Input = [
+type InputSized = [
 	string,
 	() => ArrayBuffer | Blob,
 	null,
-] | [
+];
+
+type InputSize = [
 	string,
 	() => HashSourceIterator | HashSourceAsyncIterator,
 	number,
 ];
+
+type Input = InputSized | InputSize;
+
+function getInputsSize(size: number): InputSize[] {
+	return [
+		[
+			`Iterator-returns-${size}`,
+			() => toIterator(new ArrayBuffer(size)),
+			size,
+		],
+		[
+			`AsyncIterator-returns-${size}`,
+			() => toAsyncIterator(new ArrayBuffer(size)),
+			size,
+		],
+		[
+			`Iterator-no-return-${size}`,
+			() => toIterator(new ArrayBuffer(size), { returns: null }),
+			size,
+		],
+		[
+			`AsyncIterator-no-return-${size}`,
+			() => toAsyncIterator(new ArrayBuffer(size), { returns: null }),
+			size,
+		],
+	];
+}
 
 function getInputs(
 	size: number,
@@ -278,26 +307,7 @@ function getInputs(
 		]);
 	}
 	if (iterators) {
-		r.push([
-			`Iterator-returns-${size}`,
-			() => toIterator(new ArrayBuffer(size)),
-			size,
-		]);
-		r.push([
-			`AsyncIterator-returns-${size}`,
-			() => toAsyncIterator(new ArrayBuffer(size)),
-			size,
-		]);
-		r.push([
-			`Iterator-no-return-${size}`,
-			() => toIterator(new ArrayBuffer(size), { returns: null }),
-			size,
-		]);
-		r.push([
-			`AsyncIterator-no-return-${size}`,
-			() => toAsyncIterator(new ArrayBuffer(size), { returns: null }),
-			size,
-		]);
+		r.push(...getInputsSize(size));
 	}
 	return r;
 }
@@ -655,6 +665,39 @@ Deno.test('Hash Blob under-read', async () => {
 			'Read size off by: 1',
 			tag,
 		);
+	}
+});
+
+Deno.test('Hash stream over-read', async () => {
+	for (const [name, source, size] of getInputsSize(1024)) {
+		for (const { engine, crypto } of engines) {
+			const tag = `name=${name} engine=${engine}`;
+			const hash = new CCHashInstance(kCCDigestSHA1);
+			hash.crypto = crypto;
+			// deno-lint-ignore no-await-in-loop
+			await assertRejects(
+				() => hash.update(source(), size - 1),
+				RangeError,
+				'Read size off by: 1',
+				tag,
+			);
+		}
+	}
+});
+Deno.test('Hash stream under-read', async () => {
+	for (const [name, source, size] of getInputsSize(1024)) {
+		for (const { engine, crypto } of engines) {
+			const tag = `name=${name} engine=${engine}`;
+			const hash = new CCHashInstance(kCCDigestSHA1);
+			hash.crypto = crypto;
+			// deno-lint-ignore no-await-in-loop
+			await assertRejects(
+				() => hash.update(source(), size + 1),
+				RangeError,
+				'Read size off by: -1',
+				tag,
+			);
+		}
 	}
 });
 
