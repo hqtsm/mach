@@ -645,7 +645,7 @@ Deno.test('Hash Blob under-read', async () => {
 });
 
 Deno.test('State errors', async () => {
-	for (const [name, data, size] of inputs) {
+	for (const [name, source, size] of inputs) {
 		for (const { engine, crypto } of engines) {
 			const tag = `name=${name} engine=${engine}`;
 			{
@@ -653,12 +653,14 @@ Deno.test('State errors', async () => {
 				hash.crypto = crypto;
 				// deno-lint-ignore no-await-in-loop
 				await (
-					size ? hash.update(data(), size) : hash.update(data())
+					size ? hash.update(source(), size) : hash.update(source())
 				);
 				// deno-lint-ignore no-await-in-loop
 				await assertRejects(
 					() => (
-						size ? hash.update(data(), size) : hash.update(data())
+						size
+							? hash.update(source(), size)
+							: hash.update(source())
 					),
 					Error,
 					'Already updated',
@@ -684,8 +686,8 @@ Deno.test('State errors', async () => {
 					() =>
 						Promise.all([
 							size
-								? hash.update(data(), size)
-								: hash.update(data()),
+								? hash.update(source(), size)
+								: hash.update(source()),
 							hash.finish(),
 						]),
 					Error,
@@ -698,7 +700,7 @@ Deno.test('State errors', async () => {
 				hash.crypto = crypto;
 				// deno-lint-ignore no-await-in-loop
 				await (
-					size ? hash.update(data(), size) : hash.update(data())
+					size ? hash.update(source(), size) : hash.update(source())
 				);
 				// deno-lint-ignore no-await-in-loop
 				await hash.finish();
