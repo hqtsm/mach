@@ -70,6 +70,15 @@ export interface HashSourceAsyncIterator {
 }
 
 /**
+ * Subtle crypto hash algorithm.
+ */
+export type HashCryptoSubtleAlgorithm =
+	| 'SHA-1'
+	| 'SHA-256'
+	| 'SHA-384'
+	| 'SHA-512';
+
+/**
  * Subtle crypto hash view.
  */
 export interface HashCryptoSubtleView {
@@ -90,15 +99,6 @@ export interface HashCryptoSubtleView {
 }
 
 /**
- * Subtle crypto hash algorithm.
- */
-export type HashCryptoSubtleAlgorithm =
-	| 'SHA-1'
-	| 'SHA-256'
-	| 'SHA-384'
-	| 'SHA-512';
-
-/**
  * Subtle crypto hash interface.
  */
 export interface HashCryptoSubtle {
@@ -114,6 +114,15 @@ export interface HashCryptoSubtle {
 		data: HashCryptoSubtleView | ArrayBuffer,
 	) => Promise<ArrayBuffer>;
 }
+
+/**
+ * Node crypto hash algorithm.
+ */
+export type HashCryptoNodeAlgorithm =
+	| 'sha1'
+	| 'sha256'
+	| 'sha384'
+	| 'sha512';
 
 /**
  * Node crypto hash interface, sync.
@@ -170,7 +179,9 @@ export interface HashCryptoNode {
 	 *
 	 * @param algo Hash algorithm.
 	 */
-	createHash(algo: string): HashCryptoNodeSync | HashCryptoNodeStream;
+	createHash(
+		algo: HashCryptoNodeAlgorithm,
+	): HashCryptoNodeSync | HashCryptoNodeStream;
 }
 
 /**
