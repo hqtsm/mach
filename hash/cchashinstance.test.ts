@@ -528,6 +528,11 @@ Deno.test('State errors', async () => {
 				() => toIterator(new ArrayBuffer(1)),
 				1,
 			],
+			[
+				'AsyncIterator',
+				() => toAsyncIterator(new ArrayBuffer(1)),
+				1,
+			],
 		] as const
 	) {
 		for (const { engine, crypto } of engines) {
