@@ -99,14 +99,14 @@ function ab2sab(ab: ArrayBuffer): SharedArrayBuffer {
 }
 
 interface IteratorInfo {
-	data: ArrayBuffer;
 	page?: number;
 	transform?: (data: ArrayBuffer) => ArrayBufferLike | ArrayBufferView;
 	returns?: (() => unknown) | null;
 }
 
 function toIterator(
-	{ data, page, transform, returns }: IteratorInfo,
+	data: ArrayBuffer,
+	{ page, transform, returns }: IteratorInfo = {},
 ): HashSourceIterator {
 	const r = (function* (): HashSourceIterator {
 		const size = data.byteLength;
@@ -135,7 +135,8 @@ function toIterator(
 }
 
 function toAsyncIterator(
-	{ data, page, transform, returns }: IteratorInfo,
+	data: ArrayBuffer,
+	{ page, transform, returns }: IteratorInfo = {},
 ): HashSourceAsyncIterator {
 	const r = (async function* (): HashSourceAsyncIterator {
 		const size = data.byteLength;
@@ -279,23 +280,22 @@ function getInputs(
 	if (iterators) {
 		r.push([
 			`Iterator-returns-${size}`,
-			() => toIterator({ data: new ArrayBuffer(size) }),
+			() => toIterator(new ArrayBuffer(size)),
 			size,
 		]);
 		r.push([
 			`AsyncIterator-returns-${size}`,
-			() => toAsyncIterator({ data: new ArrayBuffer(size) }),
+			() => toAsyncIterator(new ArrayBuffer(size)),
 			size,
 		]);
 		r.push([
 			`Iterator-no-return-${size}`,
-			() => toIterator({ data: new ArrayBuffer(size), returns: null }),
+			() => toIterator(new ArrayBuffer(size), { returns: null }),
 			size,
 		]);
 		r.push([
 			`AsyncIterator-no-return-${size}`,
-			() =>
-				toAsyncIterator({ data: new ArrayBuffer(size), returns: null }),
+			() => toAsyncIterator(new ArrayBuffer(size), { returns: null }),
 			size,
 		]);
 	}
@@ -417,8 +417,7 @@ Deno.test('Hash Iterator<ArrayBuffer>', async () => {
 			let returned = 0;
 			// deno-lint-ignore no-await-in-loop
 			await hash.update(
-				toIterator({
-					data,
+				toIterator(data, {
 					page,
 					returns: () => returned++,
 				}),
@@ -443,8 +442,7 @@ Deno.test('Hash Iterator<Uint8Array<ArrayBuffer>>', async () => {
 			let returned = 0;
 			// deno-lint-ignore no-await-in-loop
 			await hash.update(
-				toIterator({
-					data,
+				toIterator(data, {
 					page,
 					transform,
 					returns: () => returned++,
@@ -470,8 +468,7 @@ Deno.test('Hash Iterator<SharedArrayBuffer>', async () => {
 			let returned = 0;
 			// deno-lint-ignore no-await-in-loop
 			await hash.update(
-				toIterator({
-					data,
+				toIterator(data, {
 					page,
 					transform,
 					returns: () => returned++,
@@ -497,8 +494,7 @@ Deno.test('Hash Iterator<Uint8Array<SharedArrayBuffer>>', async () => {
 			let returned = 0;
 			// deno-lint-ignore no-await-in-loop
 			await hash.update(
-				toIterator({
-					data,
+				toIterator(data, {
 					page,
 					transform,
 					returns: () => returned++,
@@ -523,8 +519,7 @@ Deno.test('Hash AsyncIterator<ArrayBuffer>', async () => {
 			let returned = 0;
 			// deno-lint-ignore no-await-in-loop
 			await hash.update(
-				toAsyncIterator({
-					data,
+				toAsyncIterator(data, {
 					page,
 					returns: () => returned++,
 				}),
@@ -549,8 +544,7 @@ Deno.test('Hash AsyncIterator<Uint8Array<ArrayBuffer>>', async () => {
 			let returned = 0;
 			// deno-lint-ignore no-await-in-loop
 			await hash.update(
-				toAsyncIterator({
-					data,
+				toAsyncIterator(data, {
 					page,
 					transform,
 					returns: () => returned++,
@@ -576,8 +570,7 @@ Deno.test('Hash AsyncIterator<SharedArrayBuffer>', async () => {
 			let returned = 0;
 			// deno-lint-ignore no-await-in-loop
 			await hash.update(
-				toAsyncIterator({
-					data,
+				toAsyncIterator(data, {
 					page,
 					transform,
 					returns: () => returned++,
@@ -603,8 +596,7 @@ Deno.test('Hash AsyncIterator<Uint8Array<SharedArrayBuffer>>', async () => {
 			let returned = 0;
 			// deno-lint-ignore no-await-in-loop
 			await hash.update(
-				toAsyncIterator({
-					data,
+				toAsyncIterator(data, {
 					page,
 					transform,
 					returns: () => returned++,
