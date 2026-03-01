@@ -771,19 +771,22 @@ Deno.test('State errors', async () => {
 			{
 				const hash = new CCHashInstance(kCCDigestSHA1);
 				hash.crypto = crypto;
-				// deno-lint-ignore no-await-in-loop
-				await assertRejects(
-					() =>
-						Promise.all([
-							size === null
-								? hash.update(source())
-								: hash.update(source(), size),
-							hash.finish(),
-						]),
-					Error,
-					'Incomplete updated',
-					tag,
-				);
+				const incomplete = size === null
+					? hash.update(source())
+					: hash.update(source(), size);
+				try {
+					const finish = hash.finish();
+					// deno-lint-ignore no-await-in-loop
+					await assertRejects(
+						() => finish,
+						Error,
+						'Incomplete updated',
+						tag,
+					);
+				} finally {
+					// deno-lint-ignore no-await-in-loop
+					await incomplete;
+				}
 			}
 			{
 				const hash = new CCHashInstance(kCCDigestSHA1);
