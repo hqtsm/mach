@@ -146,7 +146,7 @@ export class CCHashInstance extends DynamicHash {
 						l = r > PAGE_SIZE ? PAGE_SIZE : r;
 						// deno-lint-ignore no-await-in-loop
 						const b = await source.slice(i, i + l).arrayBuffer();
-						const o = b.byteLength - l;
+						const o = l - b.byteLength;
 						if (o) {
 							throw new RangeError(`Read size off by: ${o}`);
 						}
@@ -169,7 +169,7 @@ export class CCHashInstance extends DynamicHash {
 						l = r > PAGE_SIZE ? PAGE_SIZE : r;
 						// deno-lint-ignore no-await-in-loop
 						const b = await source.slice(i, i + l).arrayBuffer();
-						const o = b.byteLength - l;
+						const o = l - b.byteLength;
 						if (o) {
 							throw new RangeError(`Read size off by: ${o}`);
 						}
@@ -272,7 +272,7 @@ export class CCHashInstance extends DynamicHash {
 			if ('arrayBuffer' in source) {
 				const { size } = source;
 				const v = await source.arrayBuffer();
-				const o = v.byteLength - size;
+				const o = size - v.byteLength;
 				if (o) {
 					throw new RangeError(`Read size off by: ${o}`);
 				}

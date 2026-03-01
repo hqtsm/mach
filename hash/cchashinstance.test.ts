@@ -647,7 +647,7 @@ Deno.test('Hash Blob over-read', async () => {
 		await assertRejects(
 			() => hash.update(new OverReader(1024)),
 			RangeError,
-			'Read size off by: -1',
+			'Read size off by: 1',
 			tag,
 		);
 	}
@@ -662,7 +662,7 @@ Deno.test('Hash Blob under-read', async () => {
 		await assertRejects(
 			() => hash.update(new UnderReader(1024)),
 			RangeError,
-			'Read size off by: 1',
+			'Read size off by: -1',
 			tag,
 		);
 	}
