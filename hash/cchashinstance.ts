@@ -97,6 +97,15 @@ export class CCHashInstance extends DynamicHash {
 		return this.mTruncate || this.mDigest.l;
 	}
 
+	public update(
+		source: Reader | ArrayBufferLike | ArrayBufferView,
+	): Promise<void>;
+
+	public update(
+		source: HashSourceIterator | HashSourceAsyncIterator,
+		size: number,
+	): Promise<void>;
+
 	/**
 	 * Update digest, can only be called once.
 	 *
