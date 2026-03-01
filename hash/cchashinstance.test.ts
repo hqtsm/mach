@@ -30,6 +30,7 @@ import { CCHashInstance } from './cchashinstance.ts';
 import type {
 	HashCrypto,
 	HashCryptoNodeSync,
+	HashCryptoSubtleAlgorithm,
 	HashSourceAsyncIterator,
 	HashSourceIterator,
 } from './dynamichash.ts';
@@ -247,7 +248,19 @@ async function getEngines(): Promise<[string, HashCrypto | null][]> {
 		return valid;
 	})();
 	if (await sagDetect) {
-		// TODO: Future expansion.
+		engines['subtle-no-async-generator'] = {
+			async digest(
+				algo: HashCryptoSubtleAlgorithm,
+				data:
+					| ArrayBufferView<ArrayBuffer>
+					| ArrayBuffer,
+			): Promise<ArrayBuffer> {
+				if ('next' in data) {
+					throw new TypeError('AsyncGenerator not supported');
+				}
+				return await crypto.subtle.digest(algo, data);
+			},
+		};
 	}
 
 	return Object.entries(engines);
