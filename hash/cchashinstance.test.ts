@@ -658,7 +658,7 @@ Deno.test('Hash Blob under-read', async () => {
 });
 
 Deno.test('State errors', async () => {
-	for (const [name, source, size] of [...getInputs(1)]) {
+	for (const [name, source, size] of [...getInputs(0), ...getInputs(1)]) {
 		for (const { engine, crypto } of engines) {
 			const tag = `name=${name} engine=${engine}`;
 			{
@@ -750,8 +750,14 @@ Deno.test('Hash node async write error', async () => {
 			};
 		},
 	};
+	const nozero = /^(Blob|Iterator|AsyncIterator)-/;
 
-	for (const [name, source, size] of [...getInputs(1)]) {
+	for (
+		const [name, source, size] of [
+			...getInputs(0).filter(([name]) => !nozero.test(name)),
+			...getInputs(1),
+		]
+	) {
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
@@ -785,7 +791,7 @@ Deno.test('Hash node async end error', async () => {
 		},
 	};
 
-	for (const [name, source, size] of [...getInputs(1)]) {
+	for (const [name, source, size] of [...getInputs(0), ...getInputs(1)]) {
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
