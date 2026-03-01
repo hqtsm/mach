@@ -2,24 +2,58 @@ import { toStringTag } from '@hqtsm/class/symbol';
 import type { Reader } from '../util/reader.ts';
 
 /**
+ * Hash source iterator yield.
+ */
+export interface HashSourceIteratorYield {
+	/**
+	 * Not done.
+	 */
+	done?: false;
+
+	/**
+	 * Value.
+	 */
+	value: ArrayBufferLike | ArrayBufferView;
+}
+
+/**
+ * Hash source iterator return.
+ */
+export interface HashSourceIteratorReturn {
+	/**
+	 * Done.
+	 */
+	done: true;
+}
+
+/**
  * Hash source iterator.
  */
-export type HashSourceIterator = Iterator<
-	ArrayBufferLike | ArrayBufferView,
-	// deno-lint-ignore no-explicit-any
-	any,
-	number
->;
+export interface HashSourceIterator {
+	/**
+	 * Get the next value.
+	 *
+	 * @param size Requested size.
+	 */
+	next(size?: number):
+		| HashSourceIteratorYield
+		| HashSourceIteratorReturn;
+}
 
 /**
  * Hash source async iterator.
  */
-export type HashSourceAsyncIterator = AsyncIterator<
-	ArrayBufferLike | ArrayBufferView,
-	// deno-lint-ignore no-explicit-any
-	any,
-	number
->;
+export interface HashSourceAsyncIterator {
+	/**
+	 * Get the next value.
+	 *
+	 * @param size Requested size.
+	 */
+	next(size?: number): Promise<
+		| HashSourceIteratorYield
+		| HashSourceIteratorReturn
+	>;
+}
 
 /**
  * Subtle crypto hash view.

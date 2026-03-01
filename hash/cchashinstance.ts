@@ -63,7 +63,7 @@ const viewab = (
 > => (shared(view.buffer) ? view.slice() : view as Uint8Array<ArrayBuffer>);
 
 const ip = (
-	v: IteratorResult<unknown> | Promise<unknown>,
+	v: { done?: boolean } | Promise<unknown>,
 ): v is Promise<unknown> => 'then' in v;
 
 /**
