@@ -175,11 +175,13 @@ export class CCHashInstance extends DynamicHash {
 					await Promise.resolve();
 				}
 			} else if ('next' in source) {
+				let a;
 				let o = -size;
 				if ('write' in hash) {
 					try {
+						let n;
 						for (
-							let n = source.next(PAGE_SIZE), a = ip(n);;
+							a = ip(n = source.next(PAGE_SIZE));;
 							n = source.next(PAGE_SIZE)
 						) {
 							// deno-lint-ignore no-await-in-loop
@@ -203,7 +205,7 @@ export class CCHashInstance extends DynamicHash {
 						}
 					} finally {
 						const r = source.return?.();
-						if (r) {
+						if (a && r) {
 							await r;
 						}
 					}
@@ -216,8 +218,9 @@ export class CCHashInstance extends DynamicHash {
 					d = hash.read();
 				} else {
 					try {
+						let n;
 						for (
-							let n = source.next(PAGE_SIZE), a = ip(n);;
+							a = ip(n = source.next(PAGE_SIZE));;
 							n = source.next(PAGE_SIZE)
 						) {
 							// deno-lint-ignore no-await-in-loop
@@ -236,13 +239,18 @@ export class CCHashInstance extends DynamicHash {
 							}
 						}
 					} finally {
-						// All flows need await.
-						await source.return?.();
+						const r = source.return?.();
+						if ((a = !!(a && r))) {
+							await r;
+						}
 					}
 					if (o) {
 						throw new RangeError(`Read size off by: ${o}`);
 					}
 					d = hash.digest();
+					if (!a) {
+						await Promise.resolve();
+					}
 				}
 			} else {
 				const b = view(source);
@@ -274,12 +282,14 @@ export class CCHashInstance extends DynamicHash {
 				}
 				d = await c.digest(N, v);
 			} else if ('next' in source) {
+				let a;
 				let all: Uint8Array<ArrayBuffer> | undefined;
 				let o = -size;
 				let ps = size > 0 ? size : PAGE_SIZE;
 				try {
+					let n, i = 0;
 					for (
-						let i = 0, n = source.next(ps), a = ip(n);;
+						a = ip(n = source.next(ps));;
 						n = source.next(ps)
 					) {
 						// deno-lint-ignore no-await-in-loop
@@ -310,7 +320,7 @@ export class CCHashInstance extends DynamicHash {
 					}
 				} finally {
 					const r = source.return?.();
-					if (r) {
+					if (a && r) {
 						await r;
 					}
 				}
