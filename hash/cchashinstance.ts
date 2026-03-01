@@ -17,23 +17,23 @@ import {
 
 interface Algo {
 	l: number;
-	N: HashCryptoSubtleAlgorithm;
+	s: HashCryptoSubtleAlgorithm;
 	n: HashCryptoNodeAlgorithm;
 }
 
 interface Digest extends Algo {
 	d: ArrayBuffer | null;
-	s: 0 | 1 | 2 | 3;
+	p: 0 | 1 | 2 | 3;
 }
 
 type IR = IteratorResult<ArrayBufferLike | ArrayBufferView>;
 
 // Supported hash algorithms with their names and lengths.
 const algorithims = new Map<number, Algo>([
-	[kCCDigestSHA1, { l: 20, N: 'SHA-1', n: 'sha1' }],
-	[kCCDigestSHA256, { l: 32, N: 'SHA-256', n: 'sha256' }],
-	[kCCDigestSHA384, { l: 48, N: 'SHA-384', n: 'sha384' }],
-	[kCCDigestSHA512, { l: 64, N: 'SHA-512', n: 'sha512' }],
+	[kCCDigestSHA1, { l: 20, s: 'SHA-1', n: 'sha1' }],
+	[kCCDigestSHA256, { l: 32, s: 'SHA-256', n: 'sha256' }],
+	[kCCDigestSHA384, { l: 48, s: 'SHA-384', n: 'sha384' }],
+	[kCCDigestSHA512, { l: 64, s: 'SHA-512', n: 'sha512' }],
 ]);
 
 const algorithm = (alg: number): Algo => {
@@ -85,7 +85,7 @@ export class CCHashInstance extends DynamicHash {
 	constructor(alg: number, truncate = 0) {
 		const a = algorithm(alg);
 		super();
-		this.mDigest = { ...a, d: null, s: 0 };
+		this.mDigest = { ...a, d: null, p: 0 };
 		this.mTruncate = truncate;
 	}
 
@@ -119,11 +119,11 @@ export class CCHashInstance extends DynamicHash {
 		size?: number,
 	): Promise<void> {
 		const { mDigest } = this;
-		const { N, n, s } = mDigest;
+		const { s: N, n, p: s } = mDigest;
 		if (s) {
 			throw new Error('Already updated');
 		}
-		mDigest.s = 1;
+		mDigest.p = 1;
 		size ||= 0;
 		const c = this.crypto || crypto.subtle;
 		let d;
@@ -324,13 +324,13 @@ export class CCHashInstance extends DynamicHash {
 		}
 
 		mDigest.d = d;
-		mDigest.s = 2;
+		mDigest.p = 2;
 	}
 
 	// deno-lint-ignore require-await
 	public async finish(): Promise<ArrayBuffer> {
 		const { mTruncate, mDigest } = this;
-		const { s, d } = mDigest;
+		const { p: s, d } = mDigest;
 		switch (s) {
 			case 0: {
 				throw new Error('Not updated');
@@ -342,7 +342,7 @@ export class CCHashInstance extends DynamicHash {
 				throw new Error('Already finished');
 			}
 		}
-		mDigest.s = 3;
+		mDigest.p = 3;
 		mDigest.d = null;
 		return mTruncate ? d!.slice(0, mTruncate) : d!;
 	}
