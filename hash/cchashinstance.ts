@@ -83,9 +83,8 @@ export class CCHashInstance extends DynamicHash {
 	 * @param truncate Truncate length if any.
 	 */
 	constructor(alg: number, truncate = 0) {
-		const a = algorithm(alg);
 		super();
-		this.mDigest = { ...a, d: null, p: 0 };
+		this.mDigest = { ...algorithm(alg), d: null, p: 0 };
 		this.mTruncate = truncate;
 	}
 
