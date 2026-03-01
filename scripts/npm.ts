@@ -154,7 +154,7 @@ await build({
 	typeCheck: 'both',
 	compilerOptions: {
 		target: 'Latest',
-		lib: ['ESNext'],
+		lib: ['ESNext', 'DOM'],
 		sourceMap: true,
 	},
 	async postBuild(): Promise<void> {

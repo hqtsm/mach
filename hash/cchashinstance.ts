@@ -10,16 +10,10 @@ import type { Reader } from '../util/reader.ts';
 import {
 	DynamicHash,
 	type HashCryptoNodeAlgorithm,
-	type HashCryptoSubtle,
 	type HashCryptoSubtleAlgorithm,
 	type HashSourceAsyncIterator,
 	type HashSourceIterator,
 } from './dynamichash.ts';
-
-// Workaround for missing types.
-declare const crypto: {
-	subtle: HashCryptoSubtle;
-};
 
 interface Algo {
 	l: number;
