@@ -34,6 +34,7 @@ export interface HashSourceIterator {
 	 * Get the next value.
 	 *
 	 * @param size Requested size.
+	 * @returns Next value.
 	 */
 	next(size?: number):
 		| HashSourceIteratorYield
@@ -48,6 +49,7 @@ export interface HashSourceAsyncIterator {
 	 * Get the next value.
 	 *
 	 * @param size Requested size.
+	 * @returns Next value.
 	 */
 	next(size?: number): Promise<
 		| HashSourceIteratorYield
