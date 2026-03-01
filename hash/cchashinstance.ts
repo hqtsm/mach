@@ -206,7 +206,10 @@ export class CCHashInstance extends DynamicHash {
 							}
 						}
 					} finally {
-						await source.return?.();
+						const r = source.return?.();
+						if (r) {
+							await r;
+						}
 					}
 					if (o) {
 						throw new RangeError(`Read size off by: ${o}`);
@@ -309,7 +312,10 @@ export class CCHashInstance extends DynamicHash {
 						}
 					}
 				} finally {
-					await source.return?.();
+					const r = source.return?.();
+					if (r) {
+						await r;
+					}
 				}
 				if (o) {
 					throw new RangeError(`Read size off by: ${o}`);
