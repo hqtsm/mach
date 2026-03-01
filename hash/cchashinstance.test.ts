@@ -643,13 +643,14 @@ Deno.test('Hash truncate', async () => {
 });
 
 Deno.test('Hash Blob over-read', async () => {
+	const reader = new OverReader(1024);
 	for (const { engine, crypto } of engines) {
 		const tag = `engine=${engine}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
-			() => hash.update(new OverReader(1024)),
+			() => hash.update(reader),
 			RangeError,
 			'Read size off by: 1',
 			tag,
@@ -658,13 +659,14 @@ Deno.test('Hash Blob over-read', async () => {
 });
 
 Deno.test('Hash Blob under-read', async () => {
+	const reader = new UnderReader(1024);
 	for (const { engine, crypto } of engines) {
 		const tag = `engine=${engine}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
-			() => hash.update(new UnderReader(1024)),
+			() => hash.update(reader),
 			RangeError,
 			'Read size off by: -1',
 			tag,
