@@ -247,38 +247,51 @@ const engines = [
 	},
 ] as const;
 
-const inputs = [
-	[
-		'ArrayBuffer',
-		() => new ArrayBuffer(1),
-		undefined,
-	],
-	[
-		'Blob',
-		() => new Blob([new ArrayBuffer(1)]),
-		undefined,
-	],
-	[
-		'Iterator-returns',
-		() => toIterator({ data: new ArrayBuffer(1) }),
-		1,
-	],
-	[
-		'AsyncIterator-returns',
-		() => toAsyncIterator({ data: new ArrayBuffer(1) }),
-		1,
-	],
-	[
-		'Iterator-no-return',
-		() => toIterator({ data: new ArrayBuffer(1), returns: null }),
-		1,
-	],
-	[
-		'AsyncIterator-no-return',
-		() => toAsyncIterator({ data: new ArrayBuffer(1), returns: null }),
-		1,
-	],
-] as const;
+function getInputs(
+	size: number,
+): ([
+	string,
+	() => ArrayBuffer | Blob,
+	null,
+] | [
+	string,
+	() => HashSourceIterator | HashSourceAsyncIterator,
+	number,
+])[] {
+	return [
+		[
+			`ArrayBuffer-${size}`,
+			() => new ArrayBuffer(size),
+			null,
+		],
+		[
+			`Blob-${size}`,
+			() => new Blob([new ArrayBuffer(size)]),
+			null,
+		],
+		[
+			`Iterator-returns-${size}`,
+			() => toIterator({ data: new ArrayBuffer(size) }),
+			size,
+		],
+		[
+			`AsyncIterator-returns-${size}`,
+			() => toAsyncIterator({ data: new ArrayBuffer(size) }),
+			size,
+		],
+		[
+			`Iterator-no-return-${size}`,
+			() => toIterator({ data: new ArrayBuffer(size), returns: null }),
+			size,
+		],
+		[
+			`AsyncIterator-no-return-${size}`,
+			() =>
+				toAsyncIterator({ data: new ArrayBuffer(size), returns: null }),
+			size,
+		],
+	];
+}
 
 function* cases(): Iterable<{
 	tag: string;
@@ -645,7 +658,7 @@ Deno.test('Hash Blob under-read', async () => {
 });
 
 Deno.test('State errors', async () => {
-	for (const [name, source, size] of inputs) {
+	for (const [name, source, size] of [...getInputs(1)]) {
 		for (const { engine, crypto } of engines) {
 			const tag = `name=${name} engine=${engine}`;
 			{
@@ -653,14 +666,16 @@ Deno.test('State errors', async () => {
 				hash.crypto = crypto;
 				// deno-lint-ignore no-await-in-loop
 				await (
-					size ? hash.update(source(), size) : hash.update(source())
+					size === null
+						? hash.update(source())
+						: hash.update(source(), size)
 				);
 				// deno-lint-ignore no-await-in-loop
 				await assertRejects(
 					() => (
-						size
-							? hash.update(source(), size)
-							: hash.update(source())
+						size === null
+							? hash.update(source())
+							: hash.update(source(), size)
 					),
 					Error,
 					'Already updated',
@@ -685,9 +700,9 @@ Deno.test('State errors', async () => {
 				await assertRejects(
 					() =>
 						Promise.all([
-							size
-								? hash.update(source(), size)
-								: hash.update(source()),
+							size === null
+								? hash.update(source())
+								: hash.update(source(), size),
 							hash.finish(),
 						]),
 					Error,
@@ -700,7 +715,9 @@ Deno.test('State errors', async () => {
 				hash.crypto = crypto;
 				// deno-lint-ignore no-await-in-loop
 				await (
-					size ? hash.update(source(), size) : hash.update(source())
+					size === null
+						? hash.update(source())
+						: hash.update(source(), size)
 				);
 				// deno-lint-ignore no-await-in-loop
 				await hash.finish();
@@ -734,12 +751,15 @@ Deno.test('Hash node async write error', async () => {
 		},
 	};
 
-	for (const [name, source, size] of inputs) {
+	for (const [name, source, size] of [...getInputs(1)]) {
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
-			() => size ? hash.update(source(), size) : hash.update(source()),
+			() =>
+				size === null
+					? hash.update(source())
+					: hash.update(source(), size),
 			Error,
 			'Write fail',
 			name,
@@ -765,12 +785,15 @@ Deno.test('Hash node async end error', async () => {
 		},
 	};
 
-	for (const [name, source, size] of inputs) {
+	for (const [name, source, size] of [...getInputs(1)]) {
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
-			() => size ? hash.update(source(), size) : hash.update(source()),
+			() =>
+				size === null
+					? hash.update(source())
+					: hash.update(source(), size),
 			Error,
 			'End fail',
 			name,
