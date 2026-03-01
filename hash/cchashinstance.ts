@@ -10,7 +10,9 @@ import type { Reader } from '../util/reader.ts';
 import {
 	DynamicHash,
 	type HashCryptoNodeAlgorithm,
+	type HashCryptoSubtle,
 	type HashCryptoSubtleAlgorithm,
+	type HashCryptoSubtleAsyncGenerator,
 	type HashSourceAsyncIterator,
 	type HashSourceIterator,
 } from './dynamichash.ts';
@@ -61,6 +63,49 @@ const viewab = (
 const ip = (
 	v: { done?: boolean } | Promise<unknown>,
 ): v is Promise<unknown> => 'then' in v;
+
+const supportsAG = new WeakMap();
+
+const subtleAG = async (
+	subtle: HashCryptoSubtle | HashCryptoSubtleAsyncGenerator,
+	algo: HashCryptoSubtleAlgorithm,
+	source: AsyncGenerator<ArrayBuffer>,
+): Promise<ArrayBuffer | null> => {
+	try {
+		return await (subtle as HashCryptoSubtleAsyncGenerator).digest(
+			algo,
+			source,
+		);
+	} catch (err) {
+		if (supportsAG.get(subtle.digest)) {
+			throw err;
+		}
+	}
+	supportsAG.set(subtle.digest, false);
+	return null;
+};
+
+const readerAG = async function* (
+	subtle: HashCryptoSubtle | HashCryptoSubtleAsyncGenerator,
+	source: Reader,
+): AsyncGenerator<ArrayBuffer> {
+	supportsAG.set(subtle.digest, true);
+	const { size } = source;
+	for (
+		let i = 0, r = size, l;
+		i < size;
+		r -= l, i += PAGE_SIZE
+	) {
+		l = r > PAGE_SIZE ? PAGE_SIZE : r;
+		// deno-lint-ignore no-await-in-loop
+		const b = await source.slice(i, i + l).arrayBuffer();
+		const o = l - b.byteLength;
+		if (o) {
+			throw new RangeError(`Read size off by: ${o}`);
+		}
+		yield b;
+	}
+};
 
 /**
  * CCHashInstance dynamic hash.
@@ -273,60 +318,70 @@ export class CCHashInstance extends DynamicHash {
 				.buffer;
 		} else {
 			if ('arrayBuffer' in source) {
-				const { size } = source;
-				const v = await source.arrayBuffer();
-				const o = size - v.byteLength;
-				if (o) {
-					throw new RangeError(`Read size off by: ${o}`);
+				if (supportsAG.get(c.digest) !== false) {
+					d = await subtleAG(c, N, readerAG(c, source));
 				}
-				d = await c.digest(N, v);
+				if (!d) {
+					const { size } = source;
+					const v = await source.arrayBuffer();
+					const o = size - v.byteLength;
+					if (o) {
+						throw new RangeError(`Read size off by: ${o}`);
+					}
+					d = await c.digest(N, v);
+				}
 			} else if ('next' in source) {
-				let a;
-				let all: Uint8Array<ArrayBuffer> | undefined;
-				let o = -size;
-				let ps = size > 0 ? size : PAGE_SIZE;
-				try {
-					let n, i = 0;
-					for (
-						a = ip(n = source.next(ps));;
-						n = source.next(ps)
-					) {
-						// deno-lint-ignore no-await-in-loop
-						n = (a ? await n : n) as IR;
-						if (n.done) {
-							break;
-						}
-						const b = n.value;
-						const l = b.byteLength;
-						if (l) {
-							o += l;
-							if (o > 0) {
+				if (supportsAG.get(c.digest) !== false) {
+					d = null;
+				}
+				if (!d) {
+					let a;
+					let all: Uint8Array<ArrayBuffer> | undefined;
+					let o = -size;
+					let ps = size > 0 ? size : PAGE_SIZE;
+					try {
+						let n, i = 0;
+						for (
+							a = ip(n = source.next(ps));;
+							n = source.next(ps)
+						) {
+							// deno-lint-ignore no-await-in-loop
+							n = (a ? await n : n) as IR;
+							if (n.done) {
 								break;
 							}
-							if (all) {
-								all.set(view(b), i);
-							} else {
-								if (o) {
-									all = new Uint8Array(size);
-									all.set(view(b));
-								} else {
-									all = viewab(view(b));
+							const b = n.value;
+							const l = b.byteLength;
+							if (l) {
+								o += l;
+								if (o > 0) {
+									break;
 								}
-								ps = PAGE_SIZE;
+								if (all) {
+									all.set(view(b), i);
+								} else {
+									if (o) {
+										all = new Uint8Array(size);
+										all.set(view(b));
+									} else {
+										all = viewab(view(b));
+									}
+									ps = PAGE_SIZE;
+								}
+								i += l;
 							}
-							i += l;
+						}
+					} finally {
+						const r = source.return?.();
+						if (a && r) {
+							await r;
 						}
 					}
-				} finally {
-					const r = source.return?.();
-					if (a && r) {
-						await r;
+					if (o) {
+						throw new RangeError(`Read size off by: ${o}`);
 					}
+					d = await c.digest(N, all || new ArrayBuffer(0));
 				}
-				if (o) {
-					throw new RangeError(`Read size off by: ${o}`);
-				}
-				d = await c.digest(N, all || new ArrayBuffer(0));
 			} else {
 				d = await c.digest(N, viewab(view(source)));
 			}
