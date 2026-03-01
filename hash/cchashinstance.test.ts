@@ -98,38 +98,46 @@ function ab2sab(ab: ArrayBuffer): SharedArrayBuffer {
 	return sab;
 }
 
-function* toIterator(
+function toIterator(
 	data: ArrayBuffer,
 	page?: number,
 	transform?: (data: ArrayBuffer) => ArrayBufferLike | ArrayBufferView,
 ): HashSourceIterator {
-	const size = data.byteLength;
-	let ask = page ? page : (
-		yield (transform ? transform(new ArrayBuffer(0)) : new ArrayBuffer(0))
-	);
-	for (let i = 0; i < size;) {
-		const ps = page || ask || PAGE_SIZE;
-		const d = data.slice(i, i + ps);
-		i += d.byteLength;
-		ask = yield (transform ? transform(d) : d);
-	}
+	return (function* (): HashSourceIterator {
+		const size = data.byteLength;
+		let ask = page ? page : (
+			yield (transform
+				? transform(new ArrayBuffer(0))
+				: new ArrayBuffer(0))
+		);
+		for (let i = 0; i < size;) {
+			const ps = page || ask || PAGE_SIZE;
+			const d = data.slice(i, i + ps);
+			i += d.byteLength;
+			ask = yield (transform ? transform(d) : d);
+		}
+	})();
 }
 
-async function* toAsyncIterator(
+function toAsyncIterator(
 	data: ArrayBuffer,
 	page?: number,
 	transform?: (data: ArrayBuffer) => ArrayBufferLike | ArrayBufferView,
 ): HashSourceAsyncIterator {
-	const size = data.byteLength;
-	let ask = page ? page : (
-		yield (transform ? transform(new ArrayBuffer(0)) : new ArrayBuffer(0))
-	);
-	for (let i = 0; i < size;) {
-		const ps = page || ask || PAGE_SIZE;
-		const d = data.slice(i, i + ps);
-		i += d.byteLength;
-		ask = yield (transform ? transform(d) : d);
-	}
+	return (async function* (): HashSourceAsyncIterator {
+		const size = data.byteLength;
+		let ask = page ? page : (
+			yield (transform
+				? transform(new ArrayBuffer(0))
+				: new ArrayBuffer(0))
+		);
+		for (let i = 0; i < size;) {
+			const ps = page || ask || PAGE_SIZE;
+			const d = data.slice(i, i + ps);
+			i += d.byteLength;
+			ask = yield (transform ? transform(d) : d);
+		}
+	})();
 }
 
 function hashed(algo: string, data: Uint8Array): string {
