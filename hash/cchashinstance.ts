@@ -181,28 +181,32 @@ export class CCHashInstance extends DynamicHash {
 			} else if ('next' in source) {
 				let o = -size;
 				if ('write' in hash) {
-					for (
-						let n = source.next(PAGE_SIZE), a = ip(n);;
-						n = source.next(PAGE_SIZE)
-					) {
-						// deno-lint-ignore no-await-in-loop
-						n = (a ? await n : n) as IR;
-						if (n.done) {
-							break;
-						}
-						const b = n.value;
-						const l = b.byteLength;
-						if (l) {
-							o += l;
-							if (o > 0) {
+					try {
+						for (
+							let n = source.next(PAGE_SIZE), a = ip(n);;
+							n = source.next(PAGE_SIZE)
+						) {
+							// deno-lint-ignore no-await-in-loop
+							n = (a ? await n : n) as IR;
+							if (n.done) {
 								break;
 							}
-							const d = view(b);
-							// deno-lint-ignore no-await-in-loop
-							await new Promise<void>((p, f) =>
-								hash.write(d, (e) => e ? f(e) : p())
-							);
+							const b = n.value;
+							const l = b.byteLength;
+							if (l) {
+								o += l;
+								if (o > 0) {
+									break;
+								}
+								const d = view(b);
+								// deno-lint-ignore no-await-in-loop
+								await new Promise<void>((p, f) =>
+									hash.write(d, (e) => e ? f(e) : p())
+								);
+							}
 						}
+					} finally {
+						await source.return?.();
 					}
 					if (o) {
 						throw new RangeError(`Read size off by: ${o}`);
@@ -212,30 +216,33 @@ export class CCHashInstance extends DynamicHash {
 					);
 					d = hash.read();
 				} else {
-					for (
-						let n = source.next(PAGE_SIZE), a = ip(n);;
-						n = source.next(PAGE_SIZE)
-					) {
-						// deno-lint-ignore no-await-in-loop
-						n = (a ? await n : n) as IR;
-						if (n.done) {
-							break;
-						}
-						const b = n.value;
-						const l = b.byteLength;
-						if (l) {
-							o += l;
-							if (o > 0) {
+					try {
+						for (
+							let n = source.next(PAGE_SIZE), a = ip(n);;
+							n = source.next(PAGE_SIZE)
+						) {
+							// deno-lint-ignore no-await-in-loop
+							n = (a ? await n : n) as IR;
+							if (n.done) {
 								break;
 							}
-							hash.update(view(b));
+							const b = n.value;
+							const l = b.byteLength;
+							if (l) {
+								o += l;
+								if (o > 0) {
+									break;
+								}
+								hash.update(view(b));
+							}
 						}
+					} finally {
+						await source.return?.();
 					}
 					if (o) {
 						throw new RangeError(`Read size off by: ${o}`);
 					}
 					d = hash.digest();
-					await Promise.resolve();
 				}
 			} else {
 				const b = view(source);
@@ -270,35 +277,39 @@ export class CCHashInstance extends DynamicHash {
 				let all: Uint8Array<ArrayBuffer> | undefined;
 				let o = -size;
 				let ps = size > 0 ? size : PAGE_SIZE;
-				for (
-					let i = 0, n = source.next(ps), a = ip(n);;
-					n = source.next(ps)
-				) {
-					// deno-lint-ignore no-await-in-loop
-					n = (a ? await n : n) as IR;
-					if (n.done) {
-						break;
-					}
-					const b = n.value;
-					const l = b.byteLength;
-					if (l) {
-						o += l;
-						if (o > 0) {
+				try {
+					for (
+						let i = 0, n = source.next(ps), a = ip(n);;
+						n = source.next(ps)
+					) {
+						// deno-lint-ignore no-await-in-loop
+						n = (a ? await n : n) as IR;
+						if (n.done) {
 							break;
 						}
-						if (all) {
-							all.set(view(b), i);
-						} else {
-							if (o) {
-								all = new Uint8Array(size);
-								all.set(view(b));
-							} else {
-								all = viewab(view(b));
+						const b = n.value;
+						const l = b.byteLength;
+						if (l) {
+							o += l;
+							if (o > 0) {
+								break;
 							}
-							ps = PAGE_SIZE;
+							if (all) {
+								all.set(view(b), i);
+							} else {
+								if (o) {
+									all = new Uint8Array(size);
+									all.set(view(b));
+								} else {
+									all = viewab(view(b));
+								}
+								ps = PAGE_SIZE;
+							}
+							i += l;
 						}
-						i += l;
 					}
+				} finally {
+					await source.return?.();
 				}
 				if (o) {
 					throw new RangeError(`Read size off by: ${o}`);

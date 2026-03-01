@@ -39,6 +39,12 @@ export interface HashSourceIterator {
 	next(size?: number):
 		| HashSourceIteratorYield
 		| HashSourceIteratorReturn;
+
+	/**
+	 * Close iterator.
+	 */
+	// deno-lint-ignore no-explicit-any
+	return?(value?: any): any;
 }
 
 /**
@@ -55,6 +61,12 @@ export interface HashSourceAsyncIterator {
 		| HashSourceIteratorYield
 		| HashSourceIteratorReturn
 	>;
+
+	/**
+	 * Close iterator.
+	 */
+	// deno-lint-ignore no-explicit-any
+	return?(value?: any): Promise<any>;
 }
 
 /**
