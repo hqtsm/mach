@@ -181,7 +181,7 @@ Deno.test('runtimeVersion', async () => {
 });
 
 Deno.test('validateSlot', async () => {
-	const view = new TextEncoder().encode('TESTING 123');
+	const view = new Uint8Array([...'TESTING 123'].map((x) => x.charCodeAt(0)));
 	const buff = view.buffer;
 	const blob = new Blob([buff]);
 	const len = view.length;
