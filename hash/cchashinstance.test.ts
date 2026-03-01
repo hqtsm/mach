@@ -510,69 +510,91 @@ Deno.test('Hash Blob under-read', async () => {
 	}
 });
 
-Deno.test('Repeat update', async () => {
-	for (const { engine, crypto } of engines) {
-		const tag = `engine=${engine}`;
-		const hash = new CCHashInstance(kCCDigestSHA1);
-		hash.crypto = crypto;
-		// deno-lint-ignore no-await-in-loop
-		await hash.update(ABCD);
-		// deno-lint-ignore no-await-in-loop
-		await assertRejects(
-			() => hash.update(ABCD),
-			Error,
-			'Already updated',
-			tag,
-		);
-	}
-});
-
-Deno.test('No update', async () => {
-	for (const { engine, crypto } of engines) {
-		const tag = `engine=${engine}`;
-		const hash = new CCHashInstance(kCCDigestSHA1);
-		hash.crypto = crypto;
-		// deno-lint-ignore no-await-in-loop
-		await assertRejects(
-			() => hash.finish(),
-			Error,
-			'Not updated',
-			tag,
-		);
-	}
-});
-
-Deno.test('Incomplete update', async () => {
-	for (const { engine, crypto } of engines) {
-		const tag = `engine=${engine}`;
-		const hash = new CCHashInstance(kCCDigestSHA1);
-		hash.crypto = crypto;
-		// deno-lint-ignore no-await-in-loop
-		await assertRejects(
-			() => Promise.all([hash.update(ABCD), hash.finish()]),
-			Error,
-			'Incomplete updated',
-			tag,
-		);
-	}
-});
-
-Deno.test('Already finished', async () => {
-	for (const { engine, crypto } of engines) {
-		const tag = `engine=${engine}`;
-		const hash = new CCHashInstance(kCCDigestSHA1);
-		hash.crypto = crypto;
-		// deno-lint-ignore no-await-in-loop
-		await hash.update(ABCD);
-		// deno-lint-ignore no-await-in-loop
-		await hash.finish();
-		// deno-lint-ignore no-await-in-loop
-		await assertRejects(
-			() => hash.finish(),
-			Error,
-			'Already finished',
-			tag,
-		);
+Deno.test('State errors', async () => {
+	for (
+		const [name, data, size] of [
+			[
+				'ArrayBuffer',
+				() => new ArrayBuffer(1),
+				undefined,
+			],
+			[
+				'Blob',
+				() => new Blob([new ArrayBuffer(1)]),
+				undefined,
+			],
+			[
+				'Iterator',
+				() => toIterator(new ArrayBuffer(1)),
+				1,
+			],
+		] as const
+	) {
+		for (const { engine, crypto } of engines) {
+			const tag = `name=${name} engine=${engine}`;
+			{
+				const hash = new CCHashInstance(kCCDigestSHA1);
+				hash.crypto = crypto;
+				// deno-lint-ignore no-await-in-loop
+				await (
+					size ? hash.update(data(), size) : hash.update(data())
+				);
+				// deno-lint-ignore no-await-in-loop
+				await assertRejects(
+					() => (
+						size ? hash.update(data(), size) : hash.update(data())
+					),
+					Error,
+					'Already updated',
+					tag,
+				);
+			}
+			{
+				const hash = new CCHashInstance(kCCDigestSHA1);
+				hash.crypto = crypto;
+				// deno-lint-ignore no-await-in-loop
+				await assertRejects(
+					() => hash.finish(),
+					Error,
+					'Not updated',
+					tag,
+				);
+			}
+			{
+				const hash = new CCHashInstance(kCCDigestSHA1);
+				hash.crypto = crypto;
+				// deno-lint-ignore no-await-in-loop
+				await assertRejects(
+					() =>
+						Promise.all([
+							size
+								? hash.update(data(), size)
+								: hash.update(data()),
+							hash.finish(),
+						]),
+					Error,
+					'Incomplete updated',
+					tag,
+				);
+			}
+			{
+				const hash = new CCHashInstance(kCCDigestSHA1);
+				hash.crypto = crypto;
+				// deno-lint-ignore no-await-in-loop
+				await (
+					size ? hash.update(data(), size) : hash.update(data())
+				);
+				// deno-lint-ignore no-await-in-loop
+				await hash.finish();
+				// deno-lint-ignore no-await-in-loop
+				await assertRejects(
+					() => hash.finish(),
+					Error,
+					'Already finished',
+					tag,
+				);
+			}
+		}
 	}
 });
 
