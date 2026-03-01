@@ -102,12 +102,13 @@ interface IteratorInfo {
 	data: ArrayBuffer;
 	page?: number;
 	transform?: (data: ArrayBuffer) => ArrayBufferLike | ArrayBufferView;
+	returns?: (() => unknown) | null;
 }
 
 function toIterator(
-	{ data, page, transform }: IteratorInfo,
+	{ data, page, transform, returns }: IteratorInfo,
 ): HashSourceIterator {
-	return (function* (): HashSourceIterator {
+	const r = (function* (): HashSourceIterator {
 		const size = data.byteLength;
 		let ask = page ? page : (
 			yield (transform
@@ -121,12 +122,22 @@ function toIterator(
 			ask = yield (transform ? transform(d) : d);
 		}
 	})();
+	if (returns) {
+		Object.defineProperty(r, 'return', {
+			value: returns,
+		});
+	} else if (returns === null) {
+		Object.defineProperty(r, 'return', {
+			value: undefined,
+		});
+	}
+	return r;
 }
 
 function toAsyncIterator(
-	{ data, page, transform }: IteratorInfo,
+	{ data, page, transform, returns }: IteratorInfo,
 ): HashSourceAsyncIterator {
-	return (async function* (): HashSourceAsyncIterator {
+	const r = (async function* (): HashSourceAsyncIterator {
 		const size = data.byteLength;
 		let ask = page ? page : (
 			yield (transform
@@ -140,6 +151,16 @@ function toAsyncIterator(
 			ask = yield (transform ? transform(d) : d);
 		}
 	})();
+	if (returns) {
+		Object.defineProperty(r, 'return', {
+			value: returns,
+		});
+	} else if (returns === null) {
+		Object.defineProperty(r, 'return', {
+			value: undefined,
+		});
+	}
+	return r;
 }
 
 function hashed(algo: string, data: Uint8Array): string {
@@ -238,13 +259,23 @@ const inputs = [
 		undefined,
 	],
 	[
-		'Iterator',
+		'Iterator-returns',
 		() => toIterator({ data: new ArrayBuffer(1) }),
 		1,
 	],
 	[
-		'AsyncIterator',
+		'AsyncIterator-returns',
 		() => toAsyncIterator({ data: new ArrayBuffer(1) }),
+		1,
+	],
+	[
+		'Iterator-no-return',
+		() => toIterator({ data: new ArrayBuffer(1), returns: null }),
+		1,
+	],
+	[
+		'AsyncIterator-no-return',
+		() => toAsyncIterator({ data: new ArrayBuffer(1), returns: null }),
 		1,
 	],
 ] as const;

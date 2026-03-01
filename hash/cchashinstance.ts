@@ -240,6 +240,7 @@ export class CCHashInstance extends DynamicHash {
 							}
 						}
 					} finally {
+						// All flows need await.
 						await source.return?.();
 					}
 					if (o) {
