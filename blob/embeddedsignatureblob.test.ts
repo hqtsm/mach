@@ -57,7 +57,7 @@ export async function* createCodeDirectories(
 		const builder = await createBuilder(hashType);
 		CodeDirectoryBuilder.executable(
 			builder,
-			new Blob([thin.slice(0)]),
+			new Blob([thin.slice()]),
 			info.page,
 			0,
 			info.offset,

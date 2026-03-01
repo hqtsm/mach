@@ -257,7 +257,7 @@ export class CodeDirectoryBuilder {
 				byteOffset + byteLength,
 			);
 		} else {
-			_this.mIdentifier = code.slice(0);
+			_this.mIdentifier = code.slice();
 		}
 	}
 
@@ -278,7 +278,7 @@ export class CodeDirectoryBuilder {
 				byteOffset + byteLength,
 			);
 		} else {
-			_this.mTeamID = team.slice(0);
+			_this.mTeamID = team.slice();
 		}
 	}
 

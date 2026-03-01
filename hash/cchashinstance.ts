@@ -359,8 +359,7 @@ export class CCHashInstance extends DynamicHash {
 				}
 			}
 
-			d = new Uint8Array(d.buffer, d.byteOffset, d.byteLength)
-				.slice(0)
+			d = new Uint8Array(d.buffer, d.byteOffset, d.byteLength).slice()
 				.buffer;
 		} else {
 			if ('arrayBuffer' in source) {
