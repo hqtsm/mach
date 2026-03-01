@@ -206,9 +206,10 @@ const expected = [
 	}],
 ] as const;
 
-// deno-lint-ignore require-await
+let sagDetect: Promise<boolean>;
+
 async function getEngines(): Promise<[string, HashCrypto | null][]> {
-	return Object.entries({
+	const engines: Record<string, HashCrypto | null> = {
 		subtle: null,
 		'jsr:@std/crypto': stdCrypto.subtle,
 		'node:sync': {
@@ -225,7 +226,27 @@ async function getEngines(): Promise<[string, HashCrypto | null][]> {
 			},
 		},
 		'node:async': { createHash },
-	});
+	};
+
+	sagDetect ??= (async () => {
+		try {
+			const source = (async function* (): AsyncGenerator<ArrayBuffer> {
+				yield new ArrayBuffer(0);
+			})();
+			await crypto.subtle.digest(
+				'SHA-256',
+				source as unknown as ArrayBuffer,
+			);
+		} catch {
+			return false;
+		}
+		return true;
+	})();
+	if (await sagDetect) {
+		// TODO: Future expansion.
+	}
+
+	return Object.entries(engines);
 }
 
 type InputData = [string, () => ArrayBuffer, null];
