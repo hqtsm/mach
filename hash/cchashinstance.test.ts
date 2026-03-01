@@ -247,9 +247,7 @@ const engines = [
 	},
 ] as const;
 
-function getInputs(
-	size: number,
-): ([
+type Input = [
 	string,
 	() => ArrayBuffer | Blob,
 	null,
@@ -257,40 +255,51 @@ function getInputs(
 	string,
 	() => HashSourceIterator | HashSourceAsyncIterator,
 	number,
-])[] {
-	return [
-		[
+];
+
+function getInputs(
+	size: number,
+	{ buffers = true, blobs = true, iterators = true } = {},
+): Input[] {
+	const r: Input[] = [];
+	if (buffers) {
+		r.push([
 			`ArrayBuffer-${size}`,
 			() => new ArrayBuffer(size),
 			null,
-		],
-		[
+		]);
+	}
+	if (blobs) {
+		r.push([
 			`Blob-${size}`,
 			() => new Blob([new ArrayBuffer(size)]),
 			null,
-		],
-		[
+		]);
+	}
+	if (iterators) {
+		r.push([
 			`Iterator-returns-${size}`,
 			() => toIterator({ data: new ArrayBuffer(size) }),
 			size,
-		],
-		[
+		]);
+		r.push([
 			`AsyncIterator-returns-${size}`,
 			() => toAsyncIterator({ data: new ArrayBuffer(size) }),
 			size,
-		],
-		[
+		]);
+		r.push([
 			`Iterator-no-return-${size}`,
 			() => toIterator({ data: new ArrayBuffer(size), returns: null }),
 			size,
-		],
-		[
+		]);
+		r.push([
 			`AsyncIterator-no-return-${size}`,
 			() =>
 				toAsyncIterator({ data: new ArrayBuffer(size), returns: null }),
 			size,
-		],
-	];
+		]);
+	}
+	return r;
 }
 
 function* cases(): Iterable<{
@@ -750,11 +759,10 @@ Deno.test('Hash node async write error', async () => {
 			};
 		},
 	};
-	const nozero = /^(Blob|Iterator|AsyncIterator)-/;
 
 	for (
 		const [name, source, size] of [
-			...getInputs(0).filter(([name]) => !nozero.test(name)),
+			...getInputs(0, { blobs: false, iterators: false }),
 			...getInputs(1),
 		]
 	) {
