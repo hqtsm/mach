@@ -228,9 +228,13 @@ async function getEngines(): Promise<[string, HashCrypto | null][]> {
 		'node:async': { createHash },
 	};
 
+	// Feature detect subtle crypto hash async generator extension.
 	sagDetect ??= (async () => {
+		let valid = false;
 		try {
 			const source = (async function* (): AsyncGenerator<ArrayBuffer> {
+				// If this function starts, then next was called.
+				valid = true;
 				yield new ArrayBuffer(0);
 			})();
 			await crypto.subtle.digest(
@@ -238,9 +242,9 @@ async function getEngines(): Promise<[string, HashCrypto | null][]> {
 				source as unknown as ArrayBuffer,
 			);
 		} catch {
-			return false;
+			// Ignore.
 		}
-		return true;
+		return valid;
 	})();
 	if (await sagDetect) {
 		// TODO: Future expansion.
