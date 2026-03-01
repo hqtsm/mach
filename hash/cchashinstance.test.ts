@@ -1,6 +1,7 @@
 // deno-lint-ignore no-external-import
 import { createHash } from 'node:crypto';
 import { assertEquals, assertRejects, assertThrows } from '@std/assert';
+import { crypto as stdCrypto } from '@std/crypto';
 import {
 	kCCDigestMD2,
 	kCCDigestMD4,
@@ -225,6 +226,10 @@ const engines = [
 	{
 		engine: 'subtle',
 		crypto: null,
+	},
+	{
+		engine: 'deno-std-crypto',
+		crypto: stdCrypto.subtle,
 	},
 	{
 		engine: 'node-sync',

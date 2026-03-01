@@ -8,6 +8,7 @@
     "jsr:@hqtsm/meek@^2.0.1": "2.0.1",
     "jsr:@hqtsm/struct@3": "3.0.0",
     "jsr:@std/assert@^1.0.16": "1.0.16",
+    "jsr:@std/crypto@^1.0.5": "1.0.5",
     "jsr:@std/fmt@1": "1.0.8",
     "jsr:@std/fs@1": "1.0.19",
     "jsr:@std/internal@^1.0.10": "1.0.12",
@@ -55,6 +56,9 @@
       "dependencies": [
         "jsr:@std/internal@^1.0.12"
       ]
+    },
+    "@std/crypto@1.0.5": {
+      "integrity": "0dcfbb319fe0bba1bd3af904ceb4f948cde1b92979ec1614528380ed308a3b40"
     },
     "@std/fmt@1.0.8": {
       "integrity": "71e1fc498787e4434d213647a6e43e794af4fd393ef8f52062246e06f7e372b7"
@@ -105,7 +109,8 @@
       "jsr:@deno/dnt@~0.42.3",
       "jsr:@hqtsm/class@^1.3.0",
       "jsr:@hqtsm/struct@3",
-      "jsr:@std/assert@^1.0.16"
+      "jsr:@std/assert@^1.0.16",
+      "jsr:@std/crypto@^1.0.5"
     ]
   }
 }

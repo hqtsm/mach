@@ -90,6 +90,15 @@ export interface HashCryptoSubtleView {
 }
 
 /**
+ * Subtle crypto hash algorithm.
+ */
+export type HashCryptoSubtleAlgorithm =
+	| 'SHA-1'
+	| 'SHA-256'
+	| 'SHA-384'
+	| 'SHA-512';
+
+/**
  * Subtle crypto hash interface.
  */
 export interface HashCryptoSubtle {
@@ -101,7 +110,7 @@ export interface HashCryptoSubtle {
 	 * @returns Hash digest.
 	 */
 	digest: (
-		algo: string,
+		algo: HashCryptoSubtleAlgorithm,
 		data: HashCryptoSubtleView | ArrayBuffer,
 	) => Promise<ArrayBuffer>;
 }

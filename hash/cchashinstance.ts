@@ -10,6 +10,7 @@ import type { Reader } from '../util/reader.ts';
 import {
 	DynamicHash,
 	type HashCryptoSubtle,
+	type HashCryptoSubtleAlgorithm,
 	type HashSourceAsyncIterator,
 	type HashSourceIterator,
 } from './dynamichash.ts';
@@ -21,7 +22,7 @@ declare const crypto: {
 
 interface Algo {
 	l: number;
-	N: string;
+	N: HashCryptoSubtleAlgorithm;
 	n: string;
 }
 
