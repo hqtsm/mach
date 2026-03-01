@@ -28,6 +28,7 @@ import { hex } from '../spec/hex.ts';
 import type { Reader } from '../util/reader.ts';
 import { CCHashInstance } from './cchashinstance.ts';
 import type {
+	HashCrypto,
 	HashCryptoNodeSync,
 	HashSourceAsyncIterator,
 	HashSourceIterator,
@@ -205,18 +206,11 @@ const expected = [
 	}],
 ] as const;
 
-const engines = [
-	{
-		engine: 'subtle',
-		crypto: null,
-	},
-	{
-		engine: 'deno-std-crypto',
-		crypto: stdCrypto.subtle,
-	},
-	{
-		engine: 'node-sync',
-		crypto: {
+function getEngines(): Record<string, HashCrypto | null> {
+	return {
+		subtle: null,
+		'jsr:@std/crypto': stdCrypto.subtle,
+		'node:sync': {
 			createHash(algo: string): HashCryptoNodeSync {
 				const hash = createHash(algo);
 				return {
@@ -229,12 +223,9 @@ const engines = [
 				};
 			},
 		},
-	},
-	{
-		engine: 'node-async',
-		crypto: { createHash },
-	},
-] as const;
+		'node:async': { createHash },
+	};
+}
 
 type InputData = [string, () => ArrayBuffer, null];
 
@@ -299,32 +290,37 @@ function getInputs(size: number): (InputData | InputBlob | InputIterator)[] {
 	];
 }
 
-function* cases(): Iterable<{
+interface Case {
 	tag: string;
 	alg: number;
 	input: string;
 	output: string;
 	data: ArrayBuffer;
-	engine: (typeof engines)[number]['engine'];
-	crypto: (typeof engines)[number]['crypto'];
-}> {
-	for (const [alg, expect] of expected) {
-		for (const { engine, crypto } of engines) {
-			for (const [input, [data, output]] of Object.entries(expect)) {
-				const tag =
-					`alg=${alg} crypto=${engine} in=${input} out=${output}`;
-				yield {
-					tag,
-					alg,
-					engine,
-					crypto,
-					input,
-					output,
-					data,
-				};
+	engine: string;
+	crypto: HashCrypto | null;
+}
+
+function cases(): Iterable<Case> {
+	const engines = Object.entries(getEngines());
+	return (function* (): Iterable<Case> {
+		for (const [alg, expect] of expected) {
+			for (const [engine, crypto] of engines) {
+				for (const [input, [data, output]] of Object.entries(expect)) {
+					const tag =
+						`alg=${alg} crypto=${engine} in=${input} out=${output}`;
+					yield {
+						tag,
+						alg,
+						engine,
+						crypto,
+						input,
+						output,
+						data,
+					};
+				}
 			}
 		}
-	}
+	})();
 }
 
 Deno.test('Unsupported', () => {
@@ -628,7 +624,9 @@ Deno.test('Hash truncate', async () => {
 Deno.test('Hash Blob over-read', async () => {
 	const reader = new BadReader(1024);
 	reader.diff = 1;
-	for (const { engine, crypto } of engines) {
+
+	const engines = Object.entries(getEngines());
+	for (const [engine, crypto] of engines) {
 		const tag = `engine=${engine}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
@@ -645,7 +643,9 @@ Deno.test('Hash Blob over-read', async () => {
 Deno.test('Hash Blob under-read', async () => {
 	const reader = new BadReader(1024);
 	reader.diff = -1;
-	for (const { engine, crypto } of engines) {
+
+	const engines = Object.entries(getEngines());
+	for (const [engine, crypto] of engines) {
 		const tag = `engine=${engine}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
@@ -660,8 +660,9 @@ Deno.test('Hash Blob under-read', async () => {
 });
 
 Deno.test('Hash stream over-read', async () => {
+	const engines = Object.entries(getEngines());
 	for (const [name, source, size] of getInputsIterator(1024)) {
-		for (const { engine, crypto } of engines) {
+		for (const [engine, crypto] of engines) {
 			const tag = `name=${name} engine=${engine}`;
 			const hash = new CCHashInstance(kCCDigestSHA1);
 			hash.crypto = crypto;
@@ -676,8 +677,9 @@ Deno.test('Hash stream over-read', async () => {
 	}
 });
 Deno.test('Hash stream under-read', async () => {
+	const engines = Object.entries(getEngines());
 	for (const [name, source, size] of getInputsIterator(1024)) {
-		for (const { engine, crypto } of engines) {
+		for (const [engine, crypto] of engines) {
 			const tag = `name=${name} engine=${engine}`;
 			const hash = new CCHashInstance(kCCDigestSHA1);
 			hash.crypto = crypto;
@@ -693,8 +695,9 @@ Deno.test('Hash stream under-read', async () => {
 });
 
 Deno.test('State errors', async () => {
+	const engines = Object.entries(getEngines());
 	for (const [name, source, size] of [...getInputs(0), ...getInputs(1)]) {
-		for (const { engine, crypto } of engines) {
+		for (const [engine, crypto] of engines) {
 			const tag = `name=${name} engine=${engine}`;
 			{
 				const hash = new CCHashInstance(kCCDigestSHA1);
