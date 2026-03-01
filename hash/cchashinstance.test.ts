@@ -191,11 +191,11 @@ const expected = [
 
 const engines = [
 	{
-		name: 'subtle',
+		engine: 'subtle',
 		crypto: null,
 	},
 	{
-		name: 'node-sync',
+		engine: 'node-sync',
 		crypto: {
 			createHash(algo: string): HashCryptoNodeSync {
 				const hash = createHash(algo);
@@ -211,7 +211,7 @@ const engines = [
 		},
 	},
 	{
-		name: 'node-async',
+		engine: 'node-async',
 		crypto: { createHash },
 	},
 ] as const;
@@ -222,16 +222,18 @@ function* cases(): Iterable<{
 	input: string;
 	output: string;
 	data: ArrayBuffer;
-	name: (typeof engines)[number]['name'];
+	engine: (typeof engines)[number]['engine'];
 	crypto: (typeof engines)[number]['crypto'];
 }> {
 	for (const [alg, expect] of expected) {
-		for (const { name, crypto } of engines) {
+		for (const { engine, crypto } of engines) {
 			for (const [input, [data, output]] of Object.entries(expect)) {
+				const tag =
+					`alg=${alg} crypto=${engine} in=${input} out=${output}`;
 				yield {
-					tag: `alg=${alg} crypto=${name} in=${input} out=${output}`,
+					tag,
 					alg,
-					name,
+					engine,
 					crypto,
 					input,
 					output,
@@ -479,8 +481,8 @@ Deno.test('Hash truncate', async () => {
 });
 
 Deno.test('Hash Blob over-read', async () => {
-	for (const { name, crypto } of engines) {
-		const tag = `engine=${name}`;
+	for (const { engine, crypto } of engines) {
+		const tag = `engine=${engine}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
@@ -494,8 +496,8 @@ Deno.test('Hash Blob over-read', async () => {
 });
 
 Deno.test('Hash Blob under-read', async () => {
-	for (const { name, crypto } of engines) {
-		const tag = `engine=${name}`;
+	for (const { engine, crypto } of engines) {
+		const tag = `engine=${engine}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
@@ -509,8 +511,8 @@ Deno.test('Hash Blob under-read', async () => {
 });
 
 Deno.test('Repeat update', async () => {
-	for (const { name, crypto } of engines) {
-		const tag = `engine=${name}`;
+	for (const { engine, crypto } of engines) {
+		const tag = `engine=${engine}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
@@ -526,8 +528,8 @@ Deno.test('Repeat update', async () => {
 });
 
 Deno.test('No update', async () => {
-	for (const { name, crypto } of engines) {
-		const tag = `engine=${name}`;
+	for (const { engine, crypto } of engines) {
+		const tag = `engine=${engine}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
@@ -541,8 +543,8 @@ Deno.test('No update', async () => {
 });
 
 Deno.test('Incomplete update', async () => {
-	for (const { name, crypto } of engines) {
-		const tag = `engine=${name}`;
+	for (const { engine, crypto } of engines) {
+		const tag = `engine=${engine}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
@@ -556,8 +558,8 @@ Deno.test('Incomplete update', async () => {
 });
 
 Deno.test('Already finished', async () => {
-	for (const { name, crypto } of engines) {
-		const tag = `engine=${name}`;
+	for (const { engine, crypto } of engines) {
+		const tag = `engine=${engine}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
