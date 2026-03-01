@@ -107,6 +107,52 @@ const readerAG = async function* (
 	}
 };
 
+const iteratorAG = async function* (
+	subtle: HashCryptoSubtle | HashCryptoSubtleAsyncGenerator,
+	source: HashSourceIterator | HashSourceAsyncIterator,
+	size: number,
+): AsyncGenerator<ArrayBuffer> {
+	supportsAG.set(subtle.digest, true);
+	let a, o = -size;
+	try {
+		let n;
+		for (
+			a = ip(n = source.next(PAGE_SIZE));;
+			n = source.next(PAGE_SIZE)
+		) {
+			// deno-lint-ignore no-await-in-loop
+			n = (a ? await n : n) as IR;
+			if (n.done) {
+				break;
+			}
+			const b = n.value;
+			const l = b.byteLength;
+			if (l) {
+				o += l;
+				if (o > 0) {
+					break;
+				}
+				if ('buffer' in b) {
+					yield new Uint8Array(b.buffer, b.byteOffset, l).slice()
+						.buffer;
+				} else if (shared(b)) {
+					yield new Uint8Array(b).slice().buffer;
+				} else {
+					yield b;
+				}
+			}
+		}
+	} finally {
+		const r = source.return?.();
+		if (a && r) {
+			await r;
+		}
+	}
+	if (o) {
+		throw new RangeError(`Read size off by: ${o}`);
+	}
+};
+
 /**
  * CCHashInstance dynamic hash.
  */
@@ -332,7 +378,7 @@ export class CCHashInstance extends DynamicHash {
 				}
 			} else if ('next' in source) {
 				if (supportsAG.get(c.digest) !== false) {
-					d = null;
+					d = await subtleAG(c, N, iteratorAG(c, source, size));
 				}
 				if (!d) {
 					let a;
