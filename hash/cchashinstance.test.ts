@@ -733,23 +733,13 @@ Deno.test('Hash node async write error', async () => {
 			};
 		},
 	};
-	for (
-		const [name, source] of [
-			[
-				'ArrayBuffer',
-				new ArrayBuffer(1),
-			],
-			[
-				'Blob',
-				new Blob([new ArrayBuffer(1)]),
-			],
-		] as const
-	) {
+
+	for (const [name, source, size] of inputs) {
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
-			() => hash.update(source),
+			() => size ? hash.update(source(), size) : hash.update(source()),
 			Error,
 			'Write fail',
 			name,
@@ -774,23 +764,13 @@ Deno.test('Hash node async end error', async () => {
 			};
 		},
 	};
-	for (
-		const [name, source] of [
-			[
-				'ArrayBuffer',
-				new ArrayBuffer(1),
-			],
-			[
-				'Blob',
-				new Blob([new ArrayBuffer(1)]),
-			],
-		] as const
-	) {
+
+	for (const [name, source, size] of inputs) {
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
-			() => hash.update(source),
+			() => size ? hash.update(source(), size) : hash.update(source()),
 			Error,
 			'End fail',
 			name,
