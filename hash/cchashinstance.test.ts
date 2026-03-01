@@ -206,8 +206,9 @@ const expected = [
 	}],
 ] as const;
 
-function getEngines(): Record<string, HashCrypto | null> {
-	return {
+// deno-lint-ignore require-await
+async function getEngines(): Promise<[string, HashCrypto | null][]> {
+	return Object.entries({
 		subtle: null,
 		'jsr:@std/crypto': stdCrypto.subtle,
 		'node:sync': {
@@ -224,7 +225,7 @@ function getEngines(): Record<string, HashCrypto | null> {
 			},
 		},
 		'node:async': { createHash },
-	};
+	});
 }
 
 type InputData = [string, () => ArrayBuffer, null];
@@ -300,8 +301,8 @@ interface Case {
 	crypto: HashCrypto | null;
 }
 
-function cases(): Iterable<Case> {
-	const engines = Object.entries(getEngines());
+async function getCases(): Promise<Iterable<Case>> {
+	const engines = await getEngines();
 	return (function* (): Iterable<Case> {
 		for (const [alg, expect] of expected) {
 			for (const [engine, crypto] of engines) {
@@ -336,7 +337,7 @@ Deno.test('Unsupported', () => {
 });
 
 Deno.test('Hash ArrayBuffer', async () => {
-	for (const { tag, alg, crypto, output, data } of cases()) {
+	for (const { tag, alg, crypto, output, data } of await getCases()) {
 		const hash = new CCHashInstance(alg);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
@@ -349,7 +350,7 @@ Deno.test('Hash ArrayBuffer', async () => {
 });
 
 Deno.test('Hash SharedArrayBuffer', async () => {
-	for (const { tag, alg, crypto, output, data } of cases()) {
+	for (const { tag, alg, crypto, output, data } of await getCases()) {
 		const hash = new CCHashInstance(alg);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
@@ -362,7 +363,7 @@ Deno.test('Hash SharedArrayBuffer', async () => {
 });
 
 Deno.test('Hash Uint8Array<ArrayBuffer>', async () => {
-	for (const { tag, alg, crypto, output, data } of cases()) {
+	for (const { tag, alg, crypto, output, data } of await getCases()) {
 		const hash = new CCHashInstance(alg);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
@@ -375,7 +376,7 @@ Deno.test('Hash Uint8Array<ArrayBuffer>', async () => {
 });
 
 Deno.test('Hash Uint8Array<SharedArrayBuffer>', async () => {
-	for (const { tag, alg, crypto, output, data } of cases()) {
+	for (const { tag, alg, crypto, output, data } of await getCases()) {
 		const hash = new CCHashInstance(alg);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
@@ -388,7 +389,7 @@ Deno.test('Hash Uint8Array<SharedArrayBuffer>', async () => {
 });
 
 Deno.test('Hash Blob', async () => {
-	for (const { tag, alg, crypto, output, data } of cases()) {
+	for (const { tag, alg, crypto, output, data } of await getCases()) {
 		const hash = new CCHashInstance(alg);
 		hash.crypto = crypto;
 		const blob = new Blob([data]);
@@ -403,7 +404,7 @@ Deno.test('Hash Blob', async () => {
 
 Deno.test('Hash Iterator<ArrayBuffer>', async () => {
 	for (const page of ITTER_SIZES) {
-		for (const { tag, alg, crypto, output, data } of cases()) {
+		for (const { tag, alg, crypto, output, data } of await getCases()) {
 			const tags = `${tag} page=${page}`;
 			const hash = new CCHashInstance(alg);
 			hash.crypto = crypto;
@@ -428,7 +429,7 @@ Deno.test('Hash Iterator<ArrayBuffer>', async () => {
 Deno.test('Hash Iterator<Uint8Array<ArrayBuffer>>', async () => {
 	const transform = (d: ArrayBuffer) => new Uint8Array(ab2sab(d));
 	for (const page of ITTER_SIZES) {
-		for (const { tag, alg, crypto, output, data } of cases()) {
+		for (const { tag, alg, crypto, output, data } of await getCases()) {
 			const tags = `${tag} page=${page}`;
 			const hash = new CCHashInstance(alg);
 			hash.crypto = crypto;
@@ -454,7 +455,7 @@ Deno.test('Hash Iterator<Uint8Array<ArrayBuffer>>', async () => {
 Deno.test('Hash Iterator<SharedArrayBuffer>', async () => {
 	const transform = ab2sab;
 	for (const page of ITTER_SIZES) {
-		for (const { tag, alg, crypto, output, data } of cases()) {
+		for (const { tag, alg, crypto, output, data } of await getCases()) {
 			const tags = `${tag} page=${page}`;
 			const hash = new CCHashInstance(alg);
 			hash.crypto = crypto;
@@ -480,7 +481,7 @@ Deno.test('Hash Iterator<SharedArrayBuffer>', async () => {
 Deno.test('Hash Iterator<Uint8Array<SharedArrayBuffer>>', async () => {
 	const transform = (d: ArrayBuffer) => new Uint8Array(ab2sab(d));
 	for (const page of ITTER_SIZES) {
-		for (const { tag, alg, crypto, output, data } of cases()) {
+		for (const { tag, alg, crypto, output, data } of await getCases()) {
 			const tags = `${tag} page=${page}`;
 			const hash = new CCHashInstance(alg);
 			hash.crypto = crypto;
@@ -505,7 +506,7 @@ Deno.test('Hash Iterator<Uint8Array<SharedArrayBuffer>>', async () => {
 
 Deno.test('Hash AsyncIterator<ArrayBuffer>', async () => {
 	for (const page of ITTER_SIZES) {
-		for (const { tag, alg, crypto, output, data } of cases()) {
+		for (const { tag, alg, crypto, output, data } of await getCases()) {
 			const tags = `${tag} page=${page}`;
 			const hash = new CCHashInstance(alg);
 			hash.crypto = crypto;
@@ -530,7 +531,7 @@ Deno.test('Hash AsyncIterator<ArrayBuffer>', async () => {
 Deno.test('Hash AsyncIterator<Uint8Array<ArrayBuffer>>', async () => {
 	const transform = (d: ArrayBuffer) => new Uint8Array(ab2sab(d));
 	for (const page of ITTER_SIZES) {
-		for (const { tag, alg, crypto, output, data } of cases()) {
+		for (const { tag, alg, crypto, output, data } of await getCases()) {
 			const tags = `${tag} page=${page}`;
 			const hash = new CCHashInstance(alg);
 			hash.crypto = crypto;
@@ -556,7 +557,7 @@ Deno.test('Hash AsyncIterator<Uint8Array<ArrayBuffer>>', async () => {
 Deno.test('Hash AsyncIterator<SharedArrayBuffer>', async () => {
 	const transform = ab2sab;
 	for (const page of ITTER_SIZES) {
-		for (const { tag, alg, crypto, output, data } of cases()) {
+		for (const { tag, alg, crypto, output, data } of await getCases()) {
 			const tags = `${tag} page=${page}`;
 			const hash = new CCHashInstance(alg);
 			hash.crypto = crypto;
@@ -582,7 +583,7 @@ Deno.test('Hash AsyncIterator<SharedArrayBuffer>', async () => {
 Deno.test('Hash AsyncIterator<Uint8Array<SharedArrayBuffer>>', async () => {
 	const transform = (d: ArrayBuffer) => new Uint8Array(ab2sab(d));
 	for (const page of ITTER_SIZES) {
-		for (const { tag, alg, crypto, output, data } of cases()) {
+		for (const { tag, alg, crypto, output, data } of await getCases()) {
 			const tags = `${tag} page=${page}`;
 			const hash = new CCHashInstance(alg);
 			hash.crypto = crypto;
@@ -606,7 +607,7 @@ Deno.test('Hash AsyncIterator<Uint8Array<SharedArrayBuffer>>', async () => {
 });
 
 Deno.test('Hash truncate', async () => {
-	for (const { tag, alg, crypto, output, data } of cases()) {
+	for (const { tag, alg, crypto, output, data } of await getCases()) {
 		const truncate = Math.floor(output.length / 2);
 		const hext = output.slice(0, truncate * 2);
 		const hash = new CCHashInstance(alg, truncate);
@@ -625,7 +626,7 @@ Deno.test('Hash Blob over-read', async () => {
 	const reader = new BadReader(1024);
 	reader.diff = 1;
 
-	const engines = Object.entries(getEngines());
+	const engines = await getEngines();
 	for (const [engine, crypto] of engines) {
 		const tag = `engine=${engine}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
@@ -644,7 +645,7 @@ Deno.test('Hash Blob under-read', async () => {
 	const reader = new BadReader(1024);
 	reader.diff = -1;
 
-	const engines = Object.entries(getEngines());
+	const engines = await getEngines();
 	for (const [engine, crypto] of engines) {
 		const tag = `engine=${engine}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
@@ -660,7 +661,7 @@ Deno.test('Hash Blob under-read', async () => {
 });
 
 Deno.test('Hash stream over-read', async () => {
-	const engines = Object.entries(getEngines());
+	const engines = await getEngines();
 	for (const [name, source, size] of getInputsIterator(1024)) {
 		for (const [engine, crypto] of engines) {
 			const tag = `name=${name} engine=${engine}`;
@@ -677,7 +678,7 @@ Deno.test('Hash stream over-read', async () => {
 	}
 });
 Deno.test('Hash stream under-read', async () => {
-	const engines = Object.entries(getEngines());
+	const engines = await getEngines();
 	for (const [name, source, size] of getInputsIterator(1024)) {
 		for (const [engine, crypto] of engines) {
 			const tag = `name=${name} engine=${engine}`;
@@ -695,7 +696,7 @@ Deno.test('Hash stream under-read', async () => {
 });
 
 Deno.test('State errors', async () => {
-	const engines = Object.entries(getEngines());
+	const engines = await getEngines();
 	for (const [name, source, size] of [...getInputs(0), ...getInputs(1)]) {
 		for (const [engine, crypto] of engines) {
 			const tag = `name=${name} engine=${engine}`;
