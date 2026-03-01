@@ -248,21 +248,37 @@ const engines = [
 	},
 ] as const;
 
-type InputSized = [
-	string,
-	() => ArrayBuffer | Blob,
-	null,
-];
+type InputData = [string, () => ArrayBuffer, null];
 
-type InputSize = [
+type InputBlob = [string, () => Blob, null];
+
+type InputIterator = [
 	string,
 	() => HashSourceIterator | HashSourceAsyncIterator,
 	number,
 ];
 
-type Input = InputSized | InputSize;
+function getInputsData(size: number): InputData[] {
+	return [
+		[
+			`ArrayBuffer-${size}`,
+			() => new ArrayBuffer(size),
+			null,
+		],
+	];
+}
 
-function getInputsSize(size: number): InputSize[] {
+function getInputsBlob(size: number): InputBlob[] {
+	return [
+		[
+			`Blob-${size}`,
+			() => new Blob([new ArrayBuffer(size)]),
+			null,
+		],
+	];
+}
+
+function getInputsIterator(size: number): InputIterator[] {
 	return [
 		[
 			`Iterator-returns-${size}`,
@@ -287,29 +303,12 @@ function getInputsSize(size: number): InputSize[] {
 	];
 }
 
-function getInputs(
-	size: number,
-	{ buffers = true, blobs = true, iterators = true } = {},
-): Input[] {
-	const r: Input[] = [];
-	if (buffers) {
-		r.push([
-			`ArrayBuffer-${size}`,
-			() => new ArrayBuffer(size),
-			null,
-		]);
-	}
-	if (blobs) {
-		r.push([
-			`Blob-${size}`,
-			() => new Blob([new ArrayBuffer(size)]),
-			null,
-		]);
-	}
-	if (iterators) {
-		r.push(...getInputsSize(size));
-	}
-	return r;
+function getInputs(size: number): (InputData | InputBlob | InputIterator)[] {
+	return [
+		...getInputsData(size),
+		...getInputsBlob(size),
+		...getInputsIterator(size),
+	];
 }
 
 function* cases(): Iterable<{
@@ -669,7 +668,7 @@ Deno.test('Hash Blob under-read', async () => {
 });
 
 Deno.test('Hash stream over-read', async () => {
-	for (const [name, source, size] of getInputsSize(1024)) {
+	for (const [name, source, size] of getInputsIterator(1024)) {
 		for (const { engine, crypto } of engines) {
 			const tag = `name=${name} engine=${engine}`;
 			const hash = new CCHashInstance(kCCDigestSHA1);
@@ -685,7 +684,7 @@ Deno.test('Hash stream over-read', async () => {
 	}
 });
 Deno.test('Hash stream under-read', async () => {
-	for (const [name, source, size] of getInputsSize(1024)) {
+	for (const [name, source, size] of getInputsIterator(1024)) {
 		for (const { engine, crypto } of engines) {
 			const tag = `name=${name} engine=${engine}`;
 			const hash = new CCHashInstance(kCCDigestSHA1);
@@ -795,12 +794,7 @@ Deno.test('Hash node async write error', async () => {
 		},
 	};
 
-	for (
-		const [name, source, size] of [
-			...getInputs(0, { blobs: false, iterators: false }),
-			...getInputs(1),
-		]
-	) {
+	for (const [name, source, size] of [...getInputsData(0), ...getInputs(1)]) {
 		const hash = new CCHashInstance(kCCDigestSHA1);
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
