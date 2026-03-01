@@ -96,6 +96,26 @@ export interface HashCryptoSubtle {
 }
 
 /**
+ * Subtle crypto hash interface with async generator extension.
+ */
+export interface HashCryptoSubtleAsyncGenerator {
+	/**
+	 * Create digest.
+	 *
+	 * @param algo Hash algorithm.
+	 * @param data Data to be hashed.
+	 * @returns Hash digest.
+	 */
+	digest: (
+		algo: HashCryptoSubtleAlgorithm,
+		data:
+			| ArrayBufferView<ArrayBuffer>
+			| ArrayBuffer
+			| AsyncGenerator<ArrayBuffer>,
+	) => Promise<ArrayBuffer>;
+}
+
+/**
  * Node crypto hash algorithm.
  */
 export type HashCryptoNodeAlgorithm =
@@ -167,7 +187,10 @@ export interface HashCryptoNode {
 /**
  * Supported hash crypto implementations.
  */
-export type HashCrypto = HashCryptoSubtle | HashCryptoNode;
+export type HashCrypto =
+	| HashCryptoSubtle
+	| HashCryptoSubtleAsyncGenerator
+	| HashCryptoNode;
 
 /**
  * Dynamic hash.
