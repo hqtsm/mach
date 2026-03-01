@@ -33,14 +33,17 @@ import type {
 	HashSourceIterator,
 } from './dynamichash.ts';
 
-class OverReader implements Reader {
+class BadReader implements Reader {
 	#size: number;
 
 	#type: string;
 
+	#diff: number;
+
 	constructor(size: number, type: string = '') {
 		this.#size = size;
 		this.#type = type;
+		this.#diff = 0;
 	}
 
 	public get size(): number {
@@ -51,45 +54,25 @@ class OverReader implements Reader {
 		return this.#type;
 	}
 
-	public slice(start?: number, end?: number, contentType?: string): Reader {
-		start ??= 0;
-		end ??= this.#size;
-		return new OverReader(start < end ? end - start : 0, contentType);
+	public set diff(diff: number) {
+		this.#diff = diff;
 	}
 
-	// deno-lint-ignore require-await
-	public async arrayBuffer(): Promise<ArrayBuffer> {
-		return new ArrayBuffer(this.#size - 1);
-	}
-}
-
-class UnderReader implements Reader {
-	#size: number;
-
-	#type: string;
-
-	constructor(size: number, type: string = '') {
-		this.#size = size;
-		this.#type = type;
-	}
-
-	public get size(): number {
-		return this.#size;
-	}
-
-	public get type(): string {
-		return this.#type;
+	public get diff(): number {
+		return this.#diff;
 	}
 
 	public slice(start?: number, end?: number, contentType?: string): Reader {
 		start ??= 0;
 		end ??= this.#size;
-		return new UnderReader(start < end ? end - start : 0, contentType);
+		const r = new BadReader(start < end ? end - start : 0, contentType);
+		r.#diff = this.#diff;
+		return r;
 	}
 
 	// deno-lint-ignore require-await
 	public async arrayBuffer(): Promise<ArrayBuffer> {
-		return new ArrayBuffer(this.#size + 1);
+		return new ArrayBuffer(this.#size - this.#diff);
 	}
 }
 
@@ -643,7 +626,8 @@ Deno.test('Hash truncate', async () => {
 });
 
 Deno.test('Hash Blob over-read', async () => {
-	const reader = new OverReader(1024);
+	const reader = new BadReader(1024);
+	reader.diff = 1;
 	for (const { engine, crypto } of engines) {
 		const tag = `engine=${engine}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
@@ -659,7 +643,8 @@ Deno.test('Hash Blob over-read', async () => {
 });
 
 Deno.test('Hash Blob under-read', async () => {
-	const reader = new UnderReader(1024);
+	const reader = new BadReader(1024);
+	reader.diff = -1;
 	for (const { engine, crypto } of engines) {
 		const tag = `engine=${engine}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
