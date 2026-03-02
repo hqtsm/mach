@@ -64,7 +64,7 @@ export interface HashCryptoNodeSync {
 	 *
 	 * @param data Data.
 	 */
-	update(data: Uint8Array): void;
+	update(data: Uint8Array<ArrayBuffer>): void;
 
 	/**
 	 * Get digest.
@@ -84,7 +84,7 @@ export interface HashCryptoNodeStream {
 	 * @param data Data.
 	 * @param cb Callback.
 	 */
-	write(data: Uint8Array, cb: (err?: unknown) => void): void;
+	write(data: Uint8Array<ArrayBuffer>, cb: (err?: unknown) => void): void;
 
 	/**
 	 * End hash.
