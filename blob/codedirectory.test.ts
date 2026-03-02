@@ -41,9 +41,6 @@ Deno.test('signingLimit', async () => {
 		0,
 		1,
 	);
-	if (typeof crypto === 'undefined') {
-		builder.crypto = await import('node:crypto');
-	}
 	const cd = await CodeDirectoryBuilder.build(builder);
 	assertEquals(CodeDirectory.signingLimit(cd), 1n);
 

@@ -16,16 +16,6 @@ import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
 
-const createBuilder = async (
-	hashType: number,
-): Promise<CodeDirectoryBuilder> => {
-	const builder = new CodeDirectoryBuilder(hashType);
-	if (typeof crypto === 'undefined') {
-		builder.crypto = await import('node:crypto');
-	}
-	return builder;
-};
-
 class ErrorReader implements Reader {
 	#size: number;
 
@@ -71,7 +61,7 @@ Deno.test('hashType', () => {
 });
 
 Deno.test('opened', async () => {
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	assertEquals(CodeDirectoryBuilder.opened(builder), false);
 
 	assertThrows(
@@ -90,7 +80,7 @@ Deno.test('opened', async () => {
 
 Deno.test('identifier', async () => {
 	const expected = new TextEncoder().encode('IDENTIFIER');
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	CodeDirectoryBuilder.identifier(
 		builder,
@@ -113,7 +103,7 @@ Deno.test('identifier', async () => {
 
 Deno.test('teamID', async () => {
 	const expected = new TextEncoder().encode('TEAMID');
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	CodeDirectoryBuilder.teamID(
 		builder,
@@ -135,7 +125,7 @@ Deno.test('teamID', async () => {
 });
 
 Deno.test('codeSlots', async () => {
-	let builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	let builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	const zero = CodeDirectory.size(await CodeDirectoryBuilder.build(builder));
 
@@ -145,7 +135,7 @@ Deno.test('codeSlots', async () => {
 		zero + CS_SHA1_LEN * 1,
 	);
 
-	builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(
 		builder,
 		new Blob([new Uint8Array(1024)]),
@@ -171,7 +161,7 @@ Deno.test('codeSlots', async () => {
 });
 
 Deno.test('addExecSegFlags', async () => {
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	CodeDirectoryBuilder.execSeg(builder, 1n, 2n, 0n);
 	CodeDirectoryBuilder.addExecSegFlags(builder, 1n);
@@ -185,7 +175,7 @@ Deno.test('addExecSegFlags', async () => {
 });
 
 Deno.test('specialSlot', async () => {
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	const zero = CodeDirectory.size(await CodeDirectoryBuilder.build(builder));
 	await assertRejects(
@@ -206,7 +196,7 @@ Deno.test('specialSlot', async () => {
 });
 
 Deno.test('createScatter', async () => {
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	assertEquals(CodeDirectoryBuilder.scatter(builder), null);
 
@@ -290,7 +280,7 @@ Deno.test('version and size', () => {
 });
 
 Deno.test('platform', async () => {
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	CodeDirectoryBuilder.platform(builder, PLATFORM_MACOS);
 	assertEquals(
@@ -301,7 +291,7 @@ Deno.test('platform', async () => {
 
 Deno.test('generatePreEncryptHashes', async () => {
 	const version = CodeDirectory.supportsPreEncrypt;
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(
 		builder,
 		new Blob([new Uint8Array(1)]),
@@ -321,7 +311,7 @@ Deno.test('generatePreEncryptHashes', async () => {
 });
 
 Deno.test('Read valiation', async () => {
-	const builder = await createBuilder(kSecCodeSignatureHashSHA1);
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(
 		builder,
 		new ErrorReader(1024),
