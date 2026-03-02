@@ -11,7 +11,6 @@ import { type ArrayBufferData, asUint8Array } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import {
 	DynamicHash,
-	type HashCryptoNodeAlgorithm,
 	type HashCryptoSubtle,
 	type HashCryptoSubtleAlgorithm,
 	type HashCryptoSubtleAsyncGenerator,
@@ -20,7 +19,6 @@ import {
 interface Algo {
 	l: number;
 	s: HashCryptoSubtleAlgorithm;
-	n: HashCryptoNodeAlgorithm;
 }
 
 interface Digest extends Algo {
@@ -32,10 +30,10 @@ type IR = IteratorResult<ArrayBufferData>;
 
 // Supported hash algorithms with their names and lengths.
 const algorithims = new Map<number, Algo>([
-	[kCCDigestSHA1, { l: 20, s: 'SHA-1', n: 'sha1' }],
-	[kCCDigestSHA256, { l: 32, s: 'SHA-256', n: 'sha256' }],
-	[kCCDigestSHA384, { l: 48, s: 'SHA-384', n: 'sha384' }],
-	[kCCDigestSHA512, { l: 64, s: 'SHA-512', n: 'sha512' }],
+	[kCCDigestSHA1, { l: 20, s: 'SHA-1' }],
+	[kCCDigestSHA256, { l: 32, s: 'SHA-256' }],
+	[kCCDigestSHA384, { l: 48, s: 'SHA-384' }],
+	[kCCDigestSHA512, { l: 64, s: 'SHA-512' }],
 ]);
 
 const algorithm = (alg: number): Algo => {
@@ -193,7 +191,7 @@ export class CCHashInstance extends DynamicHash {
 		size?: number,
 	): Promise<void> {
 		const { mDigest } = this;
-		const { s, n, p } = mDigest;
+		const { s, p } = mDigest;
 		if (p) {
 			throw new Error('Already updated');
 		}
@@ -202,88 +200,7 @@ export class CCHashInstance extends DynamicHash {
 		const c = this.crypto || crypto.subtle;
 		let d;
 
-		if ('createHash' in c) {
-			const hash = c.createHash(n);
-
-			if ('arrayBuffer' in source) {
-				const { size } = source;
-				for (
-					let i = 0, r = size, l;
-					i < size;
-					r -= l, i += PAGE_SIZE
-				) {
-					l = r > PAGE_SIZE ? PAGE_SIZE : r;
-					// deno-lint-ignore no-await-in-loop
-					const b = await source.slice(i, i + l).arrayBuffer();
-					const o = l - b.byteLength;
-					if (o) {
-						throw new RangeError(`Read size off by: ${o}`);
-					}
-					const v = new Uint8Array(b);
-					// deno-lint-ignore no-await-in-loop
-					await new Promise<void>((p, f) =>
-						hash.write(v, (e) => e ? f(e) : p())
-					);
-				}
-				await new Promise<void>((p, f) =>
-					hash.end((e) => e ? f(e) : p())
-				);
-				d = hash.read();
-			} else if ('next' in source) {
-				let a;
-				let o = -size;
-				try {
-					let n;
-					for (
-						a = isPromise(n = source.next(PAGE_SIZE));;
-						n = source.next(PAGE_SIZE)
-					) {
-						// deno-lint-ignore no-await-in-loop
-						n = (a ? await n : n) as IR;
-						if (n.done) {
-							break;
-						}
-						const b = n.value;
-						const l = b.byteLength;
-						if (l) {
-							o += l;
-							if (o > 0) {
-								break;
-							}
-							const d = asUint8Array(b);
-							// deno-lint-ignore no-await-in-loop
-							await new Promise<void>((p, f) =>
-								hash.write(d, (e) => e ? f(e) : p())
-							);
-						}
-					}
-				} finally {
-					const r = source.return?.();
-					if (a && r) {
-						await r;
-					}
-				}
-				if (o) {
-					throw new RangeError(`Read size off by: ${o}`);
-				}
-				await new Promise<void>((p, f) =>
-					hash.end((e) => e ? f(e) : p())
-				);
-				d = hash.read();
-			} else {
-				const b = asUint8Array(source);
-				await new Promise<void>((p, f) =>
-					hash.write(b, (e) => e ? f(e) : p())
-				);
-				await new Promise<void>((p, f) =>
-					hash.end((e) => e ? f(e) : p())
-				);
-				d = hash.read();
-			}
-
-			d = new Uint8Array(d.buffer, d.byteOffset, d.byteLength).slice()
-				.buffer;
-		} else {
+		{
 			if ('arrayBuffer' in source) {
 				if (supportsAG.get(c.digest) !== false) {
 					d = await subtleAG(c, s, readerAG(c, source));

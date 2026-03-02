@@ -27,6 +27,7 @@ import {
 import { hex } from '../spec/hex.ts';
 import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
 import type { ArrayBufferData, ArrayBufferLikeData } from '../util/memory.ts';
+import { hashCryptoFromNodeCrypto } from '../util/node.ts';
 import type { Reader } from '../util/reader.ts';
 import { CCHashInstance } from './cchashinstance.ts';
 import type { HashCrypto, HashCryptoSubtleAlgorithm } from './dynamichash.ts';
@@ -203,7 +204,7 @@ async function getEngines(): Promise<[string, HashCrypto | null][]> {
 	const engines: Record<string, HashCrypto | null> = {
 		subtle: null,
 		'jsr:@std/crypto': stdCrypto.subtle,
-		'node:crypto': { createHash },
+		'node:crypto': hashCryptoFromNodeCrypto({ createHash }),
 	};
 
 	// Feature detect subtle crypto hash async generator extension.
@@ -659,7 +660,7 @@ Deno.test('State errors', async () => {
 });
 
 Deno.test('Hash node async write error', async () => {
-	const crypto = {
+	const crypto = hashCryptoFromNodeCrypto({
 		createHash: (algo: string) => {
 			const hash = createHash(algo);
 			return {
@@ -674,7 +675,7 @@ Deno.test('Hash node async write error', async () => {
 				},
 			};
 		},
-	};
+	});
 
 	for (const [name, source, size] of [...getInputsData(0), ...getInputs(1)]) {
 		const hash = new CCHashInstance(kCCDigestSHA1);
@@ -693,7 +694,7 @@ Deno.test('Hash node async write error', async () => {
 });
 
 Deno.test('Hash node async end error', async () => {
-	const crypto = {
+	const crypto = hashCryptoFromNodeCrypto({
 		createHash: (algo: string) => {
 			const hash = createHash(algo);
 			return {
@@ -708,7 +709,7 @@ Deno.test('Hash node async end error', async () => {
 				},
 			};
 		},
-	};
+	});
 
 	for (const [name, source, size] of [...getInputs(0), ...getInputs(1)]) {
 		const hash = new CCHashInstance(kCCDigestSHA1);

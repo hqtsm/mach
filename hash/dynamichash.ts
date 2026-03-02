@@ -47,60 +47,9 @@ export interface HashCryptoSubtleAsyncGenerator {
 }
 
 /**
- * Node crypto hash algorithm.
- */
-export type HashCryptoNodeAlgorithm =
-	| 'sha1'
-	| 'sha256'
-	| 'sha384'
-	| 'sha512';
-
-/**
- * Node crypto hash interface, async.
- */
-export interface HashCryptoNodeStream {
-	/**
-	 * Write data to hash.
-	 *
-	 * @param data Data.
-	 * @param cb Callback.
-	 */
-	write(data: Uint8Array<ArrayBuffer>, cb: (err?: unknown) => void): void;
-
-	/**
-	 * End hash.
-	 *
-	 * @param cb Callback.
-	 */
-	end(cb: (err?: unknown) => void): void;
-
-	/**
-	 * Get digest.
-	 *
-	 * @returns Hash digest.
-	 */
-	read(): ArrayBufferView;
-}
-
-/**
- * Node crypto hash interface.
- */
-export interface HashCryptoNode {
-	/**
-	 * Create hash.
-	 *
-	 * @param algo Hash algorithm.
-	 */
-	createHash(algo: HashCryptoNodeAlgorithm): HashCryptoNodeStream;
-}
-
-/**
  * Supported hash crypto implementations.
  */
-export type HashCrypto =
-	| HashCryptoSubtle
-	| HashCryptoSubtleAsyncGenerator
-	| HashCryptoNode;
+export type HashCrypto = HashCryptoSubtle | HashCryptoSubtleAsyncGenerator;
 
 /**
  * Dynamic hash.
