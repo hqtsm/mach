@@ -26,8 +26,8 @@ export function isSharedArrayBuffer(
 /**
  * Get Uint8Array from a buffer or buffer view.
  *
- * @param value
- * @returns
+ * @param value Buffer or buffer view.
+ * @returns Uint8Array.
  */
 export function asUint8Array<T extends ArrayBufferLike>(
 	value: T | ArrayBufferView<T>,
