@@ -1,3 +1,5 @@
+const { toString } = Object.prototype;
+
 /**
  * Align a number up.
  *
@@ -19,8 +21,7 @@ export function alignUp(value: number, alignment: number): number {
 export function isSharedArrayBuffer(
 	value: unknown,
 ): value is SharedArrayBuffer {
-	return Object.prototype.toString.call(value) ===
-		'[object SharedArrayBuffer]';
+	return toString.call(value) === '[object SharedArrayBuffer]';
 }
 
 /**
