@@ -1,5 +1,5 @@
 import { assertEquals } from '@std/assert';
-import { alignUp } from './memory.ts';
+import { alignUp, isSharedArrayBuffer } from './memory.ts';
 
 Deno.test('alignUp unsigned', () => {
 	assertEquals(alignUp(0, 4), 0);
@@ -23,4 +23,9 @@ Deno.test('alignUp unsigned', () => {
 	assertEquals(alignUp(18, 4), 20);
 	assertEquals(alignUp(19, 4), 20);
 	assertEquals(alignUp(20, 4), 20);
+});
+
+Deno.test('isSharedArrayBuffer', () => {
+	assertEquals(isSharedArrayBuffer(new SharedArrayBuffer(0)), true);
+	assertEquals(isSharedArrayBuffer(new ArrayBuffer(0)), false);
 });

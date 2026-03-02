@@ -6,6 +6,7 @@ import {
 	kCCDigestSHA512,
 	PAGE_SIZE,
 } from '../const.ts';
+import { isSharedArrayBuffer } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import {
 	DynamicHash,
@@ -51,14 +52,13 @@ const view = (b: ArrayBufferLike | ArrayBufferView): Uint8Array =>
 		? new Uint8Array(b.buffer, b.byteOffset, b.byteLength)
 		: new Uint8Array(b);
 
-const shared = (b: SharedArrayBuffer | ArrayBuffer): b is SharedArrayBuffer =>
-	Object.prototype.toString.call(b) === '[object SharedArrayBuffer]';
-
 const viewab = (
 	view: Uint8Array,
 ): Uint8Array<
 	ArrayBuffer
-> => (shared(view.buffer) ? view.slice() : view as Uint8Array<ArrayBuffer>);
+> => (isSharedArrayBuffer(view.buffer)
+	? view.slice()
+	: view as Uint8Array<ArrayBuffer>);
 
 const ip = (
 	v: { done?: boolean } | Promise<unknown>,
@@ -135,7 +135,7 @@ const iteratorAG = async function* (
 				if ('buffer' in b) {
 					yield new Uint8Array(b.buffer, b.byteOffset, l).slice()
 						.buffer;
-				} else if (shared(b)) {
+				} else if (isSharedArrayBuffer(b)) {
 					yield new Uint8Array(b).slice().buffer;
 				} else {
 					yield b;
