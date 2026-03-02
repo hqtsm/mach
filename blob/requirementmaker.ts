@@ -11,7 +11,7 @@ import {
 	opTrustedCert,
 	opTrustedCerts,
 } from '../const.ts';
-import { alignUp } from '../util/memory.ts';
+import { alignUp, asUint8Array } from '../util/memory.ts';
 import { Requirement } from './requirement.ts';
 import type { RequirementMakerLabel } from './requirementmakerlabel.ts';
 
@@ -75,13 +75,7 @@ export class RequirementMaker {
 			const a = RequirementMaker.alloc(_this, 4);
 			dataView(a.buffer).setUint32(a.byteOffset, data);
 		} else {
-			const d = 'buffer' in data
-				? new Uint8Array(
-					data.buffer,
-					data.byteOffset,
-					data.byteLength,
-				)
-				: new Uint8Array(data);
+			const d = asUint8Array(data);
 			RequirementMaker.alloc(_this, d.byteLength).set(d);
 		}
 	}

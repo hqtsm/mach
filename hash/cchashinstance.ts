@@ -6,7 +6,7 @@ import {
 	kCCDigestSHA512,
 	PAGE_SIZE,
 } from '../const.ts';
-import { isSharedArrayBuffer } from '../util/memory.ts';
+import { asUint8Array, isSharedArrayBuffer } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import {
 	DynamicHash,
@@ -46,11 +46,6 @@ const algorithm = (alg: number): Algo => {
 	}
 	return info;
 };
-
-const view = (b: ArrayBufferLike | ArrayBufferView): Uint8Array =>
-	'buffer' in b
-		? new Uint8Array(b.buffer, b.byteOffset, b.byteLength)
-		: new Uint8Array(b);
 
 const viewab = (
 	view: Uint8Array,
@@ -286,7 +281,7 @@ export class CCHashInstance extends DynamicHash {
 								if (o > 0) {
 									break;
 								}
-								const d = view(b);
+								const d = asUint8Array(b);
 								// deno-lint-ignore no-await-in-loop
 								await new Promise<void>((p, f) =>
 									hash.write(d, (e) => e ? f(e) : p())
@@ -325,7 +320,7 @@ export class CCHashInstance extends DynamicHash {
 								if (o > 0) {
 									break;
 								}
-								hash.update(view(b));
+								hash.update(asUint8Array(b));
 							}
 						}
 					} finally {
@@ -343,7 +338,7 @@ export class CCHashInstance extends DynamicHash {
 					}
 				}
 			} else {
-				const b = view(source);
+				const b = asUint8Array(source);
 				if ('write' in hash) {
 					await new Promise<void>((p, f) =>
 						hash.write(b, (e) => e ? f(e) : p())
@@ -403,13 +398,13 @@ export class CCHashInstance extends DynamicHash {
 									break;
 								}
 								if (all) {
-									all.set(view(b), i);
+									all.set(asUint8Array(b), i);
 								} else {
 									if (o) {
 										all = new Uint8Array(size);
-										all.set(view(b));
+										all.set(asUint8Array(b));
 									} else {
-										all = viewab(view(b));
+										all = viewab(asUint8Array(b));
 									}
 									ps = PAGE_SIZE;
 								}
@@ -428,7 +423,7 @@ export class CCHashInstance extends DynamicHash {
 					d = await c.digest(N, all || new ArrayBuffer(0));
 				}
 			} else {
-				d = await c.digest(N, viewab(view(source)));
+				d = await c.digest(N, viewab(asUint8Array(source)));
 			}
 		}
 

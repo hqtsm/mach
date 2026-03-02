@@ -1,4 +1,5 @@
 import { type Concrete, constant, toStringTag } from '@hqtsm/class';
+import { asUint8Array } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import { BlobCore } from './blobcore.ts';
 
@@ -140,13 +141,7 @@ export abstract class Blob extends BlobCore {
 	): ArrayBuffer {
 		const { typeMagic } = this;
 		const { BYTE_LENGTH } = BlobCore;
-		const view = 'buffer' in content
-			? new Uint8Array(
-				content.buffer,
-				content.byteOffset,
-				content.byteLength,
-			)
-			: new Uint8Array(content);
+		const view = asUint8Array(content);
 		const size = BYTE_LENGTH + view.byteLength;
 		const buffer = new ArrayBuffer(size);
 		class B extends Blob {
