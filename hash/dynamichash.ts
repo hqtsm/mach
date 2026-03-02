@@ -56,25 +56,6 @@ export type HashCryptoNodeAlgorithm =
 	| 'sha512';
 
 /**
- * Node crypto hash interface, sync.
- */
-export interface HashCryptoNodeSync {
-	/**
-	 * Add data to hash.
-	 *
-	 * @param data Data.
-	 */
-	update(data: Uint8Array<ArrayBuffer>): void;
-
-	/**
-	 * Get digest.
-	 *
-	 * @returns Hash digest.
-	 */
-	digest(): ArrayBufferView;
-}
-
-/**
  * Node crypto hash interface, async.
  */
 export interface HashCryptoNodeStream {
@@ -110,9 +91,7 @@ export interface HashCryptoNode {
 	 *
 	 * @param algo Hash algorithm.
 	 */
-	createHash(
-		algo: HashCryptoNodeAlgorithm,
-	): HashCryptoNodeSync | HashCryptoNodeStream;
+	createHash(algo: HashCryptoNodeAlgorithm): HashCryptoNodeStream;
 }
 
 /**

@@ -207,140 +207,78 @@ export class CCHashInstance extends DynamicHash {
 
 			if ('arrayBuffer' in source) {
 				const { size } = source;
-				if ('write' in hash) {
-					for (
-						let i = 0, r = size, l;
-						i < size;
-						r -= l, i += PAGE_SIZE
-					) {
-						l = r > PAGE_SIZE ? PAGE_SIZE : r;
-						// deno-lint-ignore no-await-in-loop
-						const b = await source.slice(i, i + l).arrayBuffer();
-						const o = l - b.byteLength;
-						if (o) {
-							throw new RangeError(`Read size off by: ${o}`);
-						}
-						const v = new Uint8Array(b);
-						// deno-lint-ignore no-await-in-loop
-						await new Promise<void>((p, f) =>
-							hash.write(v, (e) => e ? f(e) : p())
-						);
+				for (
+					let i = 0, r = size, l;
+					i < size;
+					r -= l, i += PAGE_SIZE
+				) {
+					l = r > PAGE_SIZE ? PAGE_SIZE : r;
+					// deno-lint-ignore no-await-in-loop
+					const b = await source.slice(i, i + l).arrayBuffer();
+					const o = l - b.byteLength;
+					if (o) {
+						throw new RangeError(`Read size off by: ${o}`);
 					}
+					const v = new Uint8Array(b);
+					// deno-lint-ignore no-await-in-loop
 					await new Promise<void>((p, f) =>
-						hash.end((e) => e ? f(e) : p())
+						hash.write(v, (e) => e ? f(e) : p())
 					);
-					d = hash.read();
-				} else {
-					for (
-						let i = 0, r = size, l;
-						i < size;
-						r -= l, i += PAGE_SIZE
-					) {
-						l = r > PAGE_SIZE ? PAGE_SIZE : r;
-						// deno-lint-ignore no-await-in-loop
-						const b = await source.slice(i, i + l).arrayBuffer();
-						const o = l - b.byteLength;
-						if (o) {
-							throw new RangeError(`Read size off by: ${o}`);
-						}
-						hash.update(new Uint8Array(b));
-					}
-					d = hash.digest();
-					await Promise.resolve();
 				}
+				await new Promise<void>((p, f) =>
+					hash.end((e) => e ? f(e) : p())
+				);
+				d = hash.read();
 			} else if ('next' in source) {
 				let a;
 				let o = -size;
-				if ('write' in hash) {
-					try {
-						let n;
-						for (
-							a = isPromise(n = source.next(PAGE_SIZE));;
-							n = source.next(PAGE_SIZE)
-						) {
-							// deno-lint-ignore no-await-in-loop
-							n = (a ? await n : n) as IR;
-							if (n.done) {
+				try {
+					let n;
+					for (
+						a = isPromise(n = source.next(PAGE_SIZE));;
+						n = source.next(PAGE_SIZE)
+					) {
+						// deno-lint-ignore no-await-in-loop
+						n = (a ? await n : n) as IR;
+						if (n.done) {
+							break;
+						}
+						const b = n.value;
+						const l = b.byteLength;
+						if (l) {
+							o += l;
+							if (o > 0) {
 								break;
 							}
-							const b = n.value;
-							const l = b.byteLength;
-							if (l) {
-								o += l;
-								if (o > 0) {
-									break;
-								}
-								const d = asUint8Array(b);
-								// deno-lint-ignore no-await-in-loop
-								await new Promise<void>((p, f) =>
-									hash.write(d, (e) => e ? f(e) : p())
-								);
-							}
-						}
-					} finally {
-						const r = source.return?.();
-						if (a && r) {
-							await r;
-						}
-					}
-					if (o) {
-						throw new RangeError(`Read size off by: ${o}`);
-					}
-					await new Promise<void>((p, f) =>
-						hash.end((e) => e ? f(e) : p())
-					);
-					d = hash.read();
-				} else {
-					try {
-						let n;
-						for (
-							a = isPromise(n = source.next(PAGE_SIZE));;
-							n = source.next(PAGE_SIZE)
-						) {
+							const d = asUint8Array(b);
 							// deno-lint-ignore no-await-in-loop
-							n = (a ? await n : n) as IR;
-							if (n.done) {
-								break;
-							}
-							const b = n.value;
-							const l = b.byteLength;
-							if (l) {
-								o += l;
-								if (o > 0) {
-									break;
-								}
-								hash.update(asUint8Array(b));
-							}
-						}
-					} finally {
-						const r = source.return?.();
-						if ((a = !!(a && r))) {
-							await r;
+							await new Promise<void>((p, f) =>
+								hash.write(d, (e) => e ? f(e) : p())
+							);
 						}
 					}
-					if (o) {
-						throw new RangeError(`Read size off by: ${o}`);
-					}
-					d = hash.digest();
-					if (!a) {
-						await Promise.resolve();
+				} finally {
+					const r = source.return?.();
+					if (a && r) {
+						await r;
 					}
 				}
+				if (o) {
+					throw new RangeError(`Read size off by: ${o}`);
+				}
+				await new Promise<void>((p, f) =>
+					hash.end((e) => e ? f(e) : p())
+				);
+				d = hash.read();
 			} else {
 				const b = asUint8Array(source);
-				if ('write' in hash) {
-					await new Promise<void>((p, f) =>
-						hash.write(b, (e) => e ? f(e) : p())
-					);
-					await new Promise<void>((p, f) =>
-						hash.end((e) => e ? f(e) : p())
-					);
-					d = hash.read();
-				} else {
-					hash.update(b);
-					d = hash.digest();
-					await Promise.resolve();
-				}
+				await new Promise<void>((p, f) =>
+					hash.write(b, (e) => e ? f(e) : p())
+				);
+				await new Promise<void>((p, f) =>
+					hash.end((e) => e ? f(e) : p())
+				);
+				d = hash.read();
 			}
 
 			d = new Uint8Array(d.buffer, d.byteOffset, d.byteLength).slice()

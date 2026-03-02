@@ -29,11 +29,7 @@ import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
 import type { ArrayBufferData, ArrayBufferLikeData } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import { CCHashInstance } from './cchashinstance.ts';
-import type {
-	HashCrypto,
-	HashCryptoNodeSync,
-	HashCryptoSubtleAlgorithm,
-} from './dynamichash.ts';
+import type { HashCrypto, HashCryptoSubtleAlgorithm } from './dynamichash.ts';
 
 class BadReader implements Reader {
 	#size: number;
@@ -207,20 +203,7 @@ async function getEngines(): Promise<[string, HashCrypto | null][]> {
 	const engines: Record<string, HashCrypto | null> = {
 		subtle: null,
 		'jsr:@std/crypto': stdCrypto.subtle,
-		'node:sync': {
-			createHash(algo: string): HashCryptoNodeSync {
-				const hash = createHash(algo);
-				return {
-					update(data: Uint8Array): void {
-						hash.update(data);
-					},
-					digest(): ArrayBufferView {
-						return hash.digest();
-					},
-				};
-			},
-		},
-		'node:async': { createHash },
+		'node:crypto': { createHash },
 	};
 
 	// Feature detect subtle crypto hash async generator extension.
