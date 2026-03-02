@@ -1,5 +1,13 @@
-import { assertEquals } from '@std/assert';
-import { alignUp, isSharedArrayBuffer } from './memory.ts';
+import {
+	assertEquals,
+	assertInstanceOf,
+	assertStrictEquals,
+} from '@std/assert';
+import {
+	alignUp,
+	asUint8ArrayArrayBuffer,
+	isSharedArrayBuffer,
+} from './memory.ts';
 
 Deno.test('alignUp unsigned', () => {
 	assertEquals(alignUp(0, 4), 0);
@@ -28,4 +36,23 @@ Deno.test('alignUp unsigned', () => {
 Deno.test('isSharedArrayBuffer', () => {
 	assertEquals(isSharedArrayBuffer(new SharedArrayBuffer(0)), true);
 	assertEquals(isSharedArrayBuffer(new ArrayBuffer(0)), false);
+});
+
+Deno.test('asUint8ArrayArrayBuffer', () => {
+	const ab = new ArrayBuffer(4);
+	new Uint8Array(ab).set([1, 2, 3, 4]);
+	const sab = new SharedArrayBuffer(4);
+	new Uint8Array(sab).set([1, 2, 3, 4]);
+
+	const ab2u8ab = asUint8ArrayArrayBuffer(ab, 1, 2);
+	assertStrictEquals(ab2u8ab.buffer, ab);
+	assertEquals(ab2u8ab.byteOffset, 1);
+	assertEquals(ab2u8ab.byteLength, 2);
+	assertEquals(new Uint8Array(ab2u8ab), new Uint8Array([2, 3]));
+
+	const sab2u8ab = asUint8ArrayArrayBuffer(sab, 1, 2);
+	assertInstanceOf(sab2u8ab.buffer, ArrayBuffer);
+	assertEquals(sab2u8ab.byteOffset, 0);
+	assertEquals(sab2u8ab.byteLength, 2);
+	assertEquals(new Uint8Array(sab2u8ab), new Uint8Array([2, 3]));
 });

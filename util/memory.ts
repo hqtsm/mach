@@ -22,3 +22,21 @@ export function isSharedArrayBuffer(
 	return Object.prototype.toString.call(value) ===
 		'[object SharedArrayBuffer]';
 }
+
+/**
+ * Buffer as Uint8Array<ArrayBuffer>, copy if necessary.
+ *
+ * @param buffer Buffer.
+ * @param offset Optional offset.
+ * @param length Optional length.
+ * @returns Uint8Array<ArrayBuffer>.
+ */
+export function asUint8ArrayArrayBuffer(
+	buffer: ArrayBuffer | SharedArrayBuffer,
+	offset?: number,
+	length?: number,
+): Uint8Array<ArrayBuffer> {
+	return (isSharedArrayBuffer(buffer))
+		? new Uint8Array(buffer, offset, length).slice()
+		: new Uint8Array(buffer, offset, length);
+}
