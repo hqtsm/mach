@@ -25,14 +25,13 @@ import {
 	PAGE_SIZE,
 } from '../const.ts';
 import { hex } from '../spec/hex.ts';
+import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
 import type { Reader } from '../util/reader.ts';
 import { CCHashInstance } from './cchashinstance.ts';
 import type {
 	HashCrypto,
 	HashCryptoNodeSync,
 	HashCryptoSubtleAlgorithm,
-	HashSourceAsyncIterator,
-	HashSourceIterator,
 } from './dynamichash.ts';
 
 class BadReader implements Reader {
@@ -87,8 +86,12 @@ interface IteratorInfo {
 function toIterator(
 	data: ArrayBuffer,
 	{ page, transform, returns }: IteratorInfo = {},
-): HashSourceIterator {
-	const r = (function* (): HashSourceIterator {
+): SizeIterator<
+	ArrayBuffer | ArrayBufferView<ArrayBuffer>
+> {
+	const r = (function* (): SizeIterator<
+		ArrayBuffer | ArrayBufferView<ArrayBuffer>
+	> {
 		const size = data.byteLength;
 		let ask = page ? page : (
 			yield (transform
@@ -117,8 +120,12 @@ function toIterator(
 function toAsyncIterator(
 	data: ArrayBuffer,
 	{ page, transform, returns }: IteratorInfo = {},
-): HashSourceAsyncIterator {
-	const r = (async function* (): HashSourceAsyncIterator {
+): SizeAsyncIterator<
+	ArrayBuffer | ArrayBufferView<ArrayBuffer>
+> {
+	const r = (async function* (): SizeAsyncIterator<
+		ArrayBuffer | ArrayBufferView<ArrayBuffer>
+	> {
 		const size = data.byteLength;
 		let ask = page ? page : (
 			yield (transform
@@ -264,7 +271,9 @@ type InputBlob = [string, () => Blob, null];
 
 type InputIterator = [
 	string,
-	() => HashSourceIterator | HashSourceAsyncIterator,
+	() =>
+		| SizeIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>
+		| SizeAsyncIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>,
 	number,
 ];
 

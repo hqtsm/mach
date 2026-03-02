@@ -1,73 +1,6 @@
 import { toStringTag } from '@hqtsm/class/symbol';
 import type { Reader } from '../util/reader.ts';
-
-/**
- * Hash source iterator yield.
- */
-export interface HashSourceIteratorYield {
-	/**
-	 * Not done.
-	 */
-	done?: false;
-
-	/**
-	 * Value.
-	 */
-	value: ArrayBuffer | ArrayBufferView<ArrayBuffer>;
-}
-
-/**
- * Hash source iterator return.
- */
-export interface HashSourceIteratorReturn {
-	/**
-	 * Done.
-	 */
-	done: true;
-}
-
-/**
- * Hash source iterator.
- */
-export interface HashSourceIterator {
-	/**
-	 * Get the next value.
-	 *
-	 * @param size Requested size.
-	 * @returns Next value.
-	 */
-	next(size?: number):
-		| HashSourceIteratorYield
-		| HashSourceIteratorReturn;
-
-	/**
-	 * Close iterator.
-	 */
-	// deno-lint-ignore no-explicit-any
-	return?(value?: any): any;
-}
-
-/**
- * Hash source async iterator.
- */
-export interface HashSourceAsyncIterator {
-	/**
-	 * Get the next value.
-	 *
-	 * @param size Requested size.
-	 * @returns Next value.
-	 */
-	next(size?: number): Promise<
-		| HashSourceIteratorYield
-		| HashSourceIteratorReturn
-	>;
-
-	/**
-	 * Close iterator.
-	 */
-	// deno-lint-ignore no-explicit-any
-	return?(value?: any): Promise<any>;
-}
+import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
 
 /**
  * Subtle crypto hash algorithm.
@@ -226,7 +159,9 @@ export abstract class DynamicHash {
 	 * @returns Hash digest.
 	 */
 	public abstract update(
-		source: HashSourceIterator | HashSourceAsyncIterator,
+		source:
+			| SizeIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>
+			| SizeAsyncIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>,
 		size: number,
 	): Promise<void>;
 

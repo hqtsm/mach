@@ -6,6 +6,7 @@ import {
 	kCCDigestSHA512,
 	PAGE_SIZE,
 } from '../const.ts';
+import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
 import { asUint8Array } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import {
@@ -14,8 +15,6 @@ import {
 	type HashCryptoSubtle,
 	type HashCryptoSubtleAlgorithm,
 	type HashCryptoSubtleAsyncGenerator,
-	type HashSourceAsyncIterator,
-	type HashSourceIterator,
 } from './dynamichash.ts';
 
 interface Algo {
@@ -96,7 +95,9 @@ const readerAG = async function* (
 
 const iteratorAG = async function* (
 	subtle: HashCryptoSubtle | HashCryptoSubtleAsyncGenerator,
-	source: HashSourceIterator | HashSourceAsyncIterator,
+	source:
+		| SizeIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>
+		| SizeAsyncIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>,
 	size: number,
 ): AsyncGenerator<ArrayBuffer> {
 	supportsAG.set(subtle.digest, true);
@@ -172,7 +173,9 @@ export class CCHashInstance extends DynamicHash {
 	): Promise<void>;
 
 	public update(
-		source: HashSourceIterator | HashSourceAsyncIterator,
+		source:
+			| SizeIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>
+			| SizeAsyncIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>,
 		size: number,
 	): Promise<void>;
 
@@ -188,8 +191,8 @@ export class CCHashInstance extends DynamicHash {
 			| Reader
 			| ArrayBuffer
 			| ArrayBufferView<ArrayBuffer>
-			| HashSourceIterator
-			| HashSourceAsyncIterator,
+			| SizeIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>
+			| SizeAsyncIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>,
 		size?: number,
 	): Promise<void> {
 		const { mDigest } = this;
