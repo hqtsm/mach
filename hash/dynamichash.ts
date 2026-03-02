@@ -25,7 +25,7 @@ export interface HashCryptoSubtle {
 	 */
 	digest: (
 		algo: HashCryptoSubtleAlgorithm,
-		data: ArrayBufferView<ArrayBuffer> | ArrayBuffer,
+		data: ArrayBufferData,
 	) => Promise<ArrayBuffer>;
 }
 
@@ -42,10 +42,7 @@ export interface HashCryptoSubtleAsyncGenerator {
 	 */
 	digest: (
 		algo: HashCryptoSubtleAlgorithm,
-		data:
-			| ArrayBufferView<ArrayBuffer>
-			| ArrayBuffer
-			| AsyncGenerator<ArrayBuffer>,
+		data: ArrayBufferData | AsyncGenerator<ArrayBuffer>,
 	) => Promise<ArrayBuffer>;
 }
 

@@ -245,7 +245,7 @@ async function getEngines(): Promise<[string, HashCrypto | null][]> {
 		engines['subtle-no-async-generator'] = {
 			async digest(
 				algo: HashCryptoSubtleAlgorithm,
-				data: ArrayBufferView<ArrayBuffer> | ArrayBuffer,
+				data: ArrayBufferData,
 			): Promise<ArrayBuffer> {
 				if ('next' in data) {
 					throw new TypeError('AsyncGenerator not supported');

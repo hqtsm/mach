@@ -187,8 +187,7 @@ export class CCHashInstance extends DynamicHash {
 	public async update(
 		source:
 			| Reader
-			| ArrayBuffer
-			| ArrayBufferView<ArrayBuffer>
+			| ArrayBufferData
 			| SizeIterator<ArrayBufferData>
 			| SizeAsyncIterator<ArrayBufferData>,
 		size?: number,
