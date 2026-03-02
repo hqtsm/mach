@@ -36,7 +36,7 @@ export function asUint8ArrayArrayBuffer(
 	offset?: number,
 	length?: number,
 ): Uint8Array<ArrayBuffer> {
-	return (isSharedArrayBuffer(buffer))
+	return isSharedArrayBuffer(buffer)
 		? new Uint8Array(buffer, offset, length).slice()
 		: new Uint8Array(buffer, offset, length);
 }
