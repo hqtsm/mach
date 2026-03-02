@@ -39,14 +39,14 @@ export function asUint8Array<T extends ArrayBufferLike>(
 }
 
 /**
- * Buffer as Uint8Array<ArrayBuffer>, copy if necessary.
+ * Buffer to Uint8Array<ArrayBuffer>, copy if necessary.
  *
  * @param buffer Buffer.
  * @param offset Optional offset.
  * @param length Optional length.
  * @returns Uint8Array<ArrayBuffer>.
  */
-export function asUint8ArrayArrayBuffer(
+export function toUint8ArrayArrayBuffer(
 	buffer: ArrayBuffer | SharedArrayBuffer,
 	offset?: number,
 	length?: number,

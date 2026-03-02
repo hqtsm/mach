@@ -2,7 +2,7 @@ import { toStringTag } from '@hqtsm/class';
 import { pointer, type Ptr } from '@hqtsm/struct';
 import { UINT32_MAX } from '../const.ts';
 import type { DynamicHash, HashCrypto } from '../hash/dynamichash.ts';
-import { asUint8ArrayArrayBuffer } from '../util/memory.ts';
+import { toUint8ArrayArrayBuffer } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
@@ -221,12 +221,12 @@ export class CodeDirectoryBuilder {
 		const hash = CodeDirectoryBuilder.getHash(_this);
 		await hash.update(
 			'buffer' in data
-				? asUint8ArrayArrayBuffer(
+				? toUint8ArrayArrayBuffer(
 					data.buffer,
 					data.byteOffset,
 					data.byteLength,
 				)
-				: asUint8ArrayArrayBuffer(data),
+				: toUint8ArrayArrayBuffer(data),
 		);
 		_this.mSpecial.set(slot, await hash.finish());
 		if (slot > _this.mSpecialSlots) {
