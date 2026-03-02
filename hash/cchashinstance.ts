@@ -200,75 +200,73 @@ export class CCHashInstance extends DynamicHash {
 		const c = this.crypto || crypto.subtle;
 		let d;
 
-		{
-			if ('arrayBuffer' in source) {
-				if (supportsAG.get(c.digest) !== false) {
-					d = await subtleAG(c, a, readerAG(c, source));
+		if ('arrayBuffer' in source) {
+			if (supportsAG.get(c.digest) !== false) {
+				d = await subtleAG(c, a, readerAG(c, source));
+			}
+			if (!d) {
+				const { size } = source;
+				const v = await source.arrayBuffer();
+				const o = size - v.byteLength;
+				if (o) {
+					throw new RangeError(`Read size off by: ${o}`);
 				}
-				if (!d) {
-					const { size } = source;
-					const v = await source.arrayBuffer();
-					const o = size - v.byteLength;
-					if (o) {
-						throw new RangeError(`Read size off by: ${o}`);
-					}
-					d = await c.digest(a, v);
-				}
-			} else if ('next' in source) {
-				if (supportsAG.get(c.digest) !== false) {
-					d = await subtleAG(c, a, iteratorAG(c, source, size));
-				}
-				if (!d) {
-					let p;
-					let all: Uint8Array<ArrayBuffer> | undefined;
-					let o = -size;
-					let ps = size > 0 ? size : PAGE_SIZE;
-					try {
-						let n, i = 0;
-						for (
-							p = isPromise(n = source.next(ps));;
-							n = source.next(ps)
-						) {
-							// deno-lint-ignore no-await-in-loop
-							n = (p ? await n : n) as IR;
-							if (n.done) {
+				d = await c.digest(a, v);
+			}
+		} else if ('next' in source) {
+			if (supportsAG.get(c.digest) !== false) {
+				d = await subtleAG(c, a, iteratorAG(c, source, size));
+			}
+			if (!d) {
+				let p;
+				let all: Uint8Array<ArrayBuffer> | undefined;
+				let o = -size;
+				let ps = size > 0 ? size : PAGE_SIZE;
+				try {
+					let n, i = 0;
+					for (
+						p = isPromise(n = source.next(ps));;
+						n = source.next(ps)
+					) {
+						// deno-lint-ignore no-await-in-loop
+						n = (p ? await n : n) as IR;
+						if (n.done) {
+							break;
+						}
+						const b = n.value;
+						const l = b.byteLength;
+						if (l) {
+							o += l;
+							if (o > 0) {
 								break;
 							}
-							const b = n.value;
-							const l = b.byteLength;
-							if (l) {
-								o += l;
-								if (o > 0) {
-									break;
-								}
-								if (all) {
-									all.set(asUint8Array(b), i);
+							if (all) {
+								all.set(asUint8Array(b), i);
+							} else {
+								if (o) {
+									all = new Uint8Array(size);
+									all.set(asUint8Array(b));
 								} else {
-									if (o) {
-										all = new Uint8Array(size);
-										all.set(asUint8Array(b));
-									} else {
-										all = asUint8Array(b);
-									}
-									ps = PAGE_SIZE;
+									all = asUint8Array(b);
 								}
-								i += l;
+								ps = PAGE_SIZE;
 							}
-						}
-					} finally {
-						const r = source.return?.();
-						if (p && r) {
-							await r;
+							i += l;
 						}
 					}
-					if (o) {
-						throw new RangeError(`Read size off by: ${o}`);
+				} finally {
+					const r = source.return?.();
+					if (p && r) {
+						await r;
 					}
-					d = await c.digest(a, all || new ArrayBuffer(0));
 				}
-			} else {
-				d = await c.digest(a, asUint8Array(source));
+				if (o) {
+					throw new RangeError(`Read size off by: ${o}`);
+				}
+				d = await c.digest(a, all || new ArrayBuffer(0));
 			}
+		} else {
+			d = await c.digest(a, asUint8Array(source));
 		}
 
 		mDigest.d = d;
