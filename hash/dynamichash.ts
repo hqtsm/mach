@@ -1,6 +1,7 @@
 import { toStringTag } from '@hqtsm/class/symbol';
 import type { Reader } from '../util/reader.ts';
 import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
+import type { ArrayBufferData } from '../util/memory.ts';
 
 /**
  * Subtle crypto hash algorithm.
@@ -148,7 +149,7 @@ export abstract class DynamicHash {
 	 * @returns Hash digest.
 	 */
 	public abstract update(
-		source: Reader | ArrayBuffer | ArrayBufferView<ArrayBuffer>,
+		source: Reader | ArrayBufferData,
 	): Promise<void>;
 
 	/**
@@ -160,8 +161,8 @@ export abstract class DynamicHash {
 	 */
 	public abstract update(
 		source:
-			| SizeIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>
-			| SizeAsyncIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>,
+			| SizeIterator<ArrayBufferData>
+			| SizeAsyncIterator<ArrayBufferData>,
 		size: number,
 	): Promise<void>;
 

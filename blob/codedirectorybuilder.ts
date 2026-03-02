@@ -2,7 +2,10 @@ import { toStringTag } from '@hqtsm/class';
 import { pointer, type Ptr } from '@hqtsm/struct';
 import { UINT32_MAX } from '../const.ts';
 import type { DynamicHash, HashCrypto } from '../hash/dynamichash.ts';
-import { toUint8ArrayArrayBuffer } from '../util/memory.ts';
+import {
+	type ArrayBufferLikeData,
+	toUint8ArrayArrayBuffer,
+} from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
@@ -215,7 +218,7 @@ export class CodeDirectoryBuilder {
 	public static async specialSlot(
 		_this: CodeDirectoryBuilder,
 		slot: number,
-		data: ArrayBufferLike | ArrayBufferView,
+		data: ArrayBufferLikeData,
 	): Promise<void> {
 		slot = specialSlot(slot);
 		const hash = CodeDirectoryBuilder.getHash(_this);
@@ -257,7 +260,7 @@ export class CodeDirectoryBuilder {
 	 */
 	public static identifier(
 		_this: CodeDirectoryBuilder,
-		code: ArrayBufferLike | ArrayBufferView,
+		code: ArrayBufferLikeData,
 	): void {
 		if ('buffer' in code) {
 			const { buffer, byteOffset, byteLength } = code;
@@ -278,7 +281,7 @@ export class CodeDirectoryBuilder {
 	 */
 	public static teamID(
 		_this: CodeDirectoryBuilder,
-		team: ArrayBufferLike | ArrayBufferView,
+		team: ArrayBufferLikeData,
 	): void {
 		if ('buffer' in team) {
 			const { buffer, byteOffset, byteLength } = team;

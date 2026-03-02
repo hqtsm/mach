@@ -1,5 +1,5 @@
 import { type Concrete, constant, toStringTag } from '@hqtsm/class';
-import { asUint8Array } from '../util/memory.ts';
+import { type ArrayBufferLikeData, asUint8Array } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import { BlobCore } from './blobcore.ts';
 
@@ -136,9 +136,7 @@ export abstract class Blob extends BlobCore {
 	 * @param content Data to wrap.
 	 * @returns Blob data.
 	 */
-	public static blobify(
-		content: ArrayBufferLike | ArrayBufferView,
-	): ArrayBuffer {
+	public static blobify(content: ArrayBufferLikeData): ArrayBuffer {
 		const { typeMagic } = this;
 		const { BYTE_LENGTH } = BlobCore;
 		const view = asUint8Array(content);

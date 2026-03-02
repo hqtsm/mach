@@ -11,7 +11,11 @@ import {
 	opTrustedCert,
 	opTrustedCerts,
 } from '../const.ts';
-import { alignUp, asUint8Array } from '../util/memory.ts';
+import {
+	alignUp,
+	type ArrayBufferLikeData,
+	asUint8Array,
+} from '../util/memory.ts';
 import { Requirement } from './requirement.ts';
 import type { RequirementMakerLabel } from './requirementmakerlabel.ts';
 
@@ -69,7 +73,7 @@ export class RequirementMaker {
 	 */
 	public static put(
 		_this: RequirementMaker,
-		data: ArrayBufferLike | ArrayBufferView | number,
+		data: ArrayBufferLikeData | number,
 	): void {
 		if (typeof data === 'number') {
 			const a = RequirementMaker.alloc(_this, 4);
@@ -101,7 +105,7 @@ export class RequirementMaker {
 	 */
 	public static putData(
 		_this: RequirementMaker,
-		data: ArrayBufferLike | ArrayBufferView,
+		data: ArrayBufferLikeData,
 	): void;
 
 	/**
@@ -113,7 +117,7 @@ export class RequirementMaker {
 	 */
 	public static putData(
 		_this: RequirementMaker,
-		data: ArrayBufferLike | ArrayBufferPointer | ArrayBufferView,
+		data: ArrayBufferLikeData | ArrayBufferPointer,
 		length?: number,
 	): void {
 		const d = 'buffer' in data
@@ -190,8 +194,8 @@ export class RequirementMaker {
 	 */
 	public static infoKey(
 		_this: RequirementMaker,
-		key: ArrayBufferLike | ArrayBufferView,
-		value: ArrayBufferLike | ArrayBufferView,
+		key: ArrayBufferLikeData,
+		value: ArrayBufferLikeData,
 	): void {
 		RequirementMaker.put(_this, opInfoKeyValue);
 		RequirementMaker.putData(_this, key);
@@ -206,7 +210,7 @@ export class RequirementMaker {
 	 */
 	public static ident(
 		_this: RequirementMaker,
-		identifier: ArrayBufferLike | ArrayBufferView,
+		identifier: ArrayBufferLikeData,
 	): void {
 		RequirementMaker.put(_this, opIdent);
 		RequirementMaker.putData(_this, identifier);
@@ -220,7 +224,7 @@ export class RequirementMaker {
 	 */
 	public static cdhash(
 		_this: RequirementMaker,
-		digest: ArrayBufferLike | ArrayBufferView,
+		digest: ArrayBufferLikeData,
 	): void {
 		RequirementMaker.put(_this, opCDHash);
 		RequirementMaker.putData(_this, digest);

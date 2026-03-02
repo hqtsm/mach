@@ -1,6 +1,16 @@
 const { toString } = Object.prototype;
 
 /**
+ * ArrayBuffer data.
+ */
+export type ArrayBufferData = ArrayBuffer | ArrayBufferView<ArrayBuffer>;
+
+/**
+ * ArrayBufferLike data.
+ */
+export type ArrayBufferLikeData = ArrayBufferLike | ArrayBufferView;
+
+/**
  * Align a number up.
  *
  * @param value Number.

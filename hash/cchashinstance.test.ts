@@ -26,6 +26,7 @@ import {
 } from '../const.ts';
 import { hex } from '../spec/hex.ts';
 import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
+import type { ArrayBufferData, ArrayBufferLikeData } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import { CCHashInstance } from './cchashinstance.ts';
 import type {
@@ -79,19 +80,15 @@ class BadReader implements Reader {
 
 interface IteratorInfo {
 	page?: number;
-	transform?: (data: ArrayBuffer) => ArrayBufferLike | ArrayBufferView;
+	transform?: (data: ArrayBuffer) => ArrayBufferLikeData;
 	returns?: (() => unknown) | null;
 }
 
 function toIterator(
 	data: ArrayBuffer,
 	{ page, transform, returns }: IteratorInfo = {},
-): SizeIterator<
-	ArrayBuffer | ArrayBufferView<ArrayBuffer>
-> {
-	const r = (function* (): SizeIterator<
-		ArrayBuffer | ArrayBufferView<ArrayBuffer>
-	> {
+): SizeIterator<ArrayBufferData> {
+	const r = (function* (): SizeIterator<ArrayBufferData> {
 		const size = data.byteLength;
 		let ask = page ? page : (
 			yield (transform
@@ -120,12 +117,8 @@ function toIterator(
 function toAsyncIterator(
 	data: ArrayBuffer,
 	{ page, transform, returns }: IteratorInfo = {},
-): SizeAsyncIterator<
-	ArrayBuffer | ArrayBufferView<ArrayBuffer>
-> {
-	const r = (async function* (): SizeAsyncIterator<
-		ArrayBuffer | ArrayBufferView<ArrayBuffer>
-	> {
+): SizeAsyncIterator<ArrayBufferData> {
+	const r = (async function* (): SizeAsyncIterator<ArrayBufferData> {
 		const size = data.byteLength;
 		let ask = page ? page : (
 			yield (transform
@@ -271,9 +264,7 @@ type InputBlob = [string, () => Blob, null];
 
 type InputIterator = [
 	string,
-	() =>
-		| SizeIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>
-		| SizeAsyncIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>,
+	() => SizeIterator<ArrayBufferData> | SizeAsyncIterator<ArrayBufferData>,
 	number,
 ];
 

@@ -7,7 +7,7 @@ import {
 	PAGE_SIZE,
 } from '../const.ts';
 import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
-import { asUint8Array } from '../util/memory.ts';
+import { type ArrayBufferData, asUint8Array } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import {
 	DynamicHash,
@@ -28,7 +28,7 @@ interface Digest extends Algo {
 	p: 0 | 1 | 2 | 3;
 }
 
-type IR = IteratorResult<ArrayBuffer | ArrayBufferView<ArrayBuffer>>;
+type IR = IteratorResult<ArrayBufferData>;
 
 // Supported hash algorithms with their names and lengths.
 const algorithims = new Map<number, Algo>([
@@ -95,9 +95,7 @@ const readerAG = async function* (
 
 const iteratorAG = async function* (
 	subtle: HashCryptoSubtle | HashCryptoSubtleAsyncGenerator,
-	source:
-		| SizeIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>
-		| SizeAsyncIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>,
+	source: SizeIterator<ArrayBufferData> | SizeAsyncIterator<ArrayBufferData>,
 	size: number,
 ): AsyncGenerator<ArrayBuffer> {
 	supportsAG.set(subtle.digest, true);
@@ -169,13 +167,13 @@ export class CCHashInstance extends DynamicHash {
 	}
 
 	public update(
-		source: Reader | ArrayBuffer | ArrayBufferView<ArrayBuffer>,
+		source: Reader | ArrayBufferData,
 	): Promise<void>;
 
 	public update(
 		source:
-			| SizeIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>
-			| SizeAsyncIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>,
+			| SizeIterator<ArrayBufferData>
+			| SizeAsyncIterator<ArrayBufferData>,
 		size: number,
 	): Promise<void>;
 
@@ -191,8 +189,8 @@ export class CCHashInstance extends DynamicHash {
 			| Reader
 			| ArrayBuffer
 			| ArrayBufferView<ArrayBuffer>
-			| SizeIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>
-			| SizeAsyncIterator<ArrayBuffer | ArrayBufferView<ArrayBuffer>>,
+			| SizeIterator<ArrayBufferData>
+			| SizeAsyncIterator<ArrayBufferData>,
 		size?: number,
 	): Promise<void> {
 		const { mDigest } = this;
