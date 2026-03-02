@@ -193,8 +193,8 @@ export class CCHashInstance extends DynamicHash {
 		size?: number,
 	): Promise<void> {
 		const { mDigest } = this;
-		const { s: N, n, p: s } = mDigest;
-		if (s) {
+		const { s, n, p } = mDigest;
+		if (p) {
 			throw new Error('Already updated');
 		}
 		mDigest.p = 1;
@@ -286,7 +286,7 @@ export class CCHashInstance extends DynamicHash {
 		} else {
 			if ('arrayBuffer' in source) {
 				if (supportsAG.get(c.digest) !== false) {
-					d = await subtleAG(c, N, readerAG(c, source));
+					d = await subtleAG(c, s, readerAG(c, source));
 				}
 				if (!d) {
 					const { size } = source;
@@ -295,11 +295,11 @@ export class CCHashInstance extends DynamicHash {
 					if (o) {
 						throw new RangeError(`Read size off by: ${o}`);
 					}
-					d = await c.digest(N, v);
+					d = await c.digest(s, v);
 				}
 			} else if ('next' in source) {
 				if (supportsAG.get(c.digest) !== false) {
-					d = await subtleAG(c, N, iteratorAG(c, source, size));
+					d = await subtleAG(c, s, iteratorAG(c, source, size));
 				}
 				if (!d) {
 					let a;
@@ -347,10 +347,10 @@ export class CCHashInstance extends DynamicHash {
 					if (o) {
 						throw new RangeError(`Read size off by: ${o}`);
 					}
-					d = await c.digest(N, all || new ArrayBuffer(0));
+					d = await c.digest(s, all || new ArrayBuffer(0));
 				}
 			} else {
-				d = await c.digest(N, asUint8Array(source));
+				d = await c.digest(s, asUint8Array(source));
 			}
 		}
 
