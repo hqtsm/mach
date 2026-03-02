@@ -6,7 +6,7 @@ import {
 	kCCDigestSHA512,
 	PAGE_SIZE,
 } from '../const.ts';
-import { asUint8Array, isSharedArrayBuffer } from '../util/memory.ts';
+import { asUint8Array } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import {
 	DynamicHash,
@@ -29,7 +29,7 @@ interface Digest extends Algo {
 	p: 0 | 1 | 2 | 3;
 }
 
-type IR = IteratorResult<ArrayBufferLike | ArrayBufferView>;
+type IR = IteratorResult<ArrayBuffer | ArrayBufferView<ArrayBuffer>>;
 
 // Supported hash algorithms with their names and lengths.
 const algorithims = new Map<number, Algo>([
@@ -47,15 +47,7 @@ const algorithm = (alg: number): Algo => {
 	return info;
 };
 
-const viewab = (
-	view: Uint8Array,
-): Uint8Array<
-	ArrayBuffer
-> => (isSharedArrayBuffer(view.buffer)
-	? view.slice()
-	: view as Uint8Array<ArrayBuffer>);
-
-const ip = (
+const isPromise = (
 	v: { done?: boolean } | Promise<unknown>,
 ): v is Promise<unknown> => 'then' in v;
 
@@ -112,7 +104,7 @@ const iteratorAG = async function* (
 	try {
 		let n;
 		for (
-			a = ip(n = source.next(PAGE_SIZE));;
+			a = isPromise(n = source.next(PAGE_SIZE));;
 			n = source.next(PAGE_SIZE)
 		) {
 			// deno-lint-ignore no-await-in-loop
@@ -120,7 +112,7 @@ const iteratorAG = async function* (
 			if (n.done) {
 				break;
 			}
-			const b = n.value;
+			let b = n.value;
 			const l = b.byteLength;
 			if (l) {
 				o += l;
@@ -128,13 +120,10 @@ const iteratorAG = async function* (
 					break;
 				}
 				if ('buffer' in b) {
-					yield new Uint8Array(b.buffer, b.byteOffset, l).slice()
+					b = new Uint8Array(b.buffer, b.byteOffset, l).slice()
 						.buffer;
-				} else if (isSharedArrayBuffer(b)) {
-					yield new Uint8Array(b).slice().buffer;
-				} else {
-					yield b;
 				}
+				yield b;
 			}
 		}
 	} finally {
@@ -179,7 +168,7 @@ export class CCHashInstance extends DynamicHash {
 	}
 
 	public update(
-		source: Reader | ArrayBufferLike | ArrayBufferView,
+		source: Reader | ArrayBuffer | ArrayBufferView<ArrayBuffer>,
 	): Promise<void>;
 
 	public update(
@@ -197,8 +186,8 @@ export class CCHashInstance extends DynamicHash {
 	public async update(
 		source:
 			| Reader
-			| ArrayBufferLike
-			| ArrayBufferView
+			| ArrayBuffer
+			| ArrayBufferView<ArrayBuffer>
 			| HashSourceIterator
 			| HashSourceAsyncIterator,
 		size?: number,
@@ -266,7 +255,7 @@ export class CCHashInstance extends DynamicHash {
 					try {
 						let n;
 						for (
-							a = ip(n = source.next(PAGE_SIZE));;
+							a = isPromise(n = source.next(PAGE_SIZE));;
 							n = source.next(PAGE_SIZE)
 						) {
 							// deno-lint-ignore no-await-in-loop
@@ -305,7 +294,7 @@ export class CCHashInstance extends DynamicHash {
 					try {
 						let n;
 						for (
-							a = ip(n = source.next(PAGE_SIZE));;
+							a = isPromise(n = source.next(PAGE_SIZE));;
 							n = source.next(PAGE_SIZE)
 						) {
 							// deno-lint-ignore no-await-in-loop
@@ -382,7 +371,7 @@ export class CCHashInstance extends DynamicHash {
 					try {
 						let n, i = 0;
 						for (
-							a = ip(n = source.next(ps));;
+							a = isPromise(n = source.next(ps));;
 							n = source.next(ps)
 						) {
 							// deno-lint-ignore no-await-in-loop
@@ -404,7 +393,7 @@ export class CCHashInstance extends DynamicHash {
 										all = new Uint8Array(size);
 										all.set(asUint8Array(b));
 									} else {
-										all = viewab(asUint8Array(b));
+										all = asUint8Array(b);
 									}
 									ps = PAGE_SIZE;
 								}
@@ -423,7 +412,7 @@ export class CCHashInstance extends DynamicHash {
 					d = await c.digest(N, all || new ArrayBuffer(0));
 				}
 			} else {
-				d = await c.digest(N, viewab(asUint8Array(source)));
+				d = await c.digest(N, asUint8Array(source));
 			}
 		}
 

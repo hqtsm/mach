@@ -13,7 +13,7 @@ export interface HashSourceIteratorYield {
 	/**
 	 * Value.
 	 */
-	value: ArrayBufferLike | ArrayBufferView;
+	value: ArrayBuffer | ArrayBufferView<ArrayBuffer>;
 }
 
 /**
@@ -215,7 +215,7 @@ export abstract class DynamicHash {
 	 * @returns Hash digest.
 	 */
 	public abstract update(
-		source: Reader | ArrayBufferLike | ArrayBufferView,
+		source: Reader | ArrayBuffer | ArrayBufferView<ArrayBuffer>,
 	): Promise<void>;
 
 	/**
