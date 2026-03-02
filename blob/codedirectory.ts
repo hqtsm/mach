@@ -27,6 +27,7 @@ import type { DynamicHash, HashCrypto } from '../hash/dynamichash.ts';
 import type { Reader } from '../util/reader.ts';
 import { Blob } from './blob.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
+import { asUint8ArrayArrayBuffer } from '../util/memory.ts';
 
 /**
  * Describes secured pieces of a program.
@@ -360,8 +361,12 @@ export class CodeDirectory extends Blob {
 		await hash.update(
 			'arrayBuffer' in source ? source.slice(0, size) : (
 				'buffer' in source
-					? new Uint8Array(source.buffer, source.byteOffset, size)
-					: new Uint8Array(source, 0, size)
+					? asUint8ArrayArrayBuffer(
+						source.buffer,
+						source.byteOffset,
+						size,
+					)
+					: asUint8ArrayArrayBuffer(source, 0, size)
 			),
 		);
 		const digest = new Uint8Array(await hash.finish());
@@ -424,7 +429,7 @@ export class CodeDirectory extends Blob {
 		const hash = CodeDirectory.getHash(_this);
 		hash.crypto = crypto;
 		await hash.update(
-			new Uint8Array(
+			asUint8ArrayArrayBuffer(
 				_this.buffer,
 				_this.byteOffset,
 				CodeDirectory.size(_this),
