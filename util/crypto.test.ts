@@ -8,20 +8,18 @@ Deno.test('subtleCryptoFromNodeCrypto', async () => {
 	for (let i = data.length; i--;) {
 		data[i] = i;
 	}
+	const dataAG = async function* (): AsyncGenerator<ArrayBuffer> {
+		yield data.slice(0, 128).buffer;
+		yield data.slice(128).buffer;
+	};
 
-	const nc = subtleCryptoFromNodeCrypto({ createHash });
+	const nodeSubtle = subtleCryptoFromNodeCrypto({ createHash });
 	for (const algo of ['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'] as const) {
 		// deno-lint-ignore no-await-in-loop
 		const [expected, nodeAB, nodeAG] = await Promise.all([
 			crypto.subtle.digest(algo, data),
-			nc.digest(algo, data),
-			nc.digest(
-				algo,
-				(async function* (): AsyncGenerator<ArrayBuffer> {
-					yield data.slice(0, 128).buffer;
-					yield data.slice(128).buffer;
-				})(),
-			),
+			nodeSubtle.digest(algo, data),
+			nodeSubtle.digest(algo, dataAG()),
 		]);
 
 		const expect = new Uint8Array(expected);
