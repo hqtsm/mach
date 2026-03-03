@@ -44,9 +44,9 @@ const algorithm = (alg: number): Algo => {
 	return info;
 };
 
-const isPromise = (
-	v: { done?: boolean } | Promise<unknown>,
-): v is Promise<unknown> => 'then' in v;
+const isPromise = <T>(
+	v: { done?: boolean } | Promise<T>,
+): v is Promise<T> => 'then' in v;
 
 const supportsAG = new WeakMap();
 
