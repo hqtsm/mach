@@ -165,7 +165,9 @@ export class CCHashInstance extends DynamicHash {
 	}
 
 	public update(
-		source: Reader | ArrayBufferData,
+		source:
+			| Reader
+			| ArrayBufferData,
 	): Promise<void>;
 
 	public update(

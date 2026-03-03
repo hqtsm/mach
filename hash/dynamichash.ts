@@ -34,7 +34,9 @@ export abstract class DynamicHash {
 	 * @returns Hash digest.
 	 */
 	public abstract update(
-		source: Reader | ArrayBufferData,
+		source:
+			| Reader
+			| ArrayBufferData,
 	): Promise<void>;
 
 	/**
