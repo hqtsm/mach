@@ -6,19 +6,19 @@ import {
 	kCCDigestSHA512,
 	PAGE_SIZE,
 } from '../const.ts';
+import type {
+	CryptoDigestAlgorithm,
+	SubtleCrypto,
+	SubtleCryptoExtended,
+} from '../util/crypto.ts';
 import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
 import { type ArrayBufferData, asUint8Array } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
-import {
-	DynamicHash,
-	type HashCryptoSubtle,
-	type HashCryptoSubtleAlgorithm,
-	type HashCryptoSubtleAsyncGenerator,
-} from './dynamichash.ts';
+import { DynamicHash } from './dynamichash.ts';
 
 interface Algo {
 	l: number;
-	a: HashCryptoSubtleAlgorithm;
+	a: CryptoDigestAlgorithm;
 }
 
 interface Digest extends Algo {
@@ -51,12 +51,12 @@ const isPromise = (
 const supportsAG = new WeakMap();
 
 const subtleAG = async (
-	subtle: HashCryptoSubtle | HashCryptoSubtleAsyncGenerator,
-	algo: HashCryptoSubtleAlgorithm,
+	subtle: SubtleCrypto | SubtleCryptoExtended,
+	algo: CryptoDigestAlgorithm,
 	source: AsyncGenerator<ArrayBuffer>,
 ): Promise<ArrayBuffer | null> => {
 	try {
-		return await (subtle as HashCryptoSubtleAsyncGenerator).digest(
+		return await (subtle as SubtleCryptoExtended).digest(
 			algo,
 			source,
 		);
@@ -70,7 +70,7 @@ const subtleAG = async (
 };
 
 const readerAG = async function* (
-	subtle: HashCryptoSubtle | HashCryptoSubtleAsyncGenerator,
+	subtle: SubtleCrypto | SubtleCryptoExtended,
 	source: Reader,
 ): AsyncGenerator<ArrayBuffer> {
 	supportsAG.set(subtle.digest, true);
@@ -92,7 +92,7 @@ const readerAG = async function* (
 };
 
 const iteratorAG = async function* (
-	subtle: HashCryptoSubtle | HashCryptoSubtleAsyncGenerator,
+	subtle: SubtleCrypto | SubtleCryptoExtended,
 	source: SizeIterator<ArrayBufferData> | SizeAsyncIterator<ArrayBufferData>,
 	size: number,
 ): AsyncGenerator<ArrayBuffer> {

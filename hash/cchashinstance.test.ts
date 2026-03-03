@@ -25,12 +25,18 @@ import {
 	PAGE_SIZE,
 } from '../const.ts';
 import { hex } from '../spec/hex.ts';
+import {
+	type CryptoDigestAlgorithm,
+	type SubtleCrypto,
+	type SubtleCryptoExtended,
+	subtleCryptoFromNodeCrypto,
+} from '../util/crypto.ts';
 import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
 import type { ArrayBufferData, ArrayBufferLikeData } from '../util/memory.ts';
-import { hashCryptoFromNodeCrypto } from '../util/node.ts';
 import type { Reader } from '../util/reader.ts';
 import { CCHashInstance } from './cchashinstance.ts';
-import type { HashCrypto, HashCryptoSubtleAlgorithm } from './dynamichash.ts';
+
+type HashCrypto = SubtleCrypto | SubtleCryptoExtended;
 
 class BadReader implements Reader {
 	#size: number;
@@ -204,7 +210,7 @@ async function getEngines(): Promise<[string, HashCrypto | null][]> {
 	const engines: Record<string, HashCrypto | null> = {
 		subtle: null,
 		'jsr:@std/crypto': stdCrypto.subtle,
-		'node:crypto': hashCryptoFromNodeCrypto({ createHash }),
+		'node:crypto': subtleCryptoFromNodeCrypto({ createHash }),
 	};
 
 	// Feature detect subtle crypto hash async generator extension.
@@ -228,7 +234,7 @@ async function getEngines(): Promise<[string, HashCrypto | null][]> {
 	if (await sagDetect) {
 		engines['subtle-no-async-generator'] = {
 			async digest(
-				algo: HashCryptoSubtleAlgorithm,
+				algo: CryptoDigestAlgorithm,
 				data: ArrayBufferData,
 			): Promise<ArrayBuffer> {
 				if ('next' in data) {
@@ -660,7 +666,7 @@ Deno.test('State errors', async () => {
 });
 
 Deno.test('Hash node async write error', async () => {
-	const crypto = hashCryptoFromNodeCrypto({
+	const crypto = subtleCryptoFromNodeCrypto({
 		createHash: (algo: string) => {
 			const hash = createHash(algo);
 			return {
@@ -694,7 +700,7 @@ Deno.test('Hash node async write error', async () => {
 });
 
 Deno.test('Hash node async end error', async () => {
-	const crypto = hashCryptoFromNodeCrypto({
+	const crypto = subtleCryptoFromNodeCrypto({
 		createHash: (algo: string) => {
 			const hash = createHash(algo);
 			return {

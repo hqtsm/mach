@@ -1,8 +1,47 @@
-import type {
-	HashCryptoSubtleAlgorithm,
-	HashCryptoSubtleAsyncGenerator,
-} from '../hash/dynamichash.ts';
-import { type ArrayBufferData, asUint8Array } from '../util/memory.ts';
+import { type ArrayBufferData, asUint8Array } from './memory.ts';
+
+/**
+ * Crypto digest algorithm.
+ */
+export type CryptoDigestAlgorithm =
+	| 'SHA-1'
+	| 'SHA-256'
+	| 'SHA-384'
+	| 'SHA-512';
+
+/**
+ * Subtle crypto interface.
+ */
+export interface SubtleCrypto {
+	/**
+	 * Create digest.
+	 *
+	 * @param algo Hash algorithm.
+	 * @param data Data to be hashed.
+	 * @returns Hash digest.
+	 */
+	digest: (
+		algo: CryptoDigestAlgorithm,
+		data: ArrayBufferData,
+	) => Promise<ArrayBuffer>;
+}
+
+/**
+ * Subtle crypto interface with async generator extension.
+ */
+export interface SubtleCryptoExtended extends SubtleCrypto {
+	/**
+	 * Create digest.
+	 *
+	 * @param algo Hash algorithm.
+	 * @param data Data to be hashed.
+	 * @returns Hash digest.
+	 */
+	digest: (
+		algo: CryptoDigestAlgorithm,
+		data: ArrayBufferData | AsyncGenerator<ArrayBuffer>,
+	) => Promise<ArrayBuffer>;
+}
 
 /**
  * Node crypto hash algorithm.
@@ -54,10 +93,7 @@ export interface NodeCryptoHash {
 	createHash(algo: NodeCryptoHashAlgorithm): NodeCryptoHashStream;
 }
 
-const nodeAlgorithm: Record<
-	HashCryptoSubtleAlgorithm,
-	NodeCryptoHashAlgorithm
-> = {
+const nodeAlgorithm: Record<CryptoDigestAlgorithm, NodeCryptoHashAlgorithm> = {
 	'SHA-1': 'sha1',
 	'SHA-256': 'sha256',
 	'SHA-384': 'sha384',
@@ -65,17 +101,17 @@ const nodeAlgorithm: Record<
 };
 
 /**
- * Create hash crypto from node crypto.
+ * Create subtle crypto from node crypto.
  *
  * @param crypto Node crypto.
- * @returns Hash crypto.
+ * @returns Subtle crypto with async generator extension.
  */
-export function hashCryptoFromNodeCrypto(
+export function subtleCryptoFromNodeCrypto(
 	crypto: NodeCryptoHash,
-): HashCryptoSubtleAsyncGenerator {
+): SubtleCryptoExtended {
 	return {
 		async digest(
-			algorithm: HashCryptoSubtleAlgorithm,
+			algorithm: CryptoDigestAlgorithm,
 			data: ArrayBufferData | AsyncGenerator<ArrayBuffer>,
 		): Promise<ArrayBuffer> {
 			const hash = crypto.createHash(nodeAlgorithm[algorithm]);

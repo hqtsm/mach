@@ -1,7 +1,7 @@
 import { toStringTag } from '@hqtsm/class';
 import { pointer, type Ptr } from '@hqtsm/struct';
 import { UINT32_MAX } from '../const.ts';
-import type { DynamicHash, HashCrypto } from '../hash/dynamichash.ts';
+import type { DynamicHash, DynamicHashCrypto } from '../hash/dynamichash.ts';
 import {
 	type ArrayBufferLikeData,
 	toUint8ArrayArrayBuffer,
@@ -23,9 +23,9 @@ function specialSlot(slot: number): number {
  */
 export class CodeDirectoryBuilder {
 	/**
-	 * Hash crypto.
+	 * Dynamic hash crypto.
 	 */
-	public crypto: HashCrypto | null = null;
+	public crypto: DynamicHashCrypto | null = null;
 
 	/**
 	 * Special slots.

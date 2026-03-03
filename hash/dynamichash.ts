@@ -2,54 +2,14 @@ import { toStringTag } from '@hqtsm/class/symbol';
 import type { Reader } from '../util/reader.ts';
 import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
 import type { ArrayBufferData } from '../util/memory.ts';
+import type { SubtleCrypto, SubtleCryptoExtended } from '../util/crypto.ts';
 
 /**
- * Subtle crypto hash algorithm.
+ * Dynamic hash crypto.
  */
-export type HashCryptoSubtleAlgorithm =
-	| 'SHA-1'
-	| 'SHA-256'
-	| 'SHA-384'
-	| 'SHA-512';
-
-/**
- * Subtle crypto hash interface.
- */
-export interface HashCryptoSubtle {
-	/**
-	 * Create digest.
-	 *
-	 * @param algo Hash algorithm.
-	 * @param data Data to be hashed.
-	 * @returns Hash digest.
-	 */
-	digest: (
-		algo: HashCryptoSubtleAlgorithm,
-		data: ArrayBufferData,
-	) => Promise<ArrayBuffer>;
-}
-
-/**
- * Subtle crypto hash interface with async generator extension.
- */
-export interface HashCryptoSubtleAsyncGenerator {
-	/**
-	 * Create digest.
-	 *
-	 * @param algo Hash algorithm.
-	 * @param data Data to be hashed.
-	 * @returns Hash digest.
-	 */
-	digest: (
-		algo: HashCryptoSubtleAlgorithm,
-		data: ArrayBufferData | AsyncGenerator<ArrayBuffer>,
-	) => Promise<ArrayBuffer>;
-}
-
-/**
- * Supported hash crypto implementations.
- */
-export type HashCrypto = HashCryptoSubtle | HashCryptoSubtleAsyncGenerator;
+export type DynamicHashCrypto =
+	| Pick<SubtleCrypto, 'digest'>
+	| Pick<SubtleCryptoExtended, 'digest'>;
 
 /**
  * Dynamic hash.
@@ -58,7 +18,7 @@ export abstract class DynamicHash {
 	/**
 	 * Hash crypto.
 	 */
-	public crypto: HashCrypto | null = null;
+	public crypto: DynamicHashCrypto | null = null;
 
 	/**
 	 * Get the digest length.

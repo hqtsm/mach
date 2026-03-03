@@ -1,15 +1,15 @@
 // deno-lint-ignore no-external-import
 import { createHash } from 'node:crypto';
 import { assertEquals } from '@std/assert';
-import { hashCryptoFromNodeCrypto } from './node.ts';
+import { subtleCryptoFromNodeCrypto } from './crypto.ts';
 
-Deno.test('hashCryptoFromNodeCrypto', async () => {
+Deno.test('subtleCryptoFromNodeCrypto', async () => {
 	const data = new Uint8Array(256);
 	for (let i = data.length; i--;) {
 		data[i] = i;
 	}
 
-	const nc = hashCryptoFromNodeCrypto({ createHash });
+	const nc = subtleCryptoFromNodeCrypto({ createHash });
 	for (const algo of ['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'] as const) {
 		// deno-lint-ignore no-await-in-loop
 		const [expected, nodeAB, nodeAG] = await Promise.all([

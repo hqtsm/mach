@@ -23,7 +23,7 @@ import {
 	kSecCodeSignatureHashSHA384,
 } from '../const.ts';
 import { CCHashInstance } from '../hash/cchashinstance.ts';
-import type { DynamicHash, HashCrypto } from '../hash/dynamichash.ts';
+import type { DynamicHash, DynamicHashCrypto } from '../hash/dynamichash.ts';
 import type { Reader } from '../util/reader.ts';
 import { Blob } from './blob.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
@@ -354,7 +354,7 @@ export class CodeDirectory extends Blob {
 		size: number,
 		slot: number,
 		preEncrypted: boolean,
-		crypto: HashCrypto | null = null,
+		crypto: DynamicHashCrypto | null = null,
 	): Promise<boolean> {
 		const hash = CodeDirectory.getHash(_this);
 		hash.crypto = crypto;
@@ -418,13 +418,13 @@ export class CodeDirectory extends Blob {
 	 *
 	 * @param _this This.
 	 * @param truncate Truncate to kSecCodeCDHashLength.
-	 * @param crypto Hash crypto.
+	 * @param crypto Dynamic hash crypto.
 	 * @returns Hash digest.
 	 */
 	public static async cdhash(
 		_this: CodeDirectory,
 		truncate = false,
-		crypto: HashCrypto | null = null,
+		crypto: DynamicHashCrypto | null = null,
 	): Promise<ArrayBuffer> {
 		const hash = CodeDirectory.getHash(_this);
 		hash.crypto = crypto;
