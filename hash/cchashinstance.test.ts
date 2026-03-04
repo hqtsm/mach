@@ -26,8 +26,8 @@ import {
 } from '../const.ts';
 import { hex } from '../spec/hex.ts';
 import {
-	type CryptoDigestAlgorithm,
 	type SubtleCrypto,
+	type SubtleCryptoDigestAlgorithm,
 	type SubtleCryptoExtended,
 	subtleCryptoFromNodeCrypto,
 } from '../util/crypto.ts';
@@ -234,7 +234,7 @@ async function getEngines(): Promise<[string, HashCrypto | null][]> {
 	if (await sagDetect) {
 		engines['subtle-no-async-generator'] = {
 			async digest(
-				algo: CryptoDigestAlgorithm,
+				algo: SubtleCryptoDigestAlgorithm,
 				data: ArrayBufferData,
 			): Promise<ArrayBuffer> {
 				if ('next' in data) {

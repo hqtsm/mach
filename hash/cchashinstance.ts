@@ -7,8 +7,8 @@ import {
 	PAGE_SIZE,
 } from '../const.ts';
 import type {
-	CryptoDigestAlgorithm,
 	SubtleCrypto,
+	SubtleCryptoDigestAlgorithm,
 	SubtleCryptoExtended,
 } from '../util/crypto.ts';
 import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
@@ -18,7 +18,7 @@ import { DynamicHash } from './dynamichash.ts';
 
 interface Algo {
 	l: number;
-	a: CryptoDigestAlgorithm;
+	a: SubtleCryptoDigestAlgorithm;
 }
 
 interface Digest extends Algo {
@@ -52,7 +52,7 @@ const supportsAG = new WeakMap();
 
 const subtleAG = async (
 	subtle: SubtleCrypto | SubtleCryptoExtended,
-	algo: CryptoDigestAlgorithm,
+	algo: SubtleCryptoDigestAlgorithm,
 	source: AsyncGenerator<ArrayBuffer>,
 ): Promise<ArrayBuffer | null> => {
 	try {

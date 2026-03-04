@@ -1,9 +1,9 @@
 import { type ArrayBufferData, asUint8Array } from './memory.ts';
 
 /**
- * Crypto digest algorithm.
+ * Subtle crypto digest algorithm.
  */
-export type CryptoDigestAlgorithm =
+export type SubtleCryptoDigestAlgorithm =
 	| 'SHA-1'
 	| 'SHA-256'
 	| 'SHA-384'
@@ -21,7 +21,7 @@ export interface SubtleCrypto {
 	 * @returns Hash digest.
 	 */
 	digest: (
-		algo: CryptoDigestAlgorithm,
+		algo: SubtleCryptoDigestAlgorithm,
 		data: ArrayBufferData,
 	) => Promise<ArrayBuffer>;
 }
@@ -38,7 +38,7 @@ export interface SubtleCryptoExtended extends SubtleCrypto {
 	 * @returns Hash digest.
 	 */
 	digest: (
-		algo: CryptoDigestAlgorithm,
+		algo: SubtleCryptoDigestAlgorithm,
 		data: ArrayBufferData | AsyncGenerator<ArrayBuffer>,
 	) => Promise<ArrayBuffer>;
 }
@@ -93,7 +93,10 @@ export interface NodeCryptoHash {
 	createHash(algo: NodeCryptoHashAlgorithm): NodeCryptoHashStream;
 }
 
-const nodeAlgorithm: Record<CryptoDigestAlgorithm, NodeCryptoHashAlgorithm> = {
+const nodeAlgorithm: Record<
+	SubtleCryptoDigestAlgorithm,
+	NodeCryptoHashAlgorithm
+> = {
 	'SHA-1': 'sha1',
 	'SHA-256': 'sha256',
 	'SHA-384': 'sha384',
@@ -111,7 +114,7 @@ export function subtleCryptoFromNodeCrypto(
 ): SubtleCryptoExtended {
 	return {
 		async digest(
-			algorithm: CryptoDigestAlgorithm,
+			algorithm: SubtleCryptoDigestAlgorithm,
 			data: ArrayBufferData | AsyncGenerator<ArrayBuffer>,
 		): Promise<ArrayBuffer> {
 			const hash = crypto.createHash(nodeAlgorithm[algorithm]);
