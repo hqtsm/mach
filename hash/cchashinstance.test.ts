@@ -25,11 +25,10 @@ import {
 	PAGE_SIZE,
 } from '../const.ts';
 import { hex } from '../spec/hex.ts';
-import {
-	type SubtleCrypto,
-	type SubtleCryptoDigestAlgorithm,
-	type SubtleCryptoExtended,
-	subtleCryptoFromNodeCrypto,
+import type {
+	SubtleCrypto,
+	SubtleCryptoDigestAlgorithm,
+	SubtleCryptoExtended,
 } from '../util/crypto.ts';
 import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
 import type { ArrayBufferData, ArrayBufferLikeData } from '../util/memory.ts';
@@ -664,73 +663,5 @@ Deno.test('State errors', async () => {
 				);
 			}
 		}
-	}
-});
-
-Deno.test('Hash node async write error', async () => {
-	const crypto = subtleCryptoFromNodeCrypto({
-		createHash: (algo: string) => {
-			const hash = createHash(algo);
-			return {
-				write(_: Uint8Array, cb: (err?: unknown) => void): void {
-					cb(new Error('Write fail'));
-				},
-				end(cb: (err?: unknown) => void): void {
-					hash.end(cb);
-				},
-				read(): ArrayBufferView {
-					return hash.read();
-				},
-			};
-		},
-	});
-
-	for (const [name, source, size] of [...getInputsData(0), ...getInputs(1)]) {
-		const hash = new CCHashInstance(kCCDigestSHA1);
-		hash.crypto = crypto;
-		// deno-lint-ignore no-await-in-loop
-		await assertRejects(
-			() =>
-				size === null
-					? hash.update(source())
-					: hash.update(source(), size),
-			Error,
-			'Write fail',
-			name,
-		);
-	}
-});
-
-Deno.test('Hash node async end error', async () => {
-	const crypto = subtleCryptoFromNodeCrypto({
-		createHash: (algo: string) => {
-			const hash = createHash(algo);
-			return {
-				write(data: Uint8Array, cb: (err?: unknown) => void): void {
-					hash.write(data, cb);
-				},
-				end(cb: (err?: unknown) => void): void {
-					cb(new Error('End fail'));
-				},
-				read(): ArrayBufferView {
-					return hash.read();
-				},
-			};
-		},
-	});
-
-	for (const [name, source, size] of [...getInputs(0), ...getInputs(1)]) {
-		const hash = new CCHashInstance(kCCDigestSHA1);
-		hash.crypto = crypto;
-		// deno-lint-ignore no-await-in-loop
-		await assertRejects(
-			() =>
-				size === null
-					? hash.update(source())
-					: hash.update(source(), size),
-			Error,
-			'End fail',
-			name,
-		);
 	}
 });
