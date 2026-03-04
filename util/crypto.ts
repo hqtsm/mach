@@ -143,7 +143,7 @@ export interface NodeCryptoHash {
 	createHash(algo: NodeCryptoHashAlgorithm): NodeCryptoHashStream;
 }
 
-const nodeAlgorithm: Record<
+const nodeHash: Record<
 	SubtleCryptoDigestAlgorithm,
 	NodeCryptoHashAlgorithm
 > = {
@@ -167,7 +167,7 @@ export function subtleCryptoFromNodeCrypto(
 			algorithm: SubtleCryptoDigestAlgorithm,
 			data: ArrayBufferData | AsyncGenerator<ArrayBuffer>,
 		): Promise<ArrayBuffer> {
-			const hash = crypto.createHash(nodeAlgorithm[algorithm]);
+			const hash = crypto.createHash(nodeHash[algorithm]);
 			if ('next' in data) {
 				for await (const part of data) {
 					const d = asUint8Array(part);

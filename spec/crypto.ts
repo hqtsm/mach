@@ -5,7 +5,7 @@ import type {
 	SubtleCryptoDigestAlgorithm,
 } from '../util/crypto.ts';
 
-const nodeAlgorithm: Record<
+const nodeHash: Record<
 	SubtleCryptoDigestAlgorithm,
 	NodeCryptoHashAlgorithm
 > = {
@@ -46,7 +46,7 @@ export class DigestStream extends WritableStream<ArrayBuffer> {
 	 * @param algorithm Digest algorithm.
 	 */
 	constructor(algorithm: SubtleCryptoDigestAlgorithm) {
-		const hash = createHash(nodeAlgorithm[algorithm]);
+		const hash = createHash(nodeHash[algorithm]);
 		let pass: (hash: ArrayBuffer) => void;
 		let fail: (e: unknown) => void;
 		const digest = new Promise<ArrayBuffer>((r, f) => {
