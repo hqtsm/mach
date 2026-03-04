@@ -3,6 +3,13 @@ import { createHash } from 'node:crypto';
 import { assertEquals } from '@std/assert';
 import { subtleCryptoFromNodeCrypto } from './crypto.ts';
 
+const algorithms = [
+	'SHA-1',
+	'SHA-256',
+	'SHA-384',
+	'SHA-512',
+] as const;
+
 const data = new Uint8Array(256);
 for (let i = data.length; i--;) {
 	data[i] = i;
@@ -13,8 +20,11 @@ const dataAG = async function* (): AsyncGenerator<ArrayBuffer> {
 };
 
 Deno.test('subtleCryptoFromNodeCrypto', async () => {
-	const subtleEx = subtleCryptoFromNodeCrypto({ createHash });
-	for (const algo of ['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'] as const) {
+	const subtleEx = subtleCryptoFromNodeCrypto({
+		createHash,
+	});
+
+	for (const algo of algorithms) {
 		// deno-lint-ignore no-await-in-loop
 		const [expected, nodeAB, nodeAG] = await Promise.all([
 			crypto.subtle.digest(algo, data),
