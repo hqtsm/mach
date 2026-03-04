@@ -1,9 +1,12 @@
 // deno-lint-ignore no-external-import
 import { createHash } from 'node:crypto';
-import type {
-	NodeCryptoHashAlgorithm,
-	SubtleCryptoDigestAlgorithm,
+import {
+	type NodeCryptoHashAlgorithm,
+	type SubtleCryptoDigestAlgorithm,
+	subtleCryptoFromNodeCrypto,
+	subtleCryptoFromStreaming,
 } from '../util/crypto.ts';
+import type { ArrayBufferData } from '../util/memory.ts';
 
 const nodeHash: Record<
 	SubtleCryptoDigestAlgorithm,
@@ -71,3 +74,18 @@ export class DigestStream extends WritableStream<ArrayBuffer> {
 		this.digest = digest;
 	}
 }
+
+export const subtleNode = subtleCryptoFromNodeCrypto({
+	createHash,
+});
+
+export const subtleStreaming = subtleCryptoFromStreaming({
+	DigestStream,
+
+	digest(
+		algorithm: SubtleCryptoDigestAlgorithm,
+		data: ArrayBufferData,
+	): Promise<ArrayBuffer> {
+		return crypto.subtle.digest(algorithm, data);
+	},
+});

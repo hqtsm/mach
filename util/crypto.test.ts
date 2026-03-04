@@ -1,13 +1,5 @@
-// deno-lint-ignore no-external-import
-import { createHash } from 'node:crypto';
 import { assertEquals } from '@std/assert';
-import { DigestStream } from '../spec/crypto.ts';
-import type { ArrayBufferData } from './memory.ts';
-import {
-	type SubtleCryptoDigestAlgorithm,
-	subtleCryptoFromNodeCrypto,
-	subtleCryptoFromStreaming,
-} from './crypto.ts';
+import { subtleNode, subtleStreaming } from '../spec/crypto.ts';
 
 const digests = [
 	'SHA-1',
@@ -26,16 +18,12 @@ const dataAG = async function* (): AsyncGenerator<ArrayBuffer> {
 };
 
 Deno.test('subtleCryptoFromNodeCrypto', async () => {
-	const subtleEx = subtleCryptoFromNodeCrypto({
-		createHash,
-	});
-
 	for (const algo of digests) {
 		// deno-lint-ignore no-await-in-loop
 		const [expected, nodeAB, nodeAG] = await Promise.all([
 			crypto.subtle.digest(algo, data),
-			subtleEx.digest(algo, data),
-			subtleEx.digest(algo, dataAG()),
+			subtleNode.digest(algo, data),
+			subtleNode.digest(algo, dataAG()),
 		]);
 
 		const expect = new Uint8Array(expected);
@@ -45,23 +33,12 @@ Deno.test('subtleCryptoFromNodeCrypto', async () => {
 });
 
 Deno.test('subtleCryptoFromStreaming', async () => {
-	const subtleEx = subtleCryptoFromStreaming({
-		DigestStream,
-
-		async digest(
-			algorithm: SubtleCryptoDigestAlgorithm,
-			data: ArrayBufferData,
-		): Promise<ArrayBuffer> {
-			return await crypto.subtle.digest(algorithm, data);
-		},
-	});
-
-	for (const algo of ['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'] as const) {
+	for (const algo of digests) {
 		// deno-lint-ignore no-await-in-loop
 		const [expected, nodeAB, nodeAG] = await Promise.all([
 			crypto.subtle.digest(algo, data),
-			subtleEx.digest(algo, data),
-			subtleEx.digest(algo, dataAG()),
+			subtleStreaming.digest(algo, data),
+			subtleStreaming.digest(algo, dataAG()),
 		]);
 
 		const expect = new Uint8Array(expected);

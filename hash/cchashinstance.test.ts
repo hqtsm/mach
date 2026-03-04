@@ -35,6 +35,7 @@ import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
 import type { ArrayBufferData, ArrayBufferLikeData } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import { CCHashInstance } from './cchashinstance.ts';
+import { subtleNode, subtleStreaming } from '../spec/crypto.ts';
 
 type HashCrypto = SubtleCrypto | SubtleCryptoExtended;
 
@@ -210,7 +211,8 @@ async function getEngines(): Promise<[string, HashCrypto | null][]> {
 	const engines: Record<string, HashCrypto | null> = {
 		subtle: null,
 		'jsr:@std/crypto': stdCrypto.subtle,
-		'node:crypto': subtleCryptoFromNodeCrypto({ createHash }),
+		'node:crypto': subtleNode,
+		'DigestStream': subtleStreaming,
 	};
 
 	// Feature detect subtle crypto hash async generator extension.
