@@ -46,7 +46,7 @@ export interface SubtleCryptoExtended extends SubtleCrypto {
 /**
  * Digest stream writer.
  */
-interface DigestStreamWriter {
+export interface DigestStreamWriter {
 	/**
 	 * Write data.
 	 *
