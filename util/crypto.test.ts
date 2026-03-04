@@ -20,7 +20,7 @@ const dataAG = async function* (): AsyncGenerator<ArrayBuffer> {
 	yield data.slice(128).buffer;
 };
 
-Deno.test('subtleCryptoFromNodeCrypto', async () => {
+Deno.test('subtleCryptoFromNodeCrypto results', async () => {
 	for (const algo of digests) {
 		// deno-lint-ignore no-await-in-loop
 		const [expected, nodeAB, nodeAG] = await Promise.all([
@@ -89,7 +89,7 @@ Deno.test('subtleCryptoFromNodeCrypto errors', async () => {
 	);
 });
 
-Deno.test('subtleCryptoFromStreaming', async () => {
+Deno.test('subtleCryptoFromStreaming results', async () => {
 	for (const algo of digests) {
 		// deno-lint-ignore no-await-in-loop
 		const [expected, nodeAB, nodeAG] = await Promise.all([
