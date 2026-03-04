@@ -212,7 +212,7 @@ export function subtleCryptoFromStreaming(
 				await writer.close();
 				return await stream.digest;
 			}
-			return crypto.digest(algorithm, data);
+			return await crypto.digest(algorithm, data);
 		},
 	};
 }
