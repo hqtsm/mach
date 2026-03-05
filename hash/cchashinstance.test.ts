@@ -377,7 +377,7 @@ Deno.test('Hash Uint8Array<ArrayBuffer>', async () => {
 		const d = new Uint8Array(data.byteLength + 4);
 		d.set(new Uint8Array(data), 2);
 		// deno-lint-ignore no-await-in-loop
-		await hash.update(d.subarray(2, d.byteLength - 2));
+		await hash.update(new Uint8Array(d.buffer, 2, data.byteLength));
 		// deno-lint-ignore no-await-in-loop
 		const rab = await hash.finish();
 		assertEquals(rab.byteLength, hash.digestLength(), tag);
