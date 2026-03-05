@@ -28,6 +28,7 @@ import type { Reader } from '../util/reader.ts';
 import { Blob } from './blob.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
 import { toUint8ArrayArrayBuffer } from '../util/memory.ts';
+import { hashFileData } from '../util/utilities.ts';
 
 /**
  * Describes secured pieces of a program.
@@ -358,20 +359,24 @@ export class CodeDirectory extends Blob {
 	): Promise<boolean> {
 		const hash = CodeDirectory.getHash(_this);
 		hash.crypto = crypto;
-		await hash.update(
-			'arrayBuffer' in source ? source.slice(0, size) : (
-				'buffer' in source
-					? toUint8ArrayArrayBuffer(
-						source.buffer,
-						source.byteOffset,
-						size,
-					)
-					: toUint8ArrayArrayBuffer(source, 0, size)
-			),
-		);
 		const l = hash.digestLength();
 		const digest = new Uint8Array(l);
-		await hash.finish(digest);
+		await (
+			'arrayBuffer' in source
+				? CodeDirectory.generateHash(hash, source, digest, size)
+				: CodeDirectory.generateHash(
+					hash,
+					'buffer' in source
+						? toUint8ArrayArrayBuffer(
+							source.buffer,
+							source.byteOffset,
+							size,
+						)
+						: toUint8ArrayArrayBuffer(source, 0, size),
+					size,
+					digest,
+				)
+		);
 		const slotDigest = CodeDirectory.getSlot(_this, slot, preEncrypted);
 		if (!slotDigest) {
 			throw new RangeError('Invalid slot');
@@ -488,10 +493,10 @@ export class CodeDirectory extends Blob {
 	public static readonly supportsPreEncrypt = 0x20500;
 
 	/**
-	 * Get hash instance for hash type.
+	 * Get hasher instance for hash type.
 	 *
 	 * @param hashType Hash type.
-	 * @returns Hash instance.
+	 * @returns Hasher instance.
 	 */
 	public static hashFor(hashType: number): DynamicHash {
 		switch (hashType) {
@@ -509,6 +514,70 @@ export class CodeDirectory extends Blob {
 			}
 		}
 		throw new RangeError(`Unsupported hash type: ${hashType}`);
+	}
+
+	/**
+	 * Generate hash of reader.
+	 *
+	 * @param hasher Hasher instance.
+	 * @param reader Reader.
+	 * @param digest Digest.
+	 * @param limit Limit.
+	 * @returns Size.
+	 */
+	protected static async generateHash(
+		hasher: DynamicHash,
+		reader: Reader,
+		digest: ArrayBufferLike | ArrayBufferPointer,
+		limit?: number,
+	): Promise<number>;
+
+	/**
+	 * Gernerate hash of data.
+	 *
+	 * @param hasher Hasher instance.
+	 * @param data Data.
+	 * @param length Data length.
+	 * @param digest Digest.
+	 * @returns Size.
+	 */
+	protected static async generateHash(
+		hasher: DynamicHash,
+		data: ArrayBufferPointer<ArrayBuffer>,
+		length: number,
+		digest: ArrayBufferLike | ArrayBufferPointer,
+	): Promise<number>;
+
+	/**
+	 * Generate hash.
+	 *
+	 * @param hasher Hasher instance.
+	 * @param reader Reader or data.
+	 * @param digest Digest or data length.
+	 * @param limit Limit ot digest.
+	 * @returns Size.
+	 */
+	protected static async generateHash(
+		hasher: DynamicHash,
+		reader: Reader | ArrayBufferPointer<ArrayBuffer>,
+		digest: ArrayBufferLike | ArrayBufferPointer | number,
+		limit?: number | ArrayBufferLike | ArrayBufferPointer,
+	): Promise<number> {
+		if (typeof digest === 'number') {
+			await hasher.update(
+				reader as ArrayBufferPointer<ArrayBuffer>,
+				digest,
+			);
+			await hasher.finish(limit as ArrayBufferPointer<ArrayBuffer>);
+			return digest;
+		}
+		const size = await hashFileData(
+			reader as Reader,
+			hasher,
+			limit as number | undefined,
+		);
+		await hasher.finish(digest);
+		return size;
 	}
 
 	static {

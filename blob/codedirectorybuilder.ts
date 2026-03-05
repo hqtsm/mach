@@ -580,11 +580,13 @@ export class CodeDirectoryBuilder {
 				thisPage = mPageSize;
 			}
 			const hasher = CodeDirectoryBuilder.getHash(_this);
-			// deno-lint-ignore no-await-in-loop
-			await hasher.update(mExec.slice(position, position + thisPage));
 			const data = new Uint8Array(hasher.digestLength());
 			// deno-lint-ignore no-await-in-loop
-			await hasher.finish(data);
+			await CodeDirectory['generateHash'](
+				hasher,
+				mExec.slice(position, position + thisPage),
+				data,
+			);
 			const s = CodeDirectory.getSlotMutable(dir, slot, false)!;
 			new Uint8Array(s.buffer, s.byteOffset).set(data);
 			if (gpeh) {
