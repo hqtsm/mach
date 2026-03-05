@@ -374,8 +374,10 @@ Deno.test('Hash Uint8Array<ArrayBuffer>', async () => {
 	for (const { tag, alg, crypto, output, data } of await getCases()) {
 		const hash = new CCHashInstance(alg);
 		hash.crypto = crypto;
+		const d = new Uint8Array(data.byteLength + 4);
+		d.set(new Uint8Array(data), 2);
 		// deno-lint-ignore no-await-in-loop
-		await hash.update(new Uint8Array(data));
+		await hash.update(d.subarray(2, d.byteLength - 2));
 		// deno-lint-ignore no-await-in-loop
 		const rab = await hash.finish();
 		assertEquals(rab.byteLength, hash.digestLength(), tag);
