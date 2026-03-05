@@ -1,4 +1,5 @@
 import { toStringTag } from '@hqtsm/class/symbol';
+import type { ArrayBufferPointer } from '@hqtsm/struct';
 import type { Reader } from '../util/reader.ts';
 import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
 import type { ArrayBufferData } from '../util/memory.ts';
@@ -48,6 +49,7 @@ export abstract class DynamicHash {
 	 */
 	public abstract update(
 		source:
+			| ArrayBufferPointer<ArrayBuffer>
 			| SizeIterator<ArrayBufferData>
 			| SizeAsyncIterator<ArrayBufferData>,
 		size: number,

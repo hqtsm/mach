@@ -1,4 +1,5 @@
 import { toStringTag } from '@hqtsm/class';
+import type { ArrayBufferPointer } from '@hqtsm/struct';
 import {
 	kCCDigestSHA1,
 	kCCDigestSHA256,
@@ -172,6 +173,7 @@ export class CCHashInstance extends DynamicHash {
 
 	public update(
 		source:
+			| ArrayBufferPointer<ArrayBuffer>
 			| SizeIterator<ArrayBufferData>
 			| SizeAsyncIterator<ArrayBufferData>,
 		size: number,
@@ -188,6 +190,7 @@ export class CCHashInstance extends DynamicHash {
 		source:
 			| Reader
 			| ArrayBufferData
+			| ArrayBufferPointer<ArrayBuffer>
 			| SizeIterator<ArrayBufferData>
 			| SizeAsyncIterator<ArrayBufferData>,
 		size?: number,
@@ -198,7 +201,6 @@ export class CCHashInstance extends DynamicHash {
 			throw new Error('Already updated');
 		}
 		mDigest.s = 1;
-		size ||= 0;
 		const c = this.crypto || crypto.subtle;
 		let d;
 
@@ -217,13 +219,13 @@ export class CCHashInstance extends DynamicHash {
 			}
 		} else if ('next' in source) {
 			if (supportsAG.get(c.digest) !== false) {
-				d = await subtleAG(c, a, iteratorAG(c, source, size));
+				d = await subtleAG(c, a, iteratorAG(c, source, size!));
 			}
 			if (!d) {
 				let p;
 				let all: Uint8Array<ArrayBuffer> | undefined;
-				let o = -size;
-				let ps = size > 0 ? size : PAGE_SIZE;
+				let o = -size!;
+				let ps = size! > 0 ? size! : PAGE_SIZE;
 				try {
 					let n, i = 0;
 					for (
@@ -246,7 +248,7 @@ export class CCHashInstance extends DynamicHash {
 								all.set(asUint8Array(b), i);
 							} else {
 								if (o) {
-									all = new Uint8Array(size);
+									all = new Uint8Array(size!);
 									all.set(asUint8Array(b));
 								} else {
 									all = asUint8Array(b);
@@ -268,7 +270,16 @@ export class CCHashInstance extends DynamicHash {
 				d = await c.digest(a, all || new ArrayBuffer(0));
 			}
 		} else {
-			d = await c.digest(a, asUint8Array(source));
+			d = await c.digest(
+				a,
+				'buffer' in source
+					? new Uint8Array(
+						source.buffer,
+						source.byteOffset,
+						size ?? (source as ArrayBufferView).byteLength!,
+					)
+					: new Uint8Array(source),
+			);
 		}
 
 		mDigest.d = d;

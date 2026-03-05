@@ -397,6 +397,27 @@ Deno.test('Hash Blob', async () => {
 	}
 });
 
+Deno.test('Hash ArrayBufferPointer', async () => {
+	for (const { tag, alg, crypto, output, data } of await getCases()) {
+		const hash = new CCHashInstance(alg);
+		hash.crypto = crypto;
+		const d = new Uint8Array(data.byteLength + 4);
+		d.set(new Uint8Array(data), 2);
+		// deno-lint-ignore no-await-in-loop
+		await hash.update(
+			{
+				buffer: d.buffer,
+				byteOffset: 2,
+			},
+			data.byteLength,
+		);
+		// deno-lint-ignore no-await-in-loop
+		const rab = await hash.finish();
+		assertEquals(rab.byteLength, hash.digestLength(), tag);
+		assertEquals(hex(new Uint8Array(rab)), output, tag);
+	}
+});
+
 Deno.test('Hash Iterator<ArrayBuffer>', async () => {
 	for (const page of ITTER_SIZES) {
 		for (const { tag, alg, crypto, output, data } of await getCases()) {
