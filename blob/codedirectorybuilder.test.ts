@@ -310,7 +310,7 @@ Deno.test('generatePreEncryptHashes', async () => {
 	);
 });
 
-Deno.test('Read valiation', async () => {
+Deno.test('read validation', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(
 		builder,
@@ -323,5 +323,22 @@ Deno.test('Read valiation', async () => {
 		() => CodeDirectoryBuilder.build(builder),
 		Error,
 		'BadReader',
+	);
+});
+
+Deno.test('codeslots limit', async () => {
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	const size = UINT32_MAX + 1;
+	CodeDirectoryBuilder.executable(
+		builder,
+		new ErrorReader(size),
+		1,
+		0,
+		size,
+	);
+	await assertRejects(
+		() => CodeDirectoryBuilder.build(builder),
+		Error,
+		'Too many code slots',
 	);
 });

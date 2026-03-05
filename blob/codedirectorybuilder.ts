@@ -488,6 +488,9 @@ export class CodeDirectoryBuilder {
 		if (!mExec) {
 			throw new Error('Executable not open');
 		}
+		if (mCodeSlots > UINT32_MAX) {
+			throw new Error('Too many code slots');
+		}
 		const size = CodeDirectoryBuilder.size(_this, version);
 		const buffer = new ArrayBuffer(size);
 		const data = new Uint8Array(buffer);
