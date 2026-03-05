@@ -363,10 +363,10 @@ Deno.test('Hash ArrayBuffer', async () => {
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
 		await hash.update(data);
+		const digest = new ArrayBuffer(hash.digestLength());
 		// deno-lint-ignore no-await-in-loop
-		const rab = await hash.finish();
-		assertEquals(rab.byteLength, hash.digestLength(), tag);
-		assertEquals(hex(new Uint8Array(rab)), output, tag);
+		await hash.finish(digest);
+		assertEquals(hex(new Uint8Array(digest)), output, tag);
 	}
 });
 
@@ -378,10 +378,10 @@ Deno.test('Hash Uint8Array<ArrayBuffer>', async () => {
 		d.set(new Uint8Array(data), 2);
 		// deno-lint-ignore no-await-in-loop
 		await hash.update(new Uint8Array(d.buffer, 2, data.byteLength));
+		const digest = new Uint8Array(hash.digestLength() + 4);
 		// deno-lint-ignore no-await-in-loop
-		const rab = await hash.finish();
-		assertEquals(rab.byteLength, hash.digestLength(), tag);
-		assertEquals(hex(new Uint8Array(rab)), output, tag);
+		await hash.finish(digest.subarray(2));
+		assertEquals(hex(digest.subarray(2, -2)), output, tag);
 	}
 });
 
@@ -392,10 +392,10 @@ Deno.test('Hash Blob', async () => {
 		const blob = new Blob([data]);
 		// deno-lint-ignore no-await-in-loop
 		await hash.update(blob);
+		const digest = new Uint8Array(hash.digestLength());
 		// deno-lint-ignore no-await-in-loop
-		const rab = await hash.finish();
-		assertEquals(rab.byteLength, hash.digestLength(), tag);
-		assertEquals(hex(new Uint8Array(rab)), output, tag);
+		await hash.finish(digest);
+		assertEquals(hex(digest), output, tag);
 	}
 });
 
@@ -413,10 +413,10 @@ Deno.test('Hash ArrayBufferPointer', async () => {
 			},
 			data.byteLength,
 		);
+		const digest = new Uint8Array(hash.digestLength());
 		// deno-lint-ignore no-await-in-loop
-		const rab = await hash.finish();
-		assertEquals(rab.byteLength, hash.digestLength(), tag);
-		assertEquals(hex(new Uint8Array(rab)), output, tag);
+		await hash.finish(digest);
+		assertEquals(hex(digest), output, tag);
 	}
 });
 
@@ -436,10 +436,10 @@ Deno.test('Hash Iterator<ArrayBuffer>', async () => {
 				data.byteLength,
 			);
 			assertEquals(returned, 1, tags);
+			const digest = new Uint8Array(hash.digestLength());
 			// deno-lint-ignore no-await-in-loop
-			const rab = await hash.finish();
-			assertEquals(rab.byteLength, hash.digestLength(), tags);
-			assertEquals(hex(new Uint8Array(rab)), output, tags);
+			await hash.finish(digest);
+			assertEquals(hex(digest), output, tags);
 		}
 	}
 });
@@ -462,10 +462,10 @@ Deno.test('Hash Iterator<Uint8Array<ArrayBuffer>>', async () => {
 				data.byteLength,
 			);
 			assertEquals(returned, 1, tags);
+			const digest = new Uint8Array(hash.digestLength());
 			// deno-lint-ignore no-await-in-loop
-			const rab = await hash.finish();
-			assertEquals(rab.byteLength, hash.digestLength(), tags);
-			assertEquals(hex(new Uint8Array(rab)), output, tags);
+			await hash.finish(digest);
+			assertEquals(hex(digest), output, tags);
 		}
 	}
 });
@@ -486,10 +486,10 @@ Deno.test('Hash AsyncIterator<ArrayBuffer>', async () => {
 				data.byteLength,
 			);
 			assertEquals(returned, 1, tags);
+			const digest = new Uint8Array(hash.digestLength());
 			// deno-lint-ignore no-await-in-loop
-			const rab = await hash.finish();
-			assertEquals(rab.byteLength, hash.digestLength(), tags);
-			assertEquals(hex(new Uint8Array(rab)), output, tags);
+			await hash.finish(digest);
+			assertEquals(hex(new Uint8Array(digest)), output, tags);
 		}
 	}
 });
@@ -512,10 +512,10 @@ Deno.test('Hash AsyncIterator<Uint8Array<ArrayBuffer>>', async () => {
 				data.byteLength,
 			);
 			assertEquals(returned, 1, tags);
+			const digest = new Uint8Array(hash.digestLength());
 			// deno-lint-ignore no-await-in-loop
-			const rab = await hash.finish();
-			assertEquals(rab.byteLength, hash.digestLength(), tags);
-			assertEquals(hex(new Uint8Array(rab)), output, tags);
+			await hash.finish(digest);
+			assertEquals(hex(digest), output, tags);
 		}
 	}
 });
@@ -528,11 +528,11 @@ Deno.test('Hash truncate', async () => {
 		hash.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
 		await hash.update(data);
+		const digest = new Uint8Array(hash.digestLength());
 		// deno-lint-ignore no-await-in-loop
-		const digest = await hash.finish();
+		await hash.finish(digest);
 		assertEquals(hash.digestLength(), truncate, tag);
-		assertEquals(digest.byteLength, truncate, tag);
-		assertEquals(hex(new Uint8Array(digest)), hext, tag);
+		assertEquals(hex(digest), hext, tag);
 	}
 });
 
@@ -638,9 +638,10 @@ Deno.test('State errors', async () => {
 			{
 				const hash = new CCHashInstance(kCCDigestSHA1);
 				hash.crypto = crypto;
+				const digest = new ArrayBuffer(hash.digestLength());
 				// deno-lint-ignore no-await-in-loop
 				await assertRejects(
-					() => hash.finish(),
+					() => hash.finish(digest),
 					Error,
 					'Not updated',
 					tag,
@@ -652,8 +653,9 @@ Deno.test('State errors', async () => {
 				const incomplete = size === null
 					? hash.update(source())
 					: hash.update(source(), size);
+				const digest = new ArrayBuffer(hash.digestLength());
 				try {
-					const finish = hash.finish();
+					const finish = hash.finish(digest);
 					// deno-lint-ignore no-await-in-loop
 					await assertRejects(
 						() => finish,
@@ -675,11 +677,12 @@ Deno.test('State errors', async () => {
 						? hash.update(source())
 						: hash.update(source(), size)
 				);
+				const digest = new ArrayBuffer(hash.digestLength());
 				// deno-lint-ignore no-await-in-loop
-				await hash.finish();
+				await hash.finish(digest);
 				// deno-lint-ignore no-await-in-loop
 				await assertRejects(
-					() => hash.finish(),
+					() => hash.finish(digest),
 					Error,
 					'Already finished',
 					tag,

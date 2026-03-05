@@ -287,9 +287,11 @@ export class CCHashInstance extends DynamicHash {
 	}
 
 	// deno-lint-ignore require-await
-	public async finish(): Promise<ArrayBuffer> {
+	public async finish(
+		digest: ArrayBufferLike | ArrayBufferPointer,
+	): Promise<void> {
 		const { mTruncate, mDigest } = this;
-		const { s, d } = mDigest;
+		const { s, d, l } = mDigest;
 		switch (s) {
 			case 0: {
 				throw new Error('Not updated');
@@ -303,7 +305,15 @@ export class CCHashInstance extends DynamicHash {
 		}
 		mDigest.s = 3;
 		mDigest.d = null;
-		return mTruncate ? d!.slice(0, mTruncate) : d!;
+		(
+			'buffer' in digest
+				? new Uint8Array(
+					digest.buffer,
+					digest.byteOffset,
+					mTruncate || l,
+				)
+				: new Uint8Array(digest, 0, mTruncate || l)
+		).set(new Uint8Array(d!));
 	}
 
 	static {

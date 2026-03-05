@@ -369,12 +369,14 @@ export class CodeDirectory extends Blob {
 					: toUint8ArrayArrayBuffer(source, 0, size)
 			),
 		);
-		const digest = new Uint8Array(await hash.finish());
+		const l = hash.digestLength();
+		const digest = new Uint8Array(l);
+		await hash.finish(digest);
 		const slotDigest = CodeDirectory.getSlot(_this, slot, preEncrypted);
 		if (!slotDigest) {
 			throw new RangeError('Invalid slot');
 		}
-		for (let i = 0, l = hash.digestLength(); i < l; i++) {
+		for (let i = 0; i < l; i++) {
 			if (digest[i] !== slotDigest[i]) {
 				return false;
 			}
@@ -435,12 +437,11 @@ export class CodeDirectory extends Blob {
 				CodeDirectory.size(_this),
 			),
 		);
-		const digest = await hash.finish();
+		const l = hash.digestLength();
+		const digest = new ArrayBuffer(l);
+		await hash.finish(digest);
 		return truncate
-			? digest.slice(
-				0,
-				Math.min(hash.digestLength(), kSecCodeCDHashLength),
-			)
+			? digest.slice(0, Math.min(l, kSecCodeCDHashLength))
 			: digest;
 	}
 

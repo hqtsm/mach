@@ -58,9 +58,12 @@ export abstract class DynamicHash {
 	/**
 	 * Finish hash, can only be called once.
 	 *
-	 * @returns Hash digest.
+	 * @param digest Digest.
+	 * @returns Promise.
 	 */
-	public abstract finish(): Promise<ArrayBuffer>;
+	public abstract finish(
+		digest: ArrayBufferLike | ArrayBufferPointer,
+	): Promise<void>;
 
 	static {
 		toStringTag(this, 'DynamicHash');

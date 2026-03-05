@@ -231,7 +231,9 @@ export class CodeDirectoryBuilder {
 				)
 				: toUint8ArrayArrayBuffer(data),
 		);
-		_this.mSpecial.set(slot, await hash.finish());
+		const digest = new ArrayBuffer(hash.digestLength());
+		await hash.finish(digest);
+		_this.mSpecial.set(slot, digest);
 		if (slot > _this.mSpecialSlots) {
 			_this.mSpecialSlots = slot;
 		}
@@ -563,8 +565,9 @@ export class CodeDirectoryBuilder {
 			const hash = CodeDirectoryBuilder.getHash(_this);
 			// deno-lint-ignore no-await-in-loop
 			await hash.update(mExec.slice(position, position + thisPage));
+			const data = new Uint8Array(hash.digestLength());
 			// deno-lint-ignore no-await-in-loop
-			const data = new Uint8Array(await hash.finish());
+			await hash.finish(data);
 			const slot = CodeDirectory.getSlotMutable(dir, i, false)!;
 			new Uint8Array(slot.buffer, slot.byteOffset).set(data);
 			if (gpec) {
