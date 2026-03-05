@@ -491,15 +491,18 @@ export class CodeDirectoryBuilder {
 		if (mCodeSlots > UINT32_MAX) {
 			throw new Error('Too many code slots');
 		}
-		const size = CodeDirectoryBuilder.size(_this, version);
-		const buffer = new ArrayBuffer(size);
+
+		const total = CodeDirectoryBuilder.size(_this, version);
+		const buffer = new ArrayBuffer(total);
 		const data = new Uint8Array(buffer);
 		const dir = new CodeDirectory(buffer);
-		CodeDirectory.initializeSize(dir, size);
+
+		CodeDirectory.initializeSize(dir, total);
 		dir.version = version;
 		dir.flags = _this.mFlags;
 		dir.nSpecialSlots = mSpecialSlots;
 		dir.nCodeSlots = mCodeSlots;
+
 		if (
 			mExecLength > UINT32_MAX &&
 			!(version < CodeDirectory.supportsCodeLimit64)
@@ -509,19 +512,24 @@ export class CodeDirectoryBuilder {
 		} else {
 			dir.codeLimit = mExecLength;
 		}
+
 		dir.hashType = _this.mHashType;
 		dir.platform = _this.mPlatform;
 		dir.hashSize = mDigestLength;
 		dir.pageSize = mPageSize ? Math.log2(mPageSize) : 0;
+
 		if (!(version < CodeDirectory.supportsExecSegment)) {
 			dir.execSegBase = _this.mExecSegOffset;
 			dir.execSegLimit = _this.mExecSegLimit;
 			dir.execSegFlags = _this.mExecSegFlags;
 		}
+
 		if (!(version < CodeDirectory.supportsPreEncrypt)) {
 			dir.runtime = _this.mRuntimeVersion;
 		}
+
 		let offset = CodeDirectoryBuilder.fixedSize(_this, version);
+
 		if (mScatter && !(version < CodeDirectory.supportsScatter)) {
 			dir.scatterOffset = offset;
 			data.set(
@@ -534,21 +542,26 @@ export class CodeDirectoryBuilder {
 			);
 			offset += mScatterSize;
 		}
+
 		dir.identOffset = offset;
 		data.set(new Uint8Array(mIdentifier), offset);
 		offset += mIdentifier.byteLength + 1;
+
 		if (mTeamID.byteLength && !(version < CodeDirectory.supportsTeamID)) {
 			dir.teamIDOffset = offset;
 			data.set(new Uint8Array(mTeamID), offset);
 			offset += mTeamID.byteLength + 1;
 		}
+
 		const spe = !(version < CodeDirectory.supportsPreEncrypt);
-		const gpec = spe && mGeneratePreEncryptHashes;
-		if (gpec) {
+		const gpeh = spe && mGeneratePreEncryptHashes;
+		if (gpeh) {
 			dir.preEncryptOffset = offset;
 			offset += mCodeSlots * mDigestLength;
 		}
+
 		dir.hashOffset = offset + mSpecialSlots * mDigestLength;
+
 		for (let i = 1; i <= mSpecialSlots; i++) {
 			const hash = CodeDirectoryBuilder.getSpecialSlot(_this, i);
 			if (hash) {
@@ -558,28 +571,30 @@ export class CodeDirectoryBuilder {
 				);
 			}
 		}
+
 		let position = mExecOffset;
 		let remaining = mExecLength;
-		for (let i = 0; i < mCodeSlots; i++) {
+		for (let slot = 0; slot < mCodeSlots; slot++) {
 			let thisPage = remaining;
 			if (mPageSize && thisPage > mPageSize) {
 				thisPage = mPageSize;
 			}
-			const hash = CodeDirectoryBuilder.getHash(_this);
+			const hasher = CodeDirectoryBuilder.getHash(_this);
 			// deno-lint-ignore no-await-in-loop
-			await hash.update(mExec.slice(position, position + thisPage));
-			const data = new Uint8Array(hash.digestLength());
+			await hasher.update(mExec.slice(position, position + thisPage));
+			const data = new Uint8Array(hasher.digestLength());
 			// deno-lint-ignore no-await-in-loop
-			await hash.finish(data);
-			const slot = CodeDirectory.getSlotMutable(dir, i, false)!;
-			new Uint8Array(slot.buffer, slot.byteOffset).set(data);
-			if (gpec) {
-				const slot = CodeDirectory.getSlotMutable(dir, i, true)!;
-				new Uint8Array(slot.buffer, slot.byteOffset).set(data);
+			await hasher.finish(data);
+			const s = CodeDirectory.getSlotMutable(dir, slot, false)!;
+			new Uint8Array(s.buffer, s.byteOffset).set(data);
+			if (gpeh) {
+				const s = CodeDirectory.getSlotMutable(dir, slot, true)!;
+				new Uint8Array(s.buffer, s.byteOffset).set(data);
 			}
 			position += thisPage;
 			remaining -= thisPage;
 		}
+
 		return dir;
 	}
 
