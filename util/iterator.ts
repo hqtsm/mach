@@ -26,6 +26,13 @@ export interface SizeIteratorReturn {
 }
 
 /**
+ * Size iterator next.
+ *
+ * @template T Value type.
+ */
+export type SizeIteratorNext<T> = SizeIteratorYield<T> | SizeIteratorReturn;
+
+/**
  * Size iterator.
  */
 export interface SizeIterator<T> {
@@ -35,13 +42,15 @@ export interface SizeIterator<T> {
 	 * @param size Requested size.
 	 * @returns Next value.
 	 */
-	next(size?: number): SizeIteratorYield<T> | SizeIteratorReturn;
+	next(size?: number): SizeIteratorNext<T>;
 
 	/**
 	 * Close iterator.
+	 *
+	 * @param _ Unused.
 	 */
 	// deno-lint-ignore no-explicit-any
-	return?(value?: any): any;
+	return?(_?: any): any;
 }
 
 /**
@@ -54,11 +63,13 @@ export interface SizeAsyncIterator<T> {
 	 * @param size Requested size.
 	 * @returns Next value.
 	 */
-	next(size?: number): Promise<SizeIteratorYield<T> | SizeIteratorReturn>;
+	next(size?: number): Promise<SizeIteratorNext<T>>;
 
 	/**
 	 * Close iterator.
+	 *
+	 * @param _ Unused.
 	 */
 	// deno-lint-ignore no-explicit-any
-	return?(value?: any): Promise<any>;
+	return?(_?: any): Promise<any>;
 }

@@ -24,11 +24,11 @@ import {
 } from '../const.ts';
 import { CCHashInstance } from '../hash/cchashinstance.ts';
 import type { DynamicHash, DynamicHashCrypto } from '../hash/dynamichash.ts';
+import { toUint8ArrayArrayBuffer } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
+import { hashFileData } from '../util/utilities.ts';
 import { Blob } from './blob.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
-import { toUint8ArrayArrayBuffer } from '../util/memory.ts';
-import { hashFileData } from '../util/utilities.ts';
 
 /**
  * Describes secured pieces of a program.
