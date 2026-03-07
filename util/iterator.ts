@@ -37,8 +37,10 @@ export type SizeIteratorNext<T> = SizeIteratorYield<T> | SizeIteratorReturn;
  *
  * @template T Value type.
  * @template S Size type.
+ * @template R Return type.
  */
-export interface SizeIterator<T, S = number> {
+// deno-lint-ignore no-explicit-any
+export interface SizeIterator<T, S = number, R = any> {
 	/**
 	 * Get the next value.
 	 *
@@ -53,7 +55,7 @@ export interface SizeIterator<T, S = number> {
 	 * @param _ Unused.
 	 */
 	// deno-lint-ignore no-explicit-any
-	return?(_?: any): any;
+	return?(_?: any): R;
 }
 
 /**
@@ -61,8 +63,10 @@ export interface SizeIterator<T, S = number> {
  *
  * @template T Value type.
  * @template S Size type.
+ * @template R Return type.
  */
-export interface SizeAsyncIterator<T, S = number> {
+// deno-lint-ignore no-explicit-any
+export interface SizeAsyncIterator<T, S = number, R = any> {
 	/**
 	 * Get the next value.
 	 *
@@ -77,5 +81,5 @@ export interface SizeAsyncIterator<T, S = number> {
 	 * @param _ Unused.
 	 */
 	// deno-lint-ignore no-explicit-any
-	return?(_?: any): Promise<any>;
+	return?(_?: any): Promise<R>;
 }
