@@ -23,6 +23,11 @@ export interface SizeIteratorReturn {
 	 * Done.
 	 */
 	done: true;
+
+	/**
+	 * Value.
+	 */
+	value?: undefined;
 }
 
 /**
