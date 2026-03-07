@@ -148,3 +148,68 @@ Deno.test('sizeAsyncIterators error', async () => {
 	await iA.return?.();
 	await iB.return?.();
 });
+
+Deno.test('sizeAsyncIterators return', async () => {
+	let i = 0;
+	const total = 10;
+	let returns = 0;
+	const [iA, iB, iC] = sizeAsyncIterators<number[]>(
+		{
+			next(size): Promise<SizeIteratorNext<number[]>> {
+				if (i >= total) {
+					return Promise.resolve({ done: true });
+				}
+				size = Math.max(size || 0, 2);
+				const value = [];
+				for (; i < total && size-- > 0; i) {
+					value.push(++i);
+				}
+				return Promise.resolve({ done: false, value });
+			},
+			return(): Promise<void> {
+				returns++;
+				return Promise.resolve();
+			},
+		},
+		(sizes) => Math.max(...sizes),
+		3,
+	);
+
+	{
+		const all = [];
+		const state: unknown[] = [];
+		all.push(iA.next().then((v) => state.push(v)));
+		all.push(iA.next().then((v) => state.push(v)));
+		all.push(iA.next().then((v) => state.push(v)));
+		await iA.return?.()?.then(() => state.push('RETURN: A'));
+		await Promise.all(all);
+		assertEquals(state, [
+			{ done: true },
+			{ done: true },
+			{ done: true },
+			'RETURN: A',
+		]);
+		assertEquals(returns, 0);
+	}
+
+	{
+		const all = [];
+		const state: unknown[] = [];
+		all.push(iB.next().then((v) => state.push(v)));
+		all.push(iB.next().then((v) => state.push(v)));
+		all.push(iB.next().then((v) => state.push(v)));
+		await iC.return?.()?.then(() => state.push('RETURN: C'));
+		await Promise.all(all);
+		assertEquals(state, [
+			'RETURN: C',
+			{ done: false, value: [1, 2] },
+			{ done: false, value: [3, 4] },
+			{ done: false, value: [5, 6] },
+		]);
+		assertEquals(returns, 0);
+		assertEquals(await iB.next(), { done: false, value: [7, 8] });
+		assertEquals(returns, 0);
+		await iB.return?.();
+		assertEquals(returns, 1);
+	}
+});
