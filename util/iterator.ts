@@ -109,7 +109,7 @@ export function sizeAsyncIterators<T>(
 	}
 
 	let step = 0;
-	let stopped = true;
+	let running: Promise<void> | null = null;
 	let process = Promise.resolve();
 	const tasked = new Map<number, Map<number, Task>>();
 	const processer = async () => {
@@ -147,13 +147,10 @@ export function sizeAsyncIterators<T>(
 				}
 			}
 		}
-		stopped = true;
+		running = null;
 	};
 	const flush = () => {
-		if (stopped) {
-			stopped = false;
-			process = process.then(processer);
-		}
+		running ||= process = process.then(processer);
 	};
 
 	const tee: SizeAsyncIterator<T, number, void>[] = [];
