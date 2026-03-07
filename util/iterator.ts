@@ -34,15 +34,18 @@ export type SizeIteratorNext<T> = SizeIteratorYield<T> | SizeIteratorReturn;
 
 /**
  * Size iterator.
+ *
+ * @template T Value type.
+ * @template S Size type.
  */
-export interface SizeIterator<T> {
+export interface SizeIterator<T, S = number> {
 	/**
 	 * Get the next value.
 	 *
 	 * @param size Requested size.
 	 * @returns Next value.
 	 */
-	next(size?: number): SizeIteratorNext<T>;
+	next(size?: S): SizeIteratorNext<T>;
 
 	/**
 	 * Close iterator.
@@ -55,15 +58,18 @@ export interface SizeIterator<T> {
 
 /**
  * Size async iterator.
+ *
+ * @template T Value type.
+ * @template S Size type.
  */
-export interface SizeAsyncIterator<T> {
+export interface SizeAsyncIterator<T, S = number> {
 	/**
 	 * Get the next value.
 	 *
 	 * @param size Requested size.
 	 * @returns Next value.
 	 */
-	next(size?: number): Promise<SizeIteratorNext<T>>;
+	next(size?: S): Promise<SizeIteratorNext<T>>;
 
 	/**
 	 * Close iterator.
