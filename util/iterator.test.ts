@@ -86,3 +86,65 @@ Deno.test('sizeAsyncIterators sizes', async () => {
 		assertEquals(rB.value, undefined);
 	}
 });
+
+Deno.test('sizeAsyncIterators error', async () => {
+	let i = 0;
+	const total = 10;
+	let error: Error | null = null;
+	const [iA, iB] = sizeAsyncIterators<number[]>(
+		{
+			next(size): Promise<SizeIteratorNext<number[]>> {
+				if (!error) {
+					throw error = new Error('Example error');
+				}
+				if (i >= total) {
+					return Promise.resolve({ done: true });
+				}
+				size = Math.max(size || 0, 2);
+				const value = [];
+				for (; i < total && size-- > 0; i) {
+					value.push(++i);
+				}
+				return Promise.resolve({ done: false, value });
+			},
+		},
+		(sizes) => Math.max(...sizes),
+		2,
+	);
+
+	{
+		const [eA, eB] = await Promise.all([
+			iA.next(4).catch((err) => err),
+			iB.next(4).catch((err) => err),
+		]);
+		assertStrictEquals(eA, error);
+		assertStrictEquals(eB, error);
+	}
+	{
+		const [rA, rB] = await Promise.all([iA.next(5), iB.next(5)]);
+		assertStrictEquals(rA, rB);
+		assertStrictEquals(rA.done, false);
+		assertEquals(rA.value, [1, 2, 3, 4, 5]);
+	}
+	{
+		const [rA, rB] = await Promise.all([
+			iA.next(Infinity),
+			iB.next(Infinity),
+		]);
+		assertStrictEquals(rA, rB);
+		assertStrictEquals(rA.done, false);
+		assertEquals(rA.value, [6, 7, 8, 9, 10]);
+	}
+	{
+		const [rA, rB] = await Promise.all([
+			iA.next(Infinity),
+			iB.next(Infinity),
+		]);
+		assertStrictEquals(rA, rB);
+		assertStrictEquals(rA.done, true);
+		assertEquals(rA.value, undefined);
+	}
+
+	await iA.return?.();
+	await iB.return?.();
+});
