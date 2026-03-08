@@ -11,7 +11,7 @@ export class EntitlementDERBlob extends Blob {
 	/**
 	 * Data of payload (only).
 	 */
-	declare public readonly data: Uint8Ptr;
+	declare private readonly data: Uint8Ptr;
 
 	/**
 	 * DER data.
