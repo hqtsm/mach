@@ -305,15 +305,12 @@ export class CCHashInstance extends DynamicHash {
 		}
 		mDigest.s = 3;
 		mDigest.d = null;
+		const bl = mTruncate || l;
 		(
 			'buffer' in digest
-				? new Uint8Array(
-					digest.buffer,
-					digest.byteOffset,
-					mTruncate || l,
-				)
-				: new Uint8Array(digest, 0, mTruncate || l)
-		).set(new Uint8Array(d!));
+				? new Uint8Array(digest.buffer, digest.byteOffset, bl)
+				: new Uint8Array(digest, 0, bl)
+		).set(new Uint8Array(d!, 0, bl));
 	}
 
 	static {
