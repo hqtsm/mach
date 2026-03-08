@@ -1,4 +1,5 @@
 import { assert, assertEquals, assertRejects, assertThrows } from '@std/assert';
+import { crypto as stdCrypto } from '@std/crypto';
 import {
 	cdSlotMax,
 	kSecCodeCDHashLength,
@@ -7,9 +8,45 @@ import {
 	kSecCodeSignatureHashSHA256Truncated,
 	kSecCodeSignatureHashSHA384,
 	kSecCodeSignatureHashSHA512,
+	PAGE_SIZE,
 } from '../const.ts';
+import type { Reader } from '../util/reader.ts';
 import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
+
+class ErrorReader implements Reader {
+	#size: number;
+
+	#type: string;
+
+	constructor(size: number, type: string = '') {
+		this.#size = size;
+		this.#type = type;
+	}
+
+	public get size(): number {
+		return this.#size;
+	}
+
+	public get type(): string {
+		return this.#type;
+	}
+
+	public slice(
+		start?: number,
+		end?: number,
+		contentType?: string,
+	): Reader {
+		start ??= 0;
+		end ??= this.#size;
+		return new ErrorReader(start < end ? end - start : 0, contentType);
+	}
+
+	// deno-lint-ignore require-await
+	public async arrayBuffer(): Promise<ArrayBuffer> {
+		throw new Error('ErrorReader');
+	}
+}
 
 Deno.test('BYTE_LENGTH', () => {
 	assertEquals(CodeDirectory.BYTE_LENGTH, 96);
@@ -318,5 +355,81 @@ Deno.test('hashFor', () => {
 		() => CodeDirectory.hashFor(kSecCodeSignatureHashSHA512),
 		RangeError,
 		`Unsupported hash type: ${kSecCodeSignatureHashSHA512}`,
+	);
+});
+
+Deno.test('multipleHashFileData hashes', async () => {
+	const cryptos = {
+		subtle: null,
+		'jsr:@std/crypto': stdCrypto.subtle,
+	};
+	const types = new Set([
+		kSecCodeSignatureHashSHA1,
+		kSecCodeSignatureHashSHA256Truncated,
+		kSecCodeSignatureHashSHA256,
+		kSecCodeSignatureHashSHA384,
+		// Not supported, intentional or an oversight?
+		// kSecCodeSignatureHashSHA512,
+	]);
+	const data = new Uint8Array(PAGE_SIZE * 3);
+	for (let i = 0; i < data.length; i++) {
+		data[i] = i % 256;
+	}
+	const limit = data.length - 10;
+	const limited = data.subarray(0, limit);
+	const expected: [number, Uint8Array][] = [
+		[
+			kSecCodeSignatureHashSHA1,
+			new Uint8Array(await crypto.subtle.digest('SHA-1', limited)),
+		],
+		[
+			kSecCodeSignatureHashSHA256Truncated,
+			new Uint8Array(
+				(await crypto.subtle.digest('SHA-256', limited)).slice(0, 20),
+			),
+		],
+		[
+			kSecCodeSignatureHashSHA256,
+			new Uint8Array(await crypto.subtle.digest('SHA-256', limited)),
+		],
+		[
+			kSecCodeSignatureHashSHA384,
+			new Uint8Array(await crypto.subtle.digest('SHA-384', limited)),
+		],
+	];
+	for (const [tag, crypto] of Object.entries(cryptos)) {
+		const hashed: [number, Uint8Array][] = [];
+		// deno-lint-ignore no-await-in-loop
+		await CodeDirectory.multipleHashFileData(
+			new Blob([data.buffer]),
+			limit,
+			types,
+			async (type, hasher) => {
+				const hash = new Uint8Array(hasher.digestLength());
+				await hasher.finish(hash);
+				hashed.push([type, hash]);
+			},
+			crypto,
+		);
+		assertEquals(hashed, expected, tag);
+	}
+});
+
+Deno.test('multipleHashFileData error', async () => {
+	const reader = new ErrorReader(PAGE_SIZE * 3);
+	await assertRejects(
+		() =>
+			CodeDirectory.multipleHashFileData(
+				reader,
+				0,
+				new Set([kSecCodeSignatureHashSHA1]),
+				// deno-lint-ignore require-await
+				async (type) => {
+					// Should not be called.
+					throw new Error(`Action: ${type}`);
+				},
+			),
+		Error,
+		'ErrorReader',
 	);
 });

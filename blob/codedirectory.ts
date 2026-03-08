@@ -21,14 +21,18 @@ import {
 	kSecCodeSignatureHashSHA256,
 	kSecCodeSignatureHashSHA256Truncated,
 	kSecCodeSignatureHashSHA384,
+	PAGE_SIZE,
 } from '../const.ts';
 import { CCHashInstance } from '../hash/cchashinstance.ts';
 import type { DynamicHash, DynamicHashCrypto } from '../hash/dynamichash.ts';
+import { sizeAsyncIterators, type SizeIteratorNext } from '../util/iterator.ts';
 import { toUint8ArrayArrayBuffer } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import { hashFileData } from '../util/utilities.ts';
 import { Blob } from './blob.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
+
+const max = (values: number[]) => Math.max(...values);
 
 /**
  * Describes secured pieces of a program.
@@ -514,6 +518,57 @@ export class CodeDirectory extends Blob {
 			}
 		}
 		throw new RangeError(`Unsupported hash type: ${hashType}`);
+	}
+
+	/**
+	 * Hash file data with multiple hashers.
+	 *
+	 * @param reader Reader.
+	 * @param limit Limit.
+	 * @param types Types.
+	 * @param action Callback for each hash.
+	 * @param crypto Hash crypto.
+	 */
+	public static async multipleHashFileData(
+		reader: Reader,
+		limit: number,
+		types: Set<number>,
+		action: (type: number, hasher: DynamicHash) => Promise<void>,
+		crypto: DynamicHashCrypto | null = null,
+	): Promise<void> {
+		const total = limit ? Math.min(limit, reader.size) : reader.size;
+		const hashes: [number, DynamicHash][] = [];
+		for (const type of types) {
+			const hash = CodeDirectory.hashFor(type);
+			hash.crypto = crypto;
+			hashes.push([type, hash]);
+		}
+		let i = 0;
+		let q: Promise<SizeIteratorNext<ArrayBuffer>>;
+		const tee = sizeAsyncIterators(
+			{
+				next(size = 0): Promise<SizeIteratorNext<ArrayBuffer>> {
+					return q = (q || Promise.resolve()).then(() => (
+						i < total
+							? reader.slice(
+								i,
+								Math.min(
+									i + Math.max(size, PAGE_SIZE),
+									total,
+								),
+							).arrayBuffer().then((value) => {
+								i += value.byteLength;
+								return { done: false, value } as const;
+							})
+							: { done: true }
+					));
+				},
+			},
+			max,
+			hashes.length,
+		);
+		await Promise.all(hashes.map(([, h], i) => h.update(tee[i], total)));
+		await Promise.all(hashes.map(([t, h]) => action(t, h)));
 	}
 
 	/**
