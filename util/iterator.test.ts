@@ -213,3 +213,63 @@ Deno.test('sizeAsyncIterators return', async () => {
 		assertEquals(returns, 1);
 	}
 });
+
+Deno.test('sizeAsyncIterators sync', async () => {
+	let i = 0;
+	const total = 6;
+	const list = sizeAsyncIterators<number[]>(
+		{
+			next(size): Promise<SizeIteratorNext<number[]>> {
+				if (i >= total) {
+					return Promise.resolve({ done: true });
+				}
+				size = Math.max(size || 0, 2);
+				const value = [];
+				for (; i < total && size-- > 0; i) {
+					value.push(++i);
+				}
+				return Promise.resolve({ done: false, value });
+			},
+		},
+		(sizes) => Math.max(...sizes),
+		3,
+	);
+
+	// Stay in sync even with different consumer speeds.
+	const values: [number, number[]][] = [];
+	const speeds = [10, 0, 20];
+	await Promise.all(list.map(async (gen, i) => {
+		try {
+			for (;;) {
+				// deno-lint-ignore no-await-in-loop
+				const { done, value } = await gen.next();
+				if (done) {
+					break;
+				}
+				values.push([i, value] as const);
+
+				const speed = speeds[i];
+				if (speed) {
+					// deno-lint-ignore no-await-in-loop
+					await new Promise((r) => setTimeout(r, speed));
+				}
+			}
+		} finally {
+			await gen.return?.();
+		}
+	}));
+
+	assertEquals(values, [
+		[0, [1, 2]],
+		[1, [1, 2]],
+		[2, [1, 2]],
+
+		[0, [3, 4]],
+		[1, [3, 4]],
+		[2, [3, 4]],
+
+		[0, [5, 6]],
+		[1, [5, 6]],
+		[2, [5, 6]],
+	]);
+});
