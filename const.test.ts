@@ -10,11 +10,21 @@ const signed = new Set([
 	'CPU_SUBTYPE_MULTIPLE',
 ]);
 
+const positive = new Set([
+	'errSecErrnoBase',
+	'errSecErrnoLimit',
+	'errSecSuccess',
+]);
+
 Deno.test('constants sign', () => {
 	for (const k of Object.keys(C)) {
 		const v = (C as { [k: string]: unknown })[k];
-		if (typeof v === 'number' && v < 0 && !signed.has(k)) {
-			throw new Error(`Invalid constant: ${k}`);
+		if (typeof v === 'number') {
+			const sig = k.startsWith('err') ? !positive.has(k) : signed.has(k);
+			const neg = v < 0;
+			if (sig !== neg) {
+				throw new Error(`Invalid constant: ${k}`);
+			}
 		}
 	}
 });
