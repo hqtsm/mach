@@ -56,7 +56,7 @@ export class MacOSError extends CommonError {
 	 * @param status Status.
 	 */
 	public static check(status: number): void {
-		if (status === errSecSuccess) {
+		if (status !== errSecSuccess) {
 			MacOSError.throwMe(status);
 		}
 	}
