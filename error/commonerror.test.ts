@@ -1,4 +1,9 @@
-import { assertEquals, assertGreater, assertInstanceOf } from '@std/assert';
+import {
+	assertEquals,
+	assertGreater,
+	assertInstanceOf,
+	assertThrows,
+} from '@std/assert';
 import { CommonError } from './commonerror.ts';
 
 Deno.test('message', () => {
@@ -34,9 +39,11 @@ Deno.test('isCommonError', () => {
 
 Deno.test('throw', () => {
 	assertInstanceOf(new CommonError(), Error);
-	try {
-		throw new CommonError();
-	} catch (e) {
-		assertInstanceOf(e, CommonError);
-	}
+	assertThrows(
+		() => {
+			throw new CommonError();
+		},
+		CommonError,
+		'',
+	);
 });
