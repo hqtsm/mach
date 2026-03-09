@@ -77,7 +77,12 @@ export class MacOSError extends CommonError {
 	 * @returns Is MacOSError.
 	 */
 	public static isMacOSError(arg: unknown): arg is MacOSError {
-		return (arg as MacOSError | null)?.[Symbol.toStringTag] === NAME;
+		for (; arg; arg = Object.getPrototypeOf(arg)) {
+			if ((arg as MacOSError | null)?.[Symbol.toStringTag] === NAME) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	static {

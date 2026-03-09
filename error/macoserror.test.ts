@@ -53,8 +53,8 @@ Deno.test('isMacOSError', () => {
 	assertEquals(MacOSError.isMacOSError(null), false);
 	assertEquals(MacOSError.isMacOSError(undefined), false);
 	assertEquals(MacOSError.isMacOSError(0), false);
-	// assertEquals(CommonError.isCommonError(new MacOSError(42)), true);
-	// assertEquals(MacOSError.isCommonError(new MacOSError(42)), true);
+	assertEquals(CommonError.isCommonError(new MacOSError(42)), true);
+	assertEquals(MacOSError.isCommonError(new MacOSError(42)), true);
 });
 
 Deno.test('check', () => {

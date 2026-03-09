@@ -108,7 +108,12 @@ export class UnixError extends CommonError {
 	 * @returns Is UnixError.
 	 */
 	public static isUnixError(arg: unknown): arg is UnixError {
-		return (arg as UnixError | null)?.[Symbol.toStringTag] === NAME;
+		for (; arg; arg = Object.getPrototypeOf(arg)) {
+			if ((arg as UnixError | null)?.[Symbol.toStringTag] === NAME) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	static {

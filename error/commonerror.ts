@@ -74,7 +74,12 @@ export class CommonError extends Error {
 	 * @returns Is CommonError.
 	 */
 	public static isCommonError(arg: unknown): arg is CommonError {
-		return (arg as CommonError | null)?.[Symbol.toStringTag] === NAME;
+		for (; arg; arg = Object.getPrototypeOf(arg)) {
+			if ((arg as CommonError | null)?.[Symbol.toStringTag] === NAME) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	static {
