@@ -1,8 +1,7 @@
 import { toStringTag } from '@hqtsm/class';
 import type { Const, Int8Ptr } from '@hqtsm/struct';
-import { errSecErrnoBase, errSecSuccess } from '../const.ts';
+import { errSecErrnoBase, errSecErrnoLimit, errSecSuccess } from '../const.ts';
 import { CommonError } from './commonerror.ts';
-import { errSecErrnoLimit } from '@hqtsm/mach';
 
 const NAME = 'MacOSError';
 
