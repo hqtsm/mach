@@ -45,18 +45,6 @@ Deno.test('what', () => {
 	assertEquals(err.what(), err.whatBuffer);
 });
 
-Deno.test('isMacOSError', () => {
-	assertEquals(MacOSError.isMacOSError(new MacOSError(42)), true);
-	assertEquals(MacOSError.isMacOSError(new CommonError()), false);
-	assertEquals(MacOSError.isMacOSError(new Error()), false);
-	assertEquals(MacOSError.isMacOSError({}), false);
-	assertEquals(MacOSError.isMacOSError(null), false);
-	assertEquals(MacOSError.isMacOSError(undefined), false);
-	assertEquals(MacOSError.isMacOSError(0), false);
-	assertEquals(CommonError.isCommonError(new MacOSError(42)), true);
-	assertEquals(MacOSError.isCommonError(new MacOSError(42)), true);
-});
-
 Deno.test('check', () => {
 	MacOSError.check(errSecSuccess);
 	assertThrows(
@@ -74,4 +62,16 @@ Deno.test('throw', () => {
 	} catch (e) {
 		assertInstanceOf(e, MacOSError);
 	}
+});
+
+Deno.test('isMacOSError', () => {
+	assertEquals(MacOSError.isMacOSError(new MacOSError(42)), true);
+	assertEquals(MacOSError.isMacOSError(new CommonError()), false);
+	assertEquals(MacOSError.isMacOSError(new Error()), false);
+	assertEquals(MacOSError.isMacOSError({}), false);
+	assertEquals(MacOSError.isMacOSError(null), false);
+	assertEquals(MacOSError.isMacOSError(undefined), false);
+	assertEquals(MacOSError.isMacOSError(0), false);
+	assertEquals(CommonError.isCommonError(new MacOSError(42)), true);
+	assertEquals(MacOSError.isCommonError(new MacOSError(42)), true);
 });
