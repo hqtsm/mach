@@ -8,6 +8,11 @@ import {
 import { CommonError } from './commonerror.ts';
 import { MacOSError } from './macoserror.ts';
 
+Deno.test('instanceof', () => {
+	assertInstanceOf(new MacOSError(42), Error);
+	assertInstanceOf(new MacOSError(42), CommonError);
+});
+
 Deno.test('message', () => {
 	const err = new MacOSError(42);
 	assertEquals(err.message, 'MacOS error: 42');
@@ -55,8 +60,6 @@ Deno.test('check', () => {
 });
 
 Deno.test('throwMe', () => {
-	assertInstanceOf(new MacOSError(42), Error);
-	assertInstanceOf(new MacOSError(42), CommonError);
 	assertThrows(() => MacOSError.throwMe(42), MacOSError, `MacOS error: 42`);
 });
 

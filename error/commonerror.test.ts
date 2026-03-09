@@ -6,6 +6,10 @@ import {
 } from '@std/assert';
 import { CommonError } from './commonerror.ts';
 
+Deno.test('instanceof', () => {
+	assertInstanceOf(new CommonError(), Error);
+});
+
 Deno.test('message', () => {
 	const err = new CommonError();
 	assertGreater(err.whatBufferSize, 0);
@@ -38,7 +42,6 @@ Deno.test('isCommonError', () => {
 });
 
 Deno.test('throw', () => {
-	assertInstanceOf(new CommonError(), Error);
 	assertThrows(
 		() => {
 			throw new CommonError();
