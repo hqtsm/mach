@@ -54,7 +54,7 @@ Deno.test('check', () => {
 	);
 });
 
-Deno.test('throw', () => {
+Deno.test('throwMe', () => {
 	assertInstanceOf(new MacOSError(42), Error);
 	assertInstanceOf(new MacOSError(42), CommonError);
 	try {
