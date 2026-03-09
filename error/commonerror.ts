@@ -1,12 +1,18 @@
 import { toStringTag } from '@hqtsm/class';
 import { type Arr, array, Int8Ptr } from '@hqtsm/struct';
 
+const NAME = 'CommonError';
 const whatBufferSize = 128;
 
 /**
  * Common error.
  */
 export class CommonError extends Error {
+	/**
+	 * Error tag.
+	 */
+	declare public [Symbol.toStringTag]: string;
+
 	/**
 	 * Error message.
 	 */
@@ -64,17 +70,17 @@ export class CommonError extends Error {
 	/**
 	 * Is value a CommonError.
 	 *
-	 * @param value Value.
+	 * @param arg Value.
 	 * @returns Is CommonError.
 	 */
-	public static isCommonError(value: unknown): value is CommonError {
-		return Error.isError(value) && value.name === 'CommonError';
+	public static isCommonError(arg: unknown): arg is CommonError {
+		return (arg as CommonError | null)?.[Symbol.toStringTag] === NAME;
 	}
 
 	static {
-		toStringTag(this, 'CommonError');
+		toStringTag(this, NAME);
 		Object.defineProperty(this.prototype, 'name', {
-			value: 'CommonError',
+			value: NAME,
 			configurable: true,
 			enumerable: false,
 			writable: true,

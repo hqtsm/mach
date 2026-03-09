@@ -4,6 +4,8 @@ import { errSecErrnoBase, errSecSuccess } from '../const.ts';
 import { CommonError } from './commonerror.ts';
 import { errSecErrnoLimit } from '@hqtsm/mach';
 
+const NAME = 'MacOSError';
+
 /**
  * Unix error.
  */
@@ -71,17 +73,17 @@ export class MacOSError extends CommonError {
 	/**
 	 * Is value a MacOSError.
 	 *
-	 * @param value Value.
+	 * @param arg Value.
 	 * @returns Is MacOSError.
 	 */
-	public static isMacOSError(value: unknown): value is MacOSError {
-		return Error.isError(value) && value.name === 'MacOSError';
+	public static isMacOSError(arg: unknown): arg is MacOSError {
+		return (arg as CommonError | null)?.[Symbol.toStringTag] === NAME;
 	}
 
 	static {
-		toStringTag(this, 'MacOSError');
+		toStringTag(this, NAME);
 		Object.defineProperty(this.prototype, 'name', {
-			value: 'MacOSError',
+			value: NAME,
 			configurable: true,
 			enumerable: false,
 			writable: true,
