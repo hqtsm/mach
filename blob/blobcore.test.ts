@@ -4,8 +4,8 @@ import {
 	assertNotEquals,
 	assertThrows,
 } from '@std/assert';
-import { EINVAL, ENOMEM } from '../const.ts';
 import { UnixError } from '../error/unixerror.ts';
+import { EINVAL, ENOMEM } from '../libc/errno.ts';
 import { BlobCore } from './blobcore.ts';
 
 Deno.test('BYTE_LENGTH', () => {

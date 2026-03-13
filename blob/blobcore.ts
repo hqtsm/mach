@@ -9,8 +9,8 @@ import {
 	uint32BE,
 	Uint8Ptr,
 } from '@hqtsm/struct';
-import { EINVAL, ENOMEM } from '../const.ts';
 import { UnixError } from '../error/unixerror.ts';
+import { EINVAL, ENOMEM } from '../libc/errno.ts';
 import { malloc } from '../libc/stdlib.ts';
 import type { Reader } from '../util/reader.ts';
 
