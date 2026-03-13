@@ -1,4 +1,7 @@
 import { type Concrete, constant, toStringTag } from '@hqtsm/class';
+import { errSecAllocate } from '../const.ts';
+import { MacOSError } from '../error/macoserror.ts';
+import { malloc } from '../libc/stdlib.ts';
 import { type ArrayBufferLikeData, asUint8Array } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import { BlobCore } from './blobcore.ts';
@@ -141,13 +144,16 @@ export abstract class Blob extends BlobCore {
 		const { BYTE_LENGTH } = BlobCore;
 		const view = asUint8Array(content);
 		const size = BYTE_LENGTH + view.byteLength;
-		const buffer = new ArrayBuffer(size);
+		const data = malloc(size);
+		if (!data) {
+			MacOSError.throwMe(errSecAllocate);
+		}
 		class B extends Blob {
 			public static override readonly typeMagic = typeMagic;
 		}
-		B.initializeSize(new B(buffer), size);
-		new Uint8Array(buffer, BYTE_LENGTH).set(view);
-		return buffer;
+		B.initializeSize(new B(data), size);
+		new Uint8Array(data, BYTE_LENGTH).set(view);
+		return data;
 	}
 
 	/**

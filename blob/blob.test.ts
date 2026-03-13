@@ -1,7 +1,8 @@
-import { assertEquals, assertInstanceOf } from '@std/assert';
+import { assertEquals, assertInstanceOf, assertThrows } from '@std/assert';
 import { type Class, constant } from '@hqtsm/class';
 import { uint32BE } from '@hqtsm/struct';
-import { EINVAL } from '../const.ts';
+import { EINVAL, errSecAllocate } from '../const.ts';
+import { MacOSError } from '../error/macoserror.ts';
 import { Blob } from './blob.ts';
 import { BlobCore } from './blobcore.ts';
 
@@ -87,6 +88,36 @@ Deno.test('blobify view', () => {
 		new Uint8Array(blobV),
 		new Uint8Array([0, 0, 0, 0, 0, 0, 0, 12, 2, 3, 4, 5]),
 	);
+});
+
+Deno.test('blobify error', () => {
+	const content = new ArrayBuffer(0xDEAD);
+	const desc = Object.getOwnPropertyDescriptor(
+		globalThis,
+		'ArrayBuffer',
+	)!;
+	Object.defineProperty(globalThis, 'ArrayBuffer', {
+		...desc,
+		value: new Proxy(desc.value, {
+			construct(target: () => unknown, args: unknown[]): object {
+				if (args[0] === BlobCore.BYTE_LENGTH + 0xDEAD) {
+					throw new RangeError('TEST-OOM');
+				}
+				return Reflect.construct(target, args);
+			},
+		}),
+	});
+	try {
+		const err = assertThrows(
+			() => Blob.blobify(content),
+			MacOSError,
+			new MacOSError(errSecAllocate).message,
+		);
+		assertEquals(err.error, errSecAllocate);
+	} finally {
+		Object.defineProperty(globalThis, 'ArrayBuffer', desc);
+	}
+	Blob.blobify(content);
 });
 
 Deno.test('readBlob regular', async () => {
