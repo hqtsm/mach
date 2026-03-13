@@ -1,6 +1,12 @@
-import { assertEquals, assertInstanceOf, assertNotEquals } from '@std/assert';
-import { BlobCore } from './blobcore.ts';
+import {
+	assertEquals,
+	assertInstanceOf,
+	assertNotEquals,
+	assertThrows,
+} from '@std/assert';
 import { EINVAL, ENOMEM } from '../const.ts';
+import { UnixError } from '../error/unixerror.ts';
+import { BlobCore } from './blobcore.ts';
 
 Deno.test('BYTE_LENGTH', () => {
 	assertEquals(BlobCore.BYTE_LENGTH, 8);
@@ -33,6 +39,34 @@ Deno.test('clone', () => {
 	assertEquals(BlobCore.data(clone).byteOffset, 0);
 	new Uint8Array(BlobCore.data(clone).buffer).fill(1);
 	assertEquals(data, new Uint8Array(12));
+	{
+		BlobCore.size(blob, 0xDEADDEAD);
+		const desc = Object.getOwnPropertyDescriptor(
+			globalThis,
+			'ArrayBuffer',
+		)!;
+		Object.defineProperty(globalThis, 'ArrayBuffer', {
+			...desc,
+			value: new Proxy(desc.value, {
+				construct(target: () => unknown, args: unknown[]): object {
+					if (args[0] === 0xDEADDEAD) {
+						throw new RangeError('TEST-OOM');
+					}
+					return Reflect.construct(target, args);
+				},
+			}),
+		});
+		try {
+			const err = assertThrows(
+				() => BlobCore.clone(blob),
+				UnixError,
+				new UnixError(ENOMEM, false).message,
+			);
+			assertEquals(err.error, ENOMEM);
+		} finally {
+			Object.defineProperty(globalThis, 'ArrayBuffer', desc);
+		}
+	}
 });
 
 Deno.test('innerData', () => {

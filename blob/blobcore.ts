@@ -10,6 +10,8 @@ import {
 	Uint8Ptr,
 } from '@hqtsm/struct';
 import { EINVAL, ENOMEM } from '../const.ts';
+import { UnixError } from '../error/unixerror.ts';
+import { malloc } from '../libc/stdlib.ts';
 import type { Reader } from '../util/reader.ts';
 
 /**
@@ -209,11 +211,14 @@ export class BlobCore extends Struct {
 	 */
 	public static clone(_this: BlobCore): BlobCore | null {
 		const l = BlobCore.size(_this);
-		const b = new ArrayBuffer(l);
-		new Uint8Array(b).set(
-			new Uint8Array(_this.buffer, _this.byteOffset, l),
-		);
-		return new BlobCore(b, 0, _this.littleEndian);
+		const b = malloc(l);
+		if (b) {
+			new Uint8Array(b).set(
+				new Uint8Array(_this.buffer, _this.byteOffset, l),
+			);
+			return new BlobCore(b, 0, _this.littleEndian);
+		}
+		UnixError.throwMe(ENOMEM);
 	}
 
 	/**
