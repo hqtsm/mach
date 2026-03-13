@@ -1,7 +1,7 @@
 import { toStringTag } from '@hqtsm/class';
 import { pointer, type Ptr } from '@hqtsm/struct';
-import { UINT32_MAX } from '../const.ts';
 import type { DynamicHash, DynamicHashCrypto } from '../hash/dynamichash.ts';
+import { UINT32_MAX } from '../libc/stdint.ts';
 import {
 	type ArrayBufferLikeData,
 	toUint8ArrayArrayBuffer,
