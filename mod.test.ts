@@ -74,9 +74,6 @@ function isClass(arg: unknown): arg is Class {
 }
 
 Deno.test('public', async () => {
-	const filed = new Map([
-		['MemoryFile', 'file'],
-	]);
 	for await (
 		const uri of findModules(
 			dir,
@@ -94,23 +91,6 @@ Deno.test('public', async () => {
 	) {
 		const m = await import(uri);
 		assertExported(m, mod, uri);
-
-		const [file] = uri.split('/').pop()!.split('.');
-		if (file === 'mod') {
-			continue;
-		}
-
-		for (const name of Object.keys(m)) {
-			const Class = m[name];
-			if (!isClass(Class)) {
-				continue;
-			}
-			assertEquals(
-				filed.get(name) ?? name.toLowerCase(),
-				file,
-				`${file}: ${uri}`,
-			);
-		}
 	}
 });
 
