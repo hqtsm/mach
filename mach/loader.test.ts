@@ -1,4 +1,16 @@
 import { assertEquals } from '@std/assert';
+import {
+	LC_DYLD_CHAINED_FIXUPS,
+	LC_DYLD_EXPORTS_TRIE,
+	LC_DYLD_INFO_ONLY,
+	LC_FILESET_ENTRY,
+	LC_LOAD_UPWARD_DYLIB,
+	LC_LOAD_WEAK_DYLIB,
+	LC_MAIN,
+	LC_REEXPORT_DYLIB,
+	LC_REQ_DYLD,
+	LC_RPATH,
+} from './loader.ts';
 import * as loader from './loader.ts';
 
 const BYTE_LENGTH = {
@@ -65,4 +77,16 @@ Deno.test('BYTE_LENGTH', () => {
 	) {
 		assertEquals(loader[key].BYTE_LENGTH, value);
 	}
+});
+
+Deno.test('constants expressions', () => {
+	assertEquals(LC_LOAD_WEAK_DYLIB, (0x18 | LC_REQ_DYLD) >>> 0);
+	assertEquals(LC_RPATH, (0x1c | LC_REQ_DYLD) >>> 0);
+	assertEquals(LC_REEXPORT_DYLIB, (0x1f | LC_REQ_DYLD) >>> 0);
+	assertEquals(LC_DYLD_INFO_ONLY, (0x22 | LC_REQ_DYLD) >>> 0);
+	assertEquals(LC_LOAD_UPWARD_DYLIB, (0x23 | LC_REQ_DYLD) >>> 0);
+	assertEquals(LC_MAIN, (0x28 | LC_REQ_DYLD) >>> 0);
+	assertEquals(LC_DYLD_EXPORTS_TRIE, (0x33 | LC_REQ_DYLD) >>> 0);
+	assertEquals(LC_DYLD_CHAINED_FIXUPS, (0x34 | LC_REQ_DYLD) >>> 0);
+	assertEquals(LC_FILESET_ENTRY, (0x35 | LC_REQ_DYLD) >>> 0);
 });

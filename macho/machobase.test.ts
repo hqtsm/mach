@@ -6,6 +6,7 @@ import {
 	Uint8Ptr,
 } from '@hqtsm/struct';
 import {
+	build_version_command,
 	LC_BUILD_VERSION,
 	LC_CODE_SIGNATURE,
 	LC_DYLIB_CODE_SIGN_DRS,
@@ -15,19 +16,16 @@ import {
 	LC_VERSION_MIN_MACOSX,
 	LC_VERSION_MIN_TVOS,
 	LC_VERSION_MIN_WATCHOS,
+	linkedit_data_command,
+	load_command,
+	mach_header,
+	mach_header_64,
 	MH_MAGIC,
 	MH_MAGIC_64,
 	PLATFORM_IOS,
 	PLATFORM_MACOS,
 	PLATFORM_TVOS,
 	PLATFORM_WATCHOS,
-} from '../const.ts';
-import {
-	build_version_command,
-	linkedit_data_command,
-	load_command,
-	mach_header,
-	mach_header_64,
 	rpath_command,
 	section,
 	section_64,

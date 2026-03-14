@@ -7,16 +7,23 @@ import {
 	LITTLE_ENDIAN,
 	Uint32Ptr,
 } from '@hqtsm/struct';
+import { strlen, strncmp } from '../libc/string.ts';
 import {
+	build_version_command,
 	LC_BUILD_VERSION,
 	LC_CODE_SIGNATURE,
 	LC_DYLIB_CODE_SIGN_DRS,
 	LC_SEGMENT,
 	LC_SEGMENT_64,
+	type lc_str,
 	LC_VERSION_MIN_IPHONEOS,
 	LC_VERSION_MIN_MACOSX,
 	LC_VERSION_MIN_TVOS,
 	LC_VERSION_MIN_WATCHOS,
+	linkedit_data_command,
+	load_command,
+	mach_header,
+	mach_header_64,
 	MH_CIGAM,
 	MH_CIGAM_64,
 	MH_MAGIC,
@@ -25,15 +32,6 @@ import {
 	PLATFORM_MACOS,
 	PLATFORM_TVOS,
 	PLATFORM_WATCHOS,
-} from '../const.ts';
-import { strlen, strncmp } from '../libc/string.ts';
-import {
-	build_version_command,
-	type lc_str,
-	linkedit_data_command,
-	load_command,
-	mach_header,
-	mach_header_64,
 	section,
 	section_64,
 	segment_command,

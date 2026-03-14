@@ -68,6 +68,18 @@ export class mach_header extends Struct {
 	}
 }
 
+// Constants for mach_header magic:
+
+/**
+ * 32-bit mach magic number.
+ */
+export const MH_MAGIC = 0xfeedface;
+
+/**
+ * 32-bit mach magic number, byte swapped.
+ */
+export const MH_CIGAM = 0xcefaedfe;
+
 /**
  * Mach-O header, 64-bit.
  */
@@ -126,6 +138,242 @@ export class mach_header_64 extends Struct {
 	}
 }
 
+// Constants for mach_header_64 magic:
+
+/**
+ * 64-bit mach magic number.
+ */
+export const MH_MAGIC_64 = 0xfeedfacf;
+
+/**
+ * 64-bit mach magic number, byte swapped.
+ */
+export const MH_CIGAM_64 = 0xcffaedfe;
+
+// Constants for mach_header filetype:
+
+/**
+ * Object file.
+ */
+export const MH_OBJECT = 0x1;
+
+/**
+ * Executable file.
+ */
+export const MH_EXECUTE = 0x2;
+
+/**
+ * Fixed VM shared library file.
+ */
+export const MH_FVMLIB = 0x3;
+
+/**
+ * Core file.
+ */
+export const MH_CORE = 0x4;
+
+/**
+ * Preload file.
+ */
+export const MH_PRELOAD = 0x5;
+
+/**
+ * Dynamically bound shared library.
+ */
+export const MH_DYLIB = 0x6;
+
+/**
+ * Dynamic link editor.
+ */
+export const MH_DYLINKER = 0x7;
+
+/**
+ * Dynamically bound bundle file.
+ */
+export const MH_BUNDLE = 0x8;
+
+/**
+ * Shared library stub for static linking.
+ */
+export const MH_DYLIB_STUB = 0x9;
+
+/**
+ * Debug symbols file.
+ */
+export const MH_DSYM = 0xa;
+
+/**
+ * Kext bundle.
+ */
+export const MH_KEXT_BUNDLE = 0xb;
+
+/**
+ * Multiple Mach-Os files sharing a linkedit.
+ */
+export const MH_FILESET = 0xc;
+
+/**
+ * GPU program.
+ */
+export const MH_GPU_EXECUTE = 0xd;
+
+/**
+ * GPU library.
+ */
+export const MH_GPU_DYLIB = 0xe;
+
+// Constants for mach_header flags:
+
+/**
+ * No undefined references.
+ */
+export const MH_NOUNDEFS = 0x1;
+
+/**
+ * Incremental link edit.
+ */
+export const MH_INCRLINK = 0x2;
+
+/**
+ * Dynamic link edit.
+ */
+export const MH_DYLDLINK = 0x4;
+
+/**
+ * Bind undefined references at load time.
+ */
+export const MH_BINDATLOAD = 0x8;
+
+/**
+ * Prebound undefined references.
+ */
+export const MH_PREBOUND = 0x10;
+
+/**
+ * Split segements.
+ */
+export const MH_SPLIT_SEGS = 0x20;
+
+/**
+ * Shared library init routine is lazy.
+ */
+export const MH_LAZY_INIT = 0x40;
+
+/**
+ * Using two-level namespace binding.
+ */
+export const MH_TWOLEVEL = 0x80;
+
+/**
+ * Force flat namespace binding.
+ */
+export const MH_FORCE_FLAT = 0x100;
+
+/**
+ * No multiple definitions in subimages.
+ */
+export const MH_NOMULTIDEFS = 0x200;
+
+/**
+ * Do not have dyld notify the prebinding agent.
+ */
+export const MH_NOFIXPREBINDING = 0x400;
+
+/**
+ * Binary is not prebound but can have prebindings redone.
+ */
+export const MH_PREBINDABLE = 0x800;
+
+/**
+ * Binary binds to all two-level namespace modules.
+ */
+export const MH_ALLMODSBOUND = 0x1000;
+
+/**
+ * Safe to divide sections into subsections via symbols.
+ */
+export const MH_SUBSECTIONS_VIA_SYMBOLS = 0x2000;
+
+/**
+ * Binary has been made canonical by unprebind operation.
+ */
+export const MH_CANONICAL = 0x4000;
+
+/**
+ * Final lined image contains external weak symbols.
+ */
+export const MH_WEAK_DEFINES = 0x8000;
+
+/**
+ * Final linked image uses weak symbols.
+ */
+export const MH_BINDS_TO_WEAK = 0x10000;
+
+/**
+ * All stacks are given stack execution permission.
+ */
+export const MH_ALLOW_STACK_EXECUTION = 0x20000;
+
+/**
+ * Safe for use in a process with uid 0.
+ */
+export const MH_ROOT_SAFE = 0x40000;
+
+/**
+ * Safe for use in a setuid process.
+ */
+export const MH_SETUID_SAFE = 0x80000;
+
+/**
+ * No re-exported dylibs.
+ */
+export const MH_NO_REEXPORTED_DYLIBS = 0x100000;
+
+/**
+ * Position independent executable.
+ */
+export const MH_PIE = 0x200000;
+
+/**
+ * Allow no LC_LOAD_DYLIB command if unused.
+ */
+export const MH_DEAD_STRIPPABLE_DYLIB = 0x400000;
+
+/**
+ * Contains a S_THREAD_LOCAL_VARIABLES section.
+ */
+export const MH_HAS_TLV_DESCRIPTORS = 0x800000;
+
+/**
+ * Run main executable with non-executable heap.
+ */
+export const MH_NO_HEAP_EXECUTION = 0x1000000;
+
+/**
+ * Linked for us in an application extension.
+ */
+export const MH_APP_EXTENSION_SAFE = 0x02000000;
+
+/**
+ * External symbols in nlist do not include all symbols in dyld info.
+ */
+export const MH_NLIST_OUTOFSYNC_WITH_DYLDINFO = 0x04000000;
+
+/**
+ * Allow simulator support.
+ */
+export const MH_SIM_SUPPORT = 0x08000000;
+
+/**
+ * Has no __PAGEZERO segment.
+ */
+export const MH_IMPLICIT_PAGEZERO = 0x10000000;
+
+/**
+ * Dylib is part of the dyld chared cache.
+ */
+export const MH_DYLIB_IN_CACHE = 0x80000000;
+
 /**
  * Load command.
  */
@@ -147,6 +395,303 @@ export class load_command extends Struct {
 		constant(this, 'BYTE_LENGTH');
 	}
 }
+
+// Constants for load_command cmd values:
+
+/**
+ * Requires dynamic linker to support command.
+ */
+export const LC_REQ_DYLD = 0x80000000;
+
+/**
+ * Segment to me mapped.
+ */
+export const LC_SEGMENT = 0x1;
+
+/**
+ * Link-edit stabl symbol table.
+ */
+export const LC_SYMTAB = 0x2;
+
+/**
+ * Link-edit gdb symbol table.
+ */
+export const LC_SYMSEG = 0x3;
+
+/**
+ * Thread.
+ */
+export const LC_THREAD = 0x4;
+
+/**
+ * Unix thread.
+ */
+export const LC_UNIXTHREAD = 0x5;
+
+/**
+ * Load a fixed VM shared library.
+ */
+export const LC_LOADFVMLIB = 0x6;
+
+/**
+ * Fixed VM shared library identification.
+ */
+export const LC_IDFVMLIB = 0x7;
+
+/**
+ * Object identification.
+ */
+export const LC_IDENT = 0x8;
+
+/**
+ * Fixed VM file inclusion.
+ */
+export const LC_FVMFILE = 0x9;
+
+/**
+ * Prepage command.
+ */
+export const LC_PREPAGE = 0xa;
+
+/**
+ * Dynamic link-edit symbol table.
+ */
+export const LC_DYSYMTAB = 0xb;
+
+/**
+ * Load a dynamically linked shared library.
+ */
+export const LC_LOAD_DYLIB = 0xc;
+
+/**
+ * Dynamically linked shared library identification.
+ */
+export const LC_ID_DYLIB = 0xd;
+
+/**
+ * Load a dynamic linker.
+ */
+export const LC_LOAD_DYLINKER = 0xe;
+
+/**
+ * Dynamic linker identification.
+ */
+export const LC_ID_DYLINKER = 0xf;
+
+/**
+ * Prebound for dynamically linked shared library.
+ */
+export const LC_PREBOUND_DYLIB = 0x10;
+
+/**
+ * Image routines.
+ */
+export const LC_ROUTINES = 0x11;
+
+/**
+ * Sub-framework.
+ */
+export const LC_SUB_FRAMEWORK = 0x12;
+
+/**
+ * Sub-umbrella.
+ */
+export const LC_SUB_UMBRELLA = 0x13;
+
+/**
+ * Sub-client.
+ */
+export const LC_SUB_CLIENT = 0x14;
+
+/**
+ * Sub-library.
+ */
+export const LC_SUB_LIBRARY = 0x15;
+
+/**
+ * Two-level namespace lookup hints.
+ */
+export const LC_TWOLEVEL_HINTS = 0x16;
+
+/**
+ * Prebind checksum.
+ */
+export const LC_PREBIND_CKSUM = 0x17;
+
+/**
+ * Load a dylib that is allow to be missing.
+ */
+export const LC_LOAD_WEAK_DYLIB = 0x80000018; // 0x18 | LC_REQ_DYLD
+
+/**
+ * 64-bit segment to be mapped.
+ */
+export const LC_SEGMENT_64 = 0x19;
+
+/**
+ * 64-bit image routines.
+ */
+export const LC_ROUTINES_64 = 0x1a;
+
+/**
+ * The UUID.
+ */
+export const LC_UUID = 0x1b;
+
+/**
+ * Runpath additions.
+ */
+export const LC_RPATH = 0x8000001c; // 0x1c | LC_REQ_DYLD
+
+/**
+ * Code signature.
+ */
+export const LC_CODE_SIGNATURE = 0x1d;
+
+/**
+ * Split segments info.
+ */
+export const LC_SEGMENT_SPLIT_INFO = 0x1e;
+
+/**
+ * Re-export dylib.
+ */
+export const LC_REEXPORT_DYLIB = 0x8000001f; // 0x1f | LC_REQ_DYLD
+
+/**
+ * Lazy load dylib on first use.
+ */
+export const LC_LAZY_LOAD_DYLIB = 0x20;
+
+/**
+ * Encrypted segment info.
+ */
+export const LC_ENCRYPTION_INFO = 0x21;
+
+/**
+ * Compressed dyld info.
+ */
+export const LC_DYLD_INFO = 0x22;
+
+/**
+ * Compressed dyld info only.
+ */
+export const LC_DYLD_INFO_ONLY = 0x80000022; // 0x22 | LC_REQ_DYLD
+
+/**
+ * Load upward dylib.
+ */
+export const LC_LOAD_UPWARD_DYLIB = 0x80000023; // 0x23 | LC_REQ_DYLD
+
+/**
+ * Minimum macOS version.
+ */
+export const LC_VERSION_MIN_MACOSX = 0x24;
+
+/**
+ * Minimum iPhoneOS version.
+ */
+export const LC_VERSION_MIN_IPHONEOS = 0x25;
+
+/**
+ * Compressed table of function start addresses.
+ */
+export const LC_FUNCTION_STARTS = 0x26;
+
+/**
+ * Dyld environment variable string.
+ */
+export const LC_DYLD_ENVIRONMENT = 0x27;
+
+/**
+ * Replacement for LC_UNIXTHREAD.
+ */
+export const LC_MAIN = 0x80000028; // 0x28 | LC_REQ_DYLD
+
+/**
+ * Table of non-instructions in __text.
+ */
+export const LC_DATA_IN_CODE = 0x29;
+
+/**
+ * Source version used to generate binary.
+ */
+export const LC_SOURCE_VERSION = 0x2a;
+
+/**
+ * Code signing DRs from linked dylibs.
+ */
+export const LC_DYLIB_CODE_SIGN_DRS = 0x2b;
+
+/**
+ * 64-bit encrypted segment info.
+ */
+export const LC_ENCRYPTION_INFO_64 = 0x2c;
+
+/**
+ * Linker options.
+ */
+export const LC_LINKER_OPTION = 0x2d;
+
+/**
+ * Linker optimization hints.
+ */
+export const LC_LINKER_OPTIMIZATION_HINT = 0x2e;
+
+/**
+ * Minimum tvOS version.
+ */
+export const LC_VERSION_MIN_TVOS = 0x2f;
+
+/**
+ * Minimum watchOS version.
+ */
+export const LC_VERSION_MIN_WATCHOS = 0x30;
+
+/**
+ * Arbitrary data.
+ */
+export const LC_NOTE = 0x31;
+
+/**
+ * Build for platform min OS version.
+ */
+export const LC_BUILD_VERSION = 0x32;
+
+/**
+ * Used with linkedit_data_command.
+ */
+export const LC_DYLD_EXPORTS_TRIE = 0x80000033; // 0x33 | LC_REQ_DYLD
+
+/**
+ * Used with linkedit_data_command.
+ */
+export const LC_DYLD_CHAINED_FIXUPS = 0x80000034; // 0x34 | LC_REQ_DYLD
+
+/**
+ * Used with fileset_entry_command.
+ */
+export const LC_FILESET_ENTRY = 0x80000035; // 0x35 | LC_REQ_DYLD
+
+/**
+ * Used with linkedit_data_command.
+ */
+export const LC_ATOM_INFO = 0x36;
+
+/**
+ * Used with linkedit_data_command.
+ */
+export const LC_FUNCTION_VARIANTS = 0x37;
+
+/**
+ * Used with linkedit_data_command.
+ */
+export const LC_FUNCTION_VARIANT_FIXUPS = 0x38;
+
+/**
+ * Target triple used to compile.
+ */
+export const LC_TARGET_TRIPLE = 0x39;
 
 /**
  * Load command string union.
@@ -317,6 +862,33 @@ export class segment_command_64 extends Struct {
 	}
 }
 
+// Constants for segment_command flags:
+
+/**
+ * Segment is for high part of the VM space.
+ */
+export const SG_HIGHVM = 0x1;
+
+/**
+ * Segment is the VM for a fixed VM library.
+ */
+export const SG_FVMLIB = 0x2;
+
+/**
+ * Segment is not relocated and has no relocations.
+ */
+export const SG_NORELOC = 0x4;
+
+/**
+ * Segment is protected.
+ */
+export const SG_PROTECTED_VERSION_1 = 0x8;
+
+/**
+ * Segment is read-only after fixups.
+ */
+export const SG_READ_ONLY = 0x10;
+
 /**
  * Section, 32-bit.
  */
@@ -474,6 +1046,299 @@ export class section_64 extends Struct {
 		constant(this, 'BYTE_LENGTH');
 	}
 }
+
+// Masks for section flags:
+
+/**
+ * Section type mask.
+ */
+export const SECTION_TYPE = 0x000000ff;
+
+/**
+ * Section attributes mask.
+ */
+export const SECTION_ATTRIBUTES = 0xffffff00;
+
+// Constants for section type:
+
+/**
+ * Regular section.
+ */
+export const S_REGULAR = 0x0;
+
+/**
+ * Zero fill on demand section.
+ */
+export const S_ZEROFILL = 0x1;
+
+/**
+ * Section of only literal C-strings.
+ */
+export const S_CSTRING_LITERALS = 0x2;
+
+/**
+ * Section of only 4-byte literals.
+ */
+export const S_4BYTE_LITERALS = 0x3;
+
+/**
+ * Section of only 8-byte literals.
+ */
+export const S_8BYTE_LITERALS = 0x4;
+
+/**
+ * Section with only pointer to literals.
+ */
+export const S_LITERAL_POINTERS = 0x5;
+
+/**
+ * Section with only non-lazy symbol pointers.
+ */
+export const S_NON_LAZY_SYMBOL_POINTERS = 0x6;
+
+/**
+ * Section with only lazy symbol pointers.
+ */
+export const S_LAZY_SYMBOL_POINTERS = 0x7;
+
+/**
+ * Section with only symbol stubs.
+ */
+export const S_SYMBOL_STUBS = 0x8;
+
+/**
+ * Section with only function pointers for initialization.
+ */
+export const S_MOD_INIT_FUNC_POINTERS = 0x9;
+
+/**
+ * Section with only function pointers for termination.
+ */
+export const S_MOD_TERM_FUNC_POINTERS = 0xa;
+
+/**
+ * Section contains coalesced symbols.
+ */
+export const S_COALESCED = 0xb;
+
+/**
+ * Zero fill on demand section (can be larger than 4GB).
+ */
+export const S_GB_ZEROFILL = 0xc;
+
+/**
+ * Section with only interposing function pointer pairs.
+ */
+export const S_INTERPOSING = 0xd;
+
+/**
+ * Section with only 16-byte literals.
+ */
+export const S_16BYTE_LITERALS = 0xe;
+
+/**
+ * Section contains DTrace Object Format objects.
+ */
+export const S_DTRACE_DOF = 0xf;
+
+/**
+ * Section with only lazy symbol pointers to lazy loaded dylibs.
+ */
+export const S_LAZY_DYLIB_SYMBOL_POINTERS = 0x10;
+
+/**
+ * Template of initial values for regular thread local variables.
+ */
+export const S_THREAD_LOCAL_REGULAR = 0x11;
+
+/**
+ * Template of initial values for zerofill thread local variables.
+ */
+export const S_THREAD_LOCAL_ZEROFILL = 0x12;
+
+/**
+ * Thread local variable descriptors.
+ */
+export const S_THREAD_LOCAL_VARIABLES = 0x13;
+
+/**
+ * Pointers to thread local variable descriptors.
+ */
+export const S_THREAD_LOCAL_VARIABLE_POINTERS = 0x14;
+
+/**
+ * Functions to call to initialize thread local variables.
+ */
+export const S_THREAD_LOCAL_INIT_FUNCTION_POINTERS = 0x15;
+
+/**
+ * Offsets to initializer functions.
+ */
+export const S_INIT_FUNC_OFFSETS = 0x16;
+
+// Constants for section attributes:
+
+/**
+ * User setable attributes.
+ */
+export const SECTION_ATTRIBUTES_USR = 0xff000000;
+
+/**
+ * Section is pure machine instructions.
+ */
+export const S_ATTR_PURE_INSTRUCTIONS = 0x80000000;
+
+/**
+ * Section contains coalsed symbols not in a ranlib table of contents.
+ */
+export const S_ATTR_NO_TOC = 0x40000000;
+
+/**
+ * Allow stripping static symbols.
+ */
+export const S_ATTR_STRIP_STATIC_SYMS = 0x20000000;
+
+/**
+ * Prevent dead stripping.
+ */
+export const S_ATTR_NO_DEAD_STRIP = 0x10000000;
+
+/**
+ * Blocks are live is they reference live blocks.
+ */
+export const S_ATTR_LIVE_SUPPORT = 0x08000000;
+
+/**
+ * Allos self modifying code.
+ */
+export const S_ATTR_SELF_MODIFYING_CODE = 0x04000000;
+
+/**
+ * Debug section.
+ */
+export const S_ATTR_DEBUG = 0x02000000;
+
+/**
+ * System setable attributes.
+ */
+export const SECTION_ATTRIBUTES_SYS = 0x00ffff00;
+
+/**
+ * Section contains some machine instructions.
+ */
+export const S_ATTR_SOME_INSTRUCTIONS = 0x00000400;
+
+/**
+ * Section has external relocation entries.
+ */
+export const S_ATTR_EXT_RELOC = 0x00000200;
+
+/**
+ * Section has local relocation entries.
+ */
+export const S_ATTR_LOC_RELOC = 0x00000100;
+
+// Names for known segments and sections:
+
+/**
+ * The pagezero segment.
+ */
+export const SEG_PAGEZERO = '__PAGEZERO';
+
+/**
+ * UNIX text segment.
+ */
+export const SEG_TEXT = '__TEXT';
+
+/**
+ * Real text part of text segment.
+ */
+export const SECT_TEXT = '__text';
+
+/**
+ * The fvmlib initialization section.
+ */
+export const SECT_FVMLIB_INIT0 = '__fvmlib_init0';
+
+/**
+ * Section following fvmlib initialization.
+ */
+export const SECT_FVMLIB_INIT1 = '__fvmlib_init1';
+
+/**
+ * UNIX data segment.
+ */
+export const SEG_DATA = '__DATA';
+
+/**
+ * Real initialized data section.
+ */
+export const SECT_DATA = '__data';
+
+/**
+ * Real uninitialized data section.
+ */
+export const SECT_BSS = '__bss';
+
+/**
+ * Section common symbols.
+ */
+export const SECT_COMMON = '__common';
+
+/**
+ * Objective-C runtime segment.
+ */
+export const SEG_OBJC = '__OBJC';
+
+/**
+ * Objective-C symbol table.
+ */
+export const SECT_OBJC_SYMBOLS = '__symbol_table';
+
+/**
+ * Objective-C module information.
+ */
+export const SECT_OBJC_MODULES = '__module_info';
+
+/**
+ * Objective-C selector strings table.
+ */
+export const SECT_OBJC_STRINGS = '__selector_strs';
+
+/**
+ * Objective-C reference string table.
+ */
+export const SECT_OBJC_REFS = '__selector_refs';
+
+/**
+ * Icon segment.
+ */
+export const SEG_ICON = '__ICON';
+
+/**
+ * Icon header.
+ */
+export const SECT_ICON_HEADER = '__header';
+
+/**
+ * Icon images in TIFF format.
+ */
+export const SECT_ICON_TIFF = '__tiff';
+
+/**
+ * Link editor segment.
+ */
+export const SEG_LINKEDIT = '__LINKEDIT';
+
+/**
+ * UNIX stack segment.
+ */
+export const SEG_UNIXSTACK = '__UNIXSTACK';
+
+/**
+ * Segment for self modifying code stubs.
+ */
+export const SEG_IMPORT = '__IMPORT';
 
 /**
  * Fixed virtual memory shared library.
@@ -644,6 +1509,33 @@ export class dylib_use_command extends Struct {
 		constant(this, 'BYTE_LENGTH');
 	}
 }
+
+// Dylib flags:
+
+/**
+ * Dylib use weak link.
+ */
+export const DYLIB_USE_WEAK_LINK = 0x01;
+
+/**
+ * Dylib use re-export.
+ */
+export const DYLIB_USE_REEXPORT = 0x02;
+
+/**
+ * Dylib use upward.
+ */
+export const DYLIB_USE_UPWARD = 0x04;
+
+/**
+ * Dylib use delayed init.
+ */
+export const DYLIB_USE_DELAYED_INIT = 0x08;
+
+/**
+ * Dylib use marker.
+ */
+export const DYLIB_USE_MARKER = 0x1a741800;
 
 /**
  * Sub framework command.
@@ -1167,6 +2059,18 @@ export class dysymtab_command extends Struct {
 		constant(this, 'BYTE_LENGTH');
 	}
 }
+
+// Indirect symbol table constants:
+
+/**
+ * Indirect symbol local.
+ */
+export const INDIRECT_SYMBOL_LOCAL = 0x80000000;
+
+/**
+ * Indirect symbol absolute.
+ */
+export const INDIRECT_SYMBOL_ABS = 0x40000000;
 
 /**
  * Dylib table of contents entry.
@@ -1782,6 +2686,197 @@ export class build_tool_version extends Struct {
 	}
 }
 
+// Known platforms:
+
+/**
+ * Unknown platform.
+ */
+export const PLATFORM_UNKNOWN = 0;
+
+/**
+ * Any platform.
+ */
+export const PLATFORM_ANY = 0xffffffff;
+
+/**
+ * Platform: macOS.
+ */
+export const PLATFORM_MACOS = 1;
+
+/**
+ * Platform: iOS.
+ */
+export const PLATFORM_IOS = 2;
+
+/**
+ * Platform: tvOS.
+ */
+export const PLATFORM_TVOS = 3;
+
+/**
+ * Platform: watchOS.
+ */
+export const PLATFORM_WATCHOS = 4;
+
+/**
+ * Platform: bridgeOS.
+ */
+export const PLATFORM_BRIDGEOS = 5;
+
+/**
+ * Platform: macOS Catalyst.
+ */
+export const PLATFORM_MACCATALYST = 6;
+
+/**
+ * Platform: iOS Simulator.
+ */
+export const PLATFORM_IOSSIMULATOR = 7;
+
+/**
+ * Platform: tvOS Simulator.
+ */
+export const PLATFORM_TVOSSIMULATOR = 8;
+
+/**
+ * Platform: watchOS Simulator.
+ */
+export const PLATFORM_WATCHOSSIMULATOR = 9;
+
+/**
+ * Platform: DriverKit.
+ */
+export const PLATFORM_DRIVERKIT = 10;
+
+/**
+ * Platform: VisionOS.
+ */
+export const PLATFORM_VISIONOS = 11;
+
+/**
+ * Platform: VisionOS Simulator.
+ */
+export const PLATFORM_VISIONOSSIMULATOR = 12;
+
+/**
+ * Platform: Firmware.
+ */
+export const PLATFORM_FIRMWARE = 13;
+
+/**
+ * Platform: SEPOS.
+ */
+export const PLATFORM_SEPOS = 14;
+
+/**
+ * Platform: macOS ExclaveCore.
+ */
+export const PLATFORM_MACOS_EXCLAVECORE = 15;
+
+/**
+ * Platform: macOS ExclaveKit.
+ */
+export const PLATFORM_MACOS_EXCLAVEKIT = 16;
+
+/**
+ * Platform: iOS ExclaveCore.
+ */
+export const PLATFORM_IOS_EXCLAVECORE = 17;
+
+/**
+ * Platform: iOS ExclaveKit.
+ */
+export const PLATFORM_IOS_EXCLAVEKIT = 18;
+
+/**
+ * Platform: tvOS ExclaveCore.
+ */
+export const PLATFORM_TVOS_EXCLAVECORE = 19;
+
+/**
+ * Platform: tvOS ExclaveKit.
+ */
+export const PLATFORM_TVOS_EXCLAVEKIT = 20;
+
+/**
+ * Platform: watchOS ExclaveCore.
+ */
+export const PLATFORM_WATCHOS_EXCLAVECORE = 21;
+
+/**
+ * Platform: watchOS ExclaveKit.
+ */
+export const PLATFORM_WATCHOS_EXCLAVEKIT = 22;
+
+/**
+ * Platform: VisionOS ExclaveCore.
+ */
+export const PLATFORM_VISIONOS_EXCLAVECORE = 23;
+
+/**
+ * Platform: VisionOS ExclaveKit.
+ */
+export const PLATFORM_VISIONOS_EXCLAVEKIT = 24;
+
+// Known tools:
+
+/**
+ * Tool: Clang.
+ */
+export const TOOL_CLANG = 1;
+
+/**
+ * Tool: Swift.
+ */
+export const TOOL_SWIFT = 2;
+
+/**
+ * Tool: ld.
+ */
+export const TOOL_LD = 3;
+
+/**
+ * Tool: lld.
+ */
+export const TOOL_LLD = 4;
+
+// Known GPU tools:
+
+/**
+ * Tool: Metal.
+ */
+export const TOOL_METAL = 1024;
+
+/**
+ * Tool: AirLLD.
+ */
+export const TOOL_AIRLLD = 1025;
+
+/**
+ * Tool: AirNT.
+ */
+export const TOOL_AIRNT = 1026;
+
+/**
+ * Tool: AirNT plugin.
+ */
+export const TOOL_AIRNT_PLUGIN = 1027;
+
+/**
+ * Tool: AirPack.
+ */
+export const TOOL_AIRPACK = 1028;
+
+/**
+ * Tool: GPUArchiver.
+ */
+export const TOOL_GPUARCHIVER = 1031;
+
+/**
+ * Tool: Metal Framework.
+ */
+export const TOOL_METAL_FRAMEWORK = 1032;
+
 /**
  * Dyld info command.
  */
@@ -1863,6 +2958,257 @@ export class dyld_info_command extends Struct {
 		constant(this, 'BYTE_LENGTH');
 	}
 }
+
+// Rebasing information:
+
+/**
+ * Rebase type: pointer.
+ */
+export const REBASE_TYPE_POINTER = 1;
+
+/**
+ * Rebase type: text absolute 32.
+ */
+export const REBASE_TYPE_TEXT_ABSOLUTE32 = 2;
+
+/**
+ * Rebase type: text pcrel 32.
+ */
+export const REBASE_TYPE_TEXT_PCREL32 = 3;
+
+/**
+ * Rebase opcode mask.
+ */
+export const REBASE_OPCODE_MASK = 0xf0;
+
+/**
+ * Rebase immediate mask.
+ */
+export const REBASE_IMMEDIATE_MASK = 0x0f;
+
+/**
+ * Rebase opcode: done.
+ */
+export const REBASE_OPCODE_DONE = 0x00;
+
+/**
+ * Rebase opcode: set type imm.
+ */
+export const REBASE_OPCODE_SET_TYPE_IMM = 0x10;
+
+/**
+ * Rebase opcode: set segment and offset uleb.
+ */
+export const REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB = 0x20;
+
+/**
+ * Rebase opcode: add addr uleb.
+ */
+export const REBASE_OPCODE_ADD_ADDR_ULEB = 0x30;
+
+/**
+ * Rebase opcode: add addr imm scaled.
+ */
+export const REBASE_OPCODE_ADD_ADDR_IMM_SCALED = 0x40;
+
+/**
+ * Rebase opcode: do rebase imm times.
+ */
+export const REBASE_OPCODE_DO_REBASE_IMM_TIMES = 0x50;
+
+/**
+ * Rebase opcode: do rebase uleb times.
+ */
+export const REBASE_OPCODE_DO_REBASE_ULEB_TIMES = 0x60;
+
+/**
+ * Rebase opcode: do rebase add addr uleb.
+ */
+export const REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB = 0x70;
+
+/**
+ * Rebase opcode: do rebase uleb times skipping uleb.
+ */
+export const REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB = 0x80;
+
+// Binding information:
+
+/**
+ * Bind type: pointer.
+ */
+export const BIND_TYPE_POINTER = 1;
+
+/**
+ * Bind type: text absolute 32.
+ */
+export const BIND_TYPE_TEXT_ABSOLUTE32 = 2;
+
+/**
+ * Bind type: text pcrel 32.
+ */
+export const BIND_TYPE_TEXT_PCREL32 = 3;
+
+/**
+ * Bind special: dylib self.
+ */
+export const BIND_SPECIAL_DYLIB_SELF = 0;
+
+/**
+ * Bind special: dylib main executable.
+ */
+export const BIND_SPECIAL_DYLIB_MAIN_EXECUTABLE = -1;
+
+/**
+ * Bind special: dylib flat lookup.
+ */
+export const BIND_SPECIAL_DYLIB_FLAT_LOOKUP = -2;
+
+/**
+ * Bind special: dylib weak lookup.
+ */
+export const BIND_SPECIAL_DYLIB_WEAK_LOOKUP = -3;
+
+/**
+ * Bind symbol flags: weak import.
+ */
+export const BIND_SYMBOL_FLAGS_WEAK_IMPORT = 0x1;
+
+/**
+ * Bind symbol flags: non-weak definition.
+ */
+export const BIND_SYMBOL_FLAGS_NON_WEAK_DEFINITION = 0x8;
+
+/**
+ * Bind opcode mask.
+ */
+export const BIND_OPCODE_MASK = 0xf0;
+
+/**
+ * Bind immediate mask.
+ */
+export const BIND_IMMEDIATE_MASK = 0x0f;
+
+/**
+ * Bind opcode: done.
+ */
+export const BIND_OPCODE_DONE = 0x00;
+
+/**
+ * Bind opcode: set dylib ordinal imm.
+ */
+export const BIND_OPCODE_SET_DYLIB_ORDINAL_IMM = 0x10;
+
+/**
+ * Bind opcode: set dylib ordinal uleb.
+ */
+export const BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB = 0x20;
+
+/**
+ * Bind opcode: set dylib special imm.
+ */
+export const BIND_OPCODE_SET_DYLIB_SPECIAL_IMM = 0x30;
+
+/**
+ * Bind opcode: set symbol flags trailing flags imm.
+ */
+export const BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM = 0x40;
+
+/**
+ * Bind opcode: set type imm.
+ */
+export const BIND_OPCODE_SET_TYPE_IMM = 0x50;
+
+/**
+ * Bind opcode: set addend sleb.
+ */
+export const BIND_OPCODE_SET_ADDEND_SLEB = 0x60;
+
+/**
+ * Bind opcode: set segment and offset uleb.
+ */
+export const BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB = 0x70;
+
+/**
+ * Bind opcode: add addr uleb.
+ */
+export const BIND_OPCODE_ADD_ADDR_ULEB = 0x80;
+
+/**
+ * Bind opcode: do bind.
+ */
+export const BIND_OPCODE_DO_BIND = 0x90;
+
+/**
+ * Bind opcode: do bind add addr uleb.
+ */
+export const BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB = 0xa0;
+
+/**
+ * Bind opcode: do bind add addr imm scaled.
+ */
+export const BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED = 0xb0;
+
+/**
+ * Bind opcode: do bind uleb times skipping uleb.
+ */
+export const BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB = 0xc0;
+
+/**
+ * Bind opcode: threaded.
+ */
+export const BIND_OPCODE_THREADED = 0xd0;
+
+/**
+ * Bind subopcode threaded: set bind ordinal table size uleb.
+ */
+export const BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB = 0x00;
+
+/**
+ * Bind subopcode threaded: apply.
+ */
+export const BIND_SUBOPCODE_THREADED_APPLY = 0x01;
+
+// Export info:
+
+/**
+ * Export symbol flags kind mask.
+ */
+export const EXPORT_SYMBOL_FLAGS_KIND_MASK = 0x03;
+
+/**
+ * Export symbol flags kind: regular.
+ */
+export const EXPORT_SYMBOL_FLAGS_KIND_REGULAR = 0x00;
+
+/**
+ * Export symbol flags kind: thread local.
+ */
+export const EXPORT_SYMBOL_FLAGS_KIND_THREAD_LOCAL = 0x01;
+
+/**
+ * Export symbol flags kind: absolute.
+ */
+export const EXPORT_SYMBOL_FLAGS_KIND_ABSOLUTE = 0x02;
+
+/**
+ * Export symbol flags kind: weak definition.
+ */
+export const EXPORT_SYMBOL_FLAGS_WEAK_DEFINITION = 0x04;
+
+/**
+ * Export symbol flags: re-export.
+ */
+export const EXPORT_SYMBOL_FLAGS_REEXPORT = 0x08;
+
+/**
+ * Export symbol flags: stub and resolver.
+ */
+export const EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER = 0x10;
+
+/**
+ * Export symbol flags: static resolver.
+ */
+export const EXPORT_SYMBOL_FLAGS_STATIC_RESOLVER = 0x20;
 
 /**
  * Linker option command.
@@ -2071,6 +3417,33 @@ export class data_in_code_entry extends Struct {
 		constant(this, 'BYTE_LENGTH');
 	}
 }
+
+// Data in code entries:
+
+/**
+ * Data in code entry kind: data.
+ */
+export const DICE_KIND_DATA = 0x0001;
+
+/**
+ * Data in code entry kind: jump table 8.
+ */
+export const DICE_KIND_JUMP_TABLE8 = 0x0002;
+
+/**
+ * Data in code entry kind: jump table 16.
+ */
+export const DICE_KIND_JUMP_TABLE16 = 0x0003;
+
+/**
+ * Data in code entry kind: jump table 32.
+ */
+export const DICE_KIND_JUMP_TABLE32 = 0x0004;
+
+/**
+ * Data in code entry kind: absolute jump table 32.
+ */
+export const DICE_KIND_ABS_JUMP_TABLE32 = 0x0005;
 
 /**
  * Thread local variable entry, 32-bit.

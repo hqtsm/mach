@@ -1,14 +1,12 @@
 import { toStringTag } from '@hqtsm/class';
 import { getByteLength } from '@hqtsm/struct';
+import { strncmp } from '../libc/string.ts';
 import {
 	LC_SEGMENT,
 	LC_SEGMENT_64,
 	LC_SYMTAB,
-	SEG_LINKEDIT,
-} from '../const.ts';
-import { strncmp } from '../libc/string.ts';
-import {
 	mach_header,
+	SEG_LINKEDIT,
 	segment_command,
 	segment_command_64,
 	symtab_command,

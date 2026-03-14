@@ -17,12 +17,16 @@ import {
 	CPU_TYPE_X86,
 	FAT_MAGIC,
 	MAX_ARCH_COUNT,
+} from '../const.ts';
+import { fat_arch, fat_header } from '../mach/fat.ts';
+import {
+	load_command,
+	mach_header,
+	mach_header_64,
 	MH_DYLIB,
 	MH_EXECUTE,
 	MH_MAGIC_64,
-} from '../const.ts';
-import { fat_arch, fat_header } from '../mach/fat.ts';
-import { load_command, mach_header, mach_header_64 } from '../mach/loader.ts';
+} from '../mach/loader.ts';
 import { fixtureMacho, fixtureMachos } from '../spec/fixture.ts';
 import { Architecture } from './architecture.ts';
 import { MachO } from './macho.ts';

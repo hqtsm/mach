@@ -1,10 +1,6 @@
 import { assertEquals, assertThrows } from '@std/assert';
-import {
-	kSecCodeMagicRequirement,
-	opAnd,
-	opOr,
-	PLATFORM_MACOS,
-} from '../const.ts';
+import { kSecCodeMagicRequirement, opAnd, opOr } from '../const.ts';
+import { PLATFORM_MACOS } from '../mach/loader.ts';
 import { unhex } from '../spec/hex.ts';
 import { Requirement } from './requirement.ts';
 import { RequirementMaker } from './requirementmaker.ts';

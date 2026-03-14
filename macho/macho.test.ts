@@ -3,12 +3,10 @@ import {
 	LC_SEGMENT,
 	LC_SEGMENT_64,
 	LC_SYMTAB,
-	MH_MAGIC,
-	MH_MAGIC_64,
-} from '../const.ts';
-import {
 	mach_header,
 	mach_header_64,
+	MH_MAGIC,
+	MH_MAGIC_64,
 	segment_command,
 	segment_command_64,
 	symtab_command,

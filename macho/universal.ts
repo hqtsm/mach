@@ -8,14 +8,16 @@ import {
 	FAT_MAGIC,
 	MAX_ALIGN,
 	MAX_ARCH_COUNT,
+	PAGE_SIZE,
+} from '../const.ts';
+import { fat_arch, fat_header } from '../mach/fat.ts';
+import {
+	mach_header,
 	MH_CIGAM,
 	MH_CIGAM_64,
 	MH_MAGIC,
 	MH_MAGIC_64,
-	PAGE_SIZE,
-} from '../const.ts';
-import { fat_arch, fat_header } from '../mach/fat.ts';
-import { mach_header } from '../mach/loader.ts';
+} from '../mach/loader.ts';
 import type { Reader } from '../util/reader.ts';
 import { Architecture } from './architecture.ts';
 import { MachO } from './macho.ts';
