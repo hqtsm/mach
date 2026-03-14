@@ -1,3 +1,4 @@
+export * from './loader.ts';
 export * from './buildtoolversion.ts';
 export * from './buildversioncommand.ts';
 export * from './dataincodeentry.ts';
