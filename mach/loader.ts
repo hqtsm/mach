@@ -1595,52 +1595,6 @@ export class linkedit_data_command extends Struct {
 }
 
 /**
- * Fileset entry command.
- */
-export class fileset_entry_command extends Struct {
-	/**
-	 * Command type.
-	 */
-	declare public cmd: number;
-
-	/**
-	 * Command size.
-	 */
-	declare public cmdsize: number;
-
-	/**
-	 * Virtual memory address.
-	 */
-	declare public vmaddr: bigint;
-
-	/**
-	 * File offset.
-	 */
-	declare public fileoff: bigint;
-
-	/**
-	 * File pathname.
-	 */
-	declare public entry_id: lc_str;
-
-	/**
-	 * Reserved.
-	 */
-	declare public reserved: number;
-
-	static {
-		toStringTag(this, 'fileset_entry_command');
-		uint32(this, 'cmd');
-		uint32(this, 'cmdsize');
-		uint64(this, 'vmaddr');
-		uint64(this, 'fileoff');
-		member(lc_str, this, 'entry_id');
-		uint32(this, 'reserved');
-		constant(this, 'BYTE_LENGTH');
-	}
-}
-
-/**
  * Encryption info command, 32-bit.
  */
 export class encryption_info_command extends Struct {
@@ -2210,6 +2164,52 @@ export class note_command extends Struct {
 		member(array(Int8Ptr, 16), this, 'data_owner');
 		uint64(this, 'offset');
 		uint64(this, 'size');
+		constant(this, 'BYTE_LENGTH');
+	}
+}
+
+/**
+ * Fileset entry command.
+ */
+export class fileset_entry_command extends Struct {
+	/**
+	 * Command type.
+	 */
+	declare public cmd: number;
+
+	/**
+	 * Command size.
+	 */
+	declare public cmdsize: number;
+
+	/**
+	 * Virtual memory address.
+	 */
+	declare public vmaddr: bigint;
+
+	/**
+	 * File offset.
+	 */
+	declare public fileoff: bigint;
+
+	/**
+	 * File pathname.
+	 */
+	declare public entry_id: lc_str;
+
+	/**
+	 * Reserved.
+	 */
+	declare public reserved: number;
+
+	static {
+		toStringTag(this, 'fileset_entry_command');
+		uint32(this, 'cmd');
+		uint32(this, 'cmdsize');
+		uint64(this, 'vmaddr');
+		uint64(this, 'fileoff');
+		member(lc_str, this, 'entry_id');
+		uint32(this, 'reserved');
 		constant(this, 'BYTE_LENGTH');
 	}
 }
