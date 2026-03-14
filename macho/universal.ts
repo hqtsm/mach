@@ -4,13 +4,11 @@ import {
 	CPU_ARCH_ABI64,
 	CPU_SUBTYPE_MASK,
 	CPU_TYPE_ARM,
-	FAT_CIGAM,
-	FAT_MAGIC,
 	MAX_ALIGN,
 	MAX_ARCH_COUNT,
 	PAGE_SIZE,
 } from '../const.ts';
-import { fat_arch, fat_header } from '../mach/fat.ts';
+import { fat_arch, FAT_CIGAM, fat_header, FAT_MAGIC } from '../mach/fat.ts';
 import {
 	mach_header,
 	MH_CIGAM,

@@ -2,6 +2,18 @@
 import { constant, toStringTag } from '@hqtsm/class';
 import { int32, Struct, uint32, uint64 } from '@hqtsm/struct';
 
+// Constants for fat_header magic:
+
+/**
+ * Fat magic number, 32-bit.
+ */
+export const FAT_MAGIC = 0xcafebabe;
+
+/**
+ * Fat magic number, 32-bit, byte swapped.
+ */
+export const FAT_CIGAM = 0xbebafeca;
+
 /**
  * Fat header.
  */
@@ -63,6 +75,18 @@ export class fat_arch extends Struct {
 		constant(this, 'BYTE_LENGTH');
 	}
 }
+
+// Constants for fat_header_64 magic:
+
+/**
+ * Fat magic number, 64-bit.
+ */
+export const FAT_MAGIC_64 = 0xcafebabf;
+
+/**
+ * Fat magic number, 64-bit, byte swapped.
+ */
+export const FAT_CIGAM_64 = 0xbfbafeca;
 
 /**
  * Fat architecture, 64-bit.

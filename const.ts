@@ -2,12 +2,6 @@
 
 export const PAGE_SIZE = 0x4000;
 
-// FAT mach magic numbers:
-export const FAT_MAGIC = 0xcafebabe;
-export const FAT_CIGAM = 0xbebafeca;
-export const FAT_MAGIC_64 = 0xcafebabf;
-export const FAT_CIGAM_64 = 0xbfbafeca;
-
 // CPU states:
 export const CPU_STATE_MAX = 4;
 export const CPU_STATE_USER = 0;

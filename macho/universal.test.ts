@@ -15,10 +15,9 @@ import {
 	CPU_SUBTYPE_X86_ALL,
 	CPU_TYPE_ARM,
 	CPU_TYPE_X86,
-	FAT_MAGIC,
 	MAX_ARCH_COUNT,
 } from '../const.ts';
-import { fat_arch, fat_header } from '../mach/fat.ts';
+import { fat_arch, fat_header, FAT_MAGIC } from '../mach/fat.ts';
 import {
 	load_command,
 	mach_header,

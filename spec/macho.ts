@@ -1,5 +1,10 @@
 import { assert, assertEquals } from '@std/assert';
-import { FAT_CIGAM, FAT_CIGAM_64, FAT_MAGIC, FAT_MAGIC_64 } from '../const.ts';
+import {
+	FAT_CIGAM,
+	FAT_CIGAM_64,
+	FAT_MAGIC,
+	FAT_MAGIC_64,
+} from '../mach/fat.ts';
 import {
 	MH_CIGAM,
 	MH_CIGAM_64,
