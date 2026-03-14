@@ -71,12 +71,12 @@ export class mach_header extends Struct {
 // Constants for mach_header magic:
 
 /**
- * 32-bit mach magic number.
+ * Mach magic number, 32-bit.
  */
 export const MH_MAGIC = 0xfeedface;
 
 /**
- * 32-bit mach magic number, byte swapped.
+ * Mach magic number, 32-bit, byte swapped.
  */
 export const MH_CIGAM = 0xcefaedfe;
 
@@ -141,12 +141,12 @@ export class mach_header_64 extends Struct {
 // Constants for mach_header_64 magic:
 
 /**
- * 64-bit mach magic number.
+ * Mach magic number, 64-bit.
  */
 export const MH_MAGIC_64 = 0xfeedfacf;
 
 /**
- * 64-bit mach magic number, byte swapped.
+ * Mach magic number, 64-bit, byte swapped.
  */
 export const MH_CIGAM_64 = 0xcffaedfe;
 
