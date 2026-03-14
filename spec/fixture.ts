@@ -1,5 +1,11 @@
 import { assert, assertEquals } from '@std/assert';
 import {
+	kSecCodeSignatureHashSHA1,
+	kSecCodeSignatureHashSHA256,
+	kSecCodeSignatureHashSHA384,
+	kSecCodeSignatureHashSHA512,
+} from '../const.ts';
+import {
 	CPU_SUBTYPE_POWERPC_7400,
 	CPU_SUBTYPE_POWERPC_970,
 	CPU_SUBTYPE_POWERPC_ALL,
@@ -8,11 +14,7 @@ import {
 	CPU_TYPE_POWERPC,
 	CPU_TYPE_POWERPC64,
 	CPU_TYPE_X86_64,
-	kSecCodeSignatureHashSHA1,
-	kSecCodeSignatureHashSHA256,
-	kSecCodeSignatureHashSHA384,
-	kSecCodeSignatureHashSHA512,
-} from '../const.ts';
+} from '../mach/machine.ts';
 import { zipped } from './zipped.ts';
 
 let fixturesCache: string | null = null;
