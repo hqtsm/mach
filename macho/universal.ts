@@ -14,9 +14,8 @@ import {
 	MH_MAGIC_64,
 	PAGE_SIZE,
 } from '../const.ts';
-import { FatArch } from '../mach/fatarch.ts';
-import { FatHeader } from '../mach/fatheader.ts';
-import { MachHeader } from '../mach/machheader.ts';
+import { fat_arch, fat_header } from '../mach/fat.ts';
+import { mach_header } from '../mach/loader.ts';
 import type { Reader } from '../util/reader.ts';
 import { Architecture } from './architecture.ts';
 import { MachO } from './macho.ts';
@@ -34,7 +33,7 @@ export class Universal {
 	/**
 	 * Architecture list, if fat.
 	 */
-	private mArchList: Ptr<FatArch> | null = null;
+	private mArchList: Ptr<fat_arch> | null = null;
 
 	/**
 	 * Architecture count, if fat.
@@ -102,29 +101,29 @@ export class Universal {
 		const mSizes = this.mSizes;
 		mSizes.clear();
 
-		const hs = Math.max(FatHeader.BYTE_LENGTH, MachHeader.BYTE_LENGTH);
+		const hs = Math.max(fat_header.BYTE_LENGTH, mach_header.BYTE_LENGTH);
 		const hd = await reader.slice(offset, offset + hs).arrayBuffer();
 		if (hd.byteLength !== hs) {
 			throw new RangeError('Invalid header');
 		}
 
-		let header = new FatHeader(hd);
+		let header = new fat_header(hd);
 		let mHeader;
 		const m = header.magic;
 		switch (m) {
 			case FAT_CIGAM:
-				header = new FatHeader(hd, 0, !header.littleEndian);
+				header = new fat_header(hd, 0, !header.littleEndian);
 				// Falls through.
 			case FAT_MAGIC: {
 				// In some cases the fat header may be 1 less than needed.
 				// Something about "15001604" whatever that is.
-				let mArchCount = this.mArchCount = header.nfatArch;
+				let mArchCount = this.mArchCount = header.nfat_arch;
 				if (mArchCount > MAX_ARCH_COUNT) {
 					throw new RangeError('Too many architectures');
 				}
 
 				// Read enough for 1 extra arch.
-				const archSize = FatArch.BYTE_LENGTH * (mArchCount + 1);
+				const archSize = fat_arch.BYTE_LENGTH * (mArchCount + 1);
 				const archOffset = offset + header.byteLength;
 				const archData = await reader
 					.slice(archOffset, archOffset + archSize)
@@ -132,7 +131,7 @@ export class Universal {
 				if (archData.byteLength !== archSize) {
 					throw new RangeError('Invalid architectures');
 				}
-				const mArchList = this.mArchList = new (pointer(FatArch))(
+				const mArchList = this.mArchList = new (pointer(fat_arch))(
 					archData,
 					0,
 					header.littleEndian,
@@ -152,7 +151,7 @@ export class Universal {
 				sortedList.sort((a, b) => a.offset - b.offset);
 
 				const universalHeaderEnd = offset + header.byteLength +
-					(FatArch.BYTE_LENGTH * mArchCount);
+					(fat_arch.BYTE_LENGTH * mArchCount);
 				let prevHeaderEnd = universalHeaderEnd;
 				let prevArchSize = 0;
 				let prevArchStart = 0;
@@ -220,11 +219,11 @@ export class Universal {
 			}
 			case MH_CIGAM:
 			case MH_CIGAM_64:
-				mHeader = new MachHeader(hd, 0, !header.littleEndian);
+				mHeader = new mach_header(hd, 0, !header.littleEndian);
 				// Falls through.
 			case MH_MAGIC:
 			case MH_MAGIC_64: {
-				mHeader ??= new MachHeader(hd);
+				mHeader ??= new mach_header(hd);
 				this.mThinArch = new Architecture(
 					mHeader.cputype,
 					mHeader.cpusubtype,
@@ -431,7 +430,7 @@ export class Universal {
 	 * @param arch Architecture to find.
 	 * @returns Matching FAT architecture.
 	 */
-	private static findArch(_this: Universal, arch: Architecture): FatArch {
+	private static findArch(_this: Universal, arch: Architecture): fat_arch {
 		const { mArchList, mArchCount } = _this;
 		for (let i = 0; i < mArchCount; i++) {
 			const a = mArchList![i];
@@ -518,31 +517,31 @@ export class Universal {
 	 * @returns Zero if not a valid Mach-O or Universal.
 	 */
 	public static async typeOf(reader: Reader): Promise<number> {
-		let data = await reader.slice(0, MachHeader.BYTE_LENGTH).arrayBuffer();
-		if (data.byteLength !== MachHeader.BYTE_LENGTH) {
+		let data = await reader.slice(0, mach_header.BYTE_LENGTH).arrayBuffer();
+		if (data.byteLength !== mach_header.BYTE_LENGTH) {
 			return 0;
 		}
-		let header = new MachHeader(data);
+		let header = new mach_header(data);
 		let arch1;
 		for (let tries = 3; tries--;) {
 			switch (header.magic) {
 				case MH_CIGAM:
 				case MH_CIGAM_64:
-					header = new MachHeader(data, 0, !header.littleEndian);
+					header = new mach_header(data, 0, !header.littleEndian);
 					// Falls through.
 				case MH_MAGIC:
 				case MH_MAGIC_64: {
 					return header.filetype;
 				}
 				case FAT_CIGAM:
-					arch1 = new FatArch(
+					arch1 = new fat_arch(
 						data,
-						FatHeader.BYTE_LENGTH,
+						fat_header.BYTE_LENGTH,
 						!header.littleEndian,
 					);
 					// Falls through.
 				case FAT_MAGIC: {
-					arch1 ??= new FatArch(data, FatHeader.BYTE_LENGTH);
+					arch1 ??= new fat_arch(data, fat_header.BYTE_LENGTH);
 					const { offset } = arch1;
 					// deno-lint-ignore no-await-in-loop
 					data = await reader
@@ -551,7 +550,7 @@ export class Universal {
 					if (data.byteLength !== header.byteLength) {
 						return 0;
 					}
-					header = new MachHeader(data, 0, arch1.littleEndian);
+					header = new mach_header(data, 0, arch1.littleEndian);
 					continue;
 				}
 				default: {

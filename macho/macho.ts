@@ -7,10 +7,12 @@ import {
 	SEG_LINKEDIT,
 } from '../const.ts';
 import { strncmp } from '../libc/string.ts';
-import { MachHeader } from '../mach/machheader.ts';
-import { SegmentCommand } from '../mach/segmentcommand.ts';
-import { SegmentCommand64 } from '../mach/segmentcommand64.ts';
-import { SymtabCommand } from '../mach/symtabcommand.ts';
+import {
+	mach_header,
+	segment_command,
+	segment_command_64,
+	symtab_command,
+} from '../mach/loader.ts';
 import type { Reader } from '../util/reader.ts';
 import { MachOBase } from './machobase.ts';
 
@@ -65,7 +67,7 @@ export class MachO extends MachOBase {
 		const mLength = this.mLength = offset ? length : reader.size;
 		this.mSuspicious = false;
 
-		const hs = MachHeader.BYTE_LENGTH;
+		const hs = mach_header.BYTE_LENGTH;
 		const header = await reader.slice(offset, offset + hs).arrayBuffer();
 		if (header.byteLength !== hs) {
 			throw new RangeError('Invalid header');
@@ -185,10 +187,10 @@ export class MachO extends MachOBase {
 		) {
 			switch (cmd.cmd) {
 				case LC_SEGMENT: {
-					if (cmd.cmdsize < SegmentCommand.BYTE_LENGTH) {
+					if (cmd.cmdsize < segment_command.BYTE_LENGTH) {
 						throw new RangeError('Invalid command size');
 					}
-					const seg = new SegmentCommand(
+					const seg = new segment_command(
 						cmd.buffer,
 						cmd.byteOffset,
 						cmd.littleEndian,
@@ -197,7 +199,7 @@ export class MachO extends MachOBase {
 						!strncmp(
 							seg.segname,
 							segLinkedit,
-							getByteLength(SegmentCommand, 'segname'),
+							getByteLength(segment_command, 'segname'),
 						)
 					) {
 						isValid = seg.fileoff + seg.filesize ===
@@ -207,10 +209,10 @@ export class MachO extends MachOBase {
 					break;
 				}
 				case LC_SEGMENT_64: {
-					if (cmd.cmdsize < SegmentCommand64.BYTE_LENGTH) {
+					if (cmd.cmdsize < segment_command_64.BYTE_LENGTH) {
 						throw new RangeError('Invalid command size');
 					}
-					const seg64 = new SegmentCommand64(
+					const seg64 = new segment_command_64(
 						cmd.buffer,
 						cmd.byteOffset,
 						cmd.littleEndian,
@@ -219,7 +221,7 @@ export class MachO extends MachOBase {
 						!strncmp(
 							seg64.segname,
 							segLinkedit,
-							getByteLength(SegmentCommand64, 'segname'),
+							getByteLength(segment_command_64, 'segname'),
 						)
 					) {
 						isValid = Number(seg64.fileoff + seg64.filesize) ===
@@ -229,10 +231,10 @@ export class MachO extends MachOBase {
 					break;
 				}
 				case LC_SYMTAB: {
-					if (cmd.cmdsize < SymtabCommand.BYTE_LENGTH) {
+					if (cmd.cmdsize < symtab_command.BYTE_LENGTH) {
 						throw new RangeError('Invalid command size');
 					}
-					const symtab = new SymtabCommand(
+					const symtab = new symtab_command(
 						cmd.buffer,
 						cmd.byteOffset,
 						cmd.littleEndian,

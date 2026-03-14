@@ -27,17 +27,19 @@ import {
 	PLATFORM_WATCHOS,
 } from '../const.ts';
 import { strlen, strncmp } from '../libc/string.ts';
-import { BuildVersionCommand } from '../mach/buildversioncommand.ts';
-import type { LcStr } from '../mach/lcstr.ts';
-import { LinkeditDataCommand } from '../mach/linkeditdatacommand.ts';
-import { LoadCommand } from '../mach/loadcommand.ts';
-import { MachHeader } from '../mach/machheader.ts';
-import { MachHeader64 } from '../mach/machheader64.ts';
-import { Section } from '../mach/section.ts';
-import { Section64 } from '../mach/section64.ts';
-import { SegmentCommand } from '../mach/segmentcommand.ts';
-import { SegmentCommand64 } from '../mach/segmentcommand64.ts';
-import { VersionMinCommand } from '../mach/versionmincommand.ts';
+import {
+	build_version_command,
+	type lc_str,
+	linkedit_data_command,
+	load_command,
+	mach_header,
+	mach_header_64,
+	section,
+	section_64,
+	segment_command,
+	segment_command_64,
+	version_min_command,
+} from '../mach/loader.ts';
 import { Architecture } from './architecture.ts';
 
 /**
@@ -47,12 +49,12 @@ export class MachOBase {
 	/**
 	 * Mach-O header.
 	 */
-	private mHeader: MachHeader | MachHeader64 | null = null;
+	private mHeader: mach_header | mach_header_64 | null = null;
 
 	/**
 	 * Mach-O commands.
 	 */
-	private mCommands: LoadCommand | null = null;
+	private mCommands: load_command | null = null;
 
 	/**
 	 * The end commands offset, from start of commands.
@@ -100,7 +102,9 @@ export class MachOBase {
 	 * @param _this This.
 	 * @returns Header or null.
 	 */
-	public static header(_this: MachOBase): MachHeader | MachHeader64 | null {
+	public static header(
+		_this: MachOBase,
+	): mach_header | mach_header_64 | null {
 		return _this.mHeader;
 	}
 
@@ -141,7 +145,7 @@ export class MachOBase {
 	 * @param _this This.
 	 * @returns Load commands pointer or null.
 	 */
-	public static loadCommands(_this: MachOBase): LoadCommand | null {
+	public static loadCommands(_this: MachOBase): load_command | null {
 		return _this.mCommands;
 	}
 
@@ -154,8 +158,8 @@ export class MachOBase {
 	 */
 	public static nextCommand(
 		_this: MachOBase,
-		command: LoadCommand,
-	): LoadCommand | null {
+		command: load_command,
+	): load_command | null {
 		const { cmdsize } = command;
 		if (!cmdsize) {
 			throw new RangeError('Invalid command size');
@@ -165,10 +169,10 @@ export class MachOBase {
 		if (byteOffset >= mEndCommands) {
 			return null;
 		}
-		if (byteOffset + LoadCommand.BYTE_LENGTH > mEndCommands) {
+		if (byteOffset + load_command.BYTE_LENGTH > mEndCommands) {
 			throw new RangeError('Invalid command size');
 		}
-		command = new LoadCommand(
+		command = new load_command(
 			command.buffer,
 			byteOffset,
 			command.littleEndian,
@@ -198,7 +202,7 @@ export class MachOBase {
 	public static findCommand(
 		_this: MachOBase,
 		cmd: number,
-	): LoadCommand | null {
+	): load_command | null {
 		for (
 			let c = MachOBase.loadCommands(_this);
 			c;
@@ -221,7 +225,7 @@ export class MachOBase {
 	public static findSegment(
 		_this: MachOBase,
 		segname: ArrayBufferLike | ArrayBufferPointer,
-	): SegmentCommand | SegmentCommand64 | null {
+	): segment_command | segment_command_64 | null {
 		let buffer, byteOffset;
 		if ('buffer' in segname) {
 			buffer = segname.buffer;
@@ -231,7 +235,7 @@ export class MachOBase {
 			byteOffset = 0;
 		}
 		const sn = new Int8Ptr(buffer, byteOffset);
-		let SC: typeof SegmentCommand | typeof SegmentCommand64 | null;
+		let SC: typeof segment_command | typeof segment_command_64 | null;
 		for (
 			let c = MachOBase.loadCommands(_this);
 			c;
@@ -239,11 +243,11 @@ export class MachOBase {
 		) {
 			switch (c.cmd) {
 				case LC_SEGMENT: {
-					SC = SegmentCommand;
+					SC = segment_command;
 					break;
 				}
 				case LC_SEGMENT_64: {
-					SC = SegmentCommand64;
+					SC = segment_command_64;
 					break;
 				}
 				default: {
@@ -273,12 +277,12 @@ export class MachOBase {
 		_this: MachOBase,
 		segname: ArrayBufferLike | ArrayBufferPointer,
 		sectname: ArrayBufferLike | ArrayBufferPointer,
-	): Section | Section64 | null {
+	): section | section_64 | null {
 		const seg = MachOBase.findSegment(_this, segname);
 		if (!seg) {
 			return null;
 		}
-		const S = _this.m64 ? Section64 : Section;
+		const S = _this.m64 ? section_64 : section;
 		const SL = S.BYTE_LENGTH;
 		const { byteLength, littleEndian, nsects } = seg;
 		if (byteLength + (nsects * SL) > seg.cmdsize) {
@@ -315,8 +319,8 @@ export class MachOBase {
 	 */
 	public static string(
 		_this: MachOBase,
-		cmd: LoadCommand,
-		str: LcStr,
+		cmd: load_command,
+		str: lc_str,
 	): Const<Int8Ptr> | null {
 		const { offset } = str;
 		const sp = new Int8Ptr(
@@ -338,15 +342,15 @@ export class MachOBase {
 	 */
 	public static findCodeSignature(
 		_this: MachOBase,
-	): LinkeditDataCommand | null {
+	): linkedit_data_command | null {
 		const cmd = MachOBase.findCommand(_this, LC_CODE_SIGNATURE);
 		if (!cmd) {
 			return null;
 		}
-		if (cmd.cmdsize < LinkeditDataCommand.BYTE_LENGTH) {
+		if (cmd.cmdsize < linkedit_data_command.BYTE_LENGTH) {
 			throw new RangeError('Invalid command size');
 		}
-		return new LinkeditDataCommand(
+		return new linkedit_data_command(
 			cmd.buffer,
 			cmd.byteOffset,
 			cmd.littleEndian,
@@ -361,15 +365,15 @@ export class MachOBase {
 	 */
 	public static findLibraryDependencies(
 		_this: MachOBase,
-	): LinkeditDataCommand | null {
+	): linkedit_data_command | null {
 		const cmd = MachOBase.findCommand(_this, LC_DYLIB_CODE_SIGN_DRS);
 		if (!cmd) {
 			return null;
 		}
-		if (cmd.cmdsize < LinkeditDataCommand.BYTE_LENGTH) {
+		if (cmd.cmdsize < linkedit_data_command.BYTE_LENGTH) {
 			throw new RangeError('Invalid command size');
 		}
-		return new LinkeditDataCommand(
+		return new linkedit_data_command(
 			cmd.buffer,
 			cmd.byteOffset,
 			cmd.littleEndian,
@@ -517,7 +521,7 @@ export class MachOBase {
 			buffer = header;
 			byteOffset = 0;
 		}
-		let mh = _this.mHeader = new MachHeader(buffer, byteOffset);
+		let mh = _this.mHeader = new mach_header(buffer, byteOffset);
 		let m64 = false;
 		const m = mh.magic;
 		switch (m) {
@@ -526,17 +530,17 @@ export class MachOBase {
 				break;
 			}
 			case MH_CIGAM: {
-				mh = new MachHeader(buffer, byteOffset, !mh.littleEndian);
+				mh = new mach_header(buffer, byteOffset, !mh.littleEndian);
 				m64 = false;
 				break;
 			}
 			case MH_MAGIC_64: {
-				mh = new MachHeader64(buffer, byteOffset);
+				mh = new mach_header_64(buffer, byteOffset);
 				m64 = true;
 				break;
 			}
 			case MH_CIGAM_64: {
-				mh = new MachHeader64(buffer, byteOffset, !mh.littleEndian);
+				mh = new mach_header_64(buffer, byteOffset, !mh.littleEndian);
 				m64 = true;
 				break;
 			}
@@ -568,7 +572,7 @@ export class MachOBase {
 			byteOffset = 0;
 		}
 		const mHeader = _this.mHeader!;
-		const mCommands = _this.mCommands = new LoadCommand(
+		const mCommands = _this.mCommands = new load_command(
 			buffer,
 			byteOffset,
 			mHeader.littleEndian,
@@ -587,7 +591,7 @@ export class MachOBase {
 	 * @returns Byte length of header.
 	 */
 	protected static headerSize(_this: MachOBase): number {
-		return _this.m64 ? MachHeader64.BYTE_LENGTH : MachHeader.BYTE_LENGTH;
+		return _this.m64 ? mach_header_64.BYTE_LENGTH : mach_header.BYTE_LENGTH;
 	}
 
 	/**
@@ -608,7 +612,7 @@ export class MachOBase {
 	 */
 	protected static findMinVersion(
 		_this: MachOBase,
-	): VersionMinCommand | null {
+	): version_min_command | null {
 		for (
 			let c = MachOBase.loadCommands(_this);
 			c;
@@ -619,10 +623,10 @@ export class MachOBase {
 				case LC_VERSION_MIN_IPHONEOS:
 				case LC_VERSION_MIN_WATCHOS:
 				case LC_VERSION_MIN_TVOS: {
-					if (c.cmdsize < VersionMinCommand.BYTE_LENGTH) {
+					if (c.cmdsize < version_min_command.BYTE_LENGTH) {
 						throw new RangeError('Invalid command size');
 					}
-					return new VersionMinCommand(
+					return new version_min_command(
 						c.buffer,
 						c.byteOffset,
 						c.littleEndian,
@@ -641,17 +645,17 @@ export class MachOBase {
 	 */
 	protected static findBuildVersion(
 		_this: MachOBase,
-	): BuildVersionCommand | null {
+	): build_version_command | null {
 		for (
 			let c = MachOBase.loadCommands(_this);
 			c;
 			c = MachOBase.nextCommand(_this, c)
 		) {
 			if (c.cmd === LC_BUILD_VERSION) {
-				if (c.cmdsize < BuildVersionCommand.BYTE_LENGTH) {
+				if (c.cmdsize < build_version_command.BYTE_LENGTH) {
 					throw new RangeError('Invalid command size');
 				}
-				return new BuildVersionCommand(
+				return new build_version_command(
 					c.buffer,
 					c.byteOffset,
 					c.littleEndian,

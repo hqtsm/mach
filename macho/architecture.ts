@@ -1,7 +1,6 @@
 import { toStringTag } from '@hqtsm/class';
 import { CPU_SUBTYPE_MASK, CPU_SUBTYPE_MULTIPLE } from '../const.ts';
-import type { FatArch } from '../mach/fatarch.ts';
-import type { FatArch64 } from '../mach/fatarch64.ts';
+import type { fat_arch, fat_arch_64 } from '../mach/fat.ts';
 
 /**
  * Architecture specification.
@@ -33,9 +32,9 @@ export class Architecture {
 	/**
 	 * Create architecture from fat architecture struct.
 	 *
-	 * @param archInFile FatArch|FatArch64 struct.
+	 * @param archInFile Fat struct.
 	 */
-	constructor(archInFile: FatArch | FatArch64);
+	constructor(archInFile: fat_arch | fat_arch_64);
 
 	/**
 	 * Create architecture with CPU type and subtype.
@@ -44,7 +43,7 @@ export class Architecture {
 	 * @param sub CPU subtype.
 	 */
 	constructor(
-		type?: number | FatArch | FatArch64,
+		type?: number | fat_arch | fat_arch_64,
 		sub?: number,
 	) {
 		switch (typeof type) {

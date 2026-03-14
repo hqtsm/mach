@@ -22,17 +22,19 @@ import {
 	PLATFORM_TVOS,
 	PLATFORM_WATCHOS,
 } from '../const.ts';
-import { BuildVersionCommand } from '../mach/buildversioncommand.ts';
-import { LinkeditDataCommand } from '../mach/linkeditdatacommand.ts';
-import { LoadCommand } from '../mach/loadcommand.ts';
-import { MachHeader } from '../mach/machheader.ts';
-import { MachHeader64 } from '../mach/machheader64.ts';
-import { RpathCommand } from '../mach/rpathcommand.ts';
-import { Section } from '../mach/section.ts';
-import { Section64 } from '../mach/section64.ts';
-import { SegmentCommand } from '../mach/segmentcommand.ts';
-import { SegmentCommand64 } from '../mach/segmentcommand64.ts';
-import { VersionMinCommand } from '../mach/versionmincommand.ts';
+import {
+	build_version_command,
+	linkedit_data_command,
+	load_command,
+	mach_header,
+	mach_header_64,
+	rpath_command,
+	section,
+	section_64,
+	segment_command,
+	segment_command_64,
+	version_min_command,
+} from '../mach/loader.ts';
 import { Architecture } from './architecture.ts';
 import { MachOBase } from './machobase.ts';
 
@@ -61,13 +63,13 @@ class MachOBaseTest extends MachOBase {
 }
 
 const findCommands = [
-	['findCodeSignature', LinkeditDataCommand, LC_CODE_SIGNATURE],
-	['findLibraryDependencies', LinkeditDataCommand, LC_DYLIB_CODE_SIGN_DRS],
-	['findMinVersion', VersionMinCommand, LC_VERSION_MIN_MACOSX],
-	['findMinVersion', VersionMinCommand, LC_VERSION_MIN_IPHONEOS],
-	['findMinVersion', VersionMinCommand, LC_VERSION_MIN_WATCHOS],
-	['findMinVersion', VersionMinCommand, LC_VERSION_MIN_TVOS],
-	['findBuildVersion', BuildVersionCommand, LC_BUILD_VERSION],
+	['findCodeSignature', linkedit_data_command, LC_CODE_SIGNATURE],
+	['findLibraryDependencies', linkedit_data_command, LC_DYLIB_CODE_SIGN_DRS],
+	['findMinVersion', version_min_command, LC_VERSION_MIN_MACOSX],
+	['findMinVersion', version_min_command, LC_VERSION_MIN_IPHONEOS],
+	['findMinVersion', version_min_command, LC_VERSION_MIN_WATCHOS],
+	['findMinVersion', version_min_command, LC_VERSION_MIN_TVOS],
+	['findBuildVersion', build_version_command, LC_BUILD_VERSION],
 ] as const;
 
 Deno.test('init', () => {
@@ -79,19 +81,19 @@ Deno.test('init', () => {
 	assertEquals(MachOBase.isFlipped(macho), false);
 
 	// Should work with 32-bit size of 64-bit header.
-	const headerSize = MachHeader.BYTE_LENGTH;
-	const lcSize = LoadCommand.BYTE_LENGTH;
+	const headerSize = mach_header.BYTE_LENGTH;
+	const lcSize = load_command.BYTE_LENGTH;
 	const FLIP = !LITTLE_ENDIAN;
 
-	const commandN = new LoadCommand(new ArrayBuffer(lcSize));
+	const commandN = new load_command(new ArrayBuffer(lcSize));
 	commandN.cmd = 1;
-	commandN.cmdsize = LoadCommand.BYTE_LENGTH;
+	commandN.cmdsize = load_command.BYTE_LENGTH;
 
-	const commandF = new LoadCommand(new ArrayBuffer(lcSize), 0, FLIP);
+	const commandF = new load_command(new ArrayBuffer(lcSize), 0, FLIP);
 	commandF.cmd = 1;
-	commandF.cmdsize = LoadCommand.BYTE_LENGTH;
+	commandF.cmdsize = load_command.BYTE_LENGTH;
 
-	const header32N = new MachHeader(new ArrayBuffer(headerSize));
+	const header32N = new mach_header(new ArrayBuffer(headerSize));
 	header32N.cputype = 2;
 	header32N.cpusubtype = 3;
 	header32N.filetype = 4;
@@ -99,7 +101,7 @@ Deno.test('init', () => {
 	header32N.ncmds = 1;
 	header32N.sizeofcmds = commandN.cmdsize;
 
-	const header64N = new MachHeader64(new ArrayBuffer(headerSize));
+	const header64N = new mach_header_64(new ArrayBuffer(headerSize));
 	header64N.cputype = 2;
 	header64N.cpusubtype = 3;
 	header64N.filetype = 4;
@@ -107,7 +109,7 @@ Deno.test('init', () => {
 	header64N.ncmds = 1;
 	header64N.sizeofcmds = commandN.cmdsize;
 
-	const header32F = new MachHeader(new ArrayBuffer(headerSize), 0, FLIP);
+	const header32F = new mach_header(new ArrayBuffer(headerSize), 0, FLIP);
 	header32F.cputype = 2;
 	header32F.cpusubtype = 3;
 	header32F.filetype = 4;
@@ -115,7 +117,7 @@ Deno.test('init', () => {
 	header32F.ncmds = 1;
 	header32F.sizeofcmds = commandF.cmdsize;
 
-	const header64F = new MachHeader64(new ArrayBuffer(headerSize), 0, FLIP);
+	const header64F = new mach_header_64(new ArrayBuffer(headerSize), 0, FLIP);
 	header64F.cputype = 2;
 	header64F.cpusubtype = 3;
 	header64F.filetype = 4;
@@ -201,17 +203,17 @@ Deno.test('init', () => {
 });
 
 Deno.test('nextCommand valid', () => {
-	const commands = new ArrayBuffer(LoadCommand.BYTE_LENGTH * 2);
+	const commands = new ArrayBuffer(load_command.BYTE_LENGTH * 2);
 
-	const commandA = new LoadCommand(commands, 0);
+	const commandA = new load_command(commands, 0);
 	commandA.cmd = 1;
-	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+	commandA.cmdsize = load_command.BYTE_LENGTH;
 
-	const commandB = new LoadCommand(commands, LoadCommand.BYTE_LENGTH);
+	const commandB = new load_command(commands, load_command.BYTE_LENGTH);
 	commandB.cmd = 2;
-	commandB.cmdsize = LoadCommand.BYTE_LENGTH;
+	commandB.cmdsize = load_command.BYTE_LENGTH;
 
-	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+	const header = new mach_header(new ArrayBuffer(mach_header.BYTE_LENGTH));
 	header.magic = MH_MAGIC;
 	header.ncmds = 2;
 	header.sizeofcmds = commands.byteLength;
@@ -231,17 +233,17 @@ Deno.test('nextCommand valid', () => {
 });
 
 Deno.test('nextCommand zero', () => {
-	const commands = new ArrayBuffer(LoadCommand.BYTE_LENGTH * 2);
+	const commands = new ArrayBuffer(load_command.BYTE_LENGTH * 2);
 
-	const commandA = new LoadCommand(commands, 0);
+	const commandA = new load_command(commands, 0);
 	commandA.cmd = 1;
 	commandA.cmdsize = 0;
 
-	const commandB = new LoadCommand(commands, LoadCommand.BYTE_LENGTH);
+	const commandB = new load_command(commands, load_command.BYTE_LENGTH);
 	commandB.cmd = 2;
-	commandB.cmdsize = LoadCommand.BYTE_LENGTH;
+	commandB.cmdsize = load_command.BYTE_LENGTH;
 
-	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+	const header = new mach_header(new ArrayBuffer(mach_header.BYTE_LENGTH));
 	header.magic = MH_MAGIC;
 	header.ncmds = 2;
 	header.sizeofcmds = commands.byteLength;
@@ -261,16 +263,16 @@ Deno.test('nextCommand zero', () => {
 });
 
 Deno.test('nextCommand under', () => {
-	const commands = new ArrayBuffer(LoadCommand.BYTE_LENGTH * 2 - 1);
+	const commands = new ArrayBuffer(load_command.BYTE_LENGTH * 2 - 1);
 
-	const commandA = new LoadCommand(commands, 0);
+	const commandA = new load_command(commands, 0);
 	commandA.cmd = 1;
-	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+	commandA.cmdsize = load_command.BYTE_LENGTH;
 
-	const commandB = new LoadCommand(commands, LoadCommand.BYTE_LENGTH);
+	const commandB = new load_command(commands, load_command.BYTE_LENGTH);
 	commandB.cmd = 2;
 
-	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+	const header = new mach_header(new ArrayBuffer(mach_header.BYTE_LENGTH));
 	header.magic = MH_MAGIC;
 	header.ncmds = 2;
 	header.sizeofcmds = commands.byteLength;
@@ -290,17 +292,17 @@ Deno.test('nextCommand under', () => {
 });
 
 Deno.test('nextCommand over', () => {
-	const commands = new ArrayBuffer(LoadCommand.BYTE_LENGTH * 2);
+	const commands = new ArrayBuffer(load_command.BYTE_LENGTH * 2);
 
-	const commandA = new LoadCommand(commands, 0);
+	const commandA = new load_command(commands, 0);
 	commandA.cmd = 1;
-	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+	commandA.cmdsize = load_command.BYTE_LENGTH;
 
-	const commandB = new LoadCommand(commands, LoadCommand.BYTE_LENGTH);
+	const commandB = new load_command(commands, load_command.BYTE_LENGTH);
 	commandB.cmd = 2;
-	commandB.cmdsize = LoadCommand.BYTE_LENGTH + 1;
+	commandB.cmdsize = load_command.BYTE_LENGTH + 1;
 
-	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+	const header = new mach_header(new ArrayBuffer(mach_header.BYTE_LENGTH));
 	header.magic = MH_MAGIC;
 	header.ncmds = 2;
 	header.sizeofcmds = commands.byteLength;
@@ -320,21 +322,21 @@ Deno.test('nextCommand over', () => {
 });
 
 Deno.test('findCommand', () => {
-	const commands = new ArrayBuffer(LoadCommand.BYTE_LENGTH * 3);
+	const commands = new ArrayBuffer(load_command.BYTE_LENGTH * 3);
 
-	const commandA = new LoadCommand(commands, 0);
+	const commandA = new load_command(commands, 0);
 	commandA.cmd = 1;
-	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+	commandA.cmdsize = load_command.BYTE_LENGTH;
 
-	const commandB = new LoadCommand(commands, LoadCommand.BYTE_LENGTH);
+	const commandB = new load_command(commands, load_command.BYTE_LENGTH);
 	commandB.cmd = 2;
-	commandB.cmdsize = LoadCommand.BYTE_LENGTH;
+	commandB.cmdsize = load_command.BYTE_LENGTH;
 
-	const commandC = new LoadCommand(commands, LoadCommand.BYTE_LENGTH * 2);
+	const commandC = new load_command(commands, load_command.BYTE_LENGTH * 2);
 	commandC.cmd = 2;
-	commandC.cmdsize = LoadCommand.BYTE_LENGTH;
+	commandC.cmdsize = load_command.BYTE_LENGTH;
 
-	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+	const header = new mach_header(new ArrayBuffer(mach_header.BYTE_LENGTH));
 	header.magic = MH_MAGIC;
 	header.ncmds = 3;
 	header.sizeofcmds = commands.byteLength;
@@ -360,16 +362,18 @@ Deno.test('find command valid', () => {
 		const tag = `method=${method} Command=${Command.name} CMD=${CMD}`;
 
 		const commands = new ArrayBuffer(
-			LoadCommand.BYTE_LENGTH + Command.BYTE_LENGTH,
+			load_command.BYTE_LENGTH + Command.BYTE_LENGTH,
 		);
 
-		const commandA = new LoadCommand(commands);
-		commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+		const commandA = new load_command(commands);
+		commandA.cmdsize = load_command.BYTE_LENGTH;
 
-		const commandB = new Command(commands, LoadCommand.BYTE_LENGTH);
+		const commandB = new Command(commands, load_command.BYTE_LENGTH);
 		commandB.cmdsize = Command.BYTE_LENGTH;
 
-		const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+		const header = new mach_header(
+			new ArrayBuffer(mach_header.BYTE_LENGTH),
+		);
 		header.magic = MH_MAGIC;
 		header.ncmds = 2;
 		header.sizeofcmds = commands.byteLength;
@@ -392,16 +396,18 @@ Deno.test('find command under', () => {
 	for (const [method, Command, CMD] of findCommands) {
 		const tag = `method=${method} Command=${Command.name} CMD=${CMD}`;
 
-		const commands = new ArrayBuffer(LoadCommand.BYTE_LENGTH * 2);
+		const commands = new ArrayBuffer(load_command.BYTE_LENGTH * 2);
 
-		const commandA = new LoadCommand(commands);
-		commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+		const commandA = new load_command(commands);
+		commandA.cmdsize = load_command.BYTE_LENGTH;
 
-		const commandB = new LoadCommand(commands, LoadCommand.BYTE_LENGTH);
+		const commandB = new load_command(commands, load_command.BYTE_LENGTH);
 		commandB.cmd = CMD;
-		commandB.cmdsize = LoadCommand.BYTE_LENGTH;
+		commandB.cmdsize = load_command.BYTE_LENGTH;
 
-		const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+		const header = new mach_header(
+			new ArrayBuffer(mach_header.BYTE_LENGTH),
+		);
 		header.magic = MH_MAGIC;
 		header.ncmds = 2;
 		header.sizeofcmds = commands.byteLength;
@@ -423,24 +429,27 @@ Deno.test('find version', () => {
 	const p = new Uint8Ptr(new ArrayBuffer(4));
 
 	const commands = new ArrayBuffer(
-		LoadCommand.BYTE_LENGTH +
-			BuildVersionCommand.BYTE_LENGTH +
-			VersionMinCommand.BYTE_LENGTH,
+		load_command.BYTE_LENGTH +
+			build_version_command.BYTE_LENGTH +
+			version_min_command.BYTE_LENGTH,
 	);
 
-	const commandA = new LoadCommand(commands);
-	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+	const commandA = new load_command(commands);
+	commandA.cmdsize = load_command.BYTE_LENGTH;
 
-	const commandB = new BuildVersionCommand(commands, LoadCommand.BYTE_LENGTH);
-	commandB.cmdsize = BuildVersionCommand.BYTE_LENGTH;
-
-	const commandC = new VersionMinCommand(
+	const commandB = new build_version_command(
 		commands,
-		LoadCommand.BYTE_LENGTH + BuildVersionCommand.BYTE_LENGTH,
+		load_command.BYTE_LENGTH,
 	);
-	commandC.cmdsize = VersionMinCommand.BYTE_LENGTH;
+	commandB.cmdsize = build_version_command.BYTE_LENGTH;
 
-	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+	const commandC = new version_min_command(
+		commands,
+		load_command.BYTE_LENGTH + build_version_command.BYTE_LENGTH,
+	);
+	commandC.cmdsize = version_min_command.BYTE_LENGTH;
+
+	const header = new mach_header(new ArrayBuffer(mach_header.BYTE_LENGTH));
 	header.magic = MH_MAGIC;
 	header.ncmds = 3;
 	header.sizeofcmds = commands.byteLength;
@@ -492,8 +501,8 @@ Deno.test('find version', () => {
 		...desc,
 		value: function findMinVersion(
 			_this: MachOBase,
-		): VersionMinCommand | null {
-			return new VersionMinCommand(
+		): version_min_command | null {
+			return new version_min_command(
 				commandB.buffer,
 				commandB.byteOffset,
 				commandB.littleEndian,
@@ -511,16 +520,19 @@ Deno.test('find version', () => {
 
 Deno.test('signingOffset signingLength', () => {
 	const commands = new ArrayBuffer(
-		LoadCommand.BYTE_LENGTH + LinkeditDataCommand.BYTE_LENGTH,
+		load_command.BYTE_LENGTH + linkedit_data_command.BYTE_LENGTH,
 	);
 
-	const commandA = new LoadCommand(commands);
-	commandA.cmdsize = LoadCommand.BYTE_LENGTH;
+	const commandA = new load_command(commands);
+	commandA.cmdsize = load_command.BYTE_LENGTH;
 
-	const commandB = new LinkeditDataCommand(commands, LoadCommand.BYTE_LENGTH);
-	commandB.cmdsize = LinkeditDataCommand.BYTE_LENGTH;
+	const commandB = new linkedit_data_command(
+		commands,
+		load_command.BYTE_LENGTH,
+	);
+	commandB.cmdsize = linkedit_data_command.BYTE_LENGTH;
 
-	const header = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH));
+	const header = new mach_header(new ArrayBuffer(mach_header.BYTE_LENGTH));
 	header.magic = MH_MAGIC;
 	header.ncmds = 2;
 	header.sizeofcmds = commands.byteLength;
@@ -551,30 +563,30 @@ Deno.test('findSegment findSection', () => {
 		const [MH, Mach, LC, Seg, Sec] of [
 			[
 				MH_MAGIC,
-				MachHeader,
+				mach_header,
 				LC_SEGMENT,
-				SegmentCommand,
-				Section,
+				segment_command,
+				section,
 			],
 			[
 				MH_MAGIC_64,
-				MachHeader64,
+				mach_header_64,
 				LC_SEGMENT_64,
-				SegmentCommand64,
-				Section64,
+				segment_command_64,
+				section_64,
 			],
 		] as const
 	) {
 		const tag = `Mach=${Mach.name}`;
 
 		const commands = new ArrayBuffer(
-			LoadCommand.BYTE_LENGTH + Seg.BYTE_LENGTH + Sec.BYTE_LENGTH * 2,
+			load_command.BYTE_LENGTH + Seg.BYTE_LENGTH + Sec.BYTE_LENGTH * 2,
 		);
 
-		const lc = new LoadCommand(commands);
-		lc.cmdsize = LoadCommand.BYTE_LENGTH;
+		const lc = new load_command(commands);
+		lc.cmdsize = load_command.BYTE_LENGTH;
 
-		const seg = new Seg(commands, LoadCommand.BYTE_LENGTH);
+		const seg = new Seg(commands, load_command.BYTE_LENGTH);
 		seg.cmd = LC;
 		seg.nsects = 2;
 		seg.cmdsize = Seg.BYTE_LENGTH + Sec.BYTE_LENGTH * seg.nsects;
@@ -670,11 +682,11 @@ Deno.test('findSegment findSection', () => {
 
 Deno.test('string', () => {
 	const cstr = new TextEncoder().encode('Some String\0');
-	const data = new Uint8Array(RpathCommand.BYTE_LENGTH + cstr.byteLength);
+	const data = new Uint8Array(rpath_command.BYTE_LENGTH + cstr.byteLength);
 
-	const command = new RpathCommand(data.buffer);
+	const command = new rpath_command(data.buffer);
 	command.cmdsize = data.byteLength;
-	command.path.offset = RpathCommand.BYTE_LENGTH;
+	command.path.offset = rpath_command.BYTE_LENGTH;
 	data.set(cstr, command.path.offset);
 
 	const macho = new MachOBase();

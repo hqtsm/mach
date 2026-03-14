@@ -6,8 +6,7 @@ import {
 	CPU_TYPE_I386,
 	CPU_TYPE_X86_64,
 } from '../const.ts';
-import { FatArch } from '../mach/fatarch.ts';
-import { FatArch64 } from '../mach/fatarch64.ts';
+import { fat_arch, fat_arch_64 } from '../mach/fat.ts';
 import { Architecture } from './architecture.ts';
 
 Deno.test('constructor()', () => {
@@ -32,7 +31,7 @@ Deno.test('constructor(type, sub)', () => {
 });
 
 Deno.test('constructor(archInFile: FatArch)', () => {
-	const f = new FatArch(new ArrayBuffer(FatArch.BYTE_LENGTH));
+	const f = new fat_arch(new ArrayBuffer(fat_arch.BYTE_LENGTH));
 	f.cputype = 0x12345678;
 	f.cpusubtype = 0x23456789;
 	const a = new Architecture(f);
@@ -42,7 +41,7 @@ Deno.test('constructor(archInFile: FatArch)', () => {
 });
 
 Deno.test('constructor(archInFile: FatArch64)', () => {
-	const f = new FatArch64(new ArrayBuffer(FatArch64.BYTE_LENGTH));
+	const f = new fat_arch_64(new ArrayBuffer(fat_arch_64.BYTE_LENGTH));
 	f.cputype = 0x12345678;
 	f.cpusubtype = 0x23456789;
 	const a = new Architecture(f);

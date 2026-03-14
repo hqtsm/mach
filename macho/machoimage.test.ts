@@ -1,17 +1,16 @@
 import { assertEquals, assertStrictEquals } from '@std/assert';
 import { MH_MAGIC } from '../const.ts';
-import { LoadCommand } from '../mach/loadcommand.ts';
-import { MachHeader } from '../mach/machheader.ts';
+import { load_command, mach_header } from '../mach/loader.ts';
 import { MachOImage } from './machoimage.ts';
 
 Deno.test('constructor', () => {
 	const buffer = new ArrayBuffer(
-		MachHeader.BYTE_LENGTH + LoadCommand.BYTE_LENGTH,
+		mach_header.BYTE_LENGTH + load_command.BYTE_LENGTH,
 	);
-	const header = new MachHeader(buffer);
+	const header = new mach_header(buffer);
 	header.magic = MH_MAGIC;
 	header.ncmds = 1;
-	header.sizeofcmds = LoadCommand.BYTE_LENGTH;
+	header.sizeofcmds = load_command.BYTE_LENGTH;
 
 	{
 		const macho = new MachOImage(buffer);

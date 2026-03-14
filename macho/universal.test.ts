@@ -21,11 +21,8 @@ import {
 	MH_EXECUTE,
 	MH_MAGIC_64,
 } from '../const.ts';
-import { FatArch } from '../mach/fatarch.ts';
-import { FatHeader } from '../mach/fatheader.ts';
-import { LoadCommand } from '../mach/loadcommand.ts';
-import { MachHeader } from '../mach/machheader.ts';
-import { MachHeader64 } from '../mach/machheader64.ts';
+import { fat_arch, fat_header } from '../mach/fat.ts';
+import { load_command, mach_header, mach_header_64 } from '../mach/loader.ts';
 import { fixtureMacho, fixtureMachos } from '../spec/fixture.ts';
 import { Architecture } from './architecture.ts';
 import { MachO } from './macho.ts';
@@ -119,7 +116,7 @@ Deno.test('open under header', async () => {
 
 Deno.test('open unknown magic', async () => {
 	const data = new ArrayBuffer(
-		Math.max(FatHeader.BYTE_LENGTH, MachHeader.BYTE_LENGTH),
+		Math.max(fat_header.BYTE_LENGTH, mach_header.BYTE_LENGTH),
 	);
 	const blob = new Blob([data]);
 	await assertRejects(
@@ -131,11 +128,11 @@ Deno.test('open unknown magic', async () => {
 
 Deno.test('open too many arch', async () => {
 	const data = new ArrayBuffer(
-		Math.max(FatHeader.BYTE_LENGTH, MachHeader.BYTE_LENGTH),
+		Math.max(fat_header.BYTE_LENGTH, mach_header.BYTE_LENGTH),
 	);
-	const header = new FatHeader(data);
+	const header = new fat_header(data);
 	header.magic = FAT_MAGIC;
-	header.nfatArch = MAX_ARCH_COUNT + 1;
+	header.nfat_arch = MAX_ARCH_COUNT + 1;
 	const blob = new Blob([data]);
 	await assertRejects(
 		() => Universal.Universal(blob),
@@ -146,11 +143,11 @@ Deno.test('open too many arch', async () => {
 
 Deno.test('open under arch', async () => {
 	const data = new ArrayBuffer(
-		Math.max(FatHeader.BYTE_LENGTH, MachHeader.BYTE_LENGTH),
+		Math.max(fat_header.BYTE_LENGTH, mach_header.BYTE_LENGTH),
 	);
-	const header = new FatHeader(data);
+	const header = new fat_header(data);
 	header.magic = FAT_MAGIC;
-	header.nfatArch = 1;
+	header.nfat_arch = 1;
 	const blob = new Blob([data]);
 	await assertRejects(
 		() => Universal.Universal(blob),
@@ -161,19 +158,19 @@ Deno.test('open under arch', async () => {
 
 Deno.test('open under count archs', async () => {
 	const data = new ArrayBuffer(
-		Math.max(FatHeader.BYTE_LENGTH, MachHeader.BYTE_LENGTH) +
-			FatArch.BYTE_LENGTH * 2 + 512,
+		Math.max(fat_header.BYTE_LENGTH, mach_header.BYTE_LENGTH) +
+			fat_arch.BYTE_LENGTH * 2 + 512,
 	);
-	const header = new FatHeader(data);
+	const header = new fat_header(data);
 	header.magic = FAT_MAGIC;
-	header.nfatArch = 1;
+	header.nfat_arch = 1;
 
-	const arch1 = new FatArch(data, header.byteLength);
+	const arch1 = new fat_arch(data, header.byteLength);
 	arch1.cputype = CPU_TYPE_ARM;
 	arch1.offset = data.byteLength - 512;
 	arch1.size = 0;
 
-	const arch2 = new FatArch(data, arch1.byteOffset + arch1.byteLength);
+	const arch2 = new fat_arch(data, arch1.byteOffset + arch1.byteLength);
 	arch2.cputype = CPU_ARCH_ABI64 | CPU_TYPE_ARM;
 	arch2.offset = data.byteLength - 256;
 	arch2.size = 0;
@@ -186,18 +183,18 @@ Deno.test('open under count archs', async () => {
 
 Deno.test('open duplicate offset', async () => {
 	const data = new ArrayBuffer(
-		Math.max(FatHeader.BYTE_LENGTH, MachHeader.BYTE_LENGTH) +
-			FatArch.BYTE_LENGTH * 2,
+		Math.max(fat_header.BYTE_LENGTH, mach_header.BYTE_LENGTH) +
+			fat_arch.BYTE_LENGTH * 2,
 	);
-	const header = new FatHeader(data);
+	const header = new fat_header(data);
 	header.magic = FAT_MAGIC;
-	header.nfatArch = 2;
+	header.nfat_arch = 2;
 
-	const arch1 = new FatArch(data, header.byteLength);
+	const arch1 = new fat_arch(data, header.byteLength);
 	arch1.offset = data.byteLength;
 	arch1.size = 0;
 
-	const arch2 = new FatArch(data, arch1.byteOffset + arch1.byteLength);
+	const arch2 = new fat_arch(data, arch1.byteOffset + arch1.byteLength);
 	arch2.offset = data.byteLength;
 	arch2.size = 0;
 
@@ -211,11 +208,11 @@ Deno.test('open duplicate offset', async () => {
 
 Deno.test('open suspicious gap', async () => {
 	const data = new ArrayBuffer(1024);
-	const header = new FatHeader(data);
+	const header = new fat_header(data);
 	header.magic = FAT_MAGIC;
-	header.nfatArch = 1;
+	header.nfat_arch = 1;
 
-	const arch = new FatArch(data, header.byteLength);
+	const arch = new fat_arch(data, header.byteLength);
 	arch.offset = 512;
 	arch.size = 512;
 
@@ -227,16 +224,16 @@ Deno.test('open suspicious gap', async () => {
 
 Deno.test('open suspicious read align', async () => {
 	const data = new ArrayBuffer(1024);
-	const header = new FatHeader(data);
+	const header = new fat_header(data);
 	header.magic = FAT_MAGIC;
-	header.nfatArch = 2;
+	header.nfat_arch = 2;
 
-	const arch1 = new FatArch(data, header.byteLength);
+	const arch1 = new fat_arch(data, header.byteLength);
 	arch1.offset = 256;
 	arch1.size = 256;
 	arch1.align = 8;
 
-	const arch2 = new FatArch(data, header.byteLength + arch1.byteLength);
+	const arch2 = new fat_arch(data, header.byteLength + arch1.byteLength);
 	arch2.offset = 256 * 3;
 	arch2.size = 256;
 	arch2.align = 8;
@@ -247,16 +244,16 @@ Deno.test('open suspicious read align', async () => {
 
 Deno.test('open suspicious read after', async () => {
 	const data = new ArrayBuffer(1024 + 1);
-	const header = new FatHeader(data);
+	const header = new fat_header(data);
 	header.magic = FAT_MAGIC;
-	header.nfatArch = 2;
+	header.nfat_arch = 2;
 
-	const arch1 = new FatArch(data, header.byteLength);
+	const arch1 = new fat_arch(data, header.byteLength);
 	arch1.offset = 256;
 	arch1.size = 256 + 1;
 	arch1.align = 8;
 
-	const arch2 = new FatArch(data, header.byteLength + arch1.byteLength);
+	const arch2 = new fat_arch(data, header.byteLength + arch1.byteLength);
 	arch2.offset = 256 * 3;
 	arch2.size = 256;
 	arch2.align = 8;
@@ -267,16 +264,16 @@ Deno.test('open suspicious read after', async () => {
 
 Deno.test('open suspicious read error', async () => {
 	const data = new ArrayBuffer(512 + 1);
-	const header = new FatHeader(data);
+	const header = new fat_header(data);
 	header.magic = FAT_MAGIC;
-	header.nfatArch = 2;
+	header.nfat_arch = 2;
 
-	const arch1 = new FatArch(data, header.byteLength);
+	const arch1 = new fat_arch(data, header.byteLength);
 	arch1.offset = 256;
 	arch1.size = 256 + 1;
 	arch1.align = 8;
 
-	const arch2 = new FatArch(data, header.byteLength + arch1.byteLength);
+	const arch2 = new fat_arch(data, header.byteLength + arch1.byteLength);
 	arch2.offset = 256 * 3;
 	arch2.size = 256;
 	arch2.align = 8;
@@ -287,18 +284,18 @@ Deno.test('open suspicious read error', async () => {
 
 Deno.test('findArch case 1: prefer full exact match', async () => {
 	const data = new ArrayBuffer(256 * 3);
-	const header = new FatHeader(data);
+	const header = new fat_header(data);
 	header.magic = FAT_MAGIC;
-	header.nfatArch = 2;
+	header.nfat_arch = 2;
 
-	const arch1 = new FatArch(data, header.byteLength);
+	const arch1 = new fat_arch(data, header.byteLength);
 	arch1.offset = 256;
 	arch1.size = 256;
 	arch1.align = 8;
 	arch1.cputype = CPU_TYPE_ARM;
 	arch1.cpusubtype = CPU_SUBTYPE_ARM_V8;
 
-	const arch2 = new FatArch(data, arch1.byteOffset + arch1.byteLength);
+	const arch2 = new fat_arch(data, arch1.byteOffset + arch1.byteLength);
 	arch2.offset = 256 * 2;
 	arch2.size = 256;
 	arch2.align = 8;
@@ -320,18 +317,18 @@ Deno.test('findArch case 1: prefer full exact match', async () => {
 
 Deno.test('findArch case 2: prefer masked subtype equal to all', async () => {
 	const data = new ArrayBuffer(256 * 3);
-	const header = new FatHeader(data);
+	const header = new fat_header(data);
 	header.magic = FAT_MAGIC;
-	header.nfatArch = 2;
+	header.nfat_arch = 2;
 
-	const arch1 = new FatArch(data, header.byteLength);
+	const arch1 = new fat_arch(data, header.byteLength);
 	arch1.offset = 256;
 	arch1.size = 256;
 	arch1.align = 8;
 	arch1.cputype = CPU_TYPE_ARM;
 	arch1.cpusubtype = CPU_SUBTYPE_ARM_ALL;
 
-	const arch2 = new FatArch(data, arch1.byteOffset + arch1.byteLength);
+	const arch2 = new fat_arch(data, arch1.byteOffset + arch1.byteLength);
 	arch2.offset = 256 * 2;
 	arch2.size = 256;
 	arch2.align = 8;
@@ -353,18 +350,18 @@ Deno.test('findArch case 2: prefer masked subtype equal to all', async () => {
 
 Deno.test('findArch case 3: prefer all subtype to mismatch', async () => {
 	const data = new ArrayBuffer(256 * 3);
-	const header = new FatHeader(data);
+	const header = new fat_header(data);
 	header.magic = FAT_MAGIC;
-	header.nfatArch = 2;
+	header.nfat_arch = 2;
 
-	const arch1 = new FatArch(data, header.byteLength);
+	const arch1 = new fat_arch(data, header.byteLength);
 	arch1.offset = 256;
 	arch1.size = 256;
 	arch1.align = 8;
 	arch1.cputype = CPU_TYPE_ARM;
 	arch1.cpusubtype = CPU_SUBTYPE_ARM_V7;
 
-	const arch2 = new FatArch(data, arch1.byteOffset + arch1.byteLength);
+	const arch2 = new fat_arch(data, arch1.byteOffset + arch1.byteLength);
 	arch2.offset = 256 * 2;
 	arch2.size = 256;
 	arch2.align = 8;
@@ -386,18 +383,18 @@ Deno.test('findArch case 3: prefer all subtype to mismatch', async () => {
 
 Deno.test('findArch case 4: accept equal type as last resort', async () => {
 	const data = new ArrayBuffer(256 * 3);
-	const header = new FatHeader(data);
+	const header = new fat_header(data);
 	header.magic = FAT_MAGIC;
-	header.nfatArch = 2;
+	header.nfat_arch = 2;
 
-	const arch1 = new FatArch(data, header.byteLength);
+	const arch1 = new fat_arch(data, header.byteLength);
 	arch1.offset = 256;
 	arch1.size = 256;
 	arch1.align = 8;
 	arch1.cputype = CPU_TYPE_X86;
 	arch1.cpusubtype = CPU_SUBTYPE_X86_ALL;
 
-	const arch2 = new FatArch(data, arch1.byteOffset + arch1.byteLength);
+	const arch2 = new fat_arch(data, arch1.byteOffset + arch1.byteLength);
 	arch2.offset = 256 * 2;
 	arch2.size = 256;
 	arch2.align = 8;
@@ -419,19 +416,19 @@ Deno.test('findArch case 4: accept equal type as last resort', async () => {
 
 Deno.test('make unknown type', async () => {
 	const data = new ArrayBuffer(512);
-	const header = new FatHeader(data);
+	const header = new fat_header(data);
 	header.magic = FAT_MAGIC;
-	header.nfatArch = 1;
+	header.nfat_arch = 1;
 
-	const arch = new FatArch(data, header.byteLength);
+	const arch = new fat_arch(data, header.byteLength);
 	arch.offset = 256;
 	arch.size = 256;
 	arch.align = 8;
 
-	const mach = new MachHeader64(data, 256);
+	const mach = new mach_header_64(data, 256);
 	mach.magic = MH_MAGIC_64;
 	mach.sizeofcmds = 8;
-	const command = new LoadCommand(data, 256 + mach.byteLength);
+	const command = new load_command(data, 256 + mach.byteLength);
 	command.cmdsize = 8;
 
 	const uni = await Universal.Universal(new Blob([data]));
@@ -444,33 +441,33 @@ Deno.test('make unknown type', async () => {
 
 Deno.test('make mismatched type', async () => {
 	const data = new ArrayBuffer(256 * 3);
-	const header = new FatHeader(data);
+	const header = new fat_header(data);
 	header.magic = FAT_MAGIC;
-	header.nfatArch = 2;
+	header.nfat_arch = 2;
 
-	const arch1 = new FatArch(data, header.byteLength);
+	const arch1 = new fat_arch(data, header.byteLength);
 	arch1.offset = 256;
 	arch1.size = 256;
 	arch1.align = 8;
 	{
-		const mach = new MachHeader64(data, 256);
+		const mach = new mach_header_64(data, 256);
 		mach.magic = MH_MAGIC_64;
 		mach.filetype = MH_EXECUTE;
 		mach.sizeofcmds = 8;
-		const command = new LoadCommand(data, 256 + mach.byteLength);
+		const command = new load_command(data, 256 + mach.byteLength);
 		command.cmdsize = 8;
 	}
 
-	const arch2 = new FatArch(data, arch1.byteOffset + arch1.byteLength);
+	const arch2 = new fat_arch(data, arch1.byteOffset + arch1.byteLength);
 	arch2.offset = 512;
 	arch2.size = 512;
 	arch2.align = 8;
 	{
-		const mach = new MachHeader64(data, 512);
+		const mach = new mach_header_64(data, 512);
 		mach.magic = MH_MAGIC_64;
 		mach.filetype = MH_DYLIB;
 		mach.sizeofcmds = 8;
-		const command = new LoadCommand(data, 512 + mach.byteLength);
+		const command = new load_command(data, 512 + mach.byteLength);
 		command.cmdsize = 8;
 	}
 
@@ -484,31 +481,31 @@ Deno.test('make mismatched type', async () => {
 });
 
 Deno.test('typeOf under header', async () => {
-	const blob = new Blob([new ArrayBuffer(MachHeader.BYTE_LENGTH - 1)]);
+	const blob = new Blob([new ArrayBuffer(mach_header.BYTE_LENGTH - 1)]);
 	assertEquals(await Universal.typeOf(blob), 0);
 });
 
 Deno.test('typeOf unknown magic', async () => {
-	const blob = new Blob([new ArrayBuffer(MachHeader.BYTE_LENGTH)]);
+	const blob = new Blob([new ArrayBuffer(mach_header.BYTE_LENGTH)]);
 	assertEquals(await Universal.typeOf(blob), 0);
 });
 
 Deno.test('typeOf fat arch under', async () => {
-	const data = new ArrayBuffer(FatHeader.BYTE_LENGTH + FatArch.BYTE_LENGTH);
-	const header = new FatHeader(data);
+	const data = new ArrayBuffer(fat_header.BYTE_LENGTH + fat_arch.BYTE_LENGTH);
+	const header = new fat_header(data);
 	header.magic = FAT_MAGIC;
-	header.nfatArch = 1;
-	const arch = new FatArch(data, FatHeader.BYTE_LENGTH);
+	header.nfat_arch = 1;
+	const arch = new fat_arch(data, fat_header.BYTE_LENGTH);
 	arch.offset = data.byteLength;
 	const blob = new Blob([data]);
 	assertEquals(await Universal.typeOf(blob), 0);
 });
 
 Deno.test('typeOf fat infinite loop', async () => {
-	const data = new ArrayBuffer(FatHeader.BYTE_LENGTH + FatArch.BYTE_LENGTH);
-	const header = new FatHeader(data);
+	const data = new ArrayBuffer(fat_header.BYTE_LENGTH + fat_arch.BYTE_LENGTH);
+	const header = new fat_header(data);
 	header.magic = FAT_MAGIC;
-	header.nfatArch = 1;
+	header.nfat_arch = 1;
 	const blob = new Blob([data]);
 	assertEquals(await Universal.typeOf(blob), 0);
 });

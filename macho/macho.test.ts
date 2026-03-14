@@ -6,11 +6,13 @@ import {
 	MH_MAGIC,
 	MH_MAGIC_64,
 } from '../const.ts';
-import { MachHeader } from '../mach/machheader.ts';
-import { MachHeader64 } from '../mach/machheader64.ts';
-import { SegmentCommand } from '../mach/segmentcommand.ts';
-import { SegmentCommand64 } from '../mach/segmentcommand64.ts';
-import { SymtabCommand } from '../mach/symtabcommand.ts';
+import {
+	mach_header,
+	mach_header_64,
+	segment_command,
+	segment_command_64,
+	symtab_command,
+} from '../mach/loader.ts';
 import {
 	CPU_ARCHITECTURES,
 	fixtureMacho,
@@ -78,7 +80,7 @@ for (const { kind, arch, file, archs } of fixtures) {
 }
 
 Deno.test('read under', async () => {
-	let mh = new MachHeader(new ArrayBuffer(MachHeader.BYTE_LENGTH - 1));
+	let mh = new mach_header(new ArrayBuffer(mach_header.BYTE_LENGTH - 1));
 
 	await assertRejects(
 		() => MachO.MachO(new Blob([mh.buffer as ArrayBuffer])),
@@ -86,7 +88,7 @@ Deno.test('read under', async () => {
 		'Invalid header',
 	);
 
-	mh = new MachHeader64(new ArrayBuffer(MachHeader64.BYTE_LENGTH - 1));
+	mh = new mach_header_64(new ArrayBuffer(mach_header_64.BYTE_LENGTH - 1));
 	mh.magic = MH_MAGIC_64;
 
 	await assertRejects(
@@ -95,7 +97,7 @@ Deno.test('read under', async () => {
 		'Invalid header',
 	);
 
-	mh = new MachHeader64(new ArrayBuffer(MachHeader64.BYTE_LENGTH + 1));
+	mh = new mach_header_64(new ArrayBuffer(mach_header_64.BYTE_LENGTH + 1));
 	mh.magic = MH_MAGIC_64;
 	mh.ncmds = 1;
 	mh.sizeofcmds = 2;
@@ -110,18 +112,18 @@ Deno.test('read under', async () => {
 Deno.test('validateStructure LC_SYMTAB', async () => {
 	const extra = 0xff;
 	const buffer = new ArrayBuffer(
-		MachHeader.BYTE_LENGTH + SymtabCommand.BYTE_LENGTH + extra,
+		mach_header.BYTE_LENGTH + symtab_command.BYTE_LENGTH + extra,
 	);
 
-	const mh = new MachHeader(buffer, 0, false);
+	const mh = new mach_header(buffer, 0, false);
 	mh.magic = MH_MAGIC;
 	mh.ncmds = 1;
-	mh.sizeofcmds = SymtabCommand.BYTE_LENGTH;
+	mh.sizeofcmds = symtab_command.BYTE_LENGTH;
 
-	const cmd = new SymtabCommand(buffer, MachHeader.BYTE_LENGTH, false);
+	const cmd = new symtab_command(buffer, mach_header.BYTE_LENGTH, false);
 	cmd.cmd = LC_SYMTAB;
-	cmd.cmdsize = SymtabCommand.BYTE_LENGTH;
-	cmd.stroff = MachHeader.BYTE_LENGTH + SymtabCommand.BYTE_LENGTH;
+	cmd.cmdsize = symtab_command.BYTE_LENGTH;
+	cmd.stroff = mach_header.BYTE_LENGTH + symtab_command.BYTE_LENGTH;
 	cmd.strsize = extra;
 
 	{
@@ -145,9 +147,9 @@ Deno.test('validateStructure LC_SYMTAB', async () => {
 Deno.test('validateStructure bad command size', async () => {
 	for (
 		const [LC, Command, MH, Header] of [
-			[LC_SEGMENT, SegmentCommand, MH_MAGIC, MachHeader],
-			[LC_SEGMENT_64, SegmentCommand64, MH_MAGIC_64, MachHeader64],
-			[LC_SYMTAB, SymtabCommand, MH_MAGIC, MachHeader],
+			[LC_SEGMENT, segment_command, MH_MAGIC, mach_header],
+			[LC_SEGMENT_64, segment_command_64, MH_MAGIC_64, mach_header_64],
+			[LC_SYMTAB, symtab_command, MH_MAGIC, mach_header],
 		] as const
 	) {
 		const tag =
