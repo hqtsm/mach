@@ -1,4 +1,3 @@
-export * from './blob/mod.ts';
 export * from './const.ts';
 export * from './error/mod.ts';
 export * from './hash/mod.ts';
