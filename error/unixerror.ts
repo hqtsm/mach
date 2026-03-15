@@ -3,8 +3,6 @@ import type { Const, Int8Ptr } from '@hqtsm/struct';
 import { errSecErrnoBase } from '../const.ts';
 import { CommonError } from './commonerror.ts';
 
-const NAME = 'UnixError';
-
 /**
  * Unix error.
  */
@@ -113,7 +111,7 @@ export class UnixError extends CommonError {
 			(tag = (arg as UnixError | null)?.[Symbol.toStringTag]);
 			arg = Object.getPrototypeOf(arg)
 		) {
-			if (tag === NAME) {
+			if (tag === 'UnixError') {
 				return true;
 			}
 		}
@@ -121,9 +119,9 @@ export class UnixError extends CommonError {
 	}
 
 	static {
-		toStringTag(this, NAME);
+		toStringTag(this, 'UnixError');
 		Object.defineProperty(this.prototype, 'name', {
-			value: NAME,
+			value: 'UnixError',
 			configurable: true,
 			enumerable: false,
 			writable: true,

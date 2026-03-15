@@ -1,7 +1,6 @@
 import { toStringTag } from '@hqtsm/class';
 import { type Arr, array, Int8Ptr } from '@hqtsm/struct';
 
-const NAME = 'CommonError';
 const whatBufferSize = 128;
 
 /**
@@ -79,7 +78,7 @@ export class CommonError extends Error {
 			(tag = (arg as CommonError | null)?.[Symbol.toStringTag]);
 			arg = Object.getPrototypeOf(arg)
 		) {
-			if (tag === NAME) {
+			if (tag === 'CommonError') {
 				return true;
 			}
 		}
@@ -87,9 +86,9 @@ export class CommonError extends Error {
 	}
 
 	static {
-		toStringTag(this, NAME);
+		toStringTag(this, 'CommonError');
 		Object.defineProperty(this.prototype, 'name', {
-			value: NAME,
+			value: 'CommonError',
 			configurable: true,
 			enumerable: false,
 			writable: true,

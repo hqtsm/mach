@@ -3,8 +3,6 @@ import type { Const, Int8Ptr } from '@hqtsm/struct';
 import { errSecErrnoBase, errSecErrnoLimit, errSecSuccess } from '../const.ts';
 import { CommonError } from './commonerror.ts';
 
-const NAME = 'MacOSError';
-
 /**
  * Unix error.
  */
@@ -81,7 +79,7 @@ export class MacOSError extends CommonError {
 			(tag = (arg as MacOSError | null)?.[Symbol.toStringTag]);
 			arg = Object.getPrototypeOf(arg)
 		) {
-			if (tag === NAME) {
+			if (tag === 'MacOSError') {
 				return true;
 			}
 		}
@@ -89,9 +87,9 @@ export class MacOSError extends CommonError {
 	}
 
 	static {
-		toStringTag(this, NAME);
+		toStringTag(this, 'MacOSError');
 		Object.defineProperty(this.prototype, 'name', {
-			value: NAME,
+			value: 'MacOSError',
 			configurable: true,
 			enumerable: false,
 			writable: true,
