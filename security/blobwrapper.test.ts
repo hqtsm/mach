@@ -1,5 +1,5 @@
 import { assertEquals } from '@std/assert';
-import { CSMAGIC_BLOBWRAPPER } from '../const.ts';
+import { CSMAGIC_BLOBWRAPPER } from '../kern/cs_blobs.ts';
 import { unhex } from '../spec/hex.ts';
 import { BlobWrapper } from './blobwrapper.ts';
 

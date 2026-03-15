@@ -5,10 +5,10 @@ import {
 	assertThrows,
 } from '@std/assert';
 import {
-	CS_SHA1_LEN,
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
 } from '../const.ts';
+import { CS_SHA1_LEN } from '../kern/cs_blobs.ts';
 import { UINT32_MAX } from '../libc/stdint.ts';
 import { PLATFORM_MACOS } from '../mach-o/loader.ts';
 import type { Reader } from '../util/reader.ts';

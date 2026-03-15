@@ -6,7 +6,7 @@ import {
 	Ptr,
 	Uint8Ptr,
 } from '@hqtsm/struct';
-import { CSMAGIC_BLOBWRAPPER } from '../const.ts';
+import { CSMAGIC_BLOBWRAPPER } from '../kern/cs_blobs.ts';
 import { Blob } from './blob.ts';
 import { BlobCore } from './blobcore.ts';
 
