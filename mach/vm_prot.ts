@@ -81,6 +81,6 @@ export const VM_PROT_UEXEC = 0x8;
 export const VM_PROT_ALLEXEC = VM_PROT_EXECUTE;
 
 /**
- * VM protection: all exec x86_64.
+ * VM protection: all exec: x86_64.
  */
 export const VM_PROT_ALLEXEC_X86_64 = 0xc; // VM_PROT_EXECUTE | VM_PROT_UEXEC
