@@ -1,6 +1,11 @@
 // deno-lint-ignore-file camelcase
 
 /**
+ * Page size: i386.
+ */
+export const vm_page_size_i386 = 0x1000;
+
+/**
  * Page size: ARM.
  */
 export const vm_page_size_arm = 0x1000;
@@ -11,6 +16,11 @@ export const vm_page_size_arm = 0x1000;
 export const vm_page_size_arm64 = 0x4000;
 
 /**
+ * Page mask: i386.
+ */
+export const vm_page_mask_i386 = 0xfff;
+
+/**
  * Page mask: ARM.
  */
 export const vm_page_mask_arm = 0xfff;
@@ -19,6 +29,11 @@ export const vm_page_mask_arm = 0xfff;
  * Page mask: ARM64.
  */
 export const vm_page_mask_arm64 = 0x3fff;
+
+/**
+ * Page shift: i386.
+ */
+export const vm_page_shift_i386 = 12;
 
 /**
  * Page shift: ARM.
