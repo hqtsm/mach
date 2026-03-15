@@ -1,6 +1,5 @@
 import { toStringTag } from '@hqtsm/class';
 import { pointer, type Ptr } from '@hqtsm/struct';
-import type { DynamicHash, DynamicHashCrypto } from '../hash/dynamichash.ts';
 import { UINT32_MAX } from '../libc/stdint.ts';
 import {
 	type ArrayBufferLikeData,
@@ -9,6 +8,7 @@ import {
 import type { Reader } from '../util/reader.ts';
 import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
+import type { DynamicHash, DynamicHashCrypto } from './hashing.ts';
 
 function specialSlot(slot: number): number {
 	slot = (+slot || 0) - (slot % 1 || 0);

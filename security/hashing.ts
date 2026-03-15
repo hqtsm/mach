@@ -1,4 +1,4 @@
-import { toStringTag } from '@hqtsm/class';
+import { toStringTag } from '@hqtsm/class/symbol';
 import type { ArrayBufferPointer } from '@hqtsm/struct';
 import {
 	kCCDigestSHA1,
@@ -15,7 +15,71 @@ import type {
 import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
 import { type ArrayBufferData, asUint8Array } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
-import { DynamicHash } from './dynamichash.ts';
+
+/**
+ * Dynamic hash crypto.
+ */
+export type DynamicHashCrypto =
+	| Pick<SubtleCrypto, 'digest'>
+	| Pick<SubtleCryptoExtended, 'digest'>;
+
+/**
+ * Dynamic hash.
+ */
+export abstract class DynamicHash {
+	/**
+	 * Hash crypto.
+	 */
+	public crypto: DynamicHashCrypto | null = null;
+
+	/**
+	 * Get the digest length.
+	 *
+	 * @returns Digest byte length.
+	 */
+	public abstract digestLength(): number;
+
+	/**
+	 * Update digest, can only be called once.
+	 *
+	 * @param source Source data.
+	 * @returns Hash digest.
+	 */
+	public abstract update(
+		source:
+			| Reader
+			| ArrayBufferData,
+	): Promise<void>;
+
+	/**
+	 * Update digest, can only be called once.
+	 *
+	 * @param source Source data.
+	 * @param size Source size.
+	 * @returns Hash digest.
+	 */
+	public abstract update(
+		source:
+			| ArrayBufferPointer<ArrayBuffer>
+			| SizeIterator<ArrayBufferData>
+			| SizeAsyncIterator<ArrayBufferData>,
+		size: number,
+	): Promise<void>;
+
+	/**
+	 * Finish hash, can only be called once.
+	 *
+	 * @param digest Digest.
+	 * @returns Promise.
+	 */
+	public abstract finish(
+		digest: ArrayBufferLike | ArrayBufferPointer,
+	): Promise<void>;
+
+	static {
+		toStringTag(this, 'DynamicHash');
+	}
+}
 
 interface Algo {
 	l: number;
@@ -27,10 +91,8 @@ interface Digest extends Algo {
 	s: 0 | 1 | 2 | 3;
 }
 
-type IR = IteratorResult<ArrayBufferData>;
-
 // Supported hash algorithms with their names and lengths.
-const algorithims = new Map<number, Algo>([
+const algorithms = new Map<number, Algo>([
 	[kCCDigestSHA1, { l: 20, a: 'SHA-1' }],
 	[kCCDigestSHA256, { l: 32, a: 'SHA-256' }],
 	[kCCDigestSHA384, { l: 48, a: 'SHA-384' }],
@@ -38,7 +100,7 @@ const algorithims = new Map<number, Algo>([
 ]);
 
 const algorithm = (alg: number): Algo => {
-	const info = algorithims.get(alg);
+	const info = algorithms.get(alg);
 	if (!info) {
 		throw new RangeError(`Unsupported hash algorithm: ${alg}`);
 	}
@@ -106,7 +168,7 @@ const iteratorAG = async function* (
 			n = source.next(PAGE_SIZE)
 		) {
 			// deno-lint-ignore no-await-in-loop
-			n = (a ? await n : n) as IR;
+			n = (a ? await n : n) as IteratorResult<ArrayBufferData>;
 			if (n.done) {
 				break;
 			}
@@ -233,7 +295,9 @@ export class CCHashInstance extends DynamicHash {
 						n = source.next(ps)
 					) {
 						// deno-lint-ignore no-await-in-loop
-						n = (p ? await n : n) as IR;
+						n = (p ? await n : n) as IteratorResult<
+							ArrayBufferData
+						>;
 						if (n.done) {
 							break;
 						}

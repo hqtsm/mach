@@ -1,4 +1,4 @@
-import type { DynamicHash } from '../hash/dynamichash.ts';
+import type { DynamicHash } from '../security/hashing.ts';
 import type { Reader } from './reader.ts';
 
 /**

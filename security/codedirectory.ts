@@ -23,14 +23,17 @@ import {
 	kSecCodeSignatureHashSHA384,
 	PAGE_SIZE,
 } from '../const.ts';
-import { CCHashInstance } from '../hash/cchashinstance.ts';
-import type { DynamicHash, DynamicHashCrypto } from '../hash/dynamichash.ts';
 import { sizeAsyncIterators, type SizeIteratorNext } from '../util/iterator.ts';
 import { toUint8ArrayArrayBuffer } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import { hashFileData } from '../util/utilities.ts';
 import { Blob } from './blob.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
+import {
+	CCHashInstance,
+	type DynamicHash,
+	type DynamicHashCrypto,
+} from './hashing.ts';
 
 const max = (values: number[]) => Math.max(...values);
 

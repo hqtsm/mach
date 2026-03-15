@@ -24,6 +24,7 @@ import {
 	kCCDigestSkein512,
 	PAGE_SIZE,
 } from '../const.ts';
+import { subtleNode, subtleStreaming } from '../spec/crypto.ts';
 import { hex } from '../spec/hex.ts';
 import type {
 	SubtleCrypto,
@@ -33,8 +34,7 @@ import type {
 import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
 import type { ArrayBufferData, ArrayBufferLikeData } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
-import { CCHashInstance } from './cchashinstance.ts';
-import { subtleNode, subtleStreaming } from '../spec/crypto.ts';
+import { CCHashInstance } from './hashing.ts';
 
 type HashCrypto = SubtleCrypto | SubtleCryptoExtended;
 

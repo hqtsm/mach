@@ -1,6 +1,6 @@
 import { assertEquals } from '@std/assert';
 import { kCCDigestSHA1 } from '../const.ts';
-import { CCHashInstance } from '../hash/cchashinstance.ts';
+import { CCHashInstance } from '../security/hashing.ts';
 import { hashFileData } from './utilities.ts';
 
 Deno.test('hashFileData full', async () => {
