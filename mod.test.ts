@@ -51,9 +51,15 @@ Deno.test('class constants', async () => {
 
 			{
 				const tag = `${k}[Symbol.toStringTag]`;
+				const str = `[object ${k}]`;
 				if (v.prototype.toString === Object.prototype.toString) {
-					assertEquals(String(v.prototype), `[object ${k}]`, tag);
+					assertEquals(String(v.prototype), str, tag);
 				}
+				assertEquals(
+					Object.prototype.toString.call(v.prototype),
+					str,
+					tag,
+				);
 				assertEquals(
 					Object.getOwnPropertyDescriptor(
 						v.prototype,
