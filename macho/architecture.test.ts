@@ -1,5 +1,4 @@
 import { assertEquals } from '@std/assert';
-import { fat_arch, fat_arch_64 } from '../mach/fat.ts';
 import {
 	CPU_SUBTYPE_LIB64,
 	CPU_SUBTYPE_MULTIPLE,
@@ -7,6 +6,7 @@ import {
 	CPU_TYPE_I386,
 	CPU_TYPE_X86_64,
 } from '../mach/machine.ts';
+import { fat_arch, fat_arch_64 } from '../mach-o/fat.ts';
 import { Architecture } from './architecture.ts';
 
 Deno.test('constructor()', () => {

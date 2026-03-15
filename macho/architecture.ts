@@ -1,6 +1,6 @@
 import { toStringTag } from '@hqtsm/class';
-import type { fat_arch, fat_arch_64 } from '../mach/fat.ts';
 import { CPU_SUBTYPE_MASK, CPU_SUBTYPE_MULTIPLE } from '../mach/machine.ts';
+import type { fat_arch, fat_arch_64 } from '../mach-o/fat.ts';
 
 /**
  * Architecture specification.

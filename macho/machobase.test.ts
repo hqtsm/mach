@@ -32,7 +32,7 @@ import {
 	segment_command,
 	segment_command_64,
 	version_min_command,
-} from '../mach/loader.ts';
+} from '../mach-o/loader.ts';
 import { Architecture } from './architecture.ts';
 import { MachOBase } from './machobase.ts';
 

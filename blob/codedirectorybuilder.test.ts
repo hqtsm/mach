@@ -10,7 +10,7 @@ import {
 	kSecCodeSignatureHashSHA256,
 } from '../const.ts';
 import { UINT32_MAX } from '../libc/stdint.ts';
-import { PLATFORM_MACOS } from '../mach/loader.ts';
+import { PLATFORM_MACOS } from '../mach-o/loader.ts';
 import type { Reader } from '../util/reader.ts';
 import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';

@@ -7,15 +7,6 @@ import {
 	assertThrows,
 } from '@std/assert';
 import { MAX_ARCH_COUNT } from '../const.ts';
-import { fat_arch, fat_header, FAT_MAGIC } from '../mach/fat.ts';
-import {
-	load_command,
-	mach_header,
-	mach_header_64,
-	MH_DYLIB,
-	MH_EXECUTE,
-	MH_MAGIC_64,
-} from '../mach/loader.ts';
 import {
 	CPU_ARCH_ABI64,
 	CPU_SUBTYPE_ARM_ALL,
@@ -26,6 +17,15 @@ import {
 	CPU_TYPE_ARM,
 	CPU_TYPE_X86,
 } from '../mach/machine.ts';
+import { fat_arch, fat_header, FAT_MAGIC } from '../mach-o/fat.ts';
+import {
+	load_command,
+	mach_header,
+	mach_header_64,
+	MH_DYLIB,
+	MH_EXECUTE,
+	MH_MAGIC_64,
+} from '../mach-o/loader.ts';
 import { fixtureMacho, fixtureMachos } from '../spec/fixture.ts';
 import { Architecture } from './architecture.ts';
 import { MachO } from './macho.ts';

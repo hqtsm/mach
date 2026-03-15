@@ -1,5 +1,5 @@
 import { assertEquals, assertStrictEquals } from '@std/assert';
-import { load_command, mach_header, MH_MAGIC } from '../mach/loader.ts';
+import { load_command, mach_header, MH_MAGIC } from '../mach-o/loader.ts';
 import { MachOImage } from './machoimage.ts';
 
 Deno.test('constructor', () => {

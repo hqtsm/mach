@@ -10,7 +10,7 @@ import {
 	segment_command,
 	segment_command_64,
 	symtab_command,
-} from '../mach/loader.ts';
+} from '../mach-o/loader.ts';
 import {
 	CPU_ARCHITECTURES,
 	fixtureMacho,

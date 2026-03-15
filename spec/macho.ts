@@ -4,13 +4,13 @@ import {
 	FAT_CIGAM_64,
 	FAT_MAGIC,
 	FAT_MAGIC_64,
-} from '../mach/fat.ts';
+} from '../mach-o/fat.ts';
 import {
 	MH_CIGAM,
 	MH_CIGAM_64,
 	MH_MAGIC,
 	MH_MAGIC_64,
-} from '../mach/loader.ts';
+} from '../mach-o/loader.ts';
 
 export function thin(
 	data: ArrayBufferView,

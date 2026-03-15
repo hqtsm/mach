@@ -1,19 +1,19 @@
 import { toStringTag } from '@hqtsm/class';
 import { pointer, type Ptr } from '@hqtsm/struct';
 import { MAX_ALIGN, MAX_ARCH_COUNT, PAGE_SIZE } from '../const.ts';
-import { fat_arch, FAT_CIGAM, fat_header, FAT_MAGIC } from '../mach/fat.ts';
+import {
+	CPU_ARCH_ABI64,
+	CPU_SUBTYPE_MASK,
+	CPU_TYPE_ARM,
+} from '../mach/machine.ts';
+import { fat_arch, FAT_CIGAM, fat_header, FAT_MAGIC } from '../mach-o/fat.ts';
 import {
 	mach_header,
 	MH_CIGAM,
 	MH_CIGAM_64,
 	MH_MAGIC,
 	MH_MAGIC_64,
-} from '../mach/loader.ts';
-import {
-	CPU_ARCH_ABI64,
-	CPU_SUBTYPE_MASK,
-	CPU_TYPE_ARM,
-} from '../mach/machine.ts';
+} from '../mach-o/loader.ts';
 import type { Reader } from '../util/reader.ts';
 import { Architecture } from './architecture.ts';
 import { MachO } from './macho.ts';
