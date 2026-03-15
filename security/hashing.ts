@@ -17,6 +17,15 @@ import { type ArrayBufferData, asUint8Array } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 
 /**
+ * Base class for all hash objects.
+ */
+export class Hashing {
+	static {
+		toStringTag(this, 'Hashing');
+	}
+}
+
+/**
  * Dynamic hash crypto.
  */
 export type DynamicHashCrypto =
@@ -26,7 +35,7 @@ export type DynamicHashCrypto =
 /**
  * Dynamic hash.
  */
-export abstract class DynamicHash {
+export abstract class DynamicHash extends Hashing {
 	/**
 	 * Hash crypto.
 	 */
