@@ -1,4 +1,4 @@
-import { toStringTag } from '@hqtsm/class';
+import { isToStringTag, toStringTag } from '@hqtsm/class';
 import { type Arr, array, type Const, Int8Ptr } from '@hqtsm/struct';
 import { errSecErrnoBase, errSecErrnoLimit, errSecSuccess } from '../const.ts';
 
@@ -74,16 +74,7 @@ export class CommonError extends Error {
 	 * @returns Is CommonError.
 	 */
 	public static isCommonError(arg: unknown): arg is CommonError {
-		for (
-			let tag;
-			(tag = (arg as CommonError | null)?.[Symbol.toStringTag]);
-			arg = Object.getPrototypeOf(arg)
-		) {
-			if (tag === 'CommonError') {
-				return true;
-			}
-		}
-		return false;
+		return isToStringTag(CommonError, arg);
 	}
 
 	static {
@@ -200,16 +191,7 @@ export class UnixError extends CommonError {
 	 * @returns Is UnixError.
 	 */
 	public static isUnixError(arg: unknown): arg is UnixError {
-		for (
-			let tag;
-			(tag = (arg as UnixError | null)?.[Symbol.toStringTag]);
-			arg = Object.getPrototypeOf(arg)
-		) {
-			if (tag === 'UnixError') {
-				return true;
-			}
-		}
-		return false;
+		return isToStringTag(UnixError, arg);
 	}
 
 	static {
@@ -294,16 +276,7 @@ export class MacOSError extends CommonError {
 	 * @returns Is MacOSError.
 	 */
 	public static isMacOSError(arg: unknown): arg is MacOSError {
-		for (
-			let tag;
-			(tag = (arg as MacOSError | null)?.[Symbol.toStringTag]);
-			arg = Object.getPrototypeOf(arg)
-		) {
-			if (tag === 'MacOSError') {
-				return true;
-			}
-		}
-		return false;
+		return isToStringTag(MacOSError, arg);
 	}
 
 	static {
