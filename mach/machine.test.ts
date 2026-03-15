@@ -36,7 +36,7 @@ import {
 	CPU_TYPE_X86_64,
 } from './machine.ts';
 
-Deno.test('constants expressions', () => {
+Deno.test('constant expressions', () => {
 	assertEquals(CPU_TYPE_X86_64, CPU_TYPE_X86 | CPU_ARCH_ABI64);
 	assertEquals(CPU_TYPE_ARM64, CPU_TYPE_ARM | CPU_ARCH_ABI64);
 	assertEquals(CPU_TYPE_ARM64_32, CPU_TYPE_ARM | CPU_ARCH_ABI64_32);

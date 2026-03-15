@@ -79,7 +79,7 @@ Deno.test('BYTE_LENGTH', () => {
 	}
 });
 
-Deno.test('constants expressions', () => {
+Deno.test('constant expressions', () => {
 	assertEquals(LC_LOAD_WEAK_DYLIB, (0x18 | LC_REQ_DYLD) >>> 0);
 	assertEquals(LC_RPATH, (0x1c | LC_REQ_DYLD) >>> 0);
 	assertEquals(LC_REEXPORT_DYLIB, (0x1f | LC_REQ_DYLD) >>> 0);
