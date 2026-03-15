@@ -4,9 +4,9 @@ import {
 	assertNotEquals,
 	assertThrows,
 } from '@std/assert';
-import { UnixError } from '../error/unixerror.ts';
 import { EINVAL, ENOMEM } from '../libc/errno.ts';
 import { BlobCore } from './blobcore.ts';
+import { UnixError } from './errors.ts';
 
 Deno.test('BYTE_LENGTH', () => {
 	assertEquals(BlobCore.BYTE_LENGTH, 8);

@@ -9,10 +9,10 @@ import {
 	uint32BE,
 	Uint8Ptr,
 } from '@hqtsm/struct';
-import { UnixError } from '../error/unixerror.ts';
 import { EINVAL, ENOMEM } from '../libc/errno.ts';
 import { malloc } from '../libc/stdlib.ts';
 import type { Reader } from '../util/reader.ts';
+import { UnixError } from './errors.ts';
 
 /**
  * BlobCore BlobType.

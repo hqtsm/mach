@@ -11,6 +11,7 @@ export * from './embeddedsignatureblob.ts';
 export * from './embeddedsignatureblobmaker.ts';
 export * from './entitlementblob.ts';
 export * from './entitlementderblob.ts';
+export * from './errors.ts';
 export * from './launchconstraintblob.ts';
 export * from './librarydependencyblob.ts';
 export * from './librarydependencyblobmaker.ts';
