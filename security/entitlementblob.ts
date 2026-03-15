@@ -1,6 +1,6 @@
 import { constant, toStringTag } from '@hqtsm/class';
-import { kSecCodeMagicEntitlement } from '../const.ts';
 import { Blob } from './blob.ts';
+import { kSecCodeMagicEntitlement } from './CSCommonPriv.ts';
 
 /**
  * For embedding entitlement configuration data.

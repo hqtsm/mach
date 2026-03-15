@@ -2,7 +2,6 @@ import { assert, assertEquals, assertRejects, assertThrows } from '@std/assert';
 import { crypto as stdCrypto } from '@std/crypto';
 import {
 	cdSlotMax,
-	kSecCodeCDHashLength,
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
 	kSecCodeSignatureHashSHA256Truncated,
@@ -13,6 +12,7 @@ import {
 import type { Reader } from '../util/reader.ts';
 import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
+import { kSecCodeCDHashLength } from './CSCommonPriv.ts';
 
 class ErrorReader implements Reader {
 	#size: number;

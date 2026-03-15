@@ -1,6 +1,6 @@
 import { assertEquals } from '@std/assert';
-import { kSecCodeMagicEntitlement } from '../const.ts';
 import { unhex } from '../spec/hex.ts';
+import { kSecCodeMagicEntitlement } from './CSCommonPriv.ts';
 import { EntitlementBlob } from './entitlementblob.ts';
 
 const examplePlist = [

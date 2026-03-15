@@ -1,6 +1,6 @@
 import { constant, toStringTag } from '@hqtsm/class';
 import { uint32BE } from '@hqtsm/struct';
-import { kSecCodeMagicRequirement } from '../const.ts';
+import { kSecCodeMagicRequirement } from './CSCommonPriv.ts';
 import { Blob } from './blob.ts';
 
 /**

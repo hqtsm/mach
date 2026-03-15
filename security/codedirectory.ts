@@ -15,8 +15,6 @@ import {
 	kCCDigestSHA1,
 	kCCDigestSHA256,
 	kCCDigestSHA384,
-	kSecCodeCDHashLength,
-	kSecCodeMagicCodeDirectory,
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
 	kSecCodeSignatureHashSHA256Truncated,
@@ -28,6 +26,10 @@ import { toUint8ArrayArrayBuffer } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import { Blob } from './blob.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
+import {
+	kSecCodeCDHashLength,
+	kSecCodeMagicCodeDirectory,
+} from './CSCommonPriv.ts';
 import { hashFileData } from './csutilities.ts';
 import {
 	CCHashInstance,

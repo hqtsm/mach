@@ -1,8 +1,8 @@
 import { constant, toStringTag } from '@hqtsm/class';
 import { array, member, Uint8Ptr } from '@hqtsm/struct';
-import { kSecCodeMagicLaunchConstraint } from '../const.ts';
 import { Blob } from './blob.ts';
 import { BlobCore } from './blobcore.ts';
+import { kSecCodeMagicLaunchConstraint } from './CSCommonPriv.ts';
 
 /**
  * Launch constraint in DER format.

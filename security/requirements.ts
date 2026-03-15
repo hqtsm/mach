@@ -1,5 +1,5 @@
 import { constant, toStringTag } from '@hqtsm/class';
-import { kSecCodeMagicRequirementSet } from '../const.ts';
+import { kSecCodeMagicRequirementSet } from './CSCommonPriv.ts';
 import { SuperBlob } from './superblob.ts';
 
 /**

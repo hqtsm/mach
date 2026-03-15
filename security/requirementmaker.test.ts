@@ -1,11 +1,12 @@
 import { assertEquals, assertThrows } from '@std/assert';
-import { kSecCodeMagicRequirement, opAnd, opOr } from '../const.ts';
+import { Uint8Ptr } from '@hqtsm/struct';
+import { opAnd, opOr } from '../const.ts';
 import { PLATFORM_MACOS } from '../mach-o/loader.ts';
 import { unhex } from '../spec/hex.ts';
+import { kSecCodeMagicRequirement } from './CSCommonPriv.ts';
 import { Requirement } from './requirement.ts';
 import { RequirementMaker } from './requirementmaker.ts';
 import { RequirementMakerChain } from './requirementmakerchain.ts';
-import { Uint8Ptr } from '@hqtsm/struct';
 
 function fibinacci(n: number): number[] {
 	const fib = [1, 1];

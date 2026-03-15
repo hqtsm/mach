@@ -1,5 +1,5 @@
 import { constant, toStringTag } from '@hqtsm/class';
-import { kSecCodeMagicEmbeddedSignature } from '../const.ts';
+import { kSecCodeMagicEmbeddedSignature } from './CSCommonPriv.ts';
 import { SuperBlobCore } from './superblobcore.ts';
 
 /**
