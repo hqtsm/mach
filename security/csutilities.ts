@@ -1,5 +1,5 @@
 import type { DynamicHash } from '../security/hashing.ts';
-import type { Reader } from './reader.ts';
+import type { Reader } from '../util/reader.ts';
 
 /**
  * Hash file data.

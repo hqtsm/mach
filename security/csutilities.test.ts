@@ -1,7 +1,7 @@
 import { assertEquals } from '@std/assert';
 import { kCCDigestSHA1 } from '../const.ts';
 import { CCHashInstance } from '../security/hashing.ts';
-import { hashFileData } from './utilities.ts';
+import { hashFileData } from './csutilities.ts';
 
 Deno.test('hashFileData full', async () => {
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
