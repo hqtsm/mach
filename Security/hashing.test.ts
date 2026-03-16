@@ -3,27 +3,23 @@ import { createHash } from 'node:crypto';
 import { assertEquals, assertRejects, assertThrows } from '@std/assert';
 import { crypto as stdCrypto } from '@std/crypto';
 import {
+	kCCDigestMax,
 	kCCDigestMD2,
 	kCCDigestMD4,
 	kCCDigestMD5,
 	kCCDigestNone,
-	kCCDigestRMD128,
 	kCCDigestRMD160,
-	kCCDigestRMD256,
-	kCCDigestRMD320,
 	kCCDigestSHA1,
 	kCCDigestSHA224,
 	kCCDigestSHA256,
 	kCCDigestSHA384,
+	kCCDigestSHA3_224,
+	kCCDigestSHA3_256,
+	kCCDigestSHA3_384,
+	kCCDigestSHA3_512,
 	kCCDigestSHA512,
-	kCCDigestSkein128,
-	kCCDigestSkein160,
-	kCCDigestSkein224,
-	kCCDigestSkein256,
-	kCCDigestSkein384,
-	kCCDigestSkein512,
-	PAGE_SIZE,
-} from '../const.ts';
+} from '../CommonCrypto/Private/CommonDigestSPI.ts';
+import { PAGE_SIZE } from '../const.ts';
 import { subtleNode, subtleStreaming } from '../spec/crypto.ts';
 import { hex } from '../spec/hex.ts';
 import type {
@@ -164,21 +160,17 @@ const ITTER_SIZES = [
 ];
 
 const unsupported = [
-	kCCDigestNone,
+	kCCDigestMax,
 	kCCDigestMD2,
 	kCCDigestMD4,
 	kCCDigestMD5,
-	kCCDigestSHA224,
-	kCCDigestRMD128,
+	kCCDigestNone,
 	kCCDigestRMD160,
-	kCCDigestRMD256,
-	kCCDigestRMD320,
-	kCCDigestSkein128,
-	kCCDigestSkein160,
-	kCCDigestSkein224,
-	kCCDigestSkein256,
-	kCCDigestSkein384,
-	kCCDigestSkein512,
+	kCCDigestSHA224,
+	kCCDigestSHA3_224,
+	kCCDigestSHA3_256,
+	kCCDigestSHA3_384,
+	kCCDigestSHA3_512,
 ];
 
 const expected = [

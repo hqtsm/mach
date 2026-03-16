@@ -1,5 +1,5 @@
 import { assertEquals } from '@std/assert';
-import { kCCDigestSHA1 } from '../const.ts';
+import { kCCDigestSHA1 } from '../CommonCrypto/Private/CommonDigestSPI.ts';
 import { CCHashInstance } from '../Security/hashing.ts';
 import { hashFileData } from './csutilities.ts';
 

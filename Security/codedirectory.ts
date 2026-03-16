@@ -11,10 +11,12 @@ import {
 	Uint8Ptr,
 } from '@hqtsm/struct';
 import {
-	cdSlotMax,
 	kCCDigestSHA1,
 	kCCDigestSHA256,
 	kCCDigestSHA384,
+} from '../CommonCrypto/Private/CommonDigestSPI.ts';
+import {
+	cdSlotMax,
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
 	kSecCodeSignatureHashSHA256Truncated,

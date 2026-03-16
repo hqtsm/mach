@@ -5,8 +5,8 @@ import {
 	kCCDigestSHA256,
 	kCCDigestSHA384,
 	kCCDigestSHA512,
-	PAGE_SIZE,
-} from '../const.ts';
+} from '../CommonCrypto/Private/CommonDigestSPI.ts';
+import { PAGE_SIZE } from '../const.ts';
 import type {
 	SubtleCrypto,
 	SubtleCryptoDigestAlgorithm,
