@@ -1,6 +1,16 @@
 import { isToStringTag, toStringTag } from '@hqtsm/class';
 import { type Arr, array, type Const, Int8Ptr } from '@hqtsm/struct';
-import { errSecErrnoBase, errSecErrnoLimit, errSecSuccess } from '../const.ts';
+import { errSecSuccess } from './SecBase.ts';
+
+/**
+ * Security error code base.
+ */
+export const errSecErrnoBase = 100000;
+
+/**
+ * Security error code limit.
+ */
+export const errSecErrnoLimit = 100255;
 
 const whatBufferSize = 128;
 

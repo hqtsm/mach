@@ -1,10 +1,10 @@
 import { type Concrete, constant, toStringTag } from '@hqtsm/class';
-import { errSecAllocate } from '../const.ts';
 import { malloc } from '../libc/stdlib.ts';
 import { type ArrayBufferLikeData, asUint8Array } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import { BlobCore } from './blobcore.ts';
 import { MacOSError } from './errors.ts';
+import { errSecAllocate } from './SecBase.ts';
 
 /**
  * Blob template.

@@ -5,12 +5,13 @@ import {
 	assertThrows,
 } from '@std/assert';
 import {
+	CommonError,
 	errSecErrnoBase,
 	errSecErrnoLimit,
-	errSecSuccess,
-	errSecUnimplemented,
-} from '../const.ts';
-import { CommonError, MacOSError, UnixError } from './errors.ts';
+	MacOSError,
+	UnixError,
+} from './errors.ts';
+import { errSecSuccess, errSecUnimplemented } from './SecBase.ts';
 
 Deno.test('CommonError: instanceof', () => {
 	assertInstanceOf(new CommonError(), Error);

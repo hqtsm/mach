@@ -1,11 +1,11 @@
 import { assertEquals, assertInstanceOf, assertThrows } from '@std/assert';
 import { type Class, constant } from '@hqtsm/class';
 import { uint32BE } from '@hqtsm/struct';
-import { errSecAllocate } from '../const.ts';
 import { EINVAL } from '../libc/errno.ts';
 import { Blob } from './blob.ts';
 import { BlobCore } from './blobcore.ts';
 import { MacOSError } from './errors.ts';
+import { errSecAllocate } from './SecBase.ts';
 
 class NoErrno {
 	get errno(): number {
