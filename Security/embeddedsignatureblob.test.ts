@@ -1,13 +1,5 @@
 import { assertEquals } from '@std/assert';
 import {
-	cdAlternateCodeDirectorySlots,
-	cdCodeDirectorySlot,
-	cdInfoSlot,
-	cdRequirementsSlot,
-	cdResourceDirSlot,
-	cdSignatureSlot,
-} from '../const.ts';
-import {
 	CPU_ARCHITECTURES,
 	fixtureMachos,
 	type FixtureMachoSignatureInfo,
@@ -15,7 +7,15 @@ import {
 } from '../spec/fixture.ts';
 import { thin } from '../spec/macho.ts';
 import { BlobWrapper } from './blobwrapper.ts';
-import { CodeDirectory } from './codedirectory.ts';
+import {
+	cdAlternateCodeDirectorySlots,
+	cdCodeDirectorySlot,
+	cdInfoSlot,
+	cdRequirementsSlot,
+	cdResourceDirSlot,
+	cdSignatureSlot,
+	CodeDirectory,
+} from './codedirectory.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import {
 	kSecCodeSignatureHashSHA1,

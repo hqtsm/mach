@@ -1,32 +1,5 @@
 export const PAGE_SIZE = 0x4000;
 
-// Special hash slot values:
-export const cdInfoSlot = 1;
-export const cdRequirementsSlot = 2;
-export const cdResourceDirSlot = 3;
-export const cdTopDirectorySlot = 4;
-export const cdEntitlementSlot = 5;
-export const cdRepSpecificSlot = 6;
-export const cdEntitlementDERSlot = 7;
-export const cdLaunchConstraintSelf = 8;
-export const cdLaunchConstraintParent = 9;
-export const cdLaunchConstraintResponsible = 10;
-export const cdLibraryConstraint = 11;
-export const cdSlotCount = 12; // Subject to change.
-export const cdSlotMax = 11; // Subject to change.
-
-// Virtual slots:
-export const cdCodeDirectorySlot = 0;
-export const cdAlternateCodeDirectorySlots = 0x1000;
-export const cdAlternateCodeDirectoryLimit = 0x1005;
-export const cdSignatureSlot = 0x10000;
-export const cdIdentificationSlot = 0x10001;
-export const cdTicketSlot = 0x10002;
-
-// Special hash slot flags:
-export const cdComponentPerArchitecture = 1;
-export const cdComponentIsBlob = 2;
-
 // Opcodes exprForm:
 export const opFlagMask = 0xff000000;
 export const opGenericFalse = 0x80000000;

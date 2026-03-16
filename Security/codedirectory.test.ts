@@ -1,8 +1,8 @@
 import { assert, assertEquals, assertRejects, assertThrows } from '@std/assert';
 import { crypto as stdCrypto } from '@std/crypto';
-import { cdSlotMax, PAGE_SIZE } from '../const.ts';
+import { PAGE_SIZE } from '../const.ts';
 import type { Reader } from '../util/reader.ts';
-import { CodeDirectory } from './codedirectory.ts';
+import { cdSlotMax, CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import {
 	kSecCodeSignatureHashSHA1,

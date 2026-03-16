@@ -15,7 +15,7 @@ import {
 	kCCDigestSHA256,
 	kCCDigestSHA384,
 } from '../CommonCrypto/Private/CommonDigestSPI.ts';
-import { cdSlotMax, PAGE_SIZE } from '../const.ts';
+import { PAGE_SIZE } from '../const.ts';
 import { sizeAsyncIterators, type SizeIteratorNext } from '../util/iterator.ts';
 import { toUint8ArrayArrayBuffer } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
@@ -37,6 +37,131 @@ import {
 	type DynamicHash,
 	type DynamicHashCrypto,
 } from './hashing.ts';
+
+// Special hash slot values:
+
+// Primary slots:
+
+/**
+ * Code directory Info.plist slot.
+ */
+export const cdInfoSlot = 1;
+
+/**
+ * Code directory internal requirements slot.
+ */
+export const cdRequirementsSlot = 2;
+
+/**
+ * Code directory resource directory slot.
+ */
+export const cdResourceDirSlot = 3;
+
+/**
+ * Code directory top directory slot.
+ */
+export const cdTopDirectorySlot = 4;
+
+/**
+ * Code directory embedded entitlement slot.
+ */
+export const cdEntitlementSlot = 5;
+
+/**
+ * Code directory disk rep slot.
+ */
+export const cdRepSpecificSlot = 6;
+
+/**
+ * Code directory entitlement DER slot.
+ */
+export const cdEntitlementDERSlot = 7;
+
+/**
+ * Code directory launch constraint self slot.
+ */
+export const cdLaunchConstraintSelf = 8;
+
+/**
+ * Code directory launch constraint parent slot.
+ */
+export const cdLaunchConstraintParent = 9;
+
+/**
+ * Code directory launch constraint responsible slot.
+ */
+export const cdLaunchConstraintResponsible = 10;
+
+/**
+ * Code directory library constraint slot.
+ */
+export const cdLibraryConstraint = 11;
+
+/**
+ * Code directory slot count.
+ */
+export const cdSlotCount = 12;
+
+/**
+ * Code directoty maximum slot.
+ */
+export const cdSlotMax = 11;
+
+// Virtual slots:
+
+/**
+ * Code directory code directory slot.
+ */
+export const cdCodeDirectorySlot = 0;
+
+/**
+ * Code directory alternate code directory array slots.
+ */
+export const cdAlternateCodeDirectorySlots = 0x1000;
+
+/**
+ * Code directory alternate code directory array limit.
+ */
+export const cdAlternateCodeDirectoryLimit = 0x1005;
+
+/**
+ * Code directory CMS signature slot.
+ */
+export const cdSignatureSlot = 0x10000;
+
+/**
+ * Code directory identification blob slot.
+ */
+export const cdIdentificationSlot = 0x10001;
+
+/**
+ * Code directory ticket slot.
+ */
+export const cdTicketSlot = 0x10002;
+
+// Special hash slot flags:
+
+/**
+ * Slot values differs for each architecture.
+ */
+export const cdComponentPerArchitecture = 1;
+
+/**
+ * Slot value is Blob.
+ */
+export const cdComponentIsBlob = 2;
+
+// Platform values:
+
+/**
+ * No platform.
+ */
+export const noPlatform = 0;
+
+/**
+ * Maximum platform.
+ */
+export const maxPlatform = 255;
 
 const max = (values: number[]) => Math.max(...values);
 
