@@ -15,6 +15,16 @@ import type { Reader } from '../util/reader.ts';
 import { MachOBase } from './machobase.ts';
 
 /**
+ * Maximum number of architectures fat binaries can have.
+ */
+export const MAX_ARCH_COUNT = 100;
+
+/**
+ * Maximum power of 2 a Mach-O can have.
+ */
+export const MAX_ALIGN = 30;
+
+/**
  * A Mach-O binary over a reader.
  */
 export class MachO extends MachOBase {

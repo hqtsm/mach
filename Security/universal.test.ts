@@ -6,7 +6,6 @@ import {
 	assertRejects,
 	assertThrows,
 } from '@std/assert';
-import { MAX_ARCH_COUNT } from '../const.ts';
 import {
 	CPU_ARCH_ABI64,
 	CPU_SUBTYPE_ARM_ALL,
@@ -28,7 +27,7 @@ import {
 } from '../mach-o/loader.ts';
 import { fixtureMacho, fixtureMachos } from '../spec/fixture.ts';
 import { Architecture } from './architecture.ts';
-import { MachO } from './macho.ts';
+import { MachO, MAX_ARCH_COUNT } from './macho.ts';
 import { Universal } from './universal.ts';
 
 const fixtures = fixtureMachos();

@@ -1,6 +1,5 @@
 import { toStringTag } from '@hqtsm/class';
 import { pointer, type Ptr } from '@hqtsm/struct';
-import { MAX_ALIGN, MAX_ARCH_COUNT } from '../const.ts';
 import {
 	CPU_ARCH_ABI64,
 	CPU_SUBTYPE_MASK,
@@ -17,7 +16,7 @@ import {
 } from '../mach-o/loader.ts';
 import type { Reader } from '../util/reader.ts';
 import { Architecture } from './architecture.ts';
-import { MachO } from './macho.ts';
+import { MachO, MAX_ALIGN, MAX_ARCH_COUNT } from './macho.ts';
 
 /**
  * A universal binary over a readable.
