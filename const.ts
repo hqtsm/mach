@@ -1,5 +1,3 @@
-export const PAGE_SIZE = 0x4000;
-
 /**
  * Maximum number of architectures fat binaries can have.
  */

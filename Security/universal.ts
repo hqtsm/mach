@@ -1,11 +1,12 @@
 import { toStringTag } from '@hqtsm/class';
 import { pointer, type Ptr } from '@hqtsm/struct';
-import { MAX_ALIGN, MAX_ARCH_COUNT, PAGE_SIZE } from '../const.ts';
+import { MAX_ALIGN, MAX_ARCH_COUNT } from '../const.ts';
 import {
 	CPU_ARCH_ABI64,
 	CPU_SUBTYPE_MASK,
 	CPU_TYPE_ARM,
 } from '../mach/machine.ts';
+import { PAGE_MASK_ARM64 } from '../mach/vm_param.ts';
 import { fat_arch, FAT_CIGAM, fat_header, FAT_MAGIC } from '../mach-o/fat.ts';
 import {
 	mach_header,
@@ -175,7 +176,7 @@ export class Universal {
 
 					let off = 0;
 					GAPS: while (off < gapSize) {
-						const want = Math.min(gapSize - off, PAGE_SIZE);
+						const want = Math.min(gapSize - off, PAGE_MASK_ARM64);
 						const readOffset = prevHeaderEnd + off;
 						// deno-lint-ignore no-await-in-loop
 						const read = await reader

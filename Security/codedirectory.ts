@@ -15,7 +15,7 @@ import {
 	kCCDigestSHA256,
 	kCCDigestSHA384,
 } from '../CommonCrypto/Private/CommonDigestSPI.ts';
-import { PAGE_SIZE } from '../const.ts';
+import { PAGE_SIZE_ARM64 } from '../mach/vm_param.ts';
 import { sizeAsyncIterators, type SizeIteratorNext } from '../util/iterator.ts';
 import { toUint8ArrayArrayBuffer } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
@@ -684,7 +684,7 @@ export class CodeDirectory extends Blob {
 							? reader.slice(
 								i,
 								Math.min(
-									i + Math.max(size, PAGE_SIZE),
+									i + Math.max(size, PAGE_SIZE_ARM64),
 									total,
 								),
 							).arrayBuffer().then((value) => {

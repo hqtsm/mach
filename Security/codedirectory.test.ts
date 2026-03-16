@@ -1,6 +1,6 @@
 import { assert, assertEquals, assertRejects, assertThrows } from '@std/assert';
 import { crypto as stdCrypto } from '@std/crypto';
-import { PAGE_SIZE } from '../const.ts';
+import { PAGE_SIZE_ARM64 } from '../mach/vm_param.ts';
 import type { Reader } from '../util/reader.ts';
 import { cdSlotMax, CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
@@ -370,7 +370,7 @@ Deno.test('multipleHashFileData hashes', async () => {
 		// Not supported, intentional or an oversight?
 		// kSecCodeSignatureHashSHA512,
 	]);
-	const data = new Uint8Array(PAGE_SIZE * 3);
+	const data = new Uint8Array(PAGE_SIZE_ARM64 * 3);
 	for (let i = 0; i < data.length; i++) {
 		data[i] = i % 256;
 	}
@@ -415,7 +415,7 @@ Deno.test('multipleHashFileData hashes', async () => {
 });
 
 Deno.test('multipleHashFileData error', async () => {
-	const reader = new ErrorReader(PAGE_SIZE * 3);
+	const reader = new ErrorReader(PAGE_SIZE_ARM64 * 3);
 	await assertRejects(
 		() =>
 			CodeDirectory.multipleHashFileData(
