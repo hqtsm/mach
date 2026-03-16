@@ -4,10 +4,6 @@ import {
 	assertRejects,
 	assertThrows,
 } from '@std/assert';
-import {
-	kSecCodeSignatureHashSHA1,
-	kSecCodeSignatureHashSHA256,
-} from '../const.ts';
 import { CS_SHA1_LEN } from '../kern/cs_blobs.ts';
 import { UINT32_MAX } from '../libc/stdint.ts';
 import { PLATFORM_MACOS } from '../mach-o/loader.ts';
@@ -15,6 +11,10 @@ import type { Reader } from '../util/reader.ts';
 import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
+import {
+	kSecCodeSignatureHashSHA1,
+	kSecCodeSignatureHashSHA256,
+} from './CSCommon.ts';
 
 class ErrorReader implements Reader {
 	#size: number;

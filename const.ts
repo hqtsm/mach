@@ -1,32 +1,5 @@
 export const PAGE_SIZE = 0x4000;
 
-// SecCSDigestAlgorithm:
-export const kSecCodeSignatureNoHash = 0;
-export const kSecCodeSignatureHashSHA1 = 1;
-export const kSecCodeSignatureHashSHA256 = 2;
-export const kSecCodeSignatureHashSHA256Truncated = 3;
-export const kSecCodeSignatureHashSHA384 = 4;
-export const kSecCodeSignatureHashSHA512 = 5;
-
-// SecCodeSignatureFlags:
-export const kSecCodeSignatureHost = 0x0001;
-export const kSecCodeSignatureAdhoc = 0x0002;
-export const kSecCodeSignatureForceHard = 0x0100;
-export const kSecCodeSignatureForceKill = 0x0200;
-export const kSecCodeSignatureForceExpiration = 0x0400;
-export const kSecCodeSignatureRestrict = 0x0800;
-export const kSecCodeSignatureEnforcement = 0x1000;
-export const kSecCodeSignatureLibraryValidation = 0x2000;
-export const kSecCodeSignatureRuntime = 0x10000;
-export const kSecCodeSignatureLinkerSigned = 0x20000;
-
-// SecRequirementType:
-export const kSecHostRequirementType = 1;
-export const kSecGuestRequirementType = 2;
-export const kSecDesignatedRequirementType = 3;
-export const kSecLibraryRequirementType = 4;
-export const kSecPluginRequirementType = 5;
-
 // Special hash slot values:
 export const cdInfoSlot = 1;
 export const cdRequirementsSlot = 2;

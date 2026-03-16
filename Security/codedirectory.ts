@@ -15,19 +15,18 @@ import {
 	kCCDigestSHA256,
 	kCCDigestSHA384,
 } from '../CommonCrypto/Private/CommonDigestSPI.ts';
-import {
-	cdSlotMax,
-	kSecCodeSignatureHashSHA1,
-	kSecCodeSignatureHashSHA256,
-	kSecCodeSignatureHashSHA256Truncated,
-	kSecCodeSignatureHashSHA384,
-	PAGE_SIZE,
-} from '../const.ts';
+import { cdSlotMax, PAGE_SIZE } from '../const.ts';
 import { sizeAsyncIterators, type SizeIteratorNext } from '../util/iterator.ts';
 import { toUint8ArrayArrayBuffer } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import { Blob } from './blob.ts';
 import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
+import {
+	kSecCodeSignatureHashSHA1,
+	kSecCodeSignatureHashSHA256,
+	kSecCodeSignatureHashSHA256Truncated,
+	kSecCodeSignatureHashSHA384,
+} from './CSCommon.ts';
 import {
 	kSecCodeCDHashLength,
 	kSecCodeMagicCodeDirectory,

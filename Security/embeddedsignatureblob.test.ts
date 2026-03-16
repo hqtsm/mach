@@ -6,8 +6,6 @@ import {
 	cdRequirementsSlot,
 	cdResourceDirSlot,
 	cdSignatureSlot,
-	kSecCodeSignatureHashSHA1,
-	kSecCodeSignatureLinkerSigned,
 } from '../const.ts';
 import {
 	CPU_ARCHITECTURES,
@@ -19,6 +17,10 @@ import { thin } from '../spec/macho.ts';
 import { BlobWrapper } from './blobwrapper.ts';
 import { CodeDirectory } from './codedirectory.ts';
 import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
+import {
+	kSecCodeSignatureHashSHA1,
+	kSecCodeSignatureLinkerSigned,
+} from './CSCommon.ts';
 import { EmbeddedSignatureBlob } from './embeddedsignatureblob.ts';
 import { EmbeddedSignatureBlobMaker } from './embeddedsignatureblobmaker.ts';
 import { RequirementsMaker } from './requirementsmaker.ts';

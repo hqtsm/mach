@@ -1,17 +1,16 @@
 import { assert, assertEquals, assertRejects, assertThrows } from '@std/assert';
 import { crypto as stdCrypto } from '@std/crypto';
+import { cdSlotMax, PAGE_SIZE } from '../const.ts';
+import type { Reader } from '../util/reader.ts';
+import { CodeDirectory } from './codedirectory.ts';
+import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
 import {
-	cdSlotMax,
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
 	kSecCodeSignatureHashSHA256Truncated,
 	kSecCodeSignatureHashSHA384,
 	kSecCodeSignatureHashSHA512,
-	PAGE_SIZE,
-} from '../const.ts';
-import type { Reader } from '../util/reader.ts';
-import { CodeDirectory } from './codedirectory.ts';
-import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
+} from './CSCommon.ts';
 import { kSecCodeCDHashLength } from './CSCommonPriv.ts';
 
 class ErrorReader implements Reader {

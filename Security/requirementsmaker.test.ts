@@ -1,9 +1,9 @@
 import { assertEquals } from '@std/assert';
+import { unhex } from '../spec/hex.ts';
 import {
 	kSecDesignatedRequirementType,
 	kSecHostRequirementType,
-} from '../const.ts';
-import { unhex } from '../spec/hex.ts';
+} from './CSCommon.ts';
 import { Requirement } from './requirement.ts';
 import { RequirementsMaker } from './requirementsmaker.ts';
 import { Requirements } from './requirements.ts';

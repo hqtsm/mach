@@ -5,6 +5,7 @@ export * from './blobwrapper.ts';
 export * from './codedirectory.ts';
 export * from './codedirectorybuilder.ts';
 export * from './codedirectoryscatter.ts';
+export * from './CSCommon.ts';
 export * from './CSCommonPriv.ts';
 export * from './csutilities.ts';
 export * from './detachedsignatureblob.ts';
