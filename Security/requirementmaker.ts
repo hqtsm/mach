@@ -1,6 +1,11 @@
 import { toStringTag } from '@hqtsm/class';
 import { type ArrayBufferPointer, dataView, Ptr } from '@hqtsm/struct';
 import {
+	alignUp,
+	type ArrayBufferLikeData,
+	asUint8Array,
+} from '../util/memory.ts';
+import {
 	opAnchorHash,
 	opAppleAnchor,
 	opAppleGenericAnchor,
@@ -10,13 +15,8 @@ import {
 	opPlatform,
 	opTrustedCert,
 	opTrustedCerts,
-} from '../const.ts';
-import {
-	alignUp,
-	type ArrayBufferLikeData,
-	asUint8Array,
-} from '../util/memory.ts';
-import { Requirement } from './requirement.ts';
+	Requirement,
+} from './requirement.ts';
 import type { RequirementMakerLabel } from './requirementmakerlabel.ts';
 
 /**

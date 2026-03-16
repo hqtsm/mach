@@ -69,3 +69,224 @@ export class Requirement extends Blob {
 		constant(this, 'lwcrForm');
 	}
 }
+
+// Opcodes exprForm:
+
+/**
+ * Opcode flag mask.
+ */
+export const opFlagMask = 0xFF000000;
+
+/**
+ * Opcode generic false.
+ */
+export const opGenericFalse = 0x80000000;
+
+/**
+ * Opcode generic skip.
+ */
+export const opGenericSkip = 0x40000000;
+
+// ExprOp:
+
+/**
+ * Opcode: False.
+ */
+export const opFalse = 0;
+
+/**
+ * Opcode: True.
+ */
+export const opTrue = 1;
+
+/**
+ * Opcode: Ident.
+ */
+export const opIdent = 2;
+
+/**
+ * Opcode: Apple anchor.
+ */
+export const opAppleAnchor = 3;
+
+/**
+ * Opcode: Anchor hash.
+ */
+export const opAnchorHash = 4;
+
+/**
+ * Opcode: Info key value.
+ */
+export const opInfoKeyValue = 5;
+
+/**
+ * Opcode: And.
+ */
+export const opAnd = 6;
+
+/**
+ * Opcode: Or.
+ */
+export const opOr = 7;
+
+/**
+ * Opcode: CD hash.
+ */
+export const opCDHash = 8;
+
+/**
+ * Opcode: Not.
+ */
+export const opNot = 9;
+
+/**
+ * Opcode: Info key field.
+ */
+export const opInfoKeyField = 10;
+
+/**
+ * Opcode: Op cert field.
+ */
+export const opCertField = 11;
+
+/**
+ * Opcode: Trusted cert.
+ */
+export const opTrustedCert = 12;
+
+/**
+ * Opcode: Trusted certs.
+ */
+export const opTrustedCerts = 13;
+
+/**
+ * Opcode: Generic.
+ */
+export const opCertGeneric = 14;
+
+/**
+ * Opcode: Apple generic anchor.
+ */
+export const opAppleGenericAnchor = 15;
+
+/**
+ * Opcode: Entitlement field.
+ */
+export const opEntitlementField = 16;
+
+/**
+ * Opcode: Cert policy.
+ */
+export const opCertPolicy = 17;
+
+/**
+ * Opcode: Named anchor.
+ */
+export const opNamedAnchor = 18;
+
+/**
+ * Opcode: Named code.
+ */
+export const opNamedCode = 19;
+
+/**
+ * Opcode: Platform.
+ */
+export const opPlatform = 20;
+
+/**
+ * Opcode: Notarized.
+ */
+export const opNotarized = 21;
+
+/**
+ * Opcode: Cert field date.
+ */
+export const opCertFieldDate = 22;
+
+/**
+ * Opcode: Legacy dev ID.
+ */
+export const opLegacyDevID = 23;
+
+/**
+ * Opcode count.
+ */
+export const exprOpCount = 24;
+
+// MatchOperation:
+
+/**
+ * Match: Exists.
+ */
+export const matchExists = 0;
+
+/**
+ * Match: Equal.
+ */
+export const matchEqual = 1;
+
+/**
+ * Match: Contains.
+ */
+export const matchContains = 2;
+
+/**
+ * Match: Begins with.
+ */
+export const matchBeginsWith = 3;
+
+/**
+ * Match: Ends with.
+ */
+export const matchEndsWith = 4;
+
+/**
+ * Match: Less than.
+ */
+export const matchLessThan = 5;
+
+/**
+ * Match: Greater than.
+ */
+export const matchGreaterThan = 6;
+
+/**
+ * Match: Less than or equal.
+ */
+export const matchLessEqual = 7;
+
+/**
+ * Match: Greater than or equal.
+ */
+export const matchGreaterEqual = 8;
+
+/**
+ * Match: On.
+ */
+export const matchOn = 9;
+
+/**
+ * Match: Before.
+ */
+export const matchBefore = 10;
+
+/**
+ * Match: After.
+ */
+export const matchAfter = 11;
+
+/**
+ * Match: On or before.
+ */
+export const matchOnOrBefore = 12;
+
+/**
+ * Match: On or after.
+ */
+export const matchOnOrAfter = 13;
+
+/**
+ * Match: Absent.
+ */
+export const matchAbsent = 14;

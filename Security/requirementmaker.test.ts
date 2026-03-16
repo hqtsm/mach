@@ -1,10 +1,9 @@
 import { assertEquals, assertThrows } from '@std/assert';
 import { Uint8Ptr } from '@hqtsm/struct';
-import { opAnd, opOr } from '../const.ts';
 import { PLATFORM_MACOS } from '../mach-o/loader.ts';
 import { unhex } from '../spec/hex.ts';
 import { kSecCodeMagicRequirement } from './CSCommonPriv.ts';
-import { Requirement } from './requirement.ts';
+import { opAnd, opOr, Requirement } from './requirement.ts';
 import { RequirementMaker } from './requirementmaker.ts';
 import { RequirementMakerChain } from './requirementmakerchain.ts';
 
