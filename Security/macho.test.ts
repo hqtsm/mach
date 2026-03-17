@@ -856,11 +856,13 @@ Deno.test('MachOBase: string', () => {
 	assertEquals(MachOBase.string(macho, command, command.path), null);
 });
 
-for (const { kind, arch, file, archs } of fixtures) {
-	Deno.test(`${kind}: ${arch}: ${file}`, async () => {
+Deno.test('MachOBase: fixtures', async () => {
+	for (const { kind, arch, file, archs } of fixtures) {
+		// deno-lint-ignore no-await-in-loop
 		const [macho] = await fixtureMacho(kind, arch, [file]);
 		const blob = new Blob([macho]);
 		for (const [arc, info] of archs) {
+			const tag = `${kind}: ${arch}: ${file}: ${arc}`;
 			const bin = thin(macho, ...CPU_ARCHITECTURES.get(arc)!);
 			const offset = bin.byteOffset;
 			const length = offset ? bin.byteLength : blob.size;
@@ -870,35 +872,35 @@ for (const { kind, arch, file, archs } of fixtures) {
 				// deno-lint-ignore no-await-in-loop
 				: await MachO.MachO(blob);
 
-			assertEquals(MachO.isOpen(m), true, arc);
-			assertEquals(MachO.offset(m), offset, arc);
-			assertEquals(MachO.size(m), length, arc);
+			assertEquals(MachO.isOpen(m), true, tag);
+			assertEquals(MachO.offset(m), offset, tag);
+			assertEquals(MachO.size(m), length, tag);
 			if (info) {
-				assertEquals(MachO.signingExtent(m), info.offset, arc);
+				assertEquals(MachO.signingExtent(m), info.offset, tag);
 			} else {
-				assertEquals(MachO.signingExtent(m), length, arc);
+				assertEquals(MachO.signingExtent(m), length, tag);
 			}
-			assertEquals(MachO.isSuspicious(m), false, arc);
+			assertEquals(MachO.isSuspicious(m), false, tag);
 
 			assertEquals(
 				// deno-lint-ignore no-await-in-loop
 				new Uint8Array(await MachO.dataAt(m, 0, 4)),
 				bin.slice(0, 4),
-				arc,
+				tag,
 			);
 
 			assertEquals(
 				// deno-lint-ignore no-await-in-loop
 				new Uint8Array(await MachO.dataAt(m, 4, 4)),
 				bin.slice(4, 8),
-				arc,
+				tag,
 			);
 
 			assertEquals(
 				// deno-lint-ignore no-await-in-loop
 				(await MachO.dataAt(m, 4, 0)).byteLength,
 				0,
-				arc,
+				tag,
 			);
 
 			// deno-lint-ignore no-await-in-loop
@@ -906,11 +908,11 @@ for (const { kind, arch, file, archs } of fixtures) {
 				() => MachO.dataAt(m, blob.size - 1, 2),
 				RangeError,
 				`Invalid data range: ${blob.size - 1}:2`,
-				arc,
+				tag,
 			);
 		}
-	});
-}
+	}
+});
 
 Deno.test('MachO: read under', async () => {
 	let mh = new mach_header(new ArrayBuffer(mach_header.BYTE_LENGTH - 1));
@@ -1036,80 +1038,92 @@ Deno.test('MachOImage: constructor', () => {
 	}
 });
 
-for (const { kind, arch, file, archs } of fixtures) {
-	Deno.test(`Universal: ${kind}: ${arch}: ${file}`, async () => {
+Deno.test(`Universal: fixtures`, async () => {
+	for (const { kind, arch, file, archs } of fixtures) {
+		const tag = `${kind}: ${arch}: ${file}`;
+		// deno-lint-ignore no-await-in-loop
 		const [macho] = await fixtureMacho(kind, arch, [file]);
 		const blob = new Blob([macho]);
+		// deno-lint-ignore no-await-in-loop
 		const uni = await Universal.Universal(blob);
-		assertEquals(Universal.offset(uni), 0);
-		assertEquals(Universal.size(uni), 0);
-		assertEquals(Universal.narrowed(uni), false);
-		assertEquals(Universal.isUniversal(uni), archs.size > 1);
-		assertEquals(Universal.isSuspicious(uni), false);
+		assertEquals(Universal.offset(uni), 0, tag);
+		assertEquals(Universal.size(uni), 0, tag);
+		assertEquals(Universal.narrowed(uni), false, tag);
+		assertEquals(Universal.isUniversal(uni), archs.size > 1, tag);
+		assertEquals(Universal.isSuspicious(uni), false, tag);
 
 		const architectures = new Set<Architecture>();
 		Universal.architectures(uni, architectures);
-		assertEquals(architectures.size, archs.size);
+		assertEquals(architectures.size, archs.size, tag);
 		Universal.architectures(uni, architectures);
-		assertEquals(architectures.size, archs.size);
+		assertEquals(architectures.size, archs.size, tag);
 
 		for (const a of architectures) {
 			const offset = Universal.archOffset(uni, a);
 			const length = Universal.archLength(uni, a);
 			if (Universal.isUniversal(uni)) {
-				assertGreater(offset, 0);
-				assertLess(length, blob.size);
-				assertLessOrEqual(offset + length, blob.size);
-				assertEquals(Universal.lengthOfSlice(uni, offset), length);
+				assertGreater(offset, 0, tag);
+				assertLess(length, blob.size, tag);
+				assertLessOrEqual(offset + length, blob.size, tag);
+				assertEquals(Universal.lengthOfSlice(uni, offset), length, tag);
 			} else {
-				assertEquals(offset, 0);
-				assertEquals(length, blob.size);
+				assertEquals(offset, 0, tag);
+				assertEquals(length, blob.size, tag);
 			}
 
 			// deno-lint-ignore no-await-in-loop
 			const ma = await Universal.architecture(uni, a);
-			assertEquals(MachO.offset(ma), offset);
+			assertEquals(MachO.offset(ma), offset, tag);
 
 			// deno-lint-ignore no-await-in-loop
 			const mo = await Universal.architecture(uni, offset);
-			assertEquals(MachO.offset(mo), offset);
+			assertEquals(MachO.offset(mo), offset, tag);
 		}
 
 		assertThrows(
 			() => Universal.archOffset(uni, new Architecture()),
 			RangeError,
 			'Architecture not found',
+			tag,
 		);
 		assertThrows(
 			() => Universal.archLength(uni, new Architecture()),
 			RangeError,
 			'Architecture not found',
+			tag,
 		);
 		assertThrows(
 			() => Universal.lengthOfSlice(uni, 0),
 			RangeError,
 			'Offset not found',
+			tag,
 		);
+		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
 			() => Universal.architecture(uni, new Architecture()),
 			RangeError,
 			'Architecture not found',
+			tag,
 		);
+		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
 			() => Universal.architecture(uni, 1),
 			RangeError,
 			Universal.isUniversal(uni)
 				? 'Offset not found'
 				: 'Architecture not found',
+			tag,
 		);
 
 		if (/\.dylib$|\.framework\//i.test(file)) {
-			assertEquals(await Universal.typeOf(blob), MH_DYLIB);
+			// deno-lint-ignore no-await-in-loop
+			assertEquals(await Universal.typeOf(blob), MH_DYLIB, tag);
 		} else {
-			assertEquals(await Universal.typeOf(blob), MH_EXECUTE);
+			// deno-lint-ignore no-await-in-loop
+			assertEquals(await Universal.typeOf(blob), MH_EXECUTE, tag);
 		}
-	});
-}
+	}
+});
 
 Deno.test('Universal: open under header', async () => {
 	const blob = new Blob([new ArrayBuffer(3)]);

@@ -114,13 +114,15 @@ Deno.test('BYTE_LENGTH', () => {
 	assertEquals(EmbeddedSignatureBlob.BYTE_LENGTH, 12);
 });
 
-for (const { kind, arch, file, archs } of fixtures) {
-	// Skip binaries with no signed architectures.
-	if (![...archs.values()].filter(Boolean).length) {
-		continue;
-	}
+Deno.test('EmbeddedSignatureBlob fixtures', async () => {
+	for (const { kind, arch, file, archs } of fixtures) {
+		// Skip binaries with no signed architectures.
+		if (![...archs.values()].filter(Boolean).length) {
+			continue;
+		}
 
-	Deno.test(`${kind}: ${arch}: ${file}`, async () => {
+		const tag = `${kind}: ${arch}: ${file}`;
+		// deno-lint-ignore no-await-in-loop
 		const { macho, infoPlist, codeResources } = await fixtureMachoSigned(
 			kind,
 			arch,
@@ -133,7 +135,7 @@ for (const { kind, arch, file, archs } of fixtures) {
 				continue;
 			}
 
-			const message = (s: string) => `CD: ${arc}: ${s}`;
+			const message = (s: string) => `${tag}: CD: ${arc}: ${s}`;
 			const bin = thin(macho, ...CPU_ARCHITECTURES.get(arc)!);
 			const cds = [];
 
@@ -219,5 +221,5 @@ for (const { kind, arch, file, archs } of fixtures) {
 			);
 			assertEquals(csBuffer, expected, message('compare'));
 		}
-	});
-}
+	}
+});
