@@ -115,12 +115,11 @@ Deno.test('BYTE_LENGTH', () => {
 });
 
 Deno.test('EmbeddedSignatureBlob fixtures', async () => {
-	for (const { kind, arch, file, archs } of fixtures) {
-		// Skip binaries with no signed architectures.
-		if (![...archs.values()].filter(Boolean).length) {
-			continue;
-		}
+	const signedFictures = fixtures.filter((f) =>
+		[...f.archs.values()].filter(Boolean).length
+	);
 
+	for (const { kind, arch, file, archs } of signedFictures) {
 		const tag = `${kind}: ${arch}: ${file}`;
 		// deno-lint-ignore no-await-in-loop
 		const { macho, infoPlist, codeResources } = await fixtureMachoSigned(
