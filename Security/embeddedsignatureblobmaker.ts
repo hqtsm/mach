@@ -1,6 +1,6 @@
 import { constant, toStringTag } from '@hqtsm/class';
 import { EmbeddedSignatureBlob } from './embeddedsignatureblob.ts';
-import { SuperBlobCoreMaker } from './superblobcoremaker.ts';
+import { SuperBlobCoreMaker } from './superblob.ts';
 
 /**
  * SuperBlob maker for EmbeddedSignatureBlob.

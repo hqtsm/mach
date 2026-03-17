@@ -25,7 +25,3 @@ export * from './requirements.ts';
 export * from './requirementsmaker.ts';
 export * from './SecBase.ts';
 export * from './superblob.ts';
-export * from './superblobcore.ts';
-export * from './superblobcoreindex.ts';
-export * from './superblobcoremaker.ts';
-export * from './superblobmaker.ts';

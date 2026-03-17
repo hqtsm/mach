@@ -1,6 +1,6 @@
 import { assert } from '@std/assert';
 import { Blob } from './blob.ts';
-import { SuperBlobMaker } from './superblobmaker.ts';
+import { SuperBlobMaker } from './superblob.ts';
 import * as mod from './mod.ts';
 
 // deno-lint-ignore ban-types
