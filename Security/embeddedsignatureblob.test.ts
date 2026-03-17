@@ -110,6 +110,16 @@ export async function* createCodeDirectories(
 	}
 }
 
+async function tests<T>(
+	cases: readonly T[],
+	test: (value: T) => Promise<unknown>,
+): Promise<void> {
+	const remap = (p: Promise<unknown>) => p.then(() => null, (e) => e);
+	const results = await Promise.all(cases.map(test).map(remap));
+	const expected = cases.map(() => null);
+	assertEquals(results, expected);
+}
+
 Deno.test('EmbeddedSignatureBlob: BYTE_LENGTH', () => {
 	assertEquals(EmbeddedSignatureBlob.BYTE_LENGTH, 12);
 });
@@ -119,9 +129,8 @@ Deno.test('EmbeddedSignatureBlob: fixtures', async () => {
 		[...f.archs.values()].filter(Boolean).length
 	);
 
-	for (const { kind, arch, file, archs } of signedFictures) {
+	await tests(signedFictures, async ({ kind, arch, file, archs }) => {
 		const tag = `${kind}: ${arch}: ${file}`;
-		// deno-lint-ignore no-await-in-loop
 		const { macho, infoPlist, codeResources } = await fixtureMachoSigned(
 			kind,
 			arch,
@@ -220,5 +229,5 @@ Deno.test('EmbeddedSignatureBlob: fixtures', async () => {
 			);
 			assertEquals(csBuffer, expected, message('compare'));
 		}
-	}
+	});
 });
