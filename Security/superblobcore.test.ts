@@ -1,7 +1,7 @@
 import { assertEquals, assertInstanceOf } from '@std/assert';
 import { type Class, constant } from '@hqtsm/class';
 import { SuperBlobCore } from './superblobcore.ts';
-import { BlobCore } from './blobcore.ts';
+import { BlobCore } from './blob.ts';
 
 const MAGIC = 0x12345678;
 

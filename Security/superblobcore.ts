@@ -1,7 +1,7 @@
 import { constant, toStringTag } from '@hqtsm/class';
 import { array, member, type Ptr, uint32BE } from '@hqtsm/struct';
 import { Blob } from './blob.ts';
-import { BlobCore } from './blobcore.ts';
+import { BlobCore } from './blob.ts';
 import { SuperBlobCoreIndex } from './superblobcoreindex.ts';
 
 /**

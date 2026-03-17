@@ -1,6 +1,4 @@
 export * from './blob.ts';
-export * from './blobcore.ts';
-export * from './blobwrapper.ts';
 export * from './codedirectory.ts';
 export * from './codedirectorybuilder.ts';
 export * from './codedirectoryscatter.ts';

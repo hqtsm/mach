@@ -1,7 +1,7 @@
 import { constant, toStringTag } from '@hqtsm/class';
 import { array, member, Uint8Ptr } from '@hqtsm/struct';
 import { Blob } from './blob.ts';
-import { BlobCore } from './blobcore.ts';
+import { BlobCore } from './blob.ts';
 import { kSecCodeMagicEntitlementDER } from './CSCommonPriv.ts';
 
 /**

@@ -1,10 +1,10 @@
 import { assert, assertEquals } from '@std/assert';
 import { type Class, constant } from '@hqtsm/class';
 import { Uint8Ptr } from '@hqtsm/struct';
-import { BlobWrapper } from './blobwrapper.ts';
+import { BlobWrapper } from './blob.ts';
 import { SuperBlob } from './superblob.ts';
 import { SuperBlobMaker } from './superblobmaker.ts';
-import { BlobCore } from './blobcore.ts';
+import { BlobCore } from './blob.ts';
 
 const MAGIC = 0x12345678;
 

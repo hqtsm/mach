@@ -1,5 +1,5 @@
 import { type Concrete, constant, toStringTag } from '@hqtsm/class';
-import { BlobCore } from './blobcore.ts';
+import { BlobCore } from './blob.ts';
 import { SuperBlob } from './superblob.ts';
 import { SuperBlobCore } from './superblobcore.ts';
 import { SuperBlobCoreIndex } from './superblobcoreindex.ts';

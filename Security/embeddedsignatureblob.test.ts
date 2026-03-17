@@ -6,7 +6,7 @@ import {
 	fixtureMachoSigned,
 } from '../spec/fixture.ts';
 import { thin } from '../spec/macho.ts';
-import { BlobWrapper } from './blobwrapper.ts';
+import { BlobWrapper } from './blob.ts';
 import {
 	cdAlternateCodeDirectorySlots,
 	cdCodeDirectorySlot,
