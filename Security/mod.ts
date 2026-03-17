@@ -1,4 +1,3 @@
-export * from './architecture.ts';
 export * from './blob.ts';
 export * from './blobcore.ts';
 export * from './blobwrapper.ts';
@@ -20,8 +19,6 @@ export * from './launchconstraintblob.ts';
 export * from './librarydependencyblob.ts';
 export * from './librarydependencyblobmaker.ts';
 export * from './macho.ts';
-export * from './machobase.ts';
-export * from './machoimage.ts';
 export * from './requirement.ts';
 export * from './requirementmaker.ts';
 export * from './requirementmakerchain.ts';
@@ -34,4 +31,3 @@ export * from './superblobcore.ts';
 export * from './superblobcoreindex.ts';
 export * from './superblobcoremaker.ts';
 export * from './superblobmaker.ts';
-export * from './universal.ts';
