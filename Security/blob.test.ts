@@ -4,7 +4,7 @@ import {
 	assertNotEquals,
 	assertThrows,
 } from '@std/assert';
-import { type Class, constant } from '@hqtsm/class';
+import { constant } from '@hqtsm/class';
 import { uint32BE } from '@hqtsm/struct';
 import { CSMAGIC_BLOBWRAPPER } from '../kern/cs_blobs.ts';
 import { EINVAL, ENOMEM } from '../libc/errno.ts';
@@ -292,8 +292,6 @@ class NoErrno {
 }
 
 class ExampleBlob extends Blob {
-	declare public readonly ['constructor']: Class<typeof ExampleBlob>;
-
 	/**
 	 * Example value.
 	 */

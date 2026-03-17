@@ -1,13 +1,11 @@
 import { assertEquals, assertInstanceOf } from '@std/assert';
-import { type Class, constant } from '@hqtsm/class';
+import { constant } from '@hqtsm/class';
 import { SuperBlobCore } from './superblobcore.ts';
 import { BlobCore } from './blob.ts';
 
 const MAGIC = 0x12345678;
 
 class Example extends SuperBlobCore {
-	declare public readonly ['constructor']: Class<typeof Example>;
-
 	public static override readonly typeMagic = MAGIC;
 
 	static {

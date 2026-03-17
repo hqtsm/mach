@@ -1,5 +1,5 @@
 import { assertEquals } from '@std/assert';
-import { type Class, constant } from '@hqtsm/class';
+import { constant } from '@hqtsm/class';
 import { BlobWrapper } from './blob.ts';
 import { SuperBlob } from './superblob.ts';
 import { SuperBlobMaker } from './superblobmaker.ts';
@@ -8,8 +8,6 @@ import { BlobCore } from './blob.ts';
 const MAGIC = 0x12345678;
 
 class Example extends SuperBlob {
-	declare public readonly ['constructor']: Class<typeof Example>;
-
 	public static override readonly typeMagic = MAGIC;
 
 	static {
@@ -18,8 +16,6 @@ class Example extends SuperBlob {
 }
 
 class ExampleMaker extends SuperBlobMaker {
-	declare public readonly ['constructor']: Class<typeof ExampleMaker>;
-
 	public static override readonly SuperBlob = Example;
 
 	static {
