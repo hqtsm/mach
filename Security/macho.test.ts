@@ -77,6 +77,16 @@ import {
 
 const fixtures = fixtureMachos();
 
+async function tests<T>(
+	cases: readonly T[],
+	test: (value: T) => Promise<unknown>,
+): Promise<void> {
+	const remap = (p: Promise<unknown>) => p.then(() => null, (e) => e);
+	const results = await Promise.all(cases.map(test).map(remap));
+	const expected = cases.map(() => null);
+	assertEquals(results, expected);
+}
+
 Deno.test('Architecture: constructor()', () => {
 	const a = new Architecture();
 	assertEquals(Architecture.cpuType(a), 0);
@@ -857,8 +867,7 @@ Deno.test('MachOBase: string', () => {
 });
 
 Deno.test('MachOBase: fixtures', async () => {
-	for (const { kind, arch, file, archs } of fixtures) {
-		// deno-lint-ignore no-await-in-loop
+	await tests(fixtures, async ({ kind, arch, file, archs }) => {
 		const [macho] = await fixtureMacho(kind, arch, [file]);
 		const blob = new Blob([macho]);
 		for (const [arc, info] of archs) {
@@ -911,7 +920,7 @@ Deno.test('MachOBase: fixtures', async () => {
 				tag,
 			);
 		}
-	}
+	});
 });
 
 Deno.test('MachO: read under', async () => {
@@ -1039,12 +1048,10 @@ Deno.test('MachOImage: constructor', () => {
 });
 
 Deno.test(`Universal: fixtures`, async () => {
-	for (const { kind, arch, file, archs } of fixtures) {
+	await tests(fixtures, async ({ kind, arch, file, archs }) => {
 		const tag = `${kind}: ${arch}: ${file}`;
-		// deno-lint-ignore no-await-in-loop
 		const [macho] = await fixtureMacho(kind, arch, [file]);
 		const blob = new Blob([macho]);
-		// deno-lint-ignore no-await-in-loop
 		const uni = await Universal.Universal(blob);
 		assertEquals(Universal.offset(uni), 0, tag);
 		assertEquals(Universal.size(uni), 0, tag);
@@ -1098,14 +1105,12 @@ Deno.test(`Universal: fixtures`, async () => {
 			'Offset not found',
 			tag,
 		);
-		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
 			() => Universal.architecture(uni, new Architecture()),
 			RangeError,
 			'Architecture not found',
 			tag,
 		);
-		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
 			() => Universal.architecture(uni, 1),
 			RangeError,
@@ -1116,13 +1121,11 @@ Deno.test(`Universal: fixtures`, async () => {
 		);
 
 		if (/\.dylib$|\.framework\//i.test(file)) {
-			// deno-lint-ignore no-await-in-loop
 			assertEquals(await Universal.typeOf(blob), MH_DYLIB, tag);
 		} else {
-			// deno-lint-ignore no-await-in-loop
 			assertEquals(await Universal.typeOf(blob), MH_EXECUTE, tag);
 		}
-	}
+	});
 });
 
 Deno.test('Universal: open under header', async () => {
