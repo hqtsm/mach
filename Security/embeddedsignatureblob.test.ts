@@ -110,11 +110,11 @@ export async function* createCodeDirectories(
 	}
 }
 
-Deno.test('BYTE_LENGTH', () => {
+Deno.test('EmbeddedSignatureBlob: BYTE_LENGTH', () => {
 	assertEquals(EmbeddedSignatureBlob.BYTE_LENGTH, 12);
 });
 
-Deno.test('EmbeddedSignatureBlob fixtures', async () => {
+Deno.test('EmbeddedSignatureBlob: fixtures', async () => {
 	const signedFictures = fixtures.filter((f) =>
 		[...f.archs.values()].filter(Boolean).length
 	);
