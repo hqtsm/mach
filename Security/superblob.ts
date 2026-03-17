@@ -121,19 +121,14 @@ export abstract class SuperBlobCore extends Blob {
 }
 
 /**
- * A generic SuperBlob base.
- */
-export abstract class SuperBlob extends SuperBlobCore {
-	static {
-		toStringTag(this, 'SuperBlob');
-	}
-}
-
-/**
  * SuperBlobCoreMaker template.
  */
 export type TemplateSuperBlobCoreMaker =
-	& { readonly SuperBlob: Concrete<typeof SuperBlob> & typeof SuperBlob }
+	& {
+		readonly SuperBlob:
+			& Concrete<typeof SuperBlobCore>
+			& typeof SuperBlobCore;
+	}
 	& typeof SuperBlobCoreMaker;
 
 /**
@@ -317,7 +312,7 @@ export abstract class SuperBlobCoreMaker {
 	/**
 	 * SuperBlob class.
 	 */
-	public static readonly SuperBlob = SuperBlob;
+	public static readonly SuperBlob = SuperBlobCore;
 
 	static {
 		toStringTag(this, 'SuperBlobCoreMaker');
@@ -326,10 +321,22 @@ export abstract class SuperBlobCoreMaker {
 }
 
 /**
+ * A generic SuperBlob base.
+ */
+export abstract class SuperBlob extends SuperBlobCore {
+	static {
+		toStringTag(this, 'SuperBlob');
+	}
+}
+
+/**
  * SuperBlob maker.
  */
 export abstract class SuperBlobMaker extends SuperBlobCoreMaker {
+	public static override readonly SuperBlob = SuperBlob;
+
 	static {
 		toStringTag(this, 'SuperBlobMaker');
+		constant(this, 'SuperBlob');
 	}
 }
