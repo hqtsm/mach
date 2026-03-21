@@ -1,5 +1,3 @@
-// deno-lint-ignore no-external-import
-import { createHash } from 'node:crypto';
 import {
 	assertEquals,
 	assertInstanceOf,
@@ -7,17 +5,19 @@ import {
 	assertStrictEquals,
 } from '@std/assert';
 import { crypto as stdCrypto } from '@std/crypto';
-import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../mach/vm_param.ts';
-import { subtleNode, subtleStreaming } from '../spec/crypto.ts';
+import {
+	ABCD,
+	BadReader,
+	EMPTY,
+	getCases,
+	getEngines,
+	getIterators,
+	hashed,
+	ITTER_SIZES,
+	toAsyncIterator,
+	toIterator,
+} from '../spec/hash.ts';
 import { hex } from '../spec/hex.ts';
-import type {
-	SubtleCrypto,
-	SubtleCryptoDigestAlgorithm,
-	SubtleCryptoExtended,
-} from '../util/crypto.ts';
-import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
-import type { ArrayBufferData, ArrayBufferLikeData } from '../util/memory.ts';
-import type { Reader } from '../util/reader.ts';
 import {
 	kCCDigestMax,
 	kCCDigestMD2,
@@ -56,269 +56,6 @@ import {
 	CCDigestReset,
 	CCDigestUpdate,
 } from './CommonDigest.ts';
-
-type HashCrypto = SubtleCrypto | SubtleCryptoExtended;
-
-class BadReader implements Reader {
-	#size: number;
-
-	#type: string;
-
-	#diff: number;
-
-	constructor(size: number, type: string = '') {
-		this.#size = size;
-		this.#type = type;
-		this.#diff = 0;
-	}
-
-	public get size(): number {
-		return this.#size;
-	}
-
-	public get type(): string {
-		return this.#type;
-	}
-
-	public set diff(diff: number) {
-		this.#diff = diff;
-	}
-
-	public get diff(): number {
-		return this.#diff;
-	}
-
-	public slice(start?: number, end?: number, contentType?: string): Reader {
-		start ??= 0;
-		end ??= this.#size;
-		const r = new BadReader(start < end ? end - start : 0, contentType);
-		r.#diff = this.#diff;
-		return r;
-	}
-
-	// deno-lint-ignore require-await
-	public async arrayBuffer(): Promise<ArrayBuffer> {
-		return new ArrayBuffer(this.#size - this.#diff);
-	}
-}
-
-interface IteratorInfo {
-	page?: number;
-	transform?: (data: ArrayBuffer) => ArrayBufferLikeData;
-	returns?: (() => unknown) | null;
-}
-
-function toIterator(
-	data: ArrayBuffer,
-	{ page, transform, returns }: IteratorInfo = {},
-): SizeIterator<ArrayBufferData> {
-	const r = (function* (): SizeIterator<ArrayBufferData> {
-		const size = data.byteLength;
-		let ask = page ? page : (
-			yield (transform
-				? transform(new ArrayBuffer(0))
-				: new ArrayBuffer(0))
-		);
-		for (let i = 0; i < size;) {
-			const ps = page || ask || PAGE_SIZE;
-			const d = data.slice(i, i + ps);
-			i += d.byteLength;
-			ask = yield (transform ? transform(d) : d);
-		}
-	})();
-	if (returns) {
-		Object.defineProperty(r, 'return', {
-			value: returns,
-		});
-	} else if (returns === null) {
-		Object.defineProperty(r, 'return', {
-			value: undefined,
-		});
-	}
-	return r;
-}
-
-function toAsyncIterator(
-	data: ArrayBuffer,
-	{ page, transform, returns }: IteratorInfo = {},
-): SizeAsyncIterator<ArrayBufferData> {
-	const r = (async function* (): SizeAsyncIterator<ArrayBufferData> {
-		const size = data.byteLength;
-		let ask = page ? page : (
-			yield (transform
-				? transform(new ArrayBuffer(0))
-				: new ArrayBuffer(0))
-		);
-		for (let i = 0; i < size;) {
-			const ps = page || ask || PAGE_SIZE;
-			const d = data.slice(i, i + ps);
-			i += d.byteLength;
-			ask = yield (transform ? transform(d) : d);
-		}
-	})();
-	if (returns) {
-		Object.defineProperty(r, 'return', {
-			value: returns,
-		});
-	} else if (returns === null) {
-		Object.defineProperty(r, 'return', {
-			value: undefined,
-		});
-	}
-	return r;
-}
-
-function hashed(algo: string, data: Uint8Array): string {
-	return createHash(algo).update(data).digest('hex');
-}
-
-const EMPTY = new Uint8Array(0);
-const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
-const PAGED = new Uint8Array(
-	new ArrayBuffer(Math.floor(PAGE_SIZE * 1.5)),
-);
-
-const ITTER_SIZES = [
-	0,
-	Math.floor(PAGE_SIZE / 2),
-	PAGE_SIZE,
-	Math.floor(PAGE_SIZE * 1.5),
-	PAGE_SIZE * 2,
-];
-
-const expected = [
-	[kCCDigestSHA1, {
-		EMPTY: [EMPTY.buffer, hashed('sha1', EMPTY)],
-		ABCD: [ABCD.buffer, hashed('sha1', ABCD)],
-		PAGED: [PAGED.buffer, hashed('sha1', PAGED)],
-	}],
-	[kCCDigestSHA256, {
-		EMPTY: [EMPTY.buffer, hashed('sha256', EMPTY)],
-		ABCD: [ABCD.buffer, hashed('sha256', ABCD)],
-		PAGED: [PAGED.buffer, hashed('sha256', PAGED)],
-	}],
-	[kCCDigestSHA384, {
-		EMPTY: [EMPTY.buffer, hashed('sha384', EMPTY)],
-		ABCD: [ABCD.buffer, hashed('sha384', ABCD)],
-		PAGED: [PAGED.buffer, hashed('sha384', PAGED)],
-	}],
-	[kCCDigestSHA512, {
-		EMPTY: [EMPTY.buffer, hashed('sha512', EMPTY)],
-		ABCD: [ABCD.buffer, hashed('sha512', ABCD)],
-		PAGED: [PAGED.buffer, hashed('sha512', PAGED)],
-	}],
-] as const;
-
-let sagDetect: Promise<boolean>;
-
-async function getEngines(): Promise<[string, HashCrypto | null][]> {
-	const engines: Record<string, HashCrypto | null> = {
-		subtle: null,
-		'jsr:@std/crypto': stdCrypto.subtle,
-		'node:crypto': subtleNode,
-		'DigestStream': subtleStreaming,
-	};
-
-	// Feature detect subtle crypto hash async generator extension.
-	sagDetect ??= (async () => {
-		let valid = false;
-		try {
-			const source = (async function* (): AsyncGenerator<ArrayBuffer> {
-				// If this function starts, then next was called.
-				valid = true;
-				yield new ArrayBuffer(0);
-			})();
-			await crypto.subtle.digest(
-				'SHA-256',
-				source as unknown as ArrayBuffer,
-			);
-		} catch {
-			// Ignore.
-		}
-		return valid;
-	})();
-	if (await sagDetect) {
-		engines['subtle-no-async-generator'] = {
-			async digest(
-				algo: SubtleCryptoDigestAlgorithm,
-				data: ArrayBufferData,
-			): Promise<ArrayBuffer> {
-				if ('next' in data) {
-					throw new TypeError('AsyncGenerator not supported');
-				}
-				return await crypto.subtle.digest(algo, data);
-			},
-		};
-	}
-
-	return Object.entries(engines);
-}
-
-type InputIterator = [
-	string,
-	() => SizeIterator<ArrayBufferData> | SizeAsyncIterator<ArrayBufferData>,
-	number,
-];
-
-function getIterators(size: number): InputIterator[] {
-	return [
-		[
-			`Iterator-returns-${size}`,
-			() => toIterator(new ArrayBuffer(size)),
-			size,
-		],
-		[
-			`AsyncIterator-returns-${size}`,
-			() => toAsyncIterator(new ArrayBuffer(size)),
-			size,
-		],
-		[
-			`Iterator-no-return-${size}`,
-			() => toIterator(new ArrayBuffer(size), { returns: null }),
-			size,
-		],
-		[
-			`AsyncIterator-no-return-${size}`,
-			() => toAsyncIterator(new ArrayBuffer(size), { returns: null }),
-			size,
-		],
-	];
-}
-
-interface Case {
-	tag: string;
-	alg: number;
-	input: string;
-	output: string;
-	data: ArrayBuffer;
-	engine: string;
-	crypto: HashCrypto | null;
-	size: number;
-}
-
-async function getCases(): Promise<Iterable<Case>> {
-	const engines = await getEngines();
-	return (function* (): Iterable<Case> {
-		for (const [alg, expect] of expected) {
-			for (const [engine, crypto] of engines) {
-				for (const [input, [data, output]] of Object.entries(expect)) {
-					const tag =
-						`alg=${alg} crypto=${engine} in=${input} out=${output}`;
-					yield {
-						tag,
-						alg,
-						engine,
-						crypto,
-						input,
-						output,
-						data,
-						size: output.length / 2,
-					};
-				}
-			}
-		}
-	})();
-}
 
 Deno.test('CCDigestInit', () => {
 	const ctx = new CCDigestRef();
@@ -363,7 +100,7 @@ Deno.test('CCDigestUpdate', async () => {
 });
 
 Deno.test('CCDigestUpdate: ArrayBuffer', async () => {
-	for (const { tag, alg, crypto, output, size, data } of await getCases()) {
+	for (const { tag, alg, crypto, output, size, data } of getCases()) {
 		const ctx = CCDigestCreate(alg)!;
 		ctx.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
@@ -376,7 +113,7 @@ Deno.test('CCDigestUpdate: ArrayBuffer', async () => {
 });
 
 Deno.test('CCDigestUpdate: Uint8Array<ArrayBuffer>', async () => {
-	for (const { tag, alg, crypto, output, size, data } of await getCases()) {
+	for (const { tag, alg, crypto, output, size, data } of getCases()) {
 		const ctx = CCDigestCreate(alg)!;
 		ctx.crypto = crypto;
 		const d = new Uint8Array(data.byteLength + 4);
@@ -391,7 +128,7 @@ Deno.test('CCDigestUpdate: Uint8Array<ArrayBuffer>', async () => {
 });
 
 Deno.test('CCDigestUpdate: Blob', async () => {
-	for (const { tag, alg, crypto, output, size, data } of await getCases()) {
+	for (const { tag, alg, crypto, output, size, data } of getCases()) {
 		const ctx = CCDigestCreate(alg)!;
 		ctx.crypto = crypto;
 		const blob = new Blob([data]);
@@ -408,7 +145,7 @@ Deno.test('CCDigestUpdate: Blob over-read', async () => {
 	const reader = new BadReader(1024);
 	reader.diff = 1;
 
-	const engines = await getEngines();
+	const engines = getEngines();
 	for (const [engine, crypto] of engines) {
 		const tag = `engine=${engine}`;
 		const ctx = CCDigestCreate(kCCDigestSHA1)!;
@@ -427,7 +164,7 @@ Deno.test('CCDigestUpdate: Blob under-read', async () => {
 	const reader = new BadReader(1024);
 	reader.diff = -1;
 
-	const engines = await getEngines();
+	const engines = getEngines();
 	for (const [engine, crypto] of engines) {
 		const tag = `engine=${engine}`;
 		const ctx = CCDigestCreate(kCCDigestSHA1)!;
@@ -444,9 +181,7 @@ Deno.test('CCDigestUpdate: Blob under-read', async () => {
 
 Deno.test('CCDigestUpdate: Iterator<ArrayBuffer>', async () => {
 	for (const page of ITTER_SIZES) {
-		for (
-			const { tag, alg, crypto, output, size, data } of await getCases()
-		) {
+		for (const { tag, alg, crypto, output, size, data } of getCases()) {
 			const tags = `${tag} page=${page}`;
 			const ctx = CCDigestCreate(alg)!;
 			ctx.crypto = crypto;
@@ -472,9 +207,7 @@ Deno.test('CCDigestUpdate: Iterator<ArrayBuffer>', async () => {
 Deno.test('CCDigestUpdate: Iterator<Uint8Array<ArrayBuffer>>', async () => {
 	const transform = (d: ArrayBuffer) => new Uint8Array(d);
 	for (const page of ITTER_SIZES) {
-		for (
-			const { tag, alg, crypto, output, size, data } of await getCases()
-		) {
+		for (const { tag, alg, crypto, output, size, data } of getCases()) {
 			const tags = `${tag} page=${page}`;
 			const ctx = CCDigestCreate(alg)!;
 			ctx.crypto = crypto;
@@ -500,9 +233,7 @@ Deno.test('CCDigestUpdate: Iterator<Uint8Array<ArrayBuffer>>', async () => {
 
 Deno.test('CCDigestUpdate: AsyncIterator<ArrayBuffer>', async () => {
 	for (const page of ITTER_SIZES) {
-		for (
-			const { tag, alg, crypto, output, size, data } of await getCases()
-		) {
+		for (const { tag, alg, crypto, output, size, data } of getCases()) {
 			const tags = `${tag} page=${page}`;
 			const ctx = CCDigestCreate(alg)!;
 			ctx.crypto = crypto;
@@ -528,9 +259,7 @@ Deno.test('CCDigestUpdate: AsyncIterator<ArrayBuffer>', async () => {
 Deno.test('CCDigestUpdate: AsyncIterator<Uint8Array<ArrayBuffer>>', async () => {
 	const transform = (d: ArrayBuffer) => new Uint8Array(d);
 	for (const page of ITTER_SIZES) {
-		for (
-			const { tag, alg, crypto, output, size, data } of await getCases()
-		) {
+		for (const { tag, alg, crypto, output, size, data } of getCases()) {
 			const tags = `${tag} page=${page}`;
 			const ctx = CCDigestCreate(alg)!;
 			ctx.crypto = crypto;
@@ -555,7 +284,7 @@ Deno.test('CCDigestUpdate: AsyncIterator<Uint8Array<ArrayBuffer>>', async () => 
 });
 
 Deno.test('CCDigestUpdate: Iterator over-read', async () => {
-	const engines = await getEngines();
+	const engines = getEngines();
 	for (const [name, source, size] of getIterators(1024)) {
 		for (const [engine, crypto] of engines) {
 			const tag = `name=${name} engine=${engine}`;
@@ -573,7 +302,7 @@ Deno.test('CCDigestUpdate: Iterator over-read', async () => {
 });
 
 Deno.test('CCDigestUpdate: Iterator under-read', async () => {
-	const engines = await getEngines();
+	const engines = getEngines();
 	for (const [name, source, size] of getIterators(1024)) {
 		for (const [engine, crypto] of engines) {
 			const tag = `name=${name} engine=${engine}`;
