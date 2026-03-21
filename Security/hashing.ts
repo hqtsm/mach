@@ -1,21 +1,18 @@
 import { toStringTag } from '@hqtsm/class/symbol';
 import type { ArrayBufferPointer } from '@hqtsm/struct';
 import {
-	kCCDigestSHA1,
-	kCCDigestSHA256,
-	kCCDigestSHA384,
-	kCCDigestSHA512,
-} from '../CommonCrypto/Private/CommonDigestSPI.ts';
-import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../mach/vm_param.ts';
-import type {
-	SubtleCrypto,
-	SubtleCryptoDigest,
-	SubtleCryptoDigestAlgorithm,
-	SubtleCryptoExtended,
-} from '../util/crypto.ts';
+	CCDigestCreate,
+	CCDigestFinal,
+	CCDigestOutputSize,
+	type CCDigestRef,
+	CCDigestUpdate,
+} from '../CommonCrypto/CommonDigest.ts';
+import { ENOMEM } from '../libc/errno.ts';
+import type { SubtleCryptoDigest } from '../util/crypto.ts';
 import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
 import { type ArrayBufferData, asUint8Array } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
+import { UnixError } from './errors.ts';
 
 /**
  * Base class for all hash objects.
@@ -84,122 +81,6 @@ export abstract class DynamicHash extends Hashing {
 	}
 }
 
-interface Algo {
-	l: number;
-	a: SubtleCryptoDigestAlgorithm;
-}
-
-interface Digest extends Algo {
-	d: ArrayBuffer | null;
-	s: 0 | 1 | 2 | 3;
-}
-
-// Supported hash algorithms with their names and lengths.
-const algorithms = new Map<number, Algo>([
-	[kCCDigestSHA1, { l: 20, a: 'SHA-1' }],
-	[kCCDigestSHA256, { l: 32, a: 'SHA-256' }],
-	[kCCDigestSHA384, { l: 48, a: 'SHA-384' }],
-	[kCCDigestSHA512, { l: 64, a: 'SHA-512' }],
-]);
-
-const algorithm = (alg: number): Algo => {
-	const info = algorithms.get(alg);
-	if (!info) {
-		throw new RangeError(`Unsupported hash algorithm: ${alg}`);
-	}
-	return info;
-};
-
-const isPromise = <T>(
-	v: { done?: boolean } | Promise<T>,
-): v is Promise<T> => 'then' in v;
-
-const supportsAG = new WeakMap();
-
-const subtleAG = async (
-	subtle: SubtleCrypto | SubtleCryptoExtended,
-	algo: SubtleCryptoDigestAlgorithm,
-	source: AsyncGenerator<ArrayBuffer>,
-): Promise<ArrayBuffer | null> => {
-	try {
-		return await (subtle as SubtleCryptoExtended).digest(
-			algo,
-			source,
-		);
-	} catch (err) {
-		if (supportsAG.get(subtle.digest)) {
-			throw err;
-		}
-	}
-	supportsAG.set(subtle.digest, false);
-	return null;
-};
-
-const readerAG = async function* (
-	subtle: SubtleCrypto | SubtleCryptoExtended,
-	source: Reader,
-): AsyncGenerator<ArrayBuffer> {
-	supportsAG.set(subtle.digest, true);
-	const { size } = source;
-	for (
-		let i = 0, r = size, l;
-		i < size;
-		r -= l, i += PAGE_SIZE
-	) {
-		l = r > PAGE_SIZE ? PAGE_SIZE : r;
-		// deno-lint-ignore no-await-in-loop
-		const b = await source.slice(i, i + l).arrayBuffer();
-		const o = l - b.byteLength;
-		if (o) {
-			throw new RangeError(`Read size off by: ${o}`);
-		}
-		yield b;
-	}
-};
-
-const iteratorAG = async function* (
-	subtle: SubtleCrypto | SubtleCryptoExtended,
-	source: SizeIterator<ArrayBufferData> | SizeAsyncIterator<ArrayBufferData>,
-	size: number,
-): AsyncGenerator<ArrayBuffer> {
-	supportsAG.set(subtle.digest, true);
-	let a, o = -size;
-	try {
-		let n;
-		for (
-			a = isPromise(n = source.next(PAGE_SIZE));;
-			n = source.next(PAGE_SIZE)
-		) {
-			// deno-lint-ignore no-await-in-loop
-			n = (a ? await n : n) as IteratorResult<ArrayBufferData>;
-			if (n.done) {
-				break;
-			}
-			let b = n.value;
-			const l = b.byteLength;
-			if (l) {
-				o += l;
-				if (o > 0) {
-					break;
-				}
-				if ('buffer' in b) {
-					b = new Uint8Array(b.buffer, b.byteOffset, l).slice()
-						.buffer;
-				}
-				yield b;
-			}
-		}
-	} finally {
-		const r = source.return?.();
-		if (a && r) {
-			await r;
-		}
-	}
-	if (o) {
-		throw new RangeError(`Read size off by: ${o}`);
-	}
-};
-
 /**
  * CCHashInstance dynamic hash.
  */
@@ -207,7 +88,7 @@ export class CCHashInstance extends DynamicHash {
 	/**
 	 * Digest algorithm.
 	 */
-	private mDigest: Digest;
+	private mDigest: CCDigestRef;
 
 	/**
 	 * Truncate length.
@@ -222,12 +103,17 @@ export class CCHashInstance extends DynamicHash {
 	 */
 	constructor(alg: number, truncate = 0) {
 		super();
-		this.mDigest = { ...algorithm(alg), d: null, s: 0 };
+		const d = CCDigestCreate(alg);
+		if (!d) {
+			// More likely invalid algorithm.
+			UnixError.throwMe(ENOMEM);
+		}
+		this.mDigest = d;
 		this.mTruncate = truncate;
 	}
 
 	public digestLength(): number {
-		return this.mTruncate || this.mDigest.l;
+		return this.mTruncate || CCDigestOutputSize(this.mDigest);
 	}
 
 	public update(
@@ -260,117 +146,26 @@ export class CCHashInstance extends DynamicHash {
 			| SizeAsyncIterator<ArrayBufferData>,
 		size?: number,
 	): Promise<void> {
-		const { mDigest } = this;
-		const { a, s } = mDigest;
-		if (s) {
-			throw new Error('Already updated');
-		}
-		mDigest.s = 1;
-		const c = this.crypto || crypto.subtle;
-		let d;
-
-		if ('arrayBuffer' in source) {
-			if (supportsAG.get(c.digest) !== false) {
-				d = await subtleAG(c, a, readerAG(c, source));
-			}
-			if (!d) {
-				const { size } = source;
-				const v = await source.arrayBuffer();
-				const o = size - v.byteLength;
-				if (o) {
-					throw new RangeError(`Read size off by: ${o}`);
-				}
-				d = await c.digest(a, v);
-			}
-		} else if ('next' in source) {
-			if (supportsAG.get(c.digest) !== false) {
-				d = await subtleAG(c, a, iteratorAG(c, source, size!));
-			}
-			if (!d) {
-				let p;
-				let all: Uint8Array<ArrayBuffer> | undefined;
-				let o = -size!;
-				let ps = size! > 0 ? size! : PAGE_SIZE;
-				try {
-					let n, i = 0;
-					for (
-						p = isPromise(n = source.next(ps));;
-						n = source.next(ps)
-					) {
-						// deno-lint-ignore no-await-in-loop
-						n = (p ? await n : n) as IteratorResult<
-							ArrayBufferData
-						>;
-						if (n.done) {
-							break;
-						}
-						const b = n.value;
-						const l = b.byteLength;
-						if (l) {
-							o += l;
-							if (o > 0) {
-								break;
-							}
-							if (all) {
-								all.set(asUint8Array(b), i);
-							} else {
-								if (o) {
-									all = new Uint8Array(size!);
-									all.set(asUint8Array(b));
-								} else {
-									all = asUint8Array(b);
-								}
-								ps = PAGE_SIZE;
-							}
-							i += l;
-						}
-					}
-				} finally {
-					const r = source.return?.();
-					if (p && r) {
-						await r;
-					}
-				}
-				if (o) {
-					throw new RangeError(`Read size off by: ${o}`);
-				}
-				d = await c.digest(a, all || new ArrayBuffer(0));
-			}
-		} else {
-			d = await c.digest(
-				a,
-				asUint8Array<ArrayBuffer>(
-					source,
-					size ?? (source as ArrayBufferView).byteLength!,
-				),
-			);
-		}
-
-		mDigest.d = d;
-		mDigest.s = 2;
+		await CCDigestUpdate(
+			this.mDigest,
+			source as ArrayBufferPointer<ArrayBuffer>,
+			size!,
+		);
 	}
 
-	// deno-lint-ignore require-await
 	public async finish(
 		digest: ArrayBufferLike | ArrayBufferPointer,
 	): Promise<void> {
 		const { mTruncate, mDigest } = this;
-		const { s, d, l } = mDigest;
-		switch (s) {
-			case 0: {
-				throw new Error('Not updated');
-			}
-			case 1: {
-				throw new Error('Incomplete updated');
-			}
-			case 3: {
-				throw new Error('Already finished');
-			}
+		if (mTruncate) {
+			const d = new ArrayBuffer(CCDigestOutputSize(mDigest));
+			await CCDigestFinal(mDigest, d);
+			asUint8Array(digest, mTruncate).set(
+				new Uint8Array(d, 0, mTruncate).slice(0, mTruncate),
+			);
+		} else {
+			await CCDigestFinal(mDigest, digest);
 		}
-		mDigest.s = 3;
-		mDigest.d = null;
-		const bl = mTruncate || l;
-		asUint8Array(digest, bl).set(new Uint8Array(d!, 0, bl));
 	}
 
 	static {

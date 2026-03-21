@@ -19,6 +19,7 @@ import {
 	kCCDigestSHA3_512,
 	kCCDigestSHA512,
 } from '../CommonCrypto/Private/CommonDigestSPI.ts';
+import { ENOMEM } from '../libc/errno.ts';
 import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../mach/vm_param.ts';
 import { subtleNode, subtleStreaming } from '../spec/crypto.ts';
 import { hex } from '../spec/hex.ts';
@@ -30,6 +31,7 @@ import type {
 import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
 import type { ArrayBufferData, ArrayBufferLikeData } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
+import { UnixError } from './errors.ts';
 import { CCHashInstance } from './hashing.ts';
 
 type HashCrypto = SubtleCrypto | SubtleCryptoExtended;
@@ -243,35 +245,11 @@ async function getEngines(): Promise<[string, HashCrypto | null][]> {
 	return Object.entries(engines);
 }
 
-type InputData = [string, () => ArrayBuffer, null];
-
-type InputBlob = [string, () => Blob, null];
-
 type InputIterator = [
 	string,
 	() => SizeIterator<ArrayBufferData> | SizeAsyncIterator<ArrayBufferData>,
 	number,
 ];
-
-function getInputsData(size: number): InputData[] {
-	return [
-		[
-			`ArrayBuffer-${size}`,
-			() => new ArrayBuffer(size),
-			null,
-		],
-	];
-}
-
-function getInputsBlob(size: number): InputBlob[] {
-	return [
-		[
-			`Blob-${size}`,
-			() => new Blob([new ArrayBuffer(size)]),
-			null,
-		],
-	];
-}
 
 function getInputsIterator(size: number): InputIterator[] {
 	return [
@@ -295,14 +273,6 @@ function getInputsIterator(size: number): InputIterator[] {
 			() => toAsyncIterator(new ArrayBuffer(size), { returns: null }),
 			size,
 		],
-	];
-}
-
-function getInputs(size: number): (InputData | InputBlob | InputIterator)[] {
-	return [
-		...getInputsData(size),
-		...getInputsBlob(size),
-		...getInputsIterator(size),
 	];
 }
 
@@ -344,8 +314,8 @@ Deno.test('Unsupported', () => {
 		const tag = `alg=${alg}`;
 		assertThrows(
 			() => new CCHashInstance(alg),
-			RangeError,
-			`Unsupported hash algorithm: ${alg}`,
+			UnixError,
+			new UnixError(ENOMEM, false).message,
 			tag,
 		);
 	}
@@ -600,89 +570,6 @@ Deno.test('Hash stream under-read', async () => {
 				'Read size off by: -1',
 				tag,
 			);
-		}
-	}
-});
-
-Deno.test('State errors', async () => {
-	const engines = await getEngines();
-	for (const [name, source, size] of [...getInputs(0), ...getInputs(1)]) {
-		for (const [engine, crypto] of engines) {
-			const tag = `name=${name} engine=${engine}`;
-			{
-				const hash = new CCHashInstance(kCCDigestSHA1);
-				hash.crypto = crypto;
-				// deno-lint-ignore no-await-in-loop
-				await (
-					size === null
-						? hash.update(source())
-						: hash.update(source(), size)
-				);
-				// deno-lint-ignore no-await-in-loop
-				await assertRejects(
-					() => (
-						size === null
-							? hash.update(source())
-							: hash.update(source(), size)
-					),
-					Error,
-					'Already updated',
-					tag,
-				);
-			}
-			{
-				const hash = new CCHashInstance(kCCDigestSHA1);
-				hash.crypto = crypto;
-				const digest = new ArrayBuffer(hash.digestLength());
-				// deno-lint-ignore no-await-in-loop
-				await assertRejects(
-					() => hash.finish(digest),
-					Error,
-					'Not updated',
-					tag,
-				);
-			}
-			{
-				const hash = new CCHashInstance(kCCDigestSHA1);
-				hash.crypto = crypto;
-				const incomplete = size === null
-					? hash.update(source())
-					: hash.update(source(), size);
-				const digest = new ArrayBuffer(hash.digestLength());
-				try {
-					const finish = hash.finish(digest);
-					// deno-lint-ignore no-await-in-loop
-					await assertRejects(
-						() => finish,
-						Error,
-						'Incomplete updated',
-						tag,
-					);
-				} finally {
-					// deno-lint-ignore no-await-in-loop
-					await incomplete;
-				}
-			}
-			{
-				const hash = new CCHashInstance(kCCDigestSHA1);
-				hash.crypto = crypto;
-				// deno-lint-ignore no-await-in-loop
-				await (
-					size === null
-						? hash.update(source())
-						: hash.update(source(), size)
-				);
-				const digest = new ArrayBuffer(hash.digestLength());
-				// deno-lint-ignore no-await-in-loop
-				await hash.finish(digest);
-				// deno-lint-ignore no-await-in-loop
-				await assertRejects(
-					() => hash.finish(digest),
-					Error,
-					'Already finished',
-					tag,
-				);
-			}
 		}
 	}
 });
