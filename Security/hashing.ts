@@ -339,13 +339,10 @@ export class CCHashInstance extends DynamicHash {
 		} else {
 			d = await c.digest(
 				a,
-				'buffer' in source
-					? new Uint8Array(
-						source.buffer,
-						source.byteOffset,
-						size ?? (source as ArrayBufferView).byteLength!,
-					)
-					: new Uint8Array(source),
+				asUint8Array<ArrayBuffer>(
+					source,
+					size ?? (source as ArrayBufferView).byteLength!,
+				),
 			);
 		}
 
@@ -373,11 +370,7 @@ export class CCHashInstance extends DynamicHash {
 		mDigest.s = 3;
 		mDigest.d = null;
 		const bl = mTruncate || l;
-		(
-			'buffer' in digest
-				? new Uint8Array(digest.buffer, digest.byteOffset, bl)
-				: new Uint8Array(digest, 0, bl)
-		).set(new Uint8Array(d!, 0, bl));
+		asUint8Array(digest, bl).set(new Uint8Array(d!, 0, bl));
 	}
 
 	static {

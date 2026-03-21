@@ -653,9 +653,7 @@ export class BlobWrapper extends Blob {
 			size += data;
 			magic = length;
 		} else {
-			view = 'buffer' in data
-				? new Uint8Array(data.buffer, data.byteOffset, length)
-				: new Uint8Array(data, 0, length);
+			view = asUint8Array(data, length!);
 			size += view.byteLength;
 		}
 		magic ??= BlobWrapper.typeMagic;

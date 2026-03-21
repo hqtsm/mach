@@ -201,13 +201,11 @@ export class RequirementMaker {
 		data: ArrayBufferLikeData | ArrayBufferPointer,
 		length?: number,
 	): void {
-		const d = 'buffer' in data
-			? new Uint8Array(
-				data.buffer,
-				data.byteOffset,
-				length ?? (data as ArrayBufferView).byteLength,
-			)
-			: new Uint8Array(data);
+		asUint8Array(data, length ?? (data as ArrayBufferView).byteLength);
+		const d = asUint8Array(
+			data,
+			length ?? (data as ArrayBufferView).byteLength,
+		);
 		RequirementMaker.put(_this, d.byteLength);
 		RequirementMaker.put(_this, d);
 	}

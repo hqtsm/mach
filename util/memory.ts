@@ -1,3 +1,5 @@
+import type { ArrayBufferPointer } from '@hqtsm/struct';
+
 const { toString } = Object.prototype;
 
 /**
@@ -35,6 +37,18 @@ export function isSharedArrayBuffer(
 }
 
 /**
+ * Get Uint8Array from a buffer or buffer pointer.
+ *
+ * @param value Buffer or buffer view.
+ * @param length Optional length.
+ * @returns Uint8Array.
+ */
+export function asUint8Array<T extends ArrayBufferLike>(
+	value: T | ArrayBufferPointer<T>,
+	length: number,
+): Uint8Array<T>;
+
+/**
  * Get Uint8Array from a buffer or buffer view.
  *
  * @param value Buffer or buffer view.
@@ -44,12 +58,24 @@ export function isSharedArrayBuffer(
 export function asUint8Array<T extends ArrayBufferLike>(
 	value: T | ArrayBufferView<T>,
 	length?: number,
+): Uint8Array<T>;
+
+/**
+ * Get Uint8Array from a buffer or buffer view or pointer.
+ *
+ * @param value Buffer or buffer view.
+ * @param length Optional length.
+ * @returns Uint8Array.
+ */
+export function asUint8Array<T extends ArrayBufferLike>(
+	value: T | ArrayBufferView<T> | ArrayBufferPointer<T>,
+	length?: number,
 ): Uint8Array<T> {
 	return 'buffer' in value
 		? new Uint8Array(
 			value.buffer,
 			value.byteOffset,
-			length ?? value.byteLength,
+			length ?? (value as ArrayBufferView).byteLength,
 		)
 		: new Uint8Array(value, 0, length);
 }
