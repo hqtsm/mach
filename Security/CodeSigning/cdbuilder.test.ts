@@ -4,17 +4,16 @@ import {
 	assertRejects,
 	assertThrows,
 } from '@std/assert';
-import { CS_SHA1_LEN } from '../kern/cs_blobs.ts';
-import { UINT32_MAX } from '../libc/stdint.ts';
-import { PLATFORM_MACOS } from '../mach-o/loader.ts';
-import type { Reader } from '../util/reader.ts';
-import { CodeDirectory } from './codedirectory.ts';
-import { CodeDirectoryBuilder } from './codedirectorybuilder.ts';
-import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
+import { CS_SHA1_LEN } from '../../kern/cs_blobs.ts';
+import { UINT32_MAX } from '../../libc/stdint.ts';
+import { PLATFORM_MACOS } from '../../mach-o/loader.ts';
+import type { Reader } from '../../util/reader.ts';
 import {
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
-} from './CSCommon.ts';
+} from '../CSCommon.ts';
+import { CodeDirectoryBuilder } from './cdbuilder.ts';
+import { CodeDirectory, CodeDirectoryScatter } from './codedirectory.ts';
 
 class ErrorReader implements Reader {
 	#size: number;
@@ -46,7 +45,7 @@ class ErrorReader implements Reader {
 	}
 }
 
-Deno.test('hashType', () => {
+Deno.test('CodeDirectoryBuilder: hashType', () => {
 	let builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	assertEquals(
 		CodeDirectoryBuilder.hashType(builder),
@@ -60,7 +59,7 @@ Deno.test('hashType', () => {
 	);
 });
 
-Deno.test('opened', async () => {
+Deno.test('CodeDirectoryBuilder: opened', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	assertEquals(CodeDirectoryBuilder.opened(builder), false);
 
@@ -78,7 +77,7 @@ Deno.test('opened', async () => {
 	);
 });
 
-Deno.test('identifier', async () => {
+Deno.test('CodeDirectoryBuilder: identifier', async () => {
 	const expected = new TextEncoder().encode('IDENTIFIER');
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
@@ -101,7 +100,7 @@ Deno.test('identifier', async () => {
 	}
 });
 
-Deno.test('teamID', async () => {
+Deno.test('CodeDirectoryBuilder: teamID', async () => {
 	const expected = new TextEncoder().encode('TEAMID');
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
@@ -124,7 +123,7 @@ Deno.test('teamID', async () => {
 	}
 });
 
-Deno.test('codeSlots', async () => {
+Deno.test('CodeDirectoryBuilder: codeSlots', async () => {
 	let builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	const zero = CodeDirectory.size(await CodeDirectoryBuilder.build(builder));
@@ -160,7 +159,7 @@ Deno.test('codeSlots', async () => {
 	);
 });
 
-Deno.test('addExecSegFlags', async () => {
+Deno.test('CodeDirectoryBuilder: addExecSegFlags', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	CodeDirectoryBuilder.execSeg(builder, 1n, 2n, 0n);
@@ -174,7 +173,7 @@ Deno.test('addExecSegFlags', async () => {
 	assertEquals((await CodeDirectoryBuilder.build(builder)).execSegFlags, 7n);
 });
 
-Deno.test('specialSlot', async () => {
+Deno.test('CodeDirectoryBuilder: specialSlot', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	const zero = CodeDirectory.size(await CodeDirectoryBuilder.build(builder));
@@ -195,7 +194,7 @@ Deno.test('specialSlot', async () => {
 	);
 });
 
-Deno.test('createScatter', async () => {
+Deno.test('CodeDirectoryBuilder: createScatter', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	assertEquals(CodeDirectoryBuilder.scatter(builder), null);
@@ -213,7 +212,7 @@ Deno.test('createScatter', async () => {
 	await CodeDirectoryBuilder.build(builder);
 });
 
-Deno.test('version and size', () => {
+Deno.test('CodeDirectoryBuilder: version and size', () => {
 	let size = 0;
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(
@@ -279,7 +278,7 @@ Deno.test('version and size', () => {
 	assertGreater(CodeDirectoryBuilder.size(builder), size);
 });
 
-Deno.test('platform', async () => {
+Deno.test('CodeDirectoryBuilder: platform', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	CodeDirectoryBuilder.platform(builder, PLATFORM_MACOS);
@@ -289,7 +288,7 @@ Deno.test('platform', async () => {
 	);
 });
 
-Deno.test('generatePreEncryptHashes', async () => {
+Deno.test('CodeDirectoryBuilder: generatePreEncryptHashes', async () => {
 	const version = CodeDirectory.supportsPreEncrypt;
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(
@@ -310,7 +309,7 @@ Deno.test('generatePreEncryptHashes', async () => {
 	);
 });
 
-Deno.test('read validation', async () => {
+Deno.test('CodeDirectoryBuilder: read validation', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(
 		builder,
@@ -326,7 +325,7 @@ Deno.test('read validation', async () => {
 	);
 });
 
-Deno.test('codeslots limit', async () => {
+Deno.test('CodeDirectoryBuilder; codeslots limit', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	const size = UINT32_MAX + 1;
 	CodeDirectoryBuilder.executable(

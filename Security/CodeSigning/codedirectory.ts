@@ -5,6 +5,7 @@ import {
 	Int8Ptr,
 	pointer,
 	type Ptr,
+	Struct,
 	uint32BE,
 	uint64BE,
 	uint8,
@@ -14,29 +15,33 @@ import {
 	kCCDigestSHA1,
 	kCCDigestSHA256,
 	kCCDigestSHA384,
-} from '../CommonCrypto/Private/CommonDigestSPI.ts';
-import { PAGE_SIZE_ARM64 } from '../mach/vm_param.ts';
-import { sizeAsyncIterators, type SizeIteratorNext } from '../util/iterator.ts';
-import { toUint8ArrayArrayBuffer } from '../util/memory.ts';
-import type { Reader } from '../util/reader.ts';
-import { Blob } from './blob.ts';
-import { CodeDirectoryScatter } from './codedirectoryscatter.ts';
+} from '../../CommonCrypto/Private/CommonDigestSPI.ts';
+import { PAGE_SIZE_ARM64 } from '../../mach/vm_param.ts';
+import {
+	sizeAsyncIterators,
+	type SizeIteratorNext,
+} from '../../util/iterator.ts';
+import { toUint8ArrayArrayBuffer } from '../../util/memory.ts';
+import type { Reader } from '../../util/reader.ts';
+import { Blob } from '../blob.ts';
 import {
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
 	kSecCodeSignatureHashSHA256Truncated,
 	kSecCodeSignatureHashSHA384,
-} from './CSCommon.ts';
+} from '../CSCommon.ts';
 import {
 	kSecCodeCDHashLength,
 	kSecCodeMagicCodeDirectory,
-} from './CSCommonPriv.ts';
-import { hashFileData } from './csutilities.ts';
+} from '../CSCommonPriv.ts';
+import { hashFileData } from '../csutilities.ts';
 import {
 	CCHashInstance,
 	type DynamicHash,
 	type DynamicHashCrypto,
-} from './hashing.ts';
+} from '../hashing.ts';
+
+const max = (values: number[]) => Math.max(...values);
 
 // Special hash slot values:
 
@@ -163,7 +168,39 @@ export const noPlatform = 0;
  */
 export const maxPlatform = 255;
 
-const max = (values: number[]) => Math.max(...values);
+/**
+ * CodeDirectory scatter vector element.
+ */
+export class CodeDirectoryScatter extends Struct {
+	/**
+	 * Page count; zero for sentinel (only).
+	 */
+	declare public count: number;
+
+	/**
+	 * First page number.
+	 */
+	declare public base: number;
+
+	/**
+	 * Byte offset in target.
+	 */
+	declare public targetOffset: bigint;
+
+	/**
+	 * Reserved, must be zero.
+	 */
+	declare public spare: bigint;
+
+	static {
+		toStringTag(this, 'CodeDirectoryScatter');
+		uint32BE(this, 'count');
+		uint32BE(this, 'base');
+		uint64BE(this, 'targetOffset');
+		uint64BE(this, 'spare');
+		constant(this, 'BYTE_LENGTH');
+	}
+}
 
 /**
  * Describes secured pieces of a program.
