@@ -1,5 +1,6 @@
-import { assertEquals } from '@std/assert';
-import { BadReader } from './hash.ts';
+import { assertEquals, assertInstanceOf } from '@std/assert';
+import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../mach/vm_param.ts';
+import { BadReader, toAsyncIterator, toIterator } from './hash.ts';
 
 Deno.test('BadReader', async () => {
 	const bad = new BadReader(10, 'application/test');
@@ -30,4 +31,46 @@ Deno.test('BadReader', async () => {
 	assertEquals(slice.diff, -2);
 
 	assertEquals(bad.slice(10).size, 0);
+});
+
+Deno.test('toIterator', () => {
+	const it = toIterator(new ArrayBuffer(PAGE_SIZE));
+	{
+		const { done, value } = it.next();
+		assertEquals(done, false);
+		assertInstanceOf(value, ArrayBuffer);
+		assertEquals(value.byteLength, 0);
+	}
+	{
+		const { done, value } = it.next();
+		assertEquals(done, false);
+		assertInstanceOf(value, ArrayBuffer);
+		assertEquals(value.byteLength, PAGE_SIZE);
+	}
+	{
+		const { done, value } = it.next();
+		assertEquals(done, true);
+		assertEquals(value, undefined);
+	}
+});
+
+Deno.test('toAsyncIterator', async () => {
+	const it = toAsyncIterator(new ArrayBuffer(PAGE_SIZE));
+	{
+		const { done, value } = await it.next();
+		assertEquals(done, false);
+		assertInstanceOf(value, ArrayBuffer);
+		assertEquals(value.byteLength, 0);
+	}
+	{
+		const { done, value } = await it.next();
+		assertEquals(done, false);
+		assertInstanceOf(value, ArrayBuffer);
+		assertEquals(value.byteLength, PAGE_SIZE);
+	}
+	{
+		const { done, value } = await it.next();
+		assertEquals(done, true);
+		assertEquals(value, undefined);
+	}
 });
