@@ -1,12 +1,13 @@
 import { toStringTag } from '@hqtsm/class';
 import { pointer, type Ptr } from '@hqtsm/struct';
 import { UINT32_MAX } from '../../libc/stdint.ts';
+import type { SubtleCryptoDigest } from '../../util/crypto.ts';
 import {
 	type ArrayBufferLikeData,
 	toUint8ArrayArrayBuffer,
 } from '../../util/memory.ts';
 import type { Reader } from '../../util/reader.ts';
-import type { DynamicHash, DynamicHashCrypto } from '../hashing.ts';
+import type { DynamicHash } from '../hashing.ts';
 import { CodeDirectory, CodeDirectoryScatter } from './codedirectory.ts';
 
 function specialSlot(slot: number): number {
@@ -24,7 +25,7 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Dynamic hash crypto.
 	 */
-	public crypto: DynamicHashCrypto | null = null;
+	public crypto: SubtleCryptoDigest | null = null;
 
 	/**
 	 * Special slots.

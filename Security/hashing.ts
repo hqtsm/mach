@@ -9,6 +9,7 @@ import {
 import { PAGE_SIZE_ARM64 } from '../mach/vm_param.ts';
 import type {
 	SubtleCrypto,
+	SubtleCryptoDigest,
 	SubtleCryptoDigestAlgorithm,
 	SubtleCryptoExtended,
 } from '../util/crypto.ts';
@@ -26,20 +27,13 @@ export class Hashing {
 }
 
 /**
- * Dynamic hash crypto.
- */
-export type DynamicHashCrypto =
-	| Pick<SubtleCrypto, 'digest'>
-	| Pick<SubtleCryptoExtended, 'digest'>;
-
-/**
  * Dynamic hash.
  */
 export abstract class DynamicHash extends Hashing {
 	/**
 	 * Hash crypto.
 	 */
-	public crypto: DynamicHashCrypto | null = null;
+	public crypto: SubtleCryptoDigest | null = null;
 
 	/**
 	 * Get the digest length.

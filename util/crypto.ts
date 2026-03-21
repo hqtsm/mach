@@ -44,6 +44,13 @@ export interface SubtleCryptoExtended extends SubtleCrypto {
 }
 
 /**
+ * Subtle crypto digest interface.
+ */
+export type SubtleCryptoDigest =
+	| Pick<SubtleCrypto, 'digest'>
+	| Pick<SubtleCryptoExtended, 'digest'>;
+
+/**
  * Digest stream writer.
  */
 export interface DigestStreamWriter {

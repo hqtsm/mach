@@ -17,6 +17,7 @@ import {
 	kCCDigestSHA384,
 } from '../../CommonCrypto/Private/CommonDigestSPI.ts';
 import { PAGE_SIZE_ARM64 } from '../../mach/vm_param.ts';
+import type { SubtleCryptoDigest } from '../../util/crypto.ts';
 import {
 	sizeAsyncIterators,
 	type SizeIteratorNext,
@@ -34,11 +35,7 @@ import {
 	kSecCodeCDHashLength,
 	kSecCodeMagicCodeDirectory,
 } from '../CSCommonPriv.ts';
-import {
-	CCHashInstance,
-	type DynamicHash,
-	type DynamicHashCrypto,
-} from '../hashing.ts';
+import { CCHashInstance, type DynamicHash } from '../hashing.ts';
 import { hashFileData } from './csutilities.ts';
 
 const max = (values: number[]) => Math.max(...values);
@@ -527,7 +524,7 @@ export class CodeDirectory extends Blob {
 		size: number,
 		slot: number,
 		preEncrypted: boolean,
-		crypto: DynamicHashCrypto | null = null,
+		crypto: SubtleCryptoDigest | null = null,
 	): Promise<boolean> {
 		const hash = CodeDirectory.getHash(_this);
 		hash.crypto = crypto;
@@ -603,7 +600,7 @@ export class CodeDirectory extends Blob {
 	public static async cdhash(
 		_this: CodeDirectory,
 		truncate = false,
-		crypto: DynamicHashCrypto | null = null,
+		crypto: SubtleCryptoDigest | null = null,
 	): Promise<ArrayBuffer> {
 		const hash = CodeDirectory.getHash(_this);
 		hash.crypto = crypto;
@@ -702,7 +699,7 @@ export class CodeDirectory extends Blob {
 		limit: number,
 		types: Set<number>,
 		action: (type: number, hasher: DynamicHash) => Promise<void>,
-		crypto: DynamicHashCrypto | null = null,
+		crypto: SubtleCryptoDigest | null = null,
 	): Promise<void> {
 		const total = limit ? Math.min(limit, reader.size) : reader.size;
 		const hashes: [number, DynamicHash][] = [];
