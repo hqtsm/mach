@@ -34,12 +34,12 @@ import {
 	kSecCodeCDHashLength,
 	kSecCodeMagicCodeDirectory,
 } from '../CSCommonPriv.ts';
-import { hashFileData } from '../csutilities.ts';
 import {
 	CCHashInstance,
 	type DynamicHash,
 	type DynamicHashCrypto,
 } from '../hashing.ts';
+import { hashFileData } from './csutilities.ts';
 
 const max = (values: number[]) => Math.max(...values);
 
