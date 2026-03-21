@@ -24,4 +24,10 @@ Deno.test('BadReader', async () => {
 	assertEquals(bad.diff, -2);
 	assertEquals(bad.size, 10);
 	assertEquals((await bad.arrayBuffer()).byteLength, 12);
+
+	const slice = bad.slice(1, 10);
+	assertEquals(slice.size, 9);
+	assertEquals(slice.diff, -2);
+
+	assertEquals(bad.slice(10).size, 0);
 });

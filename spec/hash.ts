@@ -49,7 +49,11 @@ export class BadReader implements Reader {
 		return this.#diff;
 	}
 
-	public slice(start?: number, end?: number, contentType?: string): Reader {
+	public slice(
+		start?: number,
+		end?: number,
+		contentType?: string,
+	): BadReader {
 		start ??= 0;
 		end ??= this.#size;
 		const r = new BadReader(start < end ? end - start : 0, contentType);
