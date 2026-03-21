@@ -27,7 +27,7 @@ import {
 	toIterator,
 } from '../spec/hash.ts';
 
-Deno.test('Unsupported', () => {
+Deno.test('CCHashInstance: Unsupported', () => {
 	for (
 		const [name, alg] of Object.entries({
 			kCCDigestMax,
@@ -53,7 +53,7 @@ Deno.test('Unsupported', () => {
 	}
 });
 
-Deno.test('Hash ArrayBuffer', async () => {
+Deno.test('CCHashInstance: ArrayBuffer', async () => {
 	for (const { tag, alg, crypto, output, size, data } of getCases()) {
 		const hash = new CCHashInstance(alg);
 		hash.crypto = crypto;
@@ -66,7 +66,7 @@ Deno.test('Hash ArrayBuffer', async () => {
 	}
 });
 
-Deno.test('Hash Uint8Array<ArrayBuffer>', async () => {
+Deno.test('CCHashInstance: Uint8Array<ArrayBuffer>', async () => {
 	for (const { tag, alg, crypto, output, size, data } of getCases()) {
 		const hash = new CCHashInstance(alg);
 		hash.crypto = crypto;
@@ -81,7 +81,7 @@ Deno.test('Hash Uint8Array<ArrayBuffer>', async () => {
 	}
 });
 
-Deno.test('Hash Blob', async () => {
+Deno.test('CCHashInstance: Blob', async () => {
 	for (const { tag, alg, crypto, output, size, data } of getCases()) {
 		const hash = new CCHashInstance(alg);
 		hash.crypto = crypto;
@@ -95,7 +95,45 @@ Deno.test('Hash Blob', async () => {
 	}
 });
 
-Deno.test('Hash ArrayBufferPointer', async () => {
+Deno.test('CCHashInstance: Blob over-read', async () => {
+	const reader = new BadReader(1024);
+	reader.diff = 1;
+
+	const engines = getEngines();
+	for (const [engine, crypto] of engines) {
+		const tag = `engine=${engine}`;
+		const hash = new CCHashInstance(kCCDigestSHA1);
+		hash.crypto = crypto;
+		// deno-lint-ignore no-await-in-loop
+		await assertRejects(
+			() => hash.update(reader),
+			RangeError,
+			'Read size off by: 1',
+			tag,
+		);
+	}
+});
+
+Deno.test('CCHashInstance: Blob under-read', async () => {
+	const reader = new BadReader(1024);
+	reader.diff = -1;
+
+	const engines = getEngines();
+	for (const [engine, crypto] of engines) {
+		const tag = `engine=${engine}`;
+		const hash = new CCHashInstance(kCCDigestSHA1);
+		hash.crypto = crypto;
+		// deno-lint-ignore no-await-in-loop
+		await assertRejects(
+			() => hash.update(reader),
+			RangeError,
+			'Read size off by: -1',
+			tag,
+		);
+	}
+});
+
+Deno.test('CCHashInstance: ArrayBufferPointer', async () => {
 	for (const { tag, alg, crypto, output, size, data } of getCases()) {
 		const hash = new CCHashInstance(alg);
 		hash.crypto = crypto;
@@ -116,7 +154,7 @@ Deno.test('Hash ArrayBufferPointer', async () => {
 	}
 });
 
-Deno.test('Hash Iterator<ArrayBuffer>', async () => {
+Deno.test('CCHashInstance: Iterator<ArrayBuffer>', async () => {
 	for (const page of ITTER_SIZES) {
 		for (const { tag, alg, crypto, output, size, data } of getCases()) {
 			const tags = `${tag} page=${page}`;
@@ -140,7 +178,7 @@ Deno.test('Hash Iterator<ArrayBuffer>', async () => {
 	}
 });
 
-Deno.test('Hash Iterator<Uint8Array<ArrayBuffer>>', async () => {
+Deno.test('CCHashInstance: Iterator<Uint8Array<ArrayBuffer>>', async () => {
 	const transform = (d: ArrayBuffer) => new Uint8Array(d);
 	for (const page of ITTER_SIZES) {
 		for (const { tag, alg, crypto, output, size, data } of getCases()) {
@@ -166,7 +204,7 @@ Deno.test('Hash Iterator<Uint8Array<ArrayBuffer>>', async () => {
 	}
 });
 
-Deno.test('Hash AsyncIterator<ArrayBuffer>', async () => {
+Deno.test('CCHashInstance: AsyncIterator<ArrayBuffer>', async () => {
 	for (const page of ITTER_SIZES) {
 		for (const { tag, alg, crypto, output, size, data } of getCases()) {
 			const tags = `${tag} page=${page}`;
@@ -190,7 +228,7 @@ Deno.test('Hash AsyncIterator<ArrayBuffer>', async () => {
 	}
 });
 
-Deno.test('Hash AsyncIterator<Uint8Array<ArrayBuffer>>', async () => {
+Deno.test('CCHashInstance: AsyncIterator<Uint8Array<ArrayBuffer>>', async () => {
 	const transform = (d: ArrayBuffer) => new Uint8Array(d);
 	for (const page of ITTER_SIZES) {
 		for (const { tag, alg, crypto, output, size, data } of getCases()) {
@@ -216,62 +254,8 @@ Deno.test('Hash AsyncIterator<Uint8Array<ArrayBuffer>>', async () => {
 	}
 });
 
-Deno.test('Hash truncate', async () => {
-	for (const { tag, alg, crypto, output, size, data } of getCases()) {
-		const truncate = Math.floor(output.length / 2);
-		const hext = output.slice(0, truncate * 2);
-		const hash = new CCHashInstance(alg, truncate);
-		hash.crypto = crypto;
-		// deno-lint-ignore no-await-in-loop
-		await hash.update(data);
-		const digest = new Uint8Array(size);
-		// deno-lint-ignore no-await-in-loop
-		await hash.finish(digest);
-		assertEquals(hash.digestLength(), truncate, tag);
-		assertEquals(hex(digest), hext, tag);
-	}
-});
-
-Deno.test('Hash Blob over-read', async () => {
-	const reader = new BadReader(1024);
-	reader.diff = 1;
-
+Deno.test('CCHashInstance: Iterator over-read', async () => {
 	const engines = getEngines();
-	for (const [engine, crypto] of engines) {
-		const tag = `engine=${engine}`;
-		const hash = new CCHashInstance(kCCDigestSHA1);
-		hash.crypto = crypto;
-		// deno-lint-ignore no-await-in-loop
-		await assertRejects(
-			() => hash.update(reader),
-			RangeError,
-			'Read size off by: 1',
-			tag,
-		);
-	}
-});
-
-Deno.test('Hash Blob under-read', async () => {
-	const reader = new BadReader(1024);
-	reader.diff = -1;
-
-	const engines = getEngines();
-	for (const [engine, crypto] of engines) {
-		const tag = `engine=${engine}`;
-		const hash = new CCHashInstance(kCCDigestSHA1);
-		hash.crypto = crypto;
-		// deno-lint-ignore no-await-in-loop
-		await assertRejects(
-			() => hash.update(reader),
-			RangeError,
-			'Read size off by: -1',
-			tag,
-		);
-	}
-});
-
-Deno.test('Hash stream over-read', async () => {
-	const engines = await getEngines();
 	for (const [name, source, size] of getIterators(1024)) {
 		for (const [engine, crypto] of engines) {
 			const tag = `name=${name} engine=${engine}`;
@@ -288,8 +272,8 @@ Deno.test('Hash stream over-read', async () => {
 	}
 });
 
-Deno.test('Hash stream under-read', async () => {
-	const engines = await getEngines();
+Deno.test('CCHashInstance: Iterator under-read', async () => {
+	const engines = getEngines();
 	for (const [name, source, size] of getIterators(1024)) {
 		for (const [engine, crypto] of engines) {
 			const tag = `name=${name} engine=${engine}`;
@@ -303,5 +287,21 @@ Deno.test('Hash stream under-read', async () => {
 				tag,
 			);
 		}
+	}
+});
+
+Deno.test('CCHashInstance: truncate', async () => {
+	for (const { tag, alg, crypto, output, size, data } of getCases()) {
+		const truncate = Math.floor(output.length / 2);
+		const hext = output.slice(0, truncate * 2);
+		const hash = new CCHashInstance(alg, truncate);
+		hash.crypto = crypto;
+		// deno-lint-ignore no-await-in-loop
+		await hash.update(data);
+		const digest = new Uint8Array(size);
+		// deno-lint-ignore no-await-in-loop
+		await hash.finish(digest);
+		assertEquals(hash.digestLength(), truncate, tag);
+		assertEquals(hex(digest), hext, tag);
 	}
 });
