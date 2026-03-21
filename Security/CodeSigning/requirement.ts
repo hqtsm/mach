@@ -1,7 +1,11 @@
 import { constant, toStringTag } from '@hqtsm/class';
 import { uint32BE } from '@hqtsm/struct';
-import { kSecCodeMagicRequirement } from './CSCommonPriv.ts';
-import { Blob } from './blob.ts';
+import { Blob } from '../blob.ts';
+import {
+	kSecCodeMagicRequirement,
+	kSecCodeMagicRequirementSet,
+} from '../CSCommonPriv.ts';
+import { SuperBlob, SuperBlobMaker } from '../superblob.ts';
 
 /**
  * Single requirement.
@@ -290,3 +294,27 @@ export const matchOnOrAfter = 13;
  * Match: Absent.
  */
 export const matchAbsent = 14;
+
+/**
+ * Requirement groups indexed by SecRequirementType.
+ */
+export class Requirements extends SuperBlob {
+	public static override readonly typeMagic = kSecCodeMagicRequirementSet;
+
+	static {
+		toStringTag(this, 'Requirements');
+		constant(this, 'typeMagic');
+	}
+}
+
+/**
+ * SuperBlob maker for Requirements.
+ */
+export class RequirementsMaker extends SuperBlobMaker {
+	public static override readonly SuperBlob = Requirements;
+
+	static {
+		toStringTag(this, 'RequirementsMaker');
+		constant(this, 'SuperBlob');
+	}
+}

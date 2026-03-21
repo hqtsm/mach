@@ -17,8 +17,6 @@ import {
 	kSecCodeMagicEntitlementDER,
 	kSecCodeMagicLaunchConstraint,
 } from '../CSCommonPriv.ts';
-import { RequirementsMaker } from '../requirementsmaker.ts';
-import { Requirements } from '../requirements.ts';
 import { CodeDirectoryBuilder } from './cdbuilder.ts';
 import {
 	cdAlternateCodeDirectorySlots,
@@ -29,6 +27,7 @@ import {
 	cdSignatureSlot,
 	CodeDirectory,
 } from './codedirectory.ts';
+import { Requirements, RequirementsMaker } from './requirement.ts';
 import {
 	DetachedSignatureBlob,
 	EmbeddedSignatureBlob,
