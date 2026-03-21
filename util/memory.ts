@@ -38,14 +38,20 @@ export function isSharedArrayBuffer(
  * Get Uint8Array from a buffer or buffer view.
  *
  * @param value Buffer or buffer view.
+ * @param length Optional length.
  * @returns Uint8Array.
  */
 export function asUint8Array<T extends ArrayBufferLike>(
 	value: T | ArrayBufferView<T>,
+	length?: number,
 ): Uint8Array<T> {
 	return 'buffer' in value
-		? new Uint8Array(value.buffer, value.byteOffset, value.byteLength)
-		: new Uint8Array(value);
+		? new Uint8Array(
+			value.buffer,
+			value.byteOffset,
+			length ?? value.byteLength,
+		)
+		: new Uint8Array(value, 0, length);
 }
 
 /**

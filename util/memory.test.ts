@@ -50,6 +50,7 @@ Deno.test('asUint8Array', () => {
 	assertStrictEquals(asUint8Array(uab).buffer, ab);
 	assertEquals(asUint8Array(uab).byteOffset, 1);
 	assertEquals(asUint8Array(uab).byteLength, 2);
+	assertEquals(asUint8Array(uab, 1).byteLength, 1);
 
 	const sab = new SharedArrayBuffer(4);
 	new Uint8Array(sab).set([5, 6, 7, 8]);
@@ -61,6 +62,7 @@ Deno.test('asUint8Array', () => {
 	assertStrictEquals(asUint8Array(usab).buffer, sab);
 	assertEquals(asUint8Array(usab).byteOffset, 1);
 	assertEquals(asUint8Array(usab).byteLength, 2);
+	assertEquals(asUint8Array(usab, 1).byteLength, 1);
 });
 
 Deno.test('toUint8ArrayArrayBuffer', () => {
