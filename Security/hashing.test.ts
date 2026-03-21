@@ -163,20 +163,6 @@ const ITTER_SIZES = [
 	PAGE_SIZE * 2,
 ];
 
-const unsupported = [
-	kCCDigestMax,
-	kCCDigestMD2,
-	kCCDigestMD4,
-	kCCDigestMD5,
-	kCCDigestNone,
-	kCCDigestRMD160,
-	kCCDigestSHA224,
-	kCCDigestSHA3_224,
-	kCCDigestSHA3_256,
-	kCCDigestSHA3_384,
-	kCCDigestSHA3_512,
-];
-
 const expected = [
 	[kCCDigestSHA1, {
 		EMPTY: [EMPTY.buffer, hashed('sha1', EMPTY)],
@@ -310,8 +296,22 @@ async function getCases(): Promise<Iterable<Case>> {
 }
 
 Deno.test('Unsupported', () => {
-	for (const alg of unsupported) {
-		const tag = `alg=${alg}`;
+	for (
+		const [name, alg] of Object.entries({
+			kCCDigestMax,
+			kCCDigestMD2,
+			kCCDigestMD4,
+			kCCDigestMD5,
+			kCCDigestNone,
+			kCCDigestRMD160,
+			kCCDigestSHA224,
+			kCCDigestSHA3_224,
+			kCCDigestSHA3_256,
+			kCCDigestSHA3_384,
+			kCCDigestSHA3_512,
+		})
+	) {
+		const tag = `alg=${name}`;
 		assertThrows(
 			() => new CCHashInstance(alg),
 			UnixError,
