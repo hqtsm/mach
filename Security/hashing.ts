@@ -164,7 +164,7 @@ export class CCHashInstance extends DynamicHash {
 			const d = new ArrayBuffer(CCDigestOutputSize(mDigest));
 			await CCDigestFinal(mDigest, d);
 			asUint8Array(digest, mTruncate).set(
-				new Uint8Array(d, 0, mTruncate).slice(0, mTruncate),
+				new Uint8Array(d, 0, mTruncate),
 			);
 		} else {
 			await CCDigestFinal(mDigest, digest);
