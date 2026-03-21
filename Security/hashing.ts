@@ -146,8 +146,10 @@ export class CCHashInstance extends DynamicHash {
 			| SizeAsyncIterator<ArrayBufferData>,
 		size?: number,
 	): Promise<void> {
+		const { crypto, mDigest } = this;
+		mDigest.crypto = crypto;
 		await CCDigestUpdate(
-			this.mDigest,
+			mDigest,
 			source as ArrayBufferPointer<ArrayBuffer>,
 			size!,
 		);
@@ -156,7 +158,8 @@ export class CCHashInstance extends DynamicHash {
 	public async finish(
 		digest: ArrayBufferLike | ArrayBufferPointer,
 	): Promise<void> {
-		const { mTruncate, mDigest } = this;
+		const { crypto, mTruncate, mDigest } = this;
+		mDigest.crypto = crypto;
 		if (mTruncate) {
 			const d = new ArrayBuffer(CCDigestOutputSize(mDigest));
 			await CCDigestFinal(mDigest, d);
