@@ -113,18 +113,16 @@ export function sizeAsyncIterators<T>(
 	let process = Promise.resolve();
 	const tasked = new Map<number, Map<number, Task>>();
 	const processer = async () => {
-		LOOP: for (; tasked.size; step++) {
+		LOOP: for (const sizes: number[] = []; tasked.size; step++) {
+			let i = sizes.length = 0;
+
 			// Wait for all tasks to be ready.
 			for (const tasks of tasked.values()) {
-				if (!tasks.has(step)) {
+				const task = tasks.get(step);
+				if (!task) {
 					break LOOP;
 				}
-			}
-
-			// List requested sizes in order.
-			const sizes: number[] = [];
-			for (const tasks of tasked.values()) {
-				sizes.push(tasks.get(step)!.size || 0);
+				sizes[i++] = task.size || 0;
 			}
 
 			try {
