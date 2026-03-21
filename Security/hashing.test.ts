@@ -19,7 +19,7 @@ import {
 	kCCDigestSHA3_512,
 	kCCDigestSHA512,
 } from '../CommonCrypto/Private/CommonDigestSPI.ts';
-import { PAGE_SIZE_ARM64 } from '../mach/vm_param.ts';
+import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../mach/vm_param.ts';
 import { subtleNode, subtleStreaming } from '../spec/crypto.ts';
 import { hex } from '../spec/hex.ts';
 import type {
@@ -95,7 +95,7 @@ function toIterator(
 				: new ArrayBuffer(0))
 		);
 		for (let i = 0; i < size;) {
-			const ps = page || ask || PAGE_SIZE_ARM64;
+			const ps = page || ask || PAGE_SIZE;
 			const d = data.slice(i, i + ps);
 			i += d.byteLength;
 			ask = yield (transform ? transform(d) : d);
@@ -125,7 +125,7 @@ function toAsyncIterator(
 				: new ArrayBuffer(0))
 		);
 		for (let i = 0; i < size;) {
-			const ps = page || ask || PAGE_SIZE_ARM64;
+			const ps = page || ask || PAGE_SIZE;
 			const d = data.slice(i, i + ps);
 			i += d.byteLength;
 			ask = yield (transform ? transform(d) : d);
@@ -150,15 +150,15 @@ function hashed(algo: string, data: Uint8Array): string {
 const EMPTY = new Uint8Array(0);
 const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
 const PAGED = new Uint8Array(
-	new ArrayBuffer(Math.floor(PAGE_SIZE_ARM64 * 1.5)),
+	new ArrayBuffer(Math.floor(PAGE_SIZE * 1.5)),
 );
 
 const ITTER_SIZES = [
 	0,
-	Math.floor(PAGE_SIZE_ARM64 / 2),
-	PAGE_SIZE_ARM64,
-	Math.floor(PAGE_SIZE_ARM64 * 1.5),
-	PAGE_SIZE_ARM64 * 2,
+	Math.floor(PAGE_SIZE / 2),
+	PAGE_SIZE,
+	Math.floor(PAGE_SIZE * 1.5),
+	PAGE_SIZE * 2,
 ];
 
 const unsupported = [

@@ -6,7 +6,7 @@ import {
 	kCCDigestSHA384,
 	kCCDigestSHA512,
 } from '../CommonCrypto/Private/CommonDigestSPI.ts';
-import { PAGE_SIZE_ARM64 } from '../mach/vm_param.ts';
+import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../mach/vm_param.ts';
 import type {
 	SubtleCrypto,
 	SubtleCryptoDigest,
@@ -144,9 +144,9 @@ const readerAG = async function* (
 	for (
 		let i = 0, r = size, l;
 		i < size;
-		r -= l, i += PAGE_SIZE_ARM64
+		r -= l, i += PAGE_SIZE
 	) {
-		l = r > PAGE_SIZE_ARM64 ? PAGE_SIZE_ARM64 : r;
+		l = r > PAGE_SIZE ? PAGE_SIZE : r;
 		// deno-lint-ignore no-await-in-loop
 		const b = await source.slice(i, i + l).arrayBuffer();
 		const o = l - b.byteLength;
@@ -167,8 +167,8 @@ const iteratorAG = async function* (
 	try {
 		let n;
 		for (
-			a = isPromise(n = source.next(PAGE_SIZE_ARM64));;
-			n = source.next(PAGE_SIZE_ARM64)
+			a = isPromise(n = source.next(PAGE_SIZE));;
+			n = source.next(PAGE_SIZE)
 		) {
 			// deno-lint-ignore no-await-in-loop
 			n = (a ? await n : n) as IteratorResult<ArrayBufferData>;
@@ -290,7 +290,7 @@ export class CCHashInstance extends DynamicHash {
 				let p;
 				let all: Uint8Array<ArrayBuffer> | undefined;
 				let o = -size!;
-				let ps = size! > 0 ? size! : PAGE_SIZE_ARM64;
+				let ps = size! > 0 ? size! : PAGE_SIZE;
 				try {
 					let n, i = 0;
 					for (
@@ -320,7 +320,7 @@ export class CCHashInstance extends DynamicHash {
 								} else {
 									all = asUint8Array(b);
 								}
-								ps = PAGE_SIZE_ARM64;
+								ps = PAGE_SIZE;
 							}
 							i += l;
 						}
