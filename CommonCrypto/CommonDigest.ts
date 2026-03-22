@@ -348,11 +348,10 @@ export async function CCDigestUpdate(
 		if (data && 'next' in data) {
 			iter = data;
 		}
-	} else if ('arrayBuffer' in data!) {
-		read = data;
-		size = data.size;
 	} else {
-		size = (data as ArrayBufferData).byteLength;
+		size = ('arrayBuffer' in data!)
+			? (read = data).size
+			: (data as ArrayBufferData).byteLength;
 	}
 
 	// Empty input is allowed.
@@ -372,14 +371,14 @@ export async function CCDigestUpdate(
 	}
 	const { a } = algo;
 
-	const subtle = c.crypto || crypto.subtle;
+	const s = c.crypto || crypto.subtle;
 
 	if (read) {
-		await (c['d'] = digestReader(read, size, a, subtle));
+		await (c['d'] = digestReader(read, size, a, s));
 	} else if (iter) {
-		await (c['d'] = digestIterator(iter, size, a, subtle));
+		await (c['d'] = digestIterator(iter, size, a, s));
 	} else {
-		await (c['d'] = subtle.digest(
+		await (c['d'] = s.digest(
 			a,
 			asUint8Array(data as ArrayBufferData, size),
 		));
@@ -502,25 +501,20 @@ export async function CCDigest(
 		o = out as ArrayBufferLike | ArrayBufferPointer;
 		s = subtle;
 	} else {
+		size = ('arrayBuffer' in data!)
+			? (read = data).size
+			: (data as ArrayBufferData).byteLength;
 		o = len;
-		s = out as SubtleCryptoDigest;
-		if ('arrayBuffer' in data!) {
-			read = data;
-			size = data.size;
-		} else {
-			size = (data as ArrayBufferData).byteLength;
-		}
+		s = out as SubtleCryptoDigest | null | undefined;
 	}
 
 	if (!o) {
 		return kCCParamError;
 	}
 
-	if (!data) {
-		if (size) {
-			return kCCParamError;
-		}
-		data = new ArrayBuffer(0);
+	// Empty input is allowed, only an error if not empty.
+	if (!data && size) {
+		return kCCParamError;
 	}
 
 	s ??= crypto.subtle;
