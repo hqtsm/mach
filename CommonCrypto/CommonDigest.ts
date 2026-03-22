@@ -141,6 +141,102 @@ const iteratorAG = async function* (
 	}
 };
 
+const digestNull = async (
+	iter?:
+		| SizeIterator<ArrayBufferData>
+		| SizeAsyncIterator<ArrayBufferData>,
+): Promise<null> => {
+	if (iter) {
+		await iter.return?.();
+	}
+	return null;
+};
+
+const digestReader = async function (
+	reader: Reader,
+	size: number,
+	alg: SubtleCryptoDigestAlgorithm,
+	subtle: SubtleCryptoDigest,
+): Promise<ArrayBuffer> {
+	let d;
+	if (supportsAG.get(subtle.digest) !== false) {
+		d = await subtleAG(subtle, alg, readerAG(subtle, reader));
+	}
+	if (!d) {
+		const v = await reader.arrayBuffer();
+		const o = size - v.byteLength;
+		if (o) {
+			throw new RangeError(`Read size off by: ${o}`);
+		}
+		d = await subtle.digest(alg, v);
+	}
+	return d;
+};
+
+const digestIterator = async function (
+	iter: SizeIterator<ArrayBufferData> | SizeAsyncIterator<ArrayBufferData>,
+	size: number,
+	alg: SubtleCryptoDigestAlgorithm,
+	subtle: SubtleCryptoDigest,
+): Promise<ArrayBuffer> {
+	let d;
+	if (supportsAG.get(subtle.digest) !== false) {
+		d = await subtleAG(subtle, alg, iteratorAG(subtle, iter, size));
+	}
+	if (!d) {
+		let p;
+		let all: Uint8Array<ArrayBuffer> | undefined;
+		let o = -size;
+		let ps = size;
+		try {
+			let n;
+			let i = 0;
+			for (
+				p = isPromise(n = iter.next(ps));;
+				n = iter.next(ps)
+			) {
+				// deno-lint-ignore no-await-in-loop
+				n = (p ? await n : n) as IteratorResult<
+					ArrayBufferData
+				>;
+				if (n.done) {
+					break;
+				}
+				const b = n.value;
+				const l = b.byteLength;
+				if (l) {
+					o += l;
+					if (o > 0) {
+						break;
+					}
+					if (all) {
+						all.set(asUint8Array(b), i);
+					} else {
+						if (o) {
+							all = new Uint8Array(size);
+							all.set(asUint8Array(b));
+						} else {
+							all = asUint8Array(b);
+						}
+						ps = PAGE_SIZE;
+					}
+					i += l;
+				}
+			}
+		} finally {
+			const r = iter.return?.();
+			if (p && r) {
+				await r;
+			}
+		}
+		if (o) {
+			throw new RangeError(`Read size off by: ${o}`);
+		}
+		d = await subtle.digest(alg, all!);
+	}
+	return d;
+};
+
 /**
  * CommonCrypto digest context.
  */
@@ -260,12 +356,7 @@ export async function CCDigestUpdate(
 
 	// Empty input is allowed.
 	if (size === 0) {
-		await (c['d'] = (async () => {
-			if (iter) {
-				await iter.return?.();
-			}
-			return null;
-		})());
+		await (c['d'] = digestNull(iter));
 		return kCCSuccess;
 	}
 
@@ -283,78 +374,9 @@ export async function CCDigestUpdate(
 	const subtle = c.crypto || crypto.subtle;
 
 	if (read) {
-		await (c['d'] = (async (d?: ArrayBuffer | null) => {
-			if (supportsAG.get(subtle.digest) !== false) {
-				d = await subtleAG(subtle, a, readerAG(subtle, read));
-			}
-			if (!d) {
-				const v = await read.arrayBuffer();
-				const o = size - v.byteLength;
-				if (o) {
-					throw new RangeError(`Read size off by: ${o}`);
-				}
-				d = await subtle.digest(a, v);
-			}
-			return d;
-		})());
+		await (c['d'] = digestReader(read, size, a, subtle));
 	} else if (iter) {
-		await (c['d'] = (async (d?: ArrayBuffer | null) => {
-			if (supportsAG.get(subtle.digest) !== false) {
-				d = await subtleAG(subtle, a, iteratorAG(subtle, iter, size));
-			}
-			if (!d) {
-				let p;
-				let all: Uint8Array<ArrayBuffer> | undefined;
-				let o = -size;
-				let ps = size;
-				try {
-					let n;
-					let i = 0;
-					for (
-						p = isPromise(n = iter.next(ps));;
-						n = iter.next(ps)
-					) {
-						// deno-lint-ignore no-await-in-loop
-						n = (p ? await n : n) as IteratorResult<
-							ArrayBufferData
-						>;
-						if (n.done) {
-							break;
-						}
-						const b = n.value;
-						const l = b.byteLength;
-						if (l) {
-							o += l;
-							if (o > 0) {
-								break;
-							}
-							if (all) {
-								all.set(asUint8Array(b), i);
-							} else {
-								if (o) {
-									all = new Uint8Array(size);
-									all.set(asUint8Array(b));
-								} else {
-									all = asUint8Array(b);
-								}
-								ps = PAGE_SIZE;
-							}
-							i += l;
-						}
-					}
-				} finally {
-					const r = iter.return?.();
-					if (p && r) {
-						await r;
-					}
-				}
-				if (o) {
-					throw new RangeError(`Read size off by: ${o}`);
-				}
-				d = await subtle.digest(a, all!);
-			}
-			return d;
-		})());
+		await (c['d'] = digestIterator(iter, size, a, subtle));
 	} else {
 		await (c['d'] = subtle.digest(
 			a,
@@ -396,8 +418,6 @@ export async function CCDigestFinal(
 
 	return kCCSuccess;
 }
-
-// CCDigest
 
 /**
  * Get digest block size.
