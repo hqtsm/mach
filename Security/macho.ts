@@ -9,6 +9,7 @@ import {
 	type Ptr,
 	Uint32Ptr,
 } from '@hqtsm/struct';
+import { ENOEXEC } from '../libc/errno.ts';
 import { strlen, strncmp } from '../libc/string.ts';
 import {
 	CPU_ARCH_ABI64,
@@ -58,6 +59,7 @@ import {
 	version_min_command,
 } from '../mach-o/loader.ts';
 import type { Reader } from '../util/reader.ts';
+import { UnixError } from './errors.ts';
 
 /**
  * Maximum number of architectures fat binaries can have.
@@ -337,7 +339,7 @@ export class MachOBase {
 	): load_command | null {
 		const { cmdsize } = command;
 		if (!cmdsize) {
-			throw new RangeError('Invalid command size');
+			UnixError.throwMe(ENOEXEC);
 		}
 		const { mEndCommands } = _this;
 		const byteOffset = command.byteOffset + cmdsize;
@@ -345,7 +347,7 @@ export class MachOBase {
 			return null;
 		}
 		if (byteOffset + load_command.BYTE_LENGTH > mEndCommands) {
-			throw new RangeError('Invalid command size');
+			UnixError.throwMe(ENOEXEC);
 		}
 		command = new load_command(
 			command.buffer,
@@ -353,7 +355,7 @@ export class MachOBase {
 			command.littleEndian,
 		);
 		if (byteOffset + command.cmdsize > mEndCommands) {
-			throw new RangeError('Invalid command size');
+			UnixError.throwMe(ENOEXEC);
 		}
 		return command;
 	}
@@ -430,7 +432,7 @@ export class MachOBase {
 				}
 			}
 			if (c.cmdsize < SC.BYTE_LENGTH) {
-				throw new RangeError('Invalid command size');
+				UnixError.throwMe(ENOEXEC);
 			}
 			const seg = new SC(c.buffer, c.byteOffset, c.littleEndian);
 			if (!strncmp(seg.segname, sn, getByteLength(SC, 'segname'))) {
@@ -523,7 +525,7 @@ export class MachOBase {
 			return null;
 		}
 		if (cmd.cmdsize < linkedit_data_command.BYTE_LENGTH) {
-			throw new RangeError('Invalid command size');
+			UnixError.throwMe(ENOEXEC);
 		}
 		return new linkedit_data_command(
 			cmd.buffer,
@@ -546,7 +548,7 @@ export class MachOBase {
 			return null;
 		}
 		if (cmd.cmdsize < linkedit_data_command.BYTE_LENGTH) {
-			throw new RangeError('Invalid command size');
+			UnixError.throwMe(ENOEXEC);
 		}
 		return new linkedit_data_command(
 			cmd.buffer,
@@ -720,7 +722,7 @@ export class MachOBase {
 				break;
 			}
 			default: {
-				throw new RangeError(`Unknown magic: 0x${m.toString(16)}`);
+				UnixError.throwMe(ENOEXEC);
 			}
 		}
 		_this.mHeader = mh;
@@ -755,7 +757,7 @@ export class MachOBase {
 		const mEndCommands = _this.mEndCommands = byteOffset +
 			mHeader.sizeofcmds;
 		if (byteOffset + mCommands.byteLength > mEndCommands) {
-			throw new RangeError('Invalid commands size');
+			UnixError.throwMe(ENOEXEC);
 		}
 	}
 
@@ -799,7 +801,7 @@ export class MachOBase {
 				case LC_VERSION_MIN_WATCHOS:
 				case LC_VERSION_MIN_TVOS: {
 					if (c.cmdsize < version_min_command.BYTE_LENGTH) {
-						throw new RangeError('Invalid command size');
+						UnixError.throwMe(ENOEXEC);
 					}
 					return new version_min_command(
 						c.buffer,
@@ -828,7 +830,7 @@ export class MachOBase {
 		) {
 			if (c.cmd === LC_BUILD_VERSION) {
 				if (c.cmdsize < build_version_command.BYTE_LENGTH) {
-					throw new RangeError('Invalid command size');
+					UnixError.throwMe(ENOEXEC);
 				}
 				return new build_version_command(
 					c.buffer,

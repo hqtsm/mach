@@ -13,6 +13,7 @@ import {
 	LITTLE_ENDIAN,
 	Uint8Ptr,
 } from '@hqtsm/struct';
+import { ENOEXEC } from '../libc/errno.ts';
 import {
 	CPU_ARCH_ABI64,
 	CPU_SUBTYPE_ARM_ALL,
@@ -66,6 +67,7 @@ import {
 	fixtureMachos,
 } from '../spec/fixture.ts';
 import { thin } from '../spec/macho.ts';
+import { UnixError } from './errors.ts';
 import {
 	Architecture,
 	MachO,
@@ -290,14 +292,14 @@ Deno.test('MachOBase: init', () => {
 	// Throws on bad magic, but still updates mHeader.
 	assertThrows(
 		() => MachOBaseTest.initHeader(macho, header32N),
-		RangeError,
-		'Unknown magic: 0x0',
+		UnixError,
+		new UnixError(ENOEXEC, true).message,
 	);
 	assertStrictEquals(MachOBase.header(macho)!.buffer, header32N.buffer);
 	assertThrows(
 		() => MachOBaseTest.initHeader(macho, header64N),
-		RangeError,
-		'Unknown magic: 0x0',
+		UnixError,
+		new UnixError(ENOEXEC, true).message,
 	);
 	assertStrictEquals(MachOBase.header(macho)!.buffer, header64N.buffer);
 
@@ -306,13 +308,13 @@ Deno.test('MachOBase: init', () => {
 
 	assertThrows(
 		() => MachOBaseTest.initHeader(macho, header32N),
-		RangeError,
-		'Unknown magic: 0x',
+		UnixError,
+		new UnixError(ENOEXEC, true).message,
 	);
 	assertThrows(
 		() => MachOBaseTest.initCommands(macho, commandN),
-		RangeError,
-		'Invalid commands size',
+		UnixError,
+		new UnixError(ENOEXEC, true).message,
 	);
 
 	header32N.sizeofcmds = commandN.cmdsize;
@@ -419,8 +421,8 @@ Deno.test('MachOBase: nextCommand zero', () => {
 
 	assertThrows(
 		() => MachOBase.nextCommand(macho, cmdA),
-		RangeError,
-		'Invalid command size',
+		UnixError,
+		new UnixError(ENOEXEC, true).message,
 	);
 });
 
@@ -448,8 +450,8 @@ Deno.test('MachOBase: nextCommand under', () => {
 
 	assertThrows(
 		() => MachOBase.nextCommand(macho, cmdA),
-		RangeError,
-		'Invalid command size',
+		UnixError,
+		new UnixError(ENOEXEC, true).message,
 	);
 });
 
@@ -478,8 +480,8 @@ Deno.test('MachOBase: nextCommand over', () => {
 
 	assertThrows(
 		() => MachOBase.nextCommand(macho, cmdA),
-		RangeError,
-		'Invalid command size',
+		UnixError,
+		new UnixError(ENOEXEC, true).message,
 	);
 });
 
@@ -580,8 +582,8 @@ Deno.test('MachOBase: find command under', () => {
 
 		assertThrows(
 			() => MachOBase[method](macho),
-			RangeError,
-			'Invalid command size',
+			UnixError,
+			new UnixError(ENOEXEC, true).message,
 			tag,
 		);
 	}
@@ -826,8 +828,8 @@ Deno.test('MachOBase: findSegment findSection', () => {
 
 		assertThrows(
 			() => MachOBase.findSegment(macho, cstr('group')),
-			RangeError,
-			'Invalid command size',
+			UnixError,
+			new UnixError(ENOEXEC, true).message,
 			tag,
 		);
 
