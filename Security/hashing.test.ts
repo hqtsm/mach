@@ -18,7 +18,9 @@ import { hex } from '../spec/hex.ts';
 import { UnixError } from './errors.ts';
 import { CCHashInstance } from './hashing.ts';
 import {
+	ABCD,
 	BadReader,
+	digest,
 	getCases,
 	getEngines,
 	getIterators,
@@ -305,5 +307,20 @@ Deno.test('CCHashInstance: truncate', async () => {
 		await hash.finish(digest);
 		assertEquals(hash.digestLength(), truncate, tag);
 		assertEquals(hex(digest), hext, tag);
+	}
+});
+
+Deno.test('CCHashInstance: verify', async () => {
+	{
+		const expected = digest('sha1', ABCD);
+		const hash = new CCHashInstance(kCCDigestSHA1);
+		await hash.update(ABCD);
+		assertEquals(await CCHashInstance.verify(hash, expected), true);
+	}
+	{
+		const unexpected = new ArrayBuffer(20);
+		const hash = new CCHashInstance(kCCDigestSHA1);
+		await hash.update(ABCD);
+		assertEquals(await CCHashInstance.verify(hash, unexpected), false);
 	}
 });

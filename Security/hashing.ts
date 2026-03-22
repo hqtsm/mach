@@ -76,6 +76,28 @@ export abstract class DynamicHash extends Hashing {
 		digest: ArrayBufferLike | ArrayBufferPointer,
 	): Promise<void>;
 
+	/**
+	 * Verify digest.
+	 *
+	 * @param _this This.
+	 * @param digest Digest to verify against.
+	 * @returns True if verified, false if not.
+	 */
+	public static async verify(
+		_this: DynamicHash,
+		digest: ArrayBufferLike | ArrayBufferPointer,
+	): Promise<boolean> {
+		const l = _this.digestLength();
+		const d = new Uint8Array(l);
+		await _this.finish(d);
+		const e = asUint8Array(digest, l);
+		let diff = 0;
+		for (let i = 0; i < l; i++) {
+			diff |= d[i] ^ e[i];
+		}
+		return !diff;
+	}
+
 	static {
 		toStringTag(this, 'DynamicHash');
 	}

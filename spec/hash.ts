@@ -133,6 +133,13 @@ export function toAsyncIterator(
 	return r;
 }
 
+export function digest(
+	algo: string,
+	data: Uint8Array,
+): Uint8Array<ArrayBuffer> {
+	return new Uint8Array(createHash(algo).update(data).digest());
+}
+
 export function hashed(algo: string, data: Uint8Array): string {
 	return createHash(algo).update(data).digest('hex');
 }
