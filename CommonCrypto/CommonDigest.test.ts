@@ -106,9 +106,9 @@ Deno.test('CCDigestUpdate: ArrayBuffer', async () => {
 		const ctx = CCDigestCreate(alg)!;
 		ctx.crypto = crypto;
 		// deno-lint-ignore no-await-in-loop
-		assertEquals(await CCDigestUpdate(ctx, data), kCCSuccess);
+		assertEquals(await CCDigestUpdate(ctx, data), kCCSuccess, tag);
 		// deno-lint-ignore no-await-in-loop
-		assertEquals(await CCDigestFinal(ctx, digest), kCCSuccess);
+		assertEquals(await CCDigestFinal(ctx, digest), kCCSuccess, tag);
 		assertEquals(hex(new Uint8Array(digest)), output, tag);
 	}
 });
@@ -127,9 +127,14 @@ Deno.test('CCDigestUpdate: Uint8Array<ArrayBuffer>', async () => {
 				new Uint8Array(d.buffer, 2, data.byteLength),
 			),
 			kCCSuccess,
+			tag,
 		);
-		// deno-lint-ignore no-await-in-loop
-		assertEquals(await CCDigestFinal(ctx, digest.subarray(2)), kCCSuccess);
+		assertEquals(
+			// deno-lint-ignore no-await-in-loop
+			await CCDigestFinal(ctx, digest.subarray(2)),
+			kCCSuccess,
+			tag,
+		);
 		assertEquals(hex(digest.subarray(2, -2)), output, tag);
 	}
 });
@@ -141,9 +146,9 @@ Deno.test('CCDigestUpdate: Blob', async () => {
 		ctx.crypto = crypto;
 		const blob = new Blob([data]);
 		// deno-lint-ignore no-await-in-loop
-		assertEquals(await CCDigestUpdate(ctx, blob), kCCSuccess);
+		assertEquals(await CCDigestUpdate(ctx, blob), kCCSuccess, tag);
 		// deno-lint-ignore no-await-in-loop
-		assertEquals(await CCDigestFinal(ctx, digest), kCCSuccess);
+		assertEquals(await CCDigestFinal(ctx, digest), kCCSuccess, tag);
 		assertEquals(hex(digest), output, tag);
 	}
 });
@@ -208,7 +213,7 @@ Deno.test('CCDigestUpdate: Iterator<ArrayBuffer>', async () => {
 			);
 			assertEquals(returned, 1, tags);
 			// deno-lint-ignore no-await-in-loop
-			assertEquals(await CCDigestFinal(ctx, digest), kCCSuccess);
+			assertEquals(await CCDigestFinal(ctx, digest), kCCSuccess, tags);
 			assertEquals(hex(digest), output, tags);
 		}
 	}
@@ -235,10 +240,11 @@ Deno.test('CCDigestUpdate: Iterator<Uint8Array<ArrayBuffer>>', async () => {
 					data.byteLength,
 				),
 				kCCSuccess,
+				tags,
 			);
 			assertEquals(returned, 1, tags);
 			// deno-lint-ignore no-await-in-loop
-			assertEquals(await CCDigestFinal(ctx, digest), kCCSuccess);
+			assertEquals(await CCDigestFinal(ctx, digest), kCCSuccess, tags);
 			assertEquals(hex(digest), output, tags);
 		}
 	}
@@ -263,10 +269,11 @@ Deno.test('CCDigestUpdate: AsyncIterator<ArrayBuffer>', async () => {
 					data.byteLength,
 				),
 				kCCSuccess,
+				tags,
 			);
 			assertEquals(returned, 1, tags);
 			// deno-lint-ignore no-await-in-loop
-			assertEquals(await CCDigestFinal(ctx, digest), kCCSuccess);
+			assertEquals(await CCDigestFinal(ctx, digest), kCCSuccess, tags);
 			assertEquals(hex(new Uint8Array(digest)), output, tags);
 		}
 	}
@@ -293,10 +300,11 @@ Deno.test('CCDigestUpdate: AsyncIterator<Uint8Array<ArrayBuffer>>', async () => 
 					data.byteLength,
 				),
 				kCCSuccess,
+				tags,
 			);
 			assertEquals(returned, 1, tags);
 			// deno-lint-ignore no-await-in-loop
-			assertEquals(await CCDigestFinal(ctx, digest), kCCSuccess);
+			assertEquals(await CCDigestFinal(ctx, digest), kCCSuccess, tags);
 			assertEquals(hex(digest), output, tags);
 		}
 	}
@@ -370,8 +378,12 @@ Deno.test('CCDigest', async () => {
 Deno.test('CCDigest: ArrayBuffer', async () => {
 	for (const { tag, alg, crypto, output, size, data } of getCases()) {
 		const digest = new ArrayBuffer(size);
-		// deno-lint-ignore no-await-in-loop
-		await CCDigest(alg, data, digest, crypto);
+		assertEquals(
+			// deno-lint-ignore no-await-in-loop
+			await CCDigest(alg, data, digest, crypto),
+			kCCSuccess,
+			tag,
+		);
 		assertEquals(hex(new Uint8Array(digest)), output, tag);
 	}
 });
@@ -381,12 +393,16 @@ Deno.test('CCDigest: Uint8Array<ArrayBuffer>', async () => {
 		const digest = new Uint8Array(size + 4);
 		const d = new Uint8Array(data.byteLength + 4);
 		d.set(new Uint8Array(data), 2);
-		// deno-lint-ignore no-await-in-loop
-		await CCDigest(
-			alg,
-			new Uint8Array(d.buffer, 2, data.byteLength),
-			digest.subarray(2),
-			crypto,
+		assertEquals(
+			// deno-lint-ignore no-await-in-loop
+			await CCDigest(
+				alg,
+				new Uint8Array(d.buffer, 2, data.byteLength),
+				digest.subarray(2),
+				crypto,
+			),
+			kCCSuccess,
+			tag,
 		);
 		assertEquals(hex(digest.subarray(2, -2)), output, tag);
 	}
@@ -396,8 +412,12 @@ Deno.test('CCDigest: Blob', async () => {
 	for (const { tag, alg, crypto, output, size, data } of getCases()) {
 		const digest = new Uint8Array(size);
 		const blob = new Blob([data]);
-		// deno-lint-ignore no-await-in-loop
-		await CCDigest(alg, blob, digest, crypto);
+		assertEquals(
+			// deno-lint-ignore no-await-in-loop
+			await CCDigest(alg, blob, digest, crypto),
+			kCCSuccess,
+			tag,
+		);
 		assertEquals(hex(digest), output, tag);
 	}
 });
@@ -444,16 +464,20 @@ Deno.test('CCDigest: Iterator<ArrayBuffer>', async () => {
 			const tags = `${tag} page=${page}`;
 			const digest = new Uint8Array(size);
 			let returned = 0;
-			// deno-lint-ignore no-await-in-loop
-			await CCDigest(
-				alg,
-				toIterator(data, {
-					page,
-					returns: () => returned++,
-				}),
-				data.byteLength,
-				digest,
-				crypto,
+			assertEquals(
+				// deno-lint-ignore no-await-in-loop
+				await CCDigest(
+					alg,
+					toIterator(data, {
+						page,
+						returns: () => returned++,
+					}),
+					data.byteLength,
+					digest,
+					crypto,
+				),
+				kCCSuccess,
+				tags,
 			);
 			assertEquals(hex(digest), output, tags);
 		}
@@ -467,17 +491,21 @@ Deno.test('CCDigest: Iterator<Uint8Array<ArrayBuffer>>', async () => {
 			const tags = `${tag} page=${page}`;
 			const digest = new Uint8Array(size);
 			let returned = 0;
-			// deno-lint-ignore no-await-in-loop
-			await CCDigest(
-				alg,
-				toIterator(data, {
-					page,
-					transform,
-					returns: () => returned++,
-				}),
-				data.byteLength,
-				digest,
-				crypto,
+			assertEquals(
+				// deno-lint-ignore no-await-in-loop
+				await CCDigest(
+					alg,
+					toIterator(data, {
+						page,
+						transform,
+						returns: () => returned++,
+					}),
+					data.byteLength,
+					digest,
+					crypto,
+				),
+				kCCSuccess,
+				tags,
 			);
 			assertEquals(returned, 1, tags);
 			assertEquals(hex(digest), output, tags);
@@ -491,16 +519,20 @@ Deno.test('CCDigest: AsyncIterator<ArrayBuffer>', async () => {
 			const tags = `${tag} page=${page}`;
 			const digest = new Uint8Array(size);
 			let returned = 0;
-			// deno-lint-ignore no-await-in-loop
-			await CCDigest(
-				alg,
-				toAsyncIterator(data, {
-					page,
-					returns: () => returned++,
-				}),
-				data.byteLength,
-				digest,
-				crypto,
+			assertEquals(
+				// deno-lint-ignore no-await-in-loop
+				await CCDigest(
+					alg,
+					toAsyncIterator(data, {
+						page,
+						returns: () => returned++,
+					}),
+					data.byteLength,
+					digest,
+					crypto,
+				),
+				kCCSuccess,
+				tags,
 			);
 			assertEquals(returned, 1, tags);
 			assertEquals(hex(new Uint8Array(digest)), output, tags);
@@ -515,17 +547,21 @@ Deno.test('CCDigest: AsyncIterator<Uint8Array<ArrayBuffer>>', async () => {
 			const tags = `${tag} page=${page}`;
 			const digest = new Uint8Array(size);
 			let returned = 0;
-			// deno-lint-ignore no-await-in-loop
-			await CCDigest(
-				alg,
-				toAsyncIterator(data, {
-					page,
-					transform,
-					returns: () => returned++,
-				}),
-				data.byteLength,
-				digest,
-				crypto,
+			assertEquals(
+				// deno-lint-ignore no-await-in-loop
+				await CCDigest(
+					alg,
+					toAsyncIterator(data, {
+						page,
+						transform,
+						returns: () => returned++,
+					}),
+					data.byteLength,
+					digest,
+					crypto,
+				),
+				kCCSuccess,
+				tags,
 			);
 			assertEquals(hex(digest), output, tags);
 		}
