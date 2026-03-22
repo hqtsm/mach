@@ -1,6 +1,9 @@
 import { type Concrete, constant, toStringTag } from '@hqtsm/class';
 import { array, member, type Ptr, Struct, uint32BE } from '@hqtsm/struct';
 import { Blob, BlobCore } from './blob.ts';
+import { ENOMEM } from '../libc/errno.ts';
+import { malloc } from '../libc/stdlib.ts';
+import { UnixError } from './errors.ts';
 
 /**
  * Super blob index entry.
@@ -287,7 +290,10 @@ export abstract class SuperBlobCoreMaker {
 		const { mPieces } = _this;
 		const count = mPieces.size;
 		const total = SuperBlobCoreMaker.size(_this, []);
-		const buffer = new ArrayBuffer(total);
+		const buffer = malloc(total);
+		if (!buffer) {
+			UnixError.throwMe(ENOMEM);
+		}
 		const data = new Uint8Array(buffer);
 		const result = new this.SuperBlob(buffer);
 		const mIndex = result['mIndex'];
