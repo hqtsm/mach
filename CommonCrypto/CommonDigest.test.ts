@@ -42,6 +42,7 @@ import {
 	kCCUnimplemented,
 } from './CommonCryptoError.ts';
 import {
+	CCDigest,
 	CCDigestBlockSize,
 	CCDigestCreate,
 	CCDigestDestroy,
@@ -324,6 +325,227 @@ Deno.test('CCDigestFinal', async () => {
 	assertEquals(await CCDigestFinal(null, null), kCCParamError);
 	assertEquals(await CCDigestFinal(ctx, null), kCCParamError);
 	assertEquals(await CCDigestFinal(ctx, EMPTY), kCCUnimplemented);
+});
+
+Deno.test('CCDigest', async () => {
+	const digest = new Uint8Array(100);
+	assertEquals(
+		await CCDigest(kCCDigestNone, EMPTY, digest),
+		kCCUnimplemented,
+	);
+	assertEquals(
+		await CCDigest(kCCDigestSHA1, null, 1, digest),
+		kCCParamError,
+	);
+	assertEquals(
+		await CCDigest(kCCDigestSHA1, null, 0, digest),
+		kCCSuccess,
+	);
+	assertEquals(
+		await CCDigest(kCCDigestSHA1, EMPTY, null),
+		kCCParamError,
+	);
+});
+
+Deno.test('CCDigest: ArrayBuffer', async () => {
+	for (const { tag, alg, crypto, output, size, data } of getCases()) {
+		const digest = new ArrayBuffer(size);
+		// deno-lint-ignore no-await-in-loop
+		await CCDigest(alg, data, digest, crypto);
+		assertEquals(hex(new Uint8Array(digest)), output, tag);
+	}
+});
+
+Deno.test('CCDigest: Uint8Array<ArrayBuffer>', async () => {
+	for (const { tag, alg, crypto, output, size, data } of getCases()) {
+		const d = new Uint8Array(data.byteLength + 4);
+		d.set(new Uint8Array(data), 2);
+		const digest = new Uint8Array(size + 4);
+		// deno-lint-ignore no-await-in-loop
+		await CCDigest(
+			alg,
+			new Uint8Array(d.buffer, 2, data.byteLength),
+			digest.subarray(2),
+			crypto,
+		);
+		assertEquals(hex(digest.subarray(2, -2)), output, tag);
+	}
+});
+
+Deno.test('CCDigest: Blob', async () => {
+	for (const { tag, alg, crypto, output, size, data } of getCases()) {
+		const blob = new Blob([data]);
+		const digest = new Uint8Array(size);
+		// deno-lint-ignore no-await-in-loop
+		await CCDigest(alg, blob, digest, crypto);
+		assertEquals(hex(digest), output, tag);
+	}
+});
+
+Deno.test('CCDigest: Blob over-read', async () => {
+	const reader = new BadReader(1024);
+	reader.diff = 1;
+
+	const engines = getEngines();
+	for (const [engine, crypto] of engines) {
+		const tag = `engine=${engine}`;
+		const digest = new Uint8Array(20);
+		// deno-lint-ignore no-await-in-loop
+		await assertRejects(
+			() => CCDigest(kCCDigestSHA1, reader, digest, crypto),
+			RangeError,
+			'Read size off by: 1',
+			tag,
+		);
+	}
+});
+
+Deno.test('CCDigest: Blob under-read', async () => {
+	const reader = new BadReader(1024);
+	reader.diff = -1;
+
+	const engines = getEngines();
+	for (const [engine, crypto] of engines) {
+		const tag = `engine=${engine}`;
+		const digest = new Uint8Array(20);
+		// deno-lint-ignore no-await-in-loop
+		await assertRejects(
+			() => CCDigest(kCCDigestSHA1, reader, digest, crypto),
+			RangeError,
+			'Read size off by: -1',
+			tag,
+		);
+	}
+});
+
+Deno.test('CCDigest: Iterator<ArrayBuffer>', async () => {
+	for (const page of ITTER_SIZES) {
+		for (const { tag, alg, crypto, output, size, data } of getCases()) {
+			const tags = `${tag} page=${page}`;
+			const digest = new Uint8Array(size);
+			let returned = 0;
+			// deno-lint-ignore no-await-in-loop
+			await CCDigest(
+				alg,
+				toIterator(data, {
+					page,
+					returns: () => returned++,
+				}),
+				data.byteLength,
+				digest,
+				crypto,
+			);
+			assertEquals(hex(digest), output, tags);
+		}
+	}
+});
+
+Deno.test('CCDigest: Iterator<Uint8Array<ArrayBuffer>>', async () => {
+	const transform = (d: ArrayBuffer) => new Uint8Array(d);
+	for (const page of ITTER_SIZES) {
+		for (const { tag, alg, crypto, output, size, data } of getCases()) {
+			const tags = `${tag} page=${page}`;
+			const digest = new Uint8Array(size);
+			let returned = 0;
+			// deno-lint-ignore no-await-in-loop
+			await CCDigest(
+				alg,
+				toIterator(data, {
+					page,
+					transform,
+					returns: () => returned++,
+				}),
+				data.byteLength,
+				digest,
+				crypto,
+			);
+			assertEquals(returned, 1, tags);
+			assertEquals(hex(digest), output, tags);
+		}
+	}
+});
+
+Deno.test('CCDigest: AsyncIterator<ArrayBuffer>', async () => {
+	for (const page of ITTER_SIZES) {
+		for (const { tag, alg, crypto, output, size, data } of getCases()) {
+			const tags = `${tag} page=${page}`;
+			const digest = new Uint8Array(size);
+			let returned = 0;
+			// deno-lint-ignore no-await-in-loop
+			await CCDigest(
+				alg,
+				toAsyncIterator(data, {
+					page,
+					returns: () => returned++,
+				}),
+				data.byteLength,
+				digest,
+				crypto,
+			);
+			assertEquals(returned, 1, tags);
+			assertEquals(hex(new Uint8Array(digest)), output, tags);
+		}
+	}
+});
+
+Deno.test('CCDigest: AsyncIterator<Uint8Array<ArrayBuffer>>', async () => {
+	const transform = (d: ArrayBuffer) => new Uint8Array(d);
+	for (const page of ITTER_SIZES) {
+		for (const { tag, alg, crypto, output, size, data } of getCases()) {
+			const tags = `${tag} page=${page}`;
+			const digest = new Uint8Array(size);
+			let returned = 0;
+			// deno-lint-ignore no-await-in-loop
+			await CCDigest(
+				alg,
+				toAsyncIterator(data, {
+					page,
+					transform,
+					returns: () => returned++,
+				}),
+				data.byteLength,
+				digest,
+				crypto,
+			);
+			assertEquals(hex(digest), output, tags);
+		}
+	}
+});
+
+Deno.test('CCDigest: Iterator over-read', async () => {
+	const engines = getEngines();
+	for (const [name, source, size] of getIterators(1024)) {
+		for (const [engine, crypto] of engines) {
+			const tag = `name=${name} engine=${engine}`;
+			const digest = new Uint8Array(20);
+			const data = source();
+			// deno-lint-ignore no-await-in-loop
+			await assertRejects(
+				() => CCDigest(kCCDigestSHA1, data, size - 1, digest, crypto),
+				RangeError,
+				'Read size off by: 1',
+				tag,
+			);
+		}
+	}
+});
+
+Deno.test('CCDigest: Iterator under-read', async () => {
+	const engines = getEngines();
+	for (const [name, source, size] of getIterators(1024)) {
+		for (const [engine, crypto] of engines) {
+			const tag = `name=${name} engine=${engine}`;
+			const digest = new Uint8Array(20);
+			const data = source();
+			// deno-lint-ignore no-await-in-loop
+			await assertRejects(
+				() => CCDigest(kCCDigestSHA1, data, size + 1, digest, crypto),
+				RangeError,
+				'Read size off by: -1',
+				tag,
+			);
+		}
+	}
 });
 
 Deno.test('CCDigestGetBlockSize', () => {

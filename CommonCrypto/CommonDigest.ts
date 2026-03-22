@@ -421,6 +421,132 @@ export async function CCDigestFinal(
 }
 
 /**
+ * Digest data.
+ *
+ * @param alg Digest algorithm.
+ * @param data Source data.
+ * @param out Digest.
+ * @param subtle Subtle crypto.
+ * @returns Status.
+ */
+export async function CCDigest(
+	alg: number,
+	data:
+		| Reader
+		| ArrayBufferData,
+	out: ArrayBufferLike | ArrayBufferPointer | null,
+	crypto?: SubtleCryptoDigest | null,
+): Promise<number>;
+
+/**
+ * Digest data.
+ *
+ * @param alg Digest algorithm.
+ * @param data Source data.
+ * @param len Source length.
+ * @param out Digest.
+ * @param subtle Subtle crypto.
+ * @returns Status.
+ */
+export async function CCDigest(
+	alg: number,
+	data:
+		| ArrayBufferPointer<ArrayBuffer>
+		| SizeIterator<ArrayBufferData>
+		| SizeAsyncIterator<ArrayBufferData>
+		| null,
+	len: number,
+	out: ArrayBufferLike | ArrayBufferPointer | null,
+	crypto?: SubtleCryptoDigest | null,
+): Promise<number>;
+
+/**
+ * Digest data.
+ *
+ * @param alg Digest algorithm.
+ * @param data Source data.
+ * @param len Source length.
+ * @param out Digest.
+ * @param subtle Subtle crypto.
+ * @returns Status.
+ */
+export async function CCDigest(
+	alg: number,
+	data:
+		| Reader
+		| ArrayBufferData
+		| ArrayBufferPointer<ArrayBuffer>
+		| SizeIterator<ArrayBufferData>
+		| SizeAsyncIterator<ArrayBufferData>
+		| null,
+	len: number | ArrayBufferLike | ArrayBufferPointer | null,
+	out?: ArrayBufferLike | ArrayBufferPointer | null | SubtleCryptoDigest,
+	subtle?: SubtleCryptoDigest | null,
+): Promise<number> {
+	const algo = algorithms.get(alg);
+	if (!algo) {
+		return kCCUnimplemented;
+	}
+	const { a, l } = algo;
+
+	let s;
+	let o;
+	let read;
+	let iter;
+	let size;
+	if (typeof len === 'number') {
+		size = len;
+		if (data && 'next' in data) {
+			iter = data;
+		}
+		o = out as ArrayBufferLike | ArrayBufferPointer;
+		s = subtle;
+	} else {
+		o = len;
+		s = out as SubtleCryptoDigest;
+		if ('arrayBuffer' in data!) {
+			read = data;
+			size = data.size;
+		} else {
+			size = (data as ArrayBufferData).byteLength;
+		}
+	}
+
+	if (!o) {
+		return kCCParamError;
+	}
+
+	if (!data) {
+		if (size) {
+			return kCCParamError;
+		}
+		data = new ArrayBuffer(0);
+	}
+
+	s ??= crypto.subtle;
+
+	let d;
+	if (!size) {
+		if (iter) {
+			await iter.return?.();
+		}
+		d = await s.digest(a, new ArrayBuffer(0));
+	} else if (read) {
+		d = await digestReader(read, size, a, s);
+	} else if (iter) {
+		d = await digestIterator(iter, size, a, s);
+	} else {
+		d = await s.digest(
+			a,
+			asUint8Array(data as ArrayBufferData, size),
+		);
+	}
+	asUint8Array(o, l).set(new Uint8Array(d, 0, l));
+
+	return kCCSuccess;
+}
+
+/**
  * Get digest block size.
  *
  * @param algorithm Digest algorithm.
