@@ -1,4 +1,5 @@
 import { assertEquals, assertInstanceOf, assertThrows } from '@std/assert';
+import { ENOMEM } from './errno.ts';
 import { calloc, malloc } from './stdlib.ts';
 
 Deno.test('malloc', () => {
@@ -17,6 +18,28 @@ Deno.test('malloc', () => {
 		const ptr = malloc(42);
 		assertInstanceOf(ptr, ArrayBuffer);
 		assertEquals(ptr.byteLength, 42);
+	}
+	{
+		const desc = Object.getOwnPropertyDescriptor(
+			globalThis,
+			'ArrayBuffer',
+		)!;
+		Object.defineProperty(globalThis, 'ArrayBuffer', {
+			...desc,
+			value: new Proxy(desc.value, {
+				construct: () => {
+					throw new RangeError('TEST-OOM');
+				},
+			}),
+		});
+		try {
+			assertEquals(malloc(42), null);
+			const context = { errno: 0 };
+			assertEquals(malloc(42, context), null);
+			assertEquals(context.errno, ENOMEM);
+		} finally {
+			Object.defineProperty(globalThis, 'ArrayBuffer', desc);
+		}
 	}
 	{
 		const desc = Object.getOwnPropertyDescriptor(
@@ -55,5 +78,27 @@ Deno.test('calloc', () => {
 		const ptr = calloc(42);
 		assertInstanceOf(ptr, ArrayBuffer);
 		assertEquals(ptr.byteLength, 42);
+	}
+	{
+		const desc = Object.getOwnPropertyDescriptor(
+			globalThis,
+			'ArrayBuffer',
+		)!;
+		Object.defineProperty(globalThis, 'ArrayBuffer', {
+			...desc,
+			value: new Proxy(desc.value, {
+				construct: () => {
+					throw new RangeError('TEST-OOM');
+				},
+			}),
+		});
+		try {
+			assertEquals(calloc(42), null);
+			const context = { errno: 0 };
+			assertEquals(calloc(42, context), null);
+			assertEquals(context.errno, ENOMEM);
+		} finally {
+			Object.defineProperty(globalThis, 'ArrayBuffer', desc);
+		}
 	}
 });
