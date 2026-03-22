@@ -342,16 +342,19 @@ export async function CCDigestUpdate(
 
 	let read;
 	let iter;
-	let size = len!;
-	if (data) {
-		if ('arrayBuffer' in data) {
-			read = data;
-			size = data.size;
-		} else if ('next' in data) {
-			iter = data;
-		} else {
-			size ??= (data as ArrayBuffer).byteLength;
-		}
+	let size;
+	if (!data) {
+		size = len!;
+	} else if ('arrayBuffer' in data) {
+		read = data;
+		size = data.size;
+	} else if ('next' in data) {
+		iter = data;
+		size = len!;
+	} else if ('byteLength' in data) {
+		size = data.byteLength;
+	} else {
+		size = len!;
 	}
 
 	// Empty input is allowed.
