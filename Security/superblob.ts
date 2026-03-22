@@ -1,7 +1,6 @@
 import { type Concrete, constant, toStringTag } from '@hqtsm/class';
 import { array, member, type Ptr, Struct, uint32BE } from '@hqtsm/struct';
-import { Blob } from './blob.ts';
-import { BlobCore } from './blob.ts';
+import { Blob, BlobCore } from './blob.ts';
 
 /**
  * Super blob index entry.
