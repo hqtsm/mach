@@ -49,7 +49,7 @@ Deno.test('CCHashInstance: Unsupported', () => {
 		assertThrows(
 			() => new CCHashInstance(alg),
 			UnixError,
-			new UnixError(ENOMEM, false).message,
+			new UnixError(ENOMEM, true).message,
 			tag,
 		);
 	}

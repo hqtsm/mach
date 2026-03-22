@@ -65,7 +65,7 @@ Deno.test('BlobCore: clone', () => {
 			const err = assertThrows(
 				() => BlobCore.clone(blob),
 				UnixError,
-				new UnixError(ENOMEM, false).message,
+				new UnixError(ENOMEM, true).message,
 			);
 			assertEquals(err.error, ENOMEM);
 		} finally {
