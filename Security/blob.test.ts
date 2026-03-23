@@ -9,6 +9,7 @@ import { uint32BE } from '@hqtsm/struct';
 import { CSMAGIC_BLOBWRAPPER } from '../kern/cs_blobs.ts';
 import { EINVAL, ENOMEM } from '../libc/errno.ts';
 import { unhex } from '../spec/hex.ts';
+import { testOOM } from '../spec/memory.ts';
 import { Blob, BlobCore, BlobWrapper } from './blob.ts';
 import { MacOSError, UnixError } from './errors.ts';
 import { errSecAllocate } from './SecBase.ts';
@@ -44,34 +45,16 @@ Deno.test('BlobCore: clone', () => {
 	assertEquals(BlobCore.data(clone).byteOffset, 0);
 	new Uint8Array(BlobCore.data(clone).buffer).fill(1);
 	assertEquals(data, new Uint8Array(12));
-	{
-		BlobCore.size(blob, 0xDEADDEAD);
-		const desc = Object.getOwnPropertyDescriptor(
-			globalThis,
-			'ArrayBuffer',
-		)!;
-		Object.defineProperty(globalThis, 'ArrayBuffer', {
-			...desc,
-			value: new Proxy(desc.value, {
-				construct(target: () => unknown, args: unknown[]): object {
-					if (args[0] === 0xDEADDEAD) {
-						throw new RangeError('TEST-OOM');
-					}
-					return Reflect.construct(target, args);
-				},
-			}),
-		});
-		try {
-			const err = assertThrows(
-				() => BlobCore.clone(blob),
-				UnixError,
-				new UnixError(ENOMEM, true).message,
-			);
-			assertEquals(err.error, ENOMEM);
-		} finally {
-			Object.defineProperty(globalThis, 'ArrayBuffer', desc);
-		}
-	}
+
+	BlobCore.size(blob, 0xDEADDEAD);
+	testOOM([0xDEADDEAD], () => {
+		const err = assertThrows(
+			() => BlobCore.clone(blob),
+			UnixError,
+			new UnixError(ENOMEM, true).message,
+		);
+		assertEquals(err.error, ENOMEM);
+	});
 });
 
 Deno.test('BlobCore: innerData', () => {
@@ -365,29 +348,14 @@ Deno.test('Blob: blobify view', () => {
 
 Deno.test('Blob: blobify error', () => {
 	const content = new ArrayBuffer(0xDEAD);
-	const desc = Object.getOwnPropertyDescriptor(globalThis, 'ArrayBuffer')!;
-	Object.defineProperty(globalThis, 'ArrayBuffer', {
-		...desc,
-		value: new Proxy(desc.value, {
-			construct(target: () => unknown, args: unknown[]): object {
-				if (args[0] === BlobCore.BYTE_LENGTH + 0xDEAD) {
-					throw new RangeError('TEST-OOM');
-				}
-				return Reflect.construct(target, args);
-			},
-		}),
-	});
-	try {
+	testOOM([BlobCore.BYTE_LENGTH + 0xDEAD], () => {
 		const err = assertThrows(
 			() => Blob.blobify(content),
 			MacOSError,
 			new MacOSError(errSecAllocate).message,
 		);
 		assertEquals(err.error, errSecAllocate);
-	} finally {
-		Object.defineProperty(globalThis, 'ArrayBuffer', desc);
-	}
-	Blob.blobify(content);
+	});
 });
 
 Deno.test('Blob: readBlob regular', async () => {

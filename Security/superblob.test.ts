@@ -7,6 +7,7 @@ import {
 import { constant } from '@hqtsm/class';
 import { Uint8Ptr } from '@hqtsm/struct';
 import { ENOMEM } from '../libc/errno.ts';
+import { testOOM } from '../spec/memory.ts';
 import { BlobCore, BlobWrapper } from './blob.ts';
 import { UnixError } from './errors.ts';
 import {
@@ -323,26 +324,12 @@ Deno.test('SuperBlobMaker: size', () => {
 Deno.test('SuperBlobMaker: make', () => {
 	const maker = new ExampleMaker();
 	const size = ExampleMaker.size(maker, []);
-	const desc = Object.getOwnPropertyDescriptor(globalThis, 'ArrayBuffer')!;
-	Object.defineProperty(globalThis, 'ArrayBuffer', {
-		...desc,
-		value: new Proxy(desc.value, {
-			construct(target: () => unknown, args: unknown[]): object {
-				if (args[0] === size) {
-					throw new RangeError('TEST-OOM');
-				}
-				return Reflect.construct(target, args);
-			},
-		}),
-	});
-	try {
+	testOOM([size], () => {
 		const err = assertThrows(
 			() => ExampleMaker.make(maker),
 			UnixError,
 			new UnixError(ENOMEM, true).message,
 		);
 		assertEquals(err.error, ENOMEM);
-	} finally {
-		Object.defineProperty(globalThis, 'ArrayBuffer', desc);
-	}
+	});
 });

@@ -1,4 +1,5 @@
 import { assertEquals, assertInstanceOf, assertThrows } from '@std/assert';
+import { testOOM } from '../spec/memory.ts';
 import { ENOMEM } from './errno.ts';
 import { calloc, malloc } from './stdlib.ts';
 
@@ -19,47 +20,22 @@ Deno.test('malloc', () => {
 		assertInstanceOf(ptr, ArrayBuffer);
 		assertEquals(ptr.byteLength, 42);
 	}
-	{
-		const desc = Object.getOwnPropertyDescriptor(
-			globalThis,
-			'ArrayBuffer',
-		)!;
-		Object.defineProperty(globalThis, 'ArrayBuffer', {
-			...desc,
-			value: new Proxy(desc.value, {
-				construct: () => {
-					throw new RangeError('TEST-OOM');
-				},
-			}),
-		});
-		try {
-			assertEquals(malloc(42), null);
-			const context = { errno: 0 };
-			assertEquals(malloc(42, context), null);
-			assertEquals(context.errno, ENOMEM);
-		} finally {
-			Object.defineProperty(globalThis, 'ArrayBuffer', desc);
-		}
-	}
-	{
-		const desc = Object.getOwnPropertyDescriptor(
-			globalThis,
-			'ArrayBuffer',
-		)!;
-		Object.defineProperty(globalThis, 'ArrayBuffer', {
-			...desc,
-			value: new Proxy(desc.value, {
-				construct: () => {
-					throw new Error('Other Error');
-				},
-			}),
-		});
-		try {
-			assertThrows(() => malloc(42), Error, 'Other Error');
-		} finally {
-			Object.defineProperty(globalThis, 'ArrayBuffer', desc);
-		}
-	}
+
+	testOOM([42], () => {
+		assertEquals(malloc(42), null);
+		const context = { errno: 0 };
+		assertEquals(malloc(42, context), null);
+		assertEquals(context.errno, ENOMEM);
+	});
+
+	testOOM(
+		[42],
+		() => {
+			assertThrows(() => malloc(42), Error, 'OTHER-ERROR');
+		},
+		Error,
+		'OTHER-ERROR',
+	);
 });
 
 Deno.test('calloc', () => {
@@ -79,26 +55,20 @@ Deno.test('calloc', () => {
 		assertInstanceOf(ptr, ArrayBuffer);
 		assertEquals(ptr.byteLength, 42);
 	}
-	{
-		const desc = Object.getOwnPropertyDescriptor(
-			globalThis,
-			'ArrayBuffer',
-		)!;
-		Object.defineProperty(globalThis, 'ArrayBuffer', {
-			...desc,
-			value: new Proxy(desc.value, {
-				construct: () => {
-					throw new RangeError('TEST-OOM');
-				},
-			}),
-		});
-		try {
-			assertEquals(calloc(42), null);
-			const context = { errno: 0 };
-			assertEquals(calloc(42, context), null);
-			assertEquals(context.errno, ENOMEM);
-		} finally {
-			Object.defineProperty(globalThis, 'ArrayBuffer', desc);
-		}
-	}
+
+	testOOM([42], () => {
+		assertEquals(calloc(42), null);
+		const context = { errno: 0 };
+		assertEquals(calloc(42, context), null);
+		assertEquals(context.errno, ENOMEM);
+	});
+
+	testOOM(
+		[42],
+		() => {
+			assertThrows(() => calloc(42), Error, 'OTHER-ERROR');
+		},
+		Error,
+		'OTHER-ERROR',
+	);
 });

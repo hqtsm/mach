@@ -8,6 +8,7 @@ import { CS_SHA1_LEN } from '../../kern/cs_blobs.ts';
 import { ENOMEM } from '../../libc/errno.ts';
 import { UINT32_MAX } from '../../libc/stdint.ts';
 import { PLATFORM_MACOS } from '../../mach-o/loader.ts';
+import { testOOM } from '../../spec/memory.ts';
 import type { Reader } from '../../util/reader.ts';
 import {
 	errSecCSTooBig,
@@ -259,28 +260,12 @@ Deno.test('CodeDirectoryBuilder: version and size', () => {
 	);
 	assertGreater(CodeDirectoryBuilder.size(builder), size);
 
-	const sized = CodeDirectoryScatter.BYTE_LENGTH * 2;
-	const desc = Object.getOwnPropertyDescriptor(globalThis, 'ArrayBuffer')!;
-	Object.defineProperty(globalThis, 'ArrayBuffer', {
-		...desc,
-		value: new Proxy(desc.value, {
-			construct(target: () => unknown, args: unknown[]): object {
-				if (args[0] === sized) {
-					throw new RangeError('TEST-OOM');
-				}
-				return Reflect.construct(target, args);
-			},
-		}),
-	});
-	try {
-		assertThrows(
-			() => CodeDirectoryBuilder.scatter(builder, 1),
-			UnixError,
-			new UnixError(ENOMEM, true).message,
-		);
-	} finally {
-		Object.defineProperty(globalThis, 'ArrayBuffer', desc);
-	}
+	const oom = [CodeDirectoryScatter.BYTE_LENGTH * 2];
+	assertThrows(
+		() => testOOM(oom, () => CodeDirectoryBuilder.scatter(builder, 1)),
+		UnixError,
+		new UnixError(ENOMEM, true).message,
+	);
 });
 
 Deno.test('CodeDirectoryBuilder: platform', async () => {

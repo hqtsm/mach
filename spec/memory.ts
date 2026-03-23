@@ -1,4 +1,9 @@
-export function testOOM<T>(sizes: Iterable<number>, f: () => T): T {
+export function testOOM<T>(
+	sizes: Iterable<number>,
+	callback: () => T,
+	Err: new (message: string) => Error = RangeError,
+	message = 'TEST-OOM',
+): T {
 	const s = new Set<unknown>(sizes);
 	const desc = Object.getOwnPropertyDescriptor(globalThis, 'ArrayBuffer')!;
 	Object.defineProperty(globalThis, 'ArrayBuffer', {
@@ -6,7 +11,7 @@ export function testOOM<T>(sizes: Iterable<number>, f: () => T): T {
 		value: new Proxy(desc.value, {
 			construct(target: () => unknown, args: unknown[]): object {
 				if (s.has(args[0])) {
-					throw new RangeError('TEST-OOM');
+					throw new Err(message);
 				}
 				return Reflect.construct(target, args);
 			},
@@ -14,7 +19,7 @@ export function testOOM<T>(sizes: Iterable<number>, f: () => T): T {
 	});
 	let r;
 	try {
-		r = f();
+		r = callback();
 	} finally {
 		if (
 			r &&
