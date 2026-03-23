@@ -1,17 +1,14 @@
-import {
-	assertEquals,
-	assertGreater,
-	assertRejects,
-	assertThrows,
-} from '@std/assert';
+import { assertEquals, assertGreater, assertRejects } from '@std/assert';
 import { CS_SHA1_LEN } from '../../kern/cs_blobs.ts';
 import { UINT32_MAX } from '../../libc/stdint.ts';
 import { PLATFORM_MACOS } from '../../mach-o/loader.ts';
 import type { Reader } from '../../util/reader.ts';
 import {
+	errSecCSTooBig,
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
 } from '../CSCommon.ts';
+import { MacOSError } from '../errors.ts';
 import { CodeDirectoryBuilder } from './cdbuilder.ts';
 import { CodeDirectory, CodeDirectoryScatter } from './codedirectory.ts';
 
@@ -59,22 +56,9 @@ Deno.test('CodeDirectoryBuilder: hashType', () => {
 	);
 });
 
-Deno.test('CodeDirectoryBuilder: opened', async () => {
+Deno.test('CodeDirectoryBuilder: opened', () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	assertEquals(CodeDirectoryBuilder.opened(builder), false);
-
-	assertThrows(
-		() => CodeDirectoryBuilder.reopen(builder, new Blob([]), 0, 0),
-		Error,
-		'Executable not open',
-	);
-	assertEquals(CodeDirectoryBuilder.opened(builder), false);
-
-	await assertRejects(
-		() => CodeDirectoryBuilder.build(builder),
-		Error,
-		'Executable not open',
-	);
 });
 
 Deno.test('CodeDirectoryBuilder: identifier', async () => {
@@ -177,11 +161,6 @@ Deno.test('CodeDirectoryBuilder: specialSlot', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	const zero = CodeDirectory.size(await CodeDirectoryBuilder.build(builder));
-	await assertRejects(
-		() => CodeDirectoryBuilder.specialSlot(builder, 0, new ArrayBuffer(0)),
-		RangeError,
-		'Invalid slot index: 0',
-	);
 	assertEquals(
 		CodeDirectory.size(await CodeDirectoryBuilder.build(builder)),
 		zero + CS_SHA1_LEN * 0,
@@ -337,7 +316,7 @@ Deno.test('CodeDirectoryBuilder; codeslots limit', async () => {
 	);
 	await assertRejects(
 		() => CodeDirectoryBuilder.build(builder),
-		Error,
-		'Too many code slots',
+		MacOSError,
+		new MacOSError(errSecCSTooBig).message,
 	);
 });

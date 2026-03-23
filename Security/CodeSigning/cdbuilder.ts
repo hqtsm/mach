@@ -7,16 +7,10 @@ import {
 	toUint8ArrayArrayBuffer,
 } from '../../util/memory.ts';
 import type { Reader } from '../../util/reader.ts';
+import { errSecCSTooBig } from '../CSCommon.ts';
+import { MacOSError } from '../errors.ts';
 import type { DynamicHash } from '../hashing.ts';
 import { CodeDirectory, CodeDirectoryScatter } from './codedirectory.ts';
-
-function specialSlot(slot: number): number {
-	slot = (+slot || 0) - (slot % 1 || 0);
-	if (slot < 1) {
-		throw new RangeError(`Invalid slot index: ${slot}`);
-	}
-	return slot;
-}
 
 /**
  * Builder for building CodeDirectories from pieces.
@@ -190,9 +184,6 @@ export class CodeDirectoryBuilder {
 	): void {
 		offset = (+offset || 0) - (offset % 1 || 0);
 		length = (+length || 0) - (length % 1 || 0);
-		if (!CodeDirectoryBuilder.opened(_this)) {
-			throw new Error('Executable not open');
-		}
 		_this.mExec = file;
 		_this.mExecOffset = offset;
 		_this.mExecLength = length;
@@ -220,7 +211,7 @@ export class CodeDirectoryBuilder {
 		slot: number,
 		data: ArrayBufferLikeData,
 	): Promise<void> {
-		slot = specialSlot(slot);
+		slot = (+slot || 0) - (slot % 1 || 0);
 		const hash = CodeDirectoryBuilder.getHash(_this);
 		await hash.update(
 			'buffer' in data
@@ -250,7 +241,7 @@ export class CodeDirectoryBuilder {
 		_this: CodeDirectoryBuilder,
 		slot: number,
 	): ArrayBuffer | null {
-		slot = specialSlot(slot);
+		slot = (+slot || 0) - (slot % 1 || 0);
 		return _this.mSpecial.get(slot) || null;
 	}
 
@@ -485,11 +476,8 @@ export class CodeDirectoryBuilder {
 			mTeamID,
 			mGeneratePreEncryptHashes,
 		} = _this;
-		if (!mExec) {
-			throw new Error('Executable not open');
-		}
 		if (mCodeSlots > UINT32_MAX) {
-			throw new Error('Too many code slots');
+			MacOSError.throwMe(errSecCSTooBig);
 		}
 
 		const total = CodeDirectoryBuilder.size(_this, version);
@@ -584,7 +572,7 @@ export class CodeDirectoryBuilder {
 			// deno-lint-ignore no-await-in-loop
 			await CodeDirectory['generateHash'](
 				hasher,
-				mExec.slice(position, position + thisPage),
+				mExec!.slice(position, position + thisPage),
 				data,
 			);
 			const s = CodeDirectory.getSlotMutable(dir, slot, false)!;
