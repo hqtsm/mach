@@ -1,8 +1,11 @@
 import { assertEquals, assertThrows } from '@std/assert';
 import { Uint8Ptr } from '@hqtsm/struct';
+import { ENOMEM } from '../../libc/errno.ts';
 import { PLATFORM_MACOS } from '../../mach-o/loader.ts';
 import { unhex } from '../../spec/hex.ts';
+import { testOOM } from '../../spec/memory.ts';
 import { kSecCodeMagicRequirement } from '../CSCommonPriv.ts';
+import { UnixError } from '../errors.ts';
 import { opAnd, opOr, Requirement } from './requirement.ts';
 import { RequirementMaker, RequirementMakerChain } from './reqmaker.ts';
 
@@ -62,6 +65,17 @@ Deno.test('RequirementMaker: alloc grow fast', () => {
 	assertEquals(dv.getUint32(0), kSecCodeMagicRequirement);
 	assertEquals(dv.getUint32(4), Requirement.size(r));
 	assertEquals(dv.getUint32(8), Requirement.lwcrForm);
+});
+
+Deno.test('RequirementMaker: alloc error', () => {
+	const maker = new RequirementMaker(Requirement.lwcrForm);
+	testOOM([0xD1E0 + 12], () => {
+		assertThrows(
+			() => RequirementMaker.alloc(maker, 0xD1E0),
+			UnixError,
+			new UnixError(ENOMEM, true).message,
+		);
+	});
 });
 
 Deno.test('RequirementMaker: identifier "com.apple.simple"', () => {

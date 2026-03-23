@@ -1,10 +1,13 @@
 import { toStringTag } from '@hqtsm/class';
 import { type ArrayBufferPointer, dataView, Ptr } from '@hqtsm/struct';
+import { ENOMEM } from '../../libc/errno.ts';
+import { realloc } from '../../libc/stdlib.ts';
 import {
 	alignUp,
 	type ArrayBufferLikeData,
 	asUint8Array,
 } from '../../util/memory.ts';
+import { UnixError } from '../errors.ts';
 import {
 	opAnchorHash,
 	opAppleAnchor,
@@ -107,7 +110,7 @@ export class RequirementMaker {
 	/**
 	 * Buffer of allocated bytes.
 	 */
-	private mBuffer: ArrayBuffer;
+	private mBuffer: ArrayBuffer | null;
 
 	/**
 	 * Current position in buffer.
@@ -141,7 +144,7 @@ export class RequirementMaker {
 	): Uint8Array<ArrayBuffer> {
 		const usedSize = alignUp(size, Requirement.baseAlignment);
 		RequirementMaker.require(_this, usedSize);
-		const a = new Uint8Array(_this.mBuffer, _this.mPC, size);
+		const a = new Uint8Array(_this.mBuffer!, _this.mPC, size);
 		_this.mPC += usedSize;
 		return a;
 	}
@@ -388,7 +391,7 @@ export class RequirementMaker {
 		length = 4,
 	): Ptr {
 		const { pos } = label;
-		const req = new Requirement(_this.mBuffer);
+		const req = new Requirement(_this.mBuffer!);
 		RequirementMaker.require(_this, length);
 		const len = _this.mPC - pos;
 		const reqDest = Requirement.at(req, Ptr, pos + length);
@@ -407,7 +410,7 @@ export class RequirementMaker {
 	 * @param kind Requirement kind.
 	 */
 	public static kind(_this: RequirementMaker, kind: number): void {
-		Requirement.kind(new Requirement(_this.mBuffer), kind);
+		Requirement.kind(new Requirement(_this.mBuffer!), kind);
 	}
 
 	/**
@@ -427,8 +430,9 @@ export class RequirementMaker {
 	 * @returns Requirement instance.
 	 */
 	public static make(_this: RequirementMaker): Requirement {
-		const r = new Requirement(_this.mBuffer);
+		const r = new Requirement(_this.mBuffer!);
 		Requirement.size(r, _this.mPC);
+		_this.mBuffer = null;
 		return r;
 	}
 
@@ -441,15 +445,15 @@ export class RequirementMaker {
 	protected static require(_this: RequirementMaker, size: number): void {
 		const { mBuffer } = _this;
 		const end = _this.mPC + size;
-		let mSize = mBuffer.byteLength;
+		let mSize = mBuffer!.byteLength;
 		if (end > mSize) {
 			mSize *= 2;
 			if (end > mSize) {
 				mSize = end;
 			}
-			const d = new ArrayBuffer(mSize);
-			new Uint8Array(d).set(new Uint8Array(mBuffer));
-			_this.mBuffer = d;
+			if (!(_this.mBuffer = realloc(mBuffer!, mSize))) {
+				UnixError.throwMe(ENOMEM);
+			}
 		}
 	}
 
