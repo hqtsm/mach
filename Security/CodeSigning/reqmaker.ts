@@ -7,7 +7,8 @@ import {
 	type ArrayBufferLikeData,
 	asUint8Array,
 } from '../../util/memory.ts';
-import { UnixError } from '../errors.ts';
+import { errSecCSReqUnsupported } from '../CSCommon.ts';
+import { MacOSError, UnixError } from '../errors.ts';
 import {
 	opAnchorHash,
 	opAppleAnchor,
@@ -363,7 +364,7 @@ export class RequirementMaker {
 			const req = data as Requirement;
 			const kind = Requirement.kind(req);
 			if (kind !== Requirement.exprForm) {
-				throw new RangeError(`Unsupported requirement kind: ${kind}`);
+				MacOSError.throwMe(errSecCSReqUnsupported);
 			}
 			const { BYTE_LENGTH } = Requirement;
 			RequirementMaker.copy(

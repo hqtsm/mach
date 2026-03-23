@@ -4,8 +4,9 @@ import { ENOMEM } from '../../libc/errno.ts';
 import { PLATFORM_MACOS } from '../../mach-o/loader.ts';
 import { unhex } from '../../spec/hex.ts';
 import { testOOM } from '../../spec/memory.ts';
+import { errSecCSReqUnsupported } from '../CSCommon.ts';
 import { kSecCodeMagicRequirement } from '../CSCommonPriv.ts';
-import { UnixError } from '../errors.ts';
+import { MacOSError, UnixError } from '../errors.ts';
 import { opAnd, opOr, Requirement } from './requirement.ts';
 import { RequirementMaker, RequirementMakerChain } from './reqmaker.ts';
 
@@ -298,8 +299,8 @@ Deno.test('RequirementMaker: copy Requirement', () => {
 	const dr = RequirementMaker.make(d);
 	assertThrows(
 		() => RequirementMaker.copy(c, dr),
-		RangeError,
-		`Unsupported requirement kind: ${Requirement.kind(dr)}`,
+		MacOSError,
+		new MacOSError(errSecCSReqUnsupported).message,
 	);
 });
 
