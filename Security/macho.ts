@@ -1631,11 +1631,11 @@ export class Universal {
 	private static make(_this: Universal, macho: MachO): MachO {
 		const type = MachO.type(macho);
 		if (!type) {
-			throw new RangeError('Unknown type');
+			UnixError.throwMe(ENOEXEC);
 		}
 		const { mMachType } = _this;
 		if (mMachType && mMachType !== type) {
-			throw new RangeError('Mismatched type');
+			UnixError.throwMe(ENOEXEC);
 		}
 		_this.mMachType = type;
 		return macho;

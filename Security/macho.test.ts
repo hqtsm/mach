@@ -1460,8 +1460,8 @@ Deno.test('Universal: make unknown type', async () => {
 	const uni = await Universal.Universal(new Blob([data]));
 	await assertRejects(
 		() => Universal.architecture(uni, 256),
-		RangeError,
-		'Unknown type',
+		UnixError,
+		new UnixError(ENOEXEC, true).message,
 	);
 });
 
@@ -1501,8 +1501,8 @@ Deno.test('Universal: make mismatched type', async () => {
 	await Universal.architecture(uni, 256);
 	await assertRejects(
 		() => Universal.architecture(uni, 512),
-		RangeError,
-		'Mismatched type',
+		UnixError,
+		new UnixError(ENOEXEC, true).message,
 	);
 });
 
