@@ -9,7 +9,7 @@ import {
 	type Ptr,
 	Uint32Ptr,
 } from '@hqtsm/struct';
-import { ENOEXEC } from '../libc/errno.ts';
+import { EIO, ENOEXEC } from '../libc/errno.ts';
 import { strlen, strncmp } from '../libc/string.ts';
 import {
 	CPU_ARCH_ABI64,
@@ -59,7 +59,8 @@ import {
 	version_min_command,
 } from '../mach-o/loader.ts';
 import type { Reader } from '../util/reader.ts';
-import { UnixError } from './errors.ts';
+import { MacOSError, UnixError } from './errors.ts';
+import { errSecInternalError } from './SecBase.ts';
 
 /**
  * Maximum number of architectures fat binaries can have.
@@ -901,7 +902,7 @@ export class MachO extends MachOBase {
 		const hs = mach_header.BYTE_LENGTH;
 		const header = await reader.slice(offset, offset + hs).arrayBuffer();
 		if (header.byteLength !== hs) {
-			throw new RangeError('Invalid header');
+			UnixError.throwMe(ENOEXEC);
 		}
 		MachO.initHeader(this, header);
 		offset += hs;
@@ -911,7 +912,7 @@ export class MachO extends MachOBase {
 		if (more > 0) {
 			const d = await reader.slice(offset, offset + more).arrayBuffer();
 			if (d.byteLength !== more) {
-				throw new RangeError('Invalid header');
+				UnixError.throwMe(ENOEXEC);
 			}
 			const full = new Uint8Array(fhs);
 			full.set(new Uint8Array(header));
@@ -923,7 +924,7 @@ export class MachO extends MachOBase {
 		const cs = MachO.commandSize(this);
 		const commands = await reader.slice(offset, offset + cs).arrayBuffer();
 		if (commands.byteLength !== cs) {
-			throw new RangeError('Invalid commands');
+			UnixError.throwMe(ENOEXEC);
 		}
 		MachO.initCommands(this, commands);
 
@@ -991,9 +992,7 @@ export class MachO extends MachOBase {
 		const o = _this.mOffset + offset;
 		const data = await _this.mReader!.slice(o, o + size).arrayBuffer();
 		if (data.byteLength !== size) {
-			throw new RangeError(
-				`Invalid data range: ${offset}:${size}`,
-			);
+			UnixError.throwMe(EIO);
 		}
 		return data;
 	}
@@ -1019,7 +1018,7 @@ export class MachO extends MachOBase {
 			switch (cmd.cmd) {
 				case LC_SEGMENT: {
 					if (cmd.cmdsize < segment_command.BYTE_LENGTH) {
-						throw new RangeError('Invalid command size');
+						UnixError.throwMe(ENOEXEC);
 					}
 					const seg = new segment_command(
 						cmd.buffer,
@@ -1041,7 +1040,7 @@ export class MachO extends MachOBase {
 				}
 				case LC_SEGMENT_64: {
 					if (cmd.cmdsize < segment_command_64.BYTE_LENGTH) {
-						throw new RangeError('Invalid command size');
+						UnixError.throwMe(ENOEXEC);
 					}
 					const seg64 = new segment_command_64(
 						cmd.buffer,
@@ -1063,7 +1062,7 @@ export class MachO extends MachOBase {
 				}
 				case LC_SYMTAB: {
 					if (cmd.cmdsize < symtab_command.BYTE_LENGTH) {
-						throw new RangeError('Invalid command size');
+						UnixError.throwMe(ENOEXEC);
 					}
 					const symtab = new symtab_command(
 						cmd.buffer,
@@ -1240,7 +1239,7 @@ export class Universal {
 		const hs = Math.max(fat_header.BYTE_LENGTH, mach_header.BYTE_LENGTH);
 		const hd = await reader.slice(offset, offset + hs).arrayBuffer();
 		if (hd.byteLength !== hs) {
-			throw new RangeError('Invalid header');
+			UnixError.throwMe(ENOEXEC);
 		}
 
 		let header = new fat_header(hd);
@@ -1255,7 +1254,7 @@ export class Universal {
 				// Something about "15001604" whatever that is.
 				let mArchCount = this.mArchCount = header.nfat_arch;
 				if (mArchCount > MAX_ARCH_COUNT) {
-					throw new RangeError('Too many architectures');
+					UnixError.throwMe(ENOEXEC);
 				}
 
 				// Read enough for 1 extra arch.
@@ -1265,7 +1264,7 @@ export class Universal {
 					.slice(archOffset, archOffset + archSize)
 					.arrayBuffer();
 				if (archData.byteLength !== archSize) {
-					throw new RangeError('Invalid architectures');
+					UnixError.throwMe(ENOEXEC);
 				}
 				const mArchList = this.mArchList = new (pointer(fat_arch))(
 					archData,
@@ -1294,11 +1293,7 @@ export class Universal {
 
 				for (const { offset, size, align } of sortedList) {
 					if (mSizes.has(offset)) {
-						throw new RangeError(
-							`Multiple architectures at offset: 0x${
-								offset.toString(16)
-							}`,
-						);
+						MacOSError.throwMe(errSecInternalError);
 					}
 					mSizes.set(offset, size);
 
@@ -1367,7 +1362,7 @@ export class Universal {
 				break;
 			}
 			default: {
-				throw new RangeError(`Unknown magic: 0x${m.toString(16)}`);
+				UnixError.throwMe(ENOEXEC);
 			}
 		}
 		return this;

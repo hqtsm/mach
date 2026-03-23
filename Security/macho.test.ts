@@ -67,7 +67,7 @@ import {
 	fixtureMachos,
 } from '../spec/fixture.ts';
 import { thin } from '../spec/macho.ts';
-import { UnixError } from './errors.ts';
+import { MacOSError, UnixError } from './errors.ts';
 import {
 	Architecture,
 	MachO,
@@ -76,6 +76,7 @@ import {
 	MAX_ARCH_COUNT,
 	Universal,
 } from './macho.ts';
+import { errSecInternalError } from './SecBase.ts';
 
 const fixtures = fixtureMachos();
 
@@ -917,8 +918,8 @@ Deno.test('MachOBase: fixtures', async () => {
 			// deno-lint-ignore no-await-in-loop
 			await assertRejects(
 				() => MachO.dataAt(m, blob.size - 1, 2),
-				RangeError,
-				`Invalid data range: ${blob.size - 1}:2`,
+				UnixError,
+				new UnixError(ENOEXEC, true).message,
 				tag,
 			);
 		}
@@ -930,8 +931,8 @@ Deno.test('MachO: read under', async () => {
 
 	await assertRejects(
 		() => MachO.MachO(new Blob([mh.buffer as ArrayBuffer])),
-		RangeError,
-		'Invalid header',
+		UnixError,
+		new UnixError(ENOEXEC, true).message,
 	);
 
 	mh = new mach_header_64(new ArrayBuffer(mach_header_64.BYTE_LENGTH - 1));
@@ -939,8 +940,8 @@ Deno.test('MachO: read under', async () => {
 
 	await assertRejects(
 		() => MachO.MachO(new Blob([mh.buffer as ArrayBuffer])),
-		RangeError,
-		'Invalid header',
+		UnixError,
+		new UnixError(ENOEXEC, true).message,
 	);
 
 	mh = new mach_header_64(new ArrayBuffer(mach_header_64.BYTE_LENGTH + 1));
@@ -950,8 +951,8 @@ Deno.test('MachO: read under', async () => {
 
 	await assertRejects(
 		() => MachO.MachO(new Blob([mh.buffer as ArrayBuffer])),
-		RangeError,
-		'Invalid commands',
+		UnixError,
+		new UnixError(ENOEXEC, true).message,
 	);
 });
 
@@ -1016,8 +1017,8 @@ Deno.test('MachO: validateStructure bad command size', async () => {
 		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
 			() => MachO.MachO(new Blob([buffer])),
-			RangeError,
-			'Invalid command size',
+			UnixError,
+			new UnixError(ENOEXEC, true).message,
 			tag,
 		);
 	}
@@ -1134,8 +1135,8 @@ Deno.test('Universal: open under header', async () => {
 	const blob = new Blob([new ArrayBuffer(3)]);
 	await assertRejects(
 		() => Universal.Universal(blob),
-		RangeError,
-		'Invalid header',
+		UnixError,
+		new UnixError(ENOEXEC, true).message,
 	);
 });
 
@@ -1146,8 +1147,8 @@ Deno.test('Universal: open unknown magic', async () => {
 	const blob = new Blob([data]);
 	await assertRejects(
 		() => Universal.Universal(blob),
-		RangeError,
-		'Unknown magic: 0x0',
+		UnixError,
+		new UnixError(ENOEXEC, true).message,
 	);
 });
 
@@ -1161,8 +1162,8 @@ Deno.test('Universal: open too many arch', async () => {
 	const blob = new Blob([data]);
 	await assertRejects(
 		() => Universal.Universal(blob),
-		RangeError,
-		'Too many architectures',
+		UnixError,
+		new UnixError(ENOEXEC, true).message,
 	);
 });
 
@@ -1176,8 +1177,8 @@ Deno.test('Universal: open under arch', async () => {
 	const blob = new Blob([data]);
 	await assertRejects(
 		() => Universal.Universal(blob),
-		RangeError,
-		'Invalid architectures',
+		UnixError,
+		new UnixError(ENOEXEC, true).message,
 	);
 });
 
@@ -1226,8 +1227,8 @@ Deno.test('Universal: open duplicate offset', async () => {
 	const blob = new Blob([data]);
 	await assertRejects(
 		() => Universal.Universal(blob),
-		RangeError,
-		`Multiple architectures at offset: 0x${data.byteLength.toString(16)}`,
+		MacOSError,
+		new MacOSError(errSecInternalError).message,
 	);
 });
 
