@@ -477,7 +477,10 @@ export class CodeDirectoryBuilder {
 		}
 
 		const total = CodeDirectoryBuilder.size(_this, version);
-		const buffer = new ArrayBuffer(total);
+		const buffer = calloc(total);
+		if (!buffer) {
+			UnixError.throwMe(ENOMEM);
+		}
 		const data = new Uint8Array(buffer);
 		const dir = new CodeDirectory(buffer);
 

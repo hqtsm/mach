@@ -332,3 +332,15 @@ Deno.test('CodeDirectoryBuilder: codeslots limit', async () => {
 		new MacOSError(errSecCSTooBig).message,
 	);
 });
+
+Deno.test('CodeDirectoryBuilder: build', async () => {
+	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
+	const size = CodeDirectoryBuilder.size(builder);
+	await testOOM([size], async () => {
+		await assertRejects(
+			() => CodeDirectoryBuilder.build(builder),
+			UnixError,
+			new UnixError(ENOMEM, true).message,
+		);
+	});
+});
