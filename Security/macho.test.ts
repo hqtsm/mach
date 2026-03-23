@@ -1092,34 +1092,34 @@ Deno.test(`Universal: fixtures`, async () => {
 
 		assertThrows(
 			() => Universal.archOffset(uni, new Architecture()),
-			RangeError,
-			'Architecture not found',
+			UnixError,
+			new UnixError(ENOEXEC, true).message,
 			tag,
 		);
 		assertThrows(
 			() => Universal.archLength(uni, new Architecture()),
-			RangeError,
-			'Architecture not found',
+			UnixError,
+			new UnixError(ENOEXEC, true).message,
 			tag,
 		);
 		assertThrows(
 			() => Universal.lengthOfSlice(uni, 0),
-			RangeError,
-			'Offset not found',
+			MacOSError,
+			new MacOSError(errSecInternalError).message,
 			tag,
 		);
 		await assertRejects(
 			() => Universal.architecture(uni, new Architecture()),
-			RangeError,
-			'Architecture not found',
+			UnixError,
+			new UnixError(ENOEXEC, true).message,
 			tag,
 		);
 		await assertRejects(
 			() => Universal.architecture(uni, 1),
-			RangeError,
+			Universal.isUniversal(uni) ? MacOSError : UnixError,
 			Universal.isUniversal(uni)
-				? 'Offset not found'
-				: 'Architecture not found',
+				? new MacOSError(errSecInternalError).message
+				: new UnixError(ENOEXEC, true).message,
 			tag,
 		);
 

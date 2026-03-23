@@ -1422,7 +1422,7 @@ export class Universal {
 				return MachO.MachO(_this.mReader!, _this.mBase, _this.mLength);
 			}
 		}
-		throw new RangeError('Architecture not found');
+		UnixError.throwMe(ENOEXEC);
 	}
 
 	/**
@@ -1439,7 +1439,7 @@ export class Universal {
 		if (Architecture.matches(_this.mThinArch!, arch)) {
 			return 0;
 		}
-		throw new RangeError('Architecture not found');
+		UnixError.throwMe(ENOEXEC);
 	}
 
 	/**
@@ -1456,7 +1456,7 @@ export class Universal {
 		if (Architecture.matches(_this.mThinArch!, arch)) {
 			return _this.mReader!.size;
 		}
-		throw new RangeError('Architecture not found');
+		UnixError.throwMe(ENOEXEC);
 	}
 
 	/**
@@ -1519,7 +1519,7 @@ export class Universal {
 	public static lengthOfSlice(_this: Universal, offset: number): number {
 		const value = _this.mSizes.get(offset);
 		if (value === undefined) {
-			throw new RangeError('Offset not found');
+			MacOSError.throwMe(errSecInternalError);
 		}
 		return value;
 	}
@@ -1597,7 +1597,7 @@ export class Universal {
 				return a;
 			}
 		}
-		throw new RangeError('Architecture not found');
+		UnixError.throwMe(ENOEXEC);
 	}
 
 	/**
