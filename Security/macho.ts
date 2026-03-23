@@ -892,8 +892,6 @@ export class MachO extends MachOBase {
 		offset = 0,
 		length = 0,
 	): Promise<this> {
-		offset = (+offset || 0) - (offset % 1 || 0);
-		length = (+length || 0) - (length % 1 || 0);
 		this.mReader = reader;
 		this.mOffset = offset;
 		const mLength = this.mLength = offset ? length : reader.size;
@@ -987,8 +985,6 @@ export class MachO extends MachOBase {
 		offset: number,
 		size: number,
 	): Promise<ArrayBuffer> {
-		offset = (+offset || 0) - (offset % 1 || 0);
-		size = (+size || 0) - (size % 1 || 0);
 		const o = _this.mOffset + offset;
 		const data = await _this.mReader!.slice(o, o + size).arrayBuffer();
 		if (data.byteLength !== size) {
@@ -1223,8 +1219,6 @@ export class Universal {
 		offset = 0,
 		length = 0,
 	): Promise<this> {
-		offset = (+offset || 0) - (offset % 1 || 0);
-		length = (+length || 0) - (length % 1 || 0);
 		this.mReader = reader;
 		this.mBase = offset;
 		this.mLength = length;

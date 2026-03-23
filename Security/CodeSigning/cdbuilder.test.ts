@@ -178,10 +178,7 @@ Deno.test('CodeDirectoryBuilder: createScatter', async () => {
 	CodeDirectoryBuilder.executable(builder, new Blob([]), 0, 0, 0);
 	assertEquals(CodeDirectoryBuilder.scatter(builder), null);
 
-	let scatter = CodeDirectoryBuilder.scatter(builder, NaN);
-	assertEquals(scatter.buffer.byteLength, CodeDirectoryScatter.BYTE_LENGTH);
-
-	scatter = CodeDirectoryBuilder.scatter(builder, 2);
+	const scatter = CodeDirectoryBuilder.scatter(builder, 2);
 	scatter[0].count = 1;
 	scatter[1].count = 2;
 	assertEquals(

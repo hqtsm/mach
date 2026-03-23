@@ -159,9 +159,6 @@ export class CodeDirectoryBuilder {
 		offset: number,
 		length: number,
 	): void {
-		pagesize = (+pagesize || 0) - (pagesize % 1 || 0);
-		offset = (+offset || 0) - (offset % 1 || 0);
-		length = (+length || 0) - (length % 1 || 0);
 		_this.mExec = file;
 		_this.mPageSize = pagesize;
 		_this.mExecOffset = offset;
@@ -182,8 +179,6 @@ export class CodeDirectoryBuilder {
 		offset: number,
 		length: number,
 	): void {
-		offset = (+offset || 0) - (offset % 1 || 0);
-		length = (+length || 0) - (length % 1 || 0);
 		_this.mExec = file;
 		_this.mExecOffset = offset;
 		_this.mExecLength = length;
@@ -211,7 +206,6 @@ export class CodeDirectoryBuilder {
 		slot: number,
 		data: ArrayBufferLikeData,
 	): Promise<void> {
-		slot = (+slot || 0) - (slot % 1 || 0);
 		const hash = CodeDirectoryBuilder.getHash(_this);
 		await hash.update(
 			'buffer' in data
@@ -241,7 +235,6 @@ export class CodeDirectoryBuilder {
 		_this: CodeDirectoryBuilder,
 		slot: number,
 	): ArrayBuffer | null {
-		slot = (+slot || 0) - (slot % 1 || 0);
 		return _this.mSpecial.get(slot) || null;
 	}
 
@@ -344,7 +337,6 @@ export class CodeDirectoryBuilder {
 		count?: number,
 	): Ptr<CodeDirectoryScatter> | null {
 		if (count !== undefined) {
-			count = (+count || 0) - (count % 1 || 0);
 			const { BYTE_LENGTH } = CodeDirectoryScatter;
 			const total = _this.mScatterSize = (count + 1) * BYTE_LENGTH;
 			return _this.mScatter = new (pointer(CodeDirectoryScatter))(

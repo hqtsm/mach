@@ -370,7 +370,6 @@ export class CodeDirectory extends Blob {
 		slot: number,
 		preEncrypt: boolean,
 	): Uint8Ptr | null {
-		slot = (+slot || 0) - (slot % 1 || 0);
 		let offset;
 		if (preEncrypt) {
 			if (
