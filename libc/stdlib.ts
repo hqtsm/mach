@@ -35,3 +35,24 @@ export function calloc(
 ): ArrayBuffer | null {
 	return malloc(size, context);
 }
+
+/**
+ * Reallocate memory.
+ *
+ * @param buffer Existing memory.
+ * @param size Size in bytes.
+ * @param context Context.
+ * @returns Reallocated memory.
+ */
+export function realloc(
+	buffer: ArrayBuffer,
+	size: number,
+	context?: { errno: number },
+): ArrayBuffer | null {
+	const m = malloc(size, context);
+	if (m) {
+		const l = buffer.byteLength;
+		new Uint8Array(m).set(new Uint8Array(buffer, 0, size > l ? l : size));
+	}
+	return m;
+}

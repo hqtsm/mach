@@ -1,7 +1,7 @@
 import { assertEquals, assertInstanceOf, assertThrows } from '@std/assert';
 import { testOOM } from '../spec/memory.ts';
 import { ENOMEM } from './errno.ts';
-import { calloc, malloc } from './stdlib.ts';
+import { calloc, malloc, realloc } from './stdlib.ts';
 
 Deno.test('malloc', () => {
 	assertEquals(malloc(Infinity), null);
@@ -67,6 +67,51 @@ Deno.test('calloc', () => {
 		[42],
 		() => {
 			assertThrows(() => calloc(42), Error, 'OTHER-ERROR');
+		},
+		Error,
+		'OTHER-ERROR',
+	);
+});
+
+Deno.test('realloc', () => {
+	const src = new ArrayBuffer(10);
+	for (let i = 0, b = new Uint8Array(src); i < 10; i++) {
+		b[i] = i;
+	}
+
+	assertEquals(realloc(src, Infinity), null);
+	{
+		const ptr = realloc(src, 0);
+		assertInstanceOf(ptr, ArrayBuffer);
+		assertEquals(ptr.byteLength, 0);
+	}
+	{
+		const ptr = realloc(src, 5);
+		assertInstanceOf(ptr, ArrayBuffer);
+		assertEquals(ptr.byteLength, 5);
+		assertEquals(new Uint8Array(ptr), new Uint8Array([0, 1, 2, 3, 4]));
+	}
+	{
+		const ptr = realloc(src, 15);
+		assertInstanceOf(ptr, ArrayBuffer);
+		assertEquals(ptr.byteLength, 15);
+		assertEquals(
+			new Uint8Array(ptr),
+			new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0, 0, 0]),
+		);
+	}
+
+	testOOM([42], () => {
+		assertEquals(realloc(src, 42), null);
+		const context = { errno: 0 };
+		assertEquals(realloc(src, 42, context), null);
+		assertEquals(context.errno, ENOMEM);
+	});
+
+	testOOM(
+		[42],
+		() => {
+			assertThrows(() => realloc(src, 42), Error, 'OTHER-ERROR');
 		},
 		Error,
 		'OTHER-ERROR',
