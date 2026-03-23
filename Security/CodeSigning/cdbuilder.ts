@@ -597,12 +597,12 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Get fixed size for compatibility version.
 	 *
-	 * @param __this This.
+	 * @param _this This.
 	 * @param version Compatibility version.
 	 * @returns Byte size.
 	 */
 	public static fixedSize(
-		__this: CodeDirectoryBuilder,
+		_this: CodeDirectoryBuilder,
 		version: number,
 	): number {
 		let size = CodeDirectory.BYTE_LENGTH;
