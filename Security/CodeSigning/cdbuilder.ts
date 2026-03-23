@@ -1,6 +1,8 @@
 import { toStringTag } from '@hqtsm/class';
 import { pointer, type Ptr } from '@hqtsm/struct';
+import { ENOMEM } from '../../libc/errno.ts';
 import { UINT32_MAX } from '../../libc/stdint.ts';
+import { calloc } from '../../libc/stdlib.ts';
 import type { SubtleCryptoDigest } from '../../util/crypto.ts';
 import {
 	type ArrayBufferLikeData,
@@ -8,7 +10,7 @@ import {
 } from '../../util/memory.ts';
 import type { Reader } from '../../util/reader.ts';
 import { errSecCSTooBig } from '../CSCommon.ts';
-import { MacOSError } from '../errors.ts';
+import { MacOSError, UnixError } from '../errors.ts';
 import type { DynamicHash } from '../hashing.ts';
 import { CodeDirectory, CodeDirectoryScatter } from './codedirectory.ts';
 
@@ -339,9 +341,11 @@ export class CodeDirectoryBuilder {
 		if (count !== undefined) {
 			const { BYTE_LENGTH } = CodeDirectoryScatter;
 			const total = _this.mScatterSize = (count + 1) * BYTE_LENGTH;
-			return _this.mScatter = new (pointer(CodeDirectoryScatter))(
-				new ArrayBuffer(total),
-			);
+			const s = calloc(total);
+			if (!s) {
+				UnixError.throwMe(ENOMEM);
+			}
+			return _this.mScatter = new (pointer(CodeDirectoryScatter))(s);
 		}
 		return _this.mScatter;
 	}

@@ -1,5 +1,11 @@
-import { assertEquals, assertGreater, assertRejects } from '@std/assert';
+import {
+	assertEquals,
+	assertGreater,
+	assertRejects,
+	assertThrows,
+} from '@std/assert';
 import { CS_SHA1_LEN } from '../../kern/cs_blobs.ts';
+import { ENOMEM } from '../../libc/errno.ts';
 import { UINT32_MAX } from '../../libc/stdint.ts';
 import { PLATFORM_MACOS } from '../../mach-o/loader.ts';
 import type { Reader } from '../../util/reader.ts';
@@ -8,7 +14,7 @@ import {
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
 } from '../CSCommon.ts';
-import { MacOSError } from '../errors.ts';
+import { MacOSError, UnixError } from '../errors.ts';
 import { CodeDirectoryBuilder } from './cdbuilder.ts';
 import { CodeDirectory, CodeDirectoryScatter } from './codedirectory.ts';
 
@@ -252,6 +258,29 @@ Deno.test('CodeDirectoryBuilder: version and size', () => {
 		CodeDirectory.supportsPreEncrypt,
 	);
 	assertGreater(CodeDirectoryBuilder.size(builder), size);
+
+	const sized = CodeDirectoryScatter.BYTE_LENGTH * 2;
+	const desc = Object.getOwnPropertyDescriptor(globalThis, 'ArrayBuffer')!;
+	Object.defineProperty(globalThis, 'ArrayBuffer', {
+		...desc,
+		value: new Proxy(desc.value, {
+			construct(target: () => unknown, args: unknown[]): object {
+				if (args[0] === sized) {
+					throw new RangeError('TEST-OOM');
+				}
+				return Reflect.construct(target, args);
+			},
+		}),
+	});
+	try {
+		assertThrows(
+			() => CodeDirectoryBuilder.scatter(builder, 1),
+			UnixError,
+			new UnixError(ENOMEM, true).message,
+		);
+	} finally {
+		Object.defineProperty(globalThis, 'ArrayBuffer', desc);
+	}
 });
 
 Deno.test('CodeDirectoryBuilder: platform', async () => {
