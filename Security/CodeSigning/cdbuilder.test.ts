@@ -260,12 +260,13 @@ Deno.test('CodeDirectoryBuilder: version and size', () => {
 	);
 	assertGreater(CodeDirectoryBuilder.size(builder), size);
 
-	const oom = [CodeDirectoryScatter.BYTE_LENGTH * 2];
-	assertThrows(
-		() => testOOM(oom, () => CodeDirectoryBuilder.scatter(builder, 1)),
-		UnixError,
-		new UnixError(ENOMEM, true).message,
-	);
+	testOOM([CodeDirectoryScatter.BYTE_LENGTH * 2], () => {
+		assertThrows(
+			() => CodeDirectoryBuilder.scatter(builder, 1),
+			UnixError,
+			new UnixError(ENOMEM, true).message,
+		);
+	});
 });
 
 Deno.test('CodeDirectoryBuilder: platform', async () => {
