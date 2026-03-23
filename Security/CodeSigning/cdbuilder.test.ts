@@ -315,7 +315,7 @@ Deno.test('CodeDirectoryBuilder: read validation', async () => {
 	);
 });
 
-Deno.test('CodeDirectoryBuilder; codeslots limit', async () => {
+Deno.test('CodeDirectoryBuilder: codeslots limit', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	const size = UINT32_MAX + 1;
 	CodeDirectoryBuilder.executable(
