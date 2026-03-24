@@ -41,6 +41,8 @@ import { hashFileData } from './csutilities.ts';
 
 const max = (values: number[]) => Math.max(...values);
 
+// String names for code signature components:
+
 /**
  * Code directory.
  */
