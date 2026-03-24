@@ -7,6 +7,7 @@ import {
 	alignUp,
 	type ArrayBufferLikeData,
 	asUint8Array,
+	toUint8ArrayArrayBuffer,
 } from '../../util/memory.ts';
 import { errSecCSReqUnsupported } from '../CSCommon.ts';
 import { MacOSError, UnixError } from '../errors.ts';
@@ -237,7 +238,7 @@ export class RequirementMaker {
 	public static anchor(
 		_this: RequirementMaker,
 		slot: number,
-		cert: ArrayBufferPointer<ArrayBuffer>,
+		cert: ArrayBufferPointer,
 		length: number,
 		subtle?: SubtleCryptoDigest,
 	): Promise<void>;
@@ -255,13 +256,19 @@ export class RequirementMaker {
 	public static anchor(
 		_this: RequirementMaker,
 		slot?: number,
-		cert?: ArrayBufferPointer<ArrayBuffer>,
+		cert?: ArrayBufferPointer,
 		length?: number,
 		subtle?: SubtleCryptoDigest,
 	): Promise<void> | void {
 		if (length !== undefined) {
-			const c = asUint8Array(cert!, length);
-			return (subtle || crypto.subtle).digest('SHA-1', c).then((d) => {
+			return (subtle || crypto.subtle).digest(
+				'SHA-1',
+				toUint8ArrayArrayBuffer(
+					cert!.buffer,
+					cert!.byteOffset,
+					length,
+				),
+			).then((d) => {
 				RequirementMaker.anchor(_this, slot!, new Uint8Array(d));
 			});
 		} else if (cert) {
