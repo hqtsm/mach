@@ -1,13 +1,13 @@
-import {
-	assertEquals,
-	assertGreater,
-	assertRejects,
-	assertThrows,
-} from '@std/assert';
+import { assertEquals, assertGreater, assertRejects } from '@std/assert';
 import { CS_SHA1_LEN } from '../../kern/cs_blobs.ts';
 import { ENOMEM } from '../../libc/errno.ts';
 import { UINT32_MAX } from '../../libc/stdint.ts';
 import { PLATFORM_MACOS } from '../../mach-o/loader.ts';
+import {
+	assertRejectsMacOSError,
+	assertRejectsUnixError,
+	assertThrowsUnixError,
+} from '../../spec/assert.ts';
 import { testOOM } from '../../spec/memory.ts';
 import type { Reader } from '../../util/reader.ts';
 import {
@@ -15,7 +15,6 @@ import {
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
 } from '../CSCommon.ts';
-import { MacOSError, UnixError } from '../errors.ts';
 import { CodeDirectoryBuilder } from './cdbuilder.ts';
 import { CodeDirectory, CodeDirectoryScatter } from './codedirectory.ts';
 
@@ -261,10 +260,9 @@ Deno.test('CodeDirectoryBuilder: version and size', () => {
 	assertGreater(CodeDirectoryBuilder.size(builder), size);
 
 	testOOM([CodeDirectoryScatter.BYTE_LENGTH * 2], () => {
-		assertThrows(
+		assertThrowsUnixError(
 			() => CodeDirectoryBuilder.scatter(builder, 1),
-			UnixError,
-			new UnixError(ENOMEM, true).message,
+			ENOMEM,
 		);
 	});
 });
@@ -326,10 +324,9 @@ Deno.test('CodeDirectoryBuilder: codeslots limit', async () => {
 		0,
 		size,
 	);
-	await assertRejects(
+	await assertRejectsMacOSError(
 		() => CodeDirectoryBuilder.build(builder),
-		MacOSError,
-		new MacOSError(errSecCSTooBig).message,
+		errSecCSTooBig,
 	);
 });
 
@@ -337,10 +334,9 @@ Deno.test('CodeDirectoryBuilder: build', async () => {
 	const builder = new CodeDirectoryBuilder(kSecCodeSignatureHashSHA1);
 	const size = CodeDirectoryBuilder.size(builder);
 	await testOOM([size], async () => {
-		await assertRejects(
+		await assertRejectsUnixError(
 			() => CodeDirectoryBuilder.build(builder),
-			UnixError,
-			new UnixError(ENOMEM, true).message,
+			ENOMEM,
 		);
 	});
 });

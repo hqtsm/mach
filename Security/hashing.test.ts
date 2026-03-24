@@ -1,4 +1,4 @@
-import { assertEquals, assertRejects, assertThrows } from '@std/assert';
+import { assertEquals, assertRejects } from '@std/assert';
 import {
 	kCCDigestMax,
 	kCCDigestMD2,
@@ -14,8 +14,8 @@ import {
 	kCCDigestSHA3_512,
 } from '../CommonCrypto/Private/CommonDigestSPI.ts';
 import { ENOMEM } from '../libc/errno.ts';
+import { assertThrowsUnixError } from '../spec/assert.ts';
 import { hex } from '../spec/hex.ts';
-import { UnixError } from './errors.ts';
 import { CCHashInstance } from './hashing.ts';
 import {
 	ABCD,
@@ -46,10 +46,9 @@ Deno.test('CCHashInstance: Unsupported', () => {
 		})
 	) {
 		const tag = `alg=${name}`;
-		assertThrows(
+		assertThrowsUnixError(
 			() => new CCHashInstance(alg),
-			UnixError,
-			new UnixError(ENOMEM, true).message,
+			ENOMEM,
 			tag,
 		);
 	}

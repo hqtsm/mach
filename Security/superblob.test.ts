@@ -1,15 +1,10 @@
-import {
-	assert,
-	assertEquals,
-	assertInstanceOf,
-	assertThrows,
-} from '@std/assert';
+import { assert, assertEquals, assertInstanceOf } from '@std/assert';
 import { constant } from '@hqtsm/class';
 import { Uint8Ptr } from '@hqtsm/struct';
 import { ENOMEM } from '../libc/errno.ts';
+import { assertThrowsUnixError } from '../spec/assert.ts';
 import { testOOM } from '../spec/memory.ts';
 import { BlobCore, BlobWrapper } from './blob.ts';
-import { UnixError } from './errors.ts';
 import {
 	SuperBlob,
 	SuperBlobCore,
@@ -325,11 +320,9 @@ Deno.test('SuperBlobMaker: make', () => {
 	const maker = new ExampleMaker();
 	const size = ExampleMaker.size(maker, []);
 	testOOM([size], () => {
-		const err = assertThrows(
+		assertThrowsUnixError(
 			() => ExampleMaker.make(maker),
-			UnixError,
-			new UnixError(ENOMEM, true).message,
+			ENOMEM,
 		);
-		assertEquals(err.error, ENOMEM);
 	});
 });

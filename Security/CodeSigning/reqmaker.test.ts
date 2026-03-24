@@ -1,12 +1,15 @@
-import { assertEquals, assertThrows } from '@std/assert';
+import { assertEquals } from '@std/assert';
 import { Uint8Ptr } from '@hqtsm/struct';
 import { ENOMEM } from '../../libc/errno.ts';
 import { PLATFORM_MACOS } from '../../mach-o/loader.ts';
+import {
+	assertThrowsMacOSError,
+	assertThrowsUnixError,
+} from '../../spec/assert.ts';
 import { unhex } from '../../spec/hex.ts';
 import { testOOM } from '../../spec/memory.ts';
 import { errSecCSReqUnsupported } from '../CSCommon.ts';
 import { kSecCodeMagicRequirement } from '../CSCommonPriv.ts';
-import { MacOSError, UnixError } from '../errors.ts';
 import { opAnd, opOr, Requirement } from './requirement.ts';
 import { RequirementMaker, RequirementMakerChain } from './reqmaker.ts';
 
@@ -71,10 +74,9 @@ Deno.test('RequirementMaker: alloc grow fast', () => {
 Deno.test('RequirementMaker: alloc error', () => {
 	const maker = new RequirementMaker(Requirement.lwcrForm);
 	testOOM([0xD1E0 + 12], () => {
-		assertThrows(
+		assertThrowsUnixError(
 			() => RequirementMaker.alloc(maker, 0xD1E0),
-			UnixError,
-			new UnixError(ENOMEM, true).message,
+			ENOMEM,
 		);
 	});
 });
@@ -297,10 +299,9 @@ Deno.test('RequirementMaker: copy Requirement', () => {
 	const c = new RequirementMaker(Requirement.lwcrForm);
 	const d = new RequirementMaker(Requirement.lwcrForm);
 	const dr = RequirementMaker.make(d);
-	assertThrows(
+	assertThrowsMacOSError(
 		() => RequirementMaker.copy(c, dr),
-		MacOSError,
-		new MacOSError(errSecCSReqUnsupported).message,
+		errSecCSReqUnsupported,
 	);
 });
 

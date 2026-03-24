@@ -3,9 +3,7 @@ import {
 	assertGreater,
 	assertLess,
 	assertLessOrEqual,
-	assertRejects,
 	assertStrictEquals,
-	assertThrows,
 } from '@std/assert';
 import {
 	type Arr,
@@ -13,7 +11,7 @@ import {
 	LITTLE_ENDIAN,
 	Uint8Ptr,
 } from '@hqtsm/struct';
-import { ENOEXEC } from '../libc/errno.ts';
+import { EIO, ENOEXEC } from '../libc/errno.ts';
 import {
 	CPU_ARCH_ABI64,
 	CPU_SUBTYPE_ARM_ALL,
@@ -62,12 +60,17 @@ import {
 	version_min_command,
 } from '../mach-o/loader.ts';
 import {
+	assertRejectsMacOSError,
+	assertRejectsUnixError,
+	assertThrowsMacOSError,
+	assertThrowsUnixError,
+} from '../spec/assert.ts';
+import {
 	CPU_ARCHITECTURES,
 	fixtureMacho,
 	fixtureMachos,
 } from '../spec/fixture.ts';
 import { thin } from '../spec/macho.ts';
-import { MacOSError, UnixError } from './errors.ts';
 import {
 	Architecture,
 	MachO,
@@ -291,31 +294,27 @@ Deno.test('MachOBase: init', () => {
 	header64F.sizeofcmds = commandF.cmdsize;
 
 	// Throws on bad magic, but still updates mHeader.
-	assertThrows(
+	assertThrowsUnixError(
 		() => MachOBaseTest.initHeader(macho, header32N),
-		UnixError,
-		new UnixError(ENOEXEC, true).message,
+		ENOEXEC,
 	);
 	assertStrictEquals(MachOBase.header(macho)!.buffer, header32N.buffer);
-	assertThrows(
+	assertThrowsUnixError(
 		() => MachOBaseTest.initHeader(macho, header64N),
-		UnixError,
-		new UnixError(ENOEXEC, true).message,
+		ENOEXEC,
 	);
 	assertStrictEquals(MachOBase.header(macho)!.buffer, header64N.buffer);
 
 	header32N.magic = 0xabcd1234;
 	header32N.sizeofcmds = 1;
 
-	assertThrows(
+	assertThrowsUnixError(
 		() => MachOBaseTest.initHeader(macho, header32N),
-		UnixError,
-		new UnixError(ENOEXEC, true).message,
+		ENOEXEC,
 	);
-	assertThrows(
+	assertThrowsUnixError(
 		() => MachOBaseTest.initCommands(macho, commandN),
-		UnixError,
-		new UnixError(ENOEXEC, true).message,
+		ENOEXEC,
 	);
 
 	header32N.sizeofcmds = commandN.cmdsize;
@@ -420,10 +419,9 @@ Deno.test('MachOBase: nextCommand zero', () => {
 	const cmdA = MachOBase.loadCommands(macho)!;
 	assertEquals(cmdA.cmd, commandA.cmd);
 
-	assertThrows(
+	assertThrowsUnixError(
 		() => MachOBase.nextCommand(macho, cmdA),
-		UnixError,
-		new UnixError(ENOEXEC, true).message,
+		ENOEXEC,
 	);
 });
 
@@ -449,10 +447,9 @@ Deno.test('MachOBase: nextCommand under', () => {
 	const cmdA = MachOBase.loadCommands(macho)!;
 	assertEquals(cmdA.cmd, commandA.cmd);
 
-	assertThrows(
+	assertThrowsUnixError(
 		() => MachOBase.nextCommand(macho, cmdA),
-		UnixError,
-		new UnixError(ENOEXEC, true).message,
+		ENOEXEC,
 	);
 });
 
@@ -479,10 +476,9 @@ Deno.test('MachOBase: nextCommand over', () => {
 	const cmdA = MachOBase.loadCommands(macho)!;
 	assertEquals(cmdA.cmd, commandA.cmd);
 
-	assertThrows(
+	assertThrowsUnixError(
 		() => MachOBase.nextCommand(macho, cmdA),
-		UnixError,
-		new UnixError(ENOEXEC, true).message,
+		ENOEXEC,
 	);
 });
 
@@ -581,10 +577,9 @@ Deno.test('MachOBase: find command under', () => {
 		MachOBaseTest.initHeader(macho, header);
 		MachOBaseTest.initCommands(macho, commands);
 
-		assertThrows(
+		assertThrowsUnixError(
 			() => MachOBase[method](macho),
-			UnixError,
-			new UnixError(ENOEXEC, true).message,
+			ENOEXEC,
 			tag,
 		);
 	}
@@ -827,10 +822,9 @@ Deno.test('MachOBase: findSegment findSection', () => {
 		const { cmdsize } = seg;
 		seg.cmdsize = Seg.BYTE_LENGTH - 1;
 
-		assertThrows(
+		assertThrowsUnixError(
 			() => MachOBase.findSegment(macho, cstr('group')),
-			UnixError,
-			new UnixError(ENOEXEC, true).message,
+			ENOEXEC,
 			tag,
 		);
 
@@ -915,10 +909,9 @@ Deno.test('MachOBase: fixtures', async () => {
 			);
 
 			// deno-lint-ignore no-await-in-loop
-			await assertRejects(
+			await assertRejectsUnixError(
 				() => MachO.dataAt(m, blob.size - 1, 2),
-				UnixError,
-				new UnixError(ENOEXEC, true).message,
+				EIO,
 				tag,
 			);
 		}
@@ -928,19 +921,17 @@ Deno.test('MachOBase: fixtures', async () => {
 Deno.test('MachO: read under', async () => {
 	let mh = new mach_header(new ArrayBuffer(mach_header.BYTE_LENGTH - 1));
 
-	await assertRejects(
+	await assertRejectsUnixError(
 		() => MachO.MachO(new Blob([mh.buffer as ArrayBuffer])),
-		UnixError,
-		new UnixError(ENOEXEC, true).message,
+		ENOEXEC,
 	);
 
 	mh = new mach_header_64(new ArrayBuffer(mach_header_64.BYTE_LENGTH - 1));
 	mh.magic = MH_MAGIC_64;
 
-	await assertRejects(
+	await assertRejectsUnixError(
 		() => MachO.MachO(new Blob([mh.buffer as ArrayBuffer])),
-		UnixError,
-		new UnixError(ENOEXEC, true).message,
+		ENOEXEC,
 	);
 
 	mh = new mach_header_64(new ArrayBuffer(mach_header_64.BYTE_LENGTH + 1));
@@ -948,10 +939,9 @@ Deno.test('MachO: read under', async () => {
 	mh.ncmds = 1;
 	mh.sizeofcmds = 2;
 
-	await assertRejects(
+	await assertRejectsUnixError(
 		() => MachO.MachO(new Blob([mh.buffer as ArrayBuffer])),
-		UnixError,
-		new UnixError(ENOEXEC, true).message,
+		ENOEXEC,
 	);
 });
 
@@ -1014,10 +1004,9 @@ Deno.test('MachO: validateStructure bad command size', async () => {
 		cmd.cmdsize = cmdsize;
 
 		// deno-lint-ignore no-await-in-loop
-		await assertRejects(
+		await assertRejectsUnixError(
 			() => MachO.MachO(new Blob([buffer])),
-			UnixError,
-			new UnixError(ENOEXEC, true).message,
+			ENOEXEC,
 			tag,
 		);
 	}
@@ -1089,38 +1078,39 @@ Deno.test(`Universal: fixtures`, async () => {
 			assertEquals(MachO.offset(mo), offset, tag);
 		}
 
-		assertThrows(
+		assertThrowsUnixError(
 			() => Universal.archOffset(uni, new Architecture()),
-			UnixError,
-			new UnixError(ENOEXEC, true).message,
+			ENOEXEC,
 			tag,
 		);
-		assertThrows(
+		assertThrowsUnixError(
 			() => Universal.archLength(uni, new Architecture()),
-			UnixError,
-			new UnixError(ENOEXEC, true).message,
+			ENOEXEC,
 			tag,
 		);
-		assertThrows(
+		assertThrowsMacOSError(
 			() => Universal.lengthOfSlice(uni, 0),
-			MacOSError,
-			new MacOSError(errSecInternalError).message,
+			errSecInternalError,
 			tag,
 		);
-		await assertRejects(
+		await assertRejectsUnixError(
 			() => Universal.architecture(uni, new Architecture()),
-			UnixError,
-			new UnixError(ENOEXEC, true).message,
+			ENOEXEC,
 			tag,
 		);
-		await assertRejects(
-			() => Universal.architecture(uni, 1),
-			Universal.isUniversal(uni) ? MacOSError : UnixError,
-			Universal.isUniversal(uni)
-				? new MacOSError(errSecInternalError).message
-				: new UnixError(ENOEXEC, true).message,
-			tag,
-		);
+		if (Universal.isUniversal(uni)) {
+			await assertRejectsMacOSError(
+				() => Universal.architecture(uni, 1),
+				errSecInternalError,
+				tag,
+			);
+		} else {
+			await assertRejectsUnixError(
+				() => Universal.architecture(uni, 1),
+				ENOEXEC,
+				tag,
+			);
+		}
 
 		if (/\.dylib$|\.framework\//i.test(file)) {
 			assertEquals(await Universal.typeOf(blob), MH_DYLIB, tag);
@@ -1132,10 +1122,9 @@ Deno.test(`Universal: fixtures`, async () => {
 
 Deno.test('Universal: open under header', async () => {
 	const blob = new Blob([new ArrayBuffer(3)]);
-	await assertRejects(
+	await assertRejectsUnixError(
 		() => Universal.Universal(blob),
-		UnixError,
-		new UnixError(ENOEXEC, true).message,
+		ENOEXEC,
 	);
 });
 
@@ -1144,10 +1133,9 @@ Deno.test('Universal: open unknown magic', async () => {
 		Math.max(fat_header.BYTE_LENGTH, mach_header.BYTE_LENGTH),
 	);
 	const blob = new Blob([data]);
-	await assertRejects(
+	await assertRejectsUnixError(
 		() => Universal.Universal(blob),
-		UnixError,
-		new UnixError(ENOEXEC, true).message,
+		ENOEXEC,
 	);
 });
 
@@ -1159,10 +1147,9 @@ Deno.test('Universal: open too many arch', async () => {
 	header.magic = FAT_MAGIC;
 	header.nfat_arch = MAX_ARCH_COUNT + 1;
 	const blob = new Blob([data]);
-	await assertRejects(
+	await assertRejectsUnixError(
 		() => Universal.Universal(blob),
-		UnixError,
-		new UnixError(ENOEXEC, true).message,
+		ENOEXEC,
 	);
 });
 
@@ -1174,10 +1161,9 @@ Deno.test('Universal: open under arch', async () => {
 	header.magic = FAT_MAGIC;
 	header.nfat_arch = 1;
 	const blob = new Blob([data]);
-	await assertRejects(
+	await assertRejectsUnixError(
 		() => Universal.Universal(blob),
-		UnixError,
-		new UnixError(ENOEXEC, true).message,
+		ENOEXEC,
 	);
 });
 
@@ -1224,10 +1210,9 @@ Deno.test('Universal: open duplicate offset', async () => {
 	arch2.size = 0;
 
 	const blob = new Blob([data]);
-	await assertRejects(
+	await assertRejectsMacOSError(
 		() => Universal.Universal(blob),
-		MacOSError,
-		new MacOSError(errSecInternalError).message,
+		errSecInternalError,
 	);
 });
 
@@ -1457,10 +1442,9 @@ Deno.test('Universal: make unknown type', async () => {
 	command.cmdsize = 8;
 
 	const uni = await Universal.Universal(new Blob([data]));
-	await assertRejects(
+	await assertRejectsUnixError(
 		() => Universal.architecture(uni, 256),
-		UnixError,
-		new UnixError(ENOEXEC, true).message,
+		ENOEXEC,
 	);
 });
 
@@ -1498,10 +1482,9 @@ Deno.test('Universal: make mismatched type', async () => {
 
 	const uni = await Universal.Universal(new Blob([data]));
 	await Universal.architecture(uni, 256);
-	await assertRejects(
+	await assertRejectsUnixError(
 		() => Universal.architecture(uni, 512),
-		UnixError,
-		new UnixError(ENOEXEC, true).message,
+		ENOEXEC,
 	);
 });
 
