@@ -4,13 +4,13 @@ import { ENOMEM } from '../../libc/errno.ts';
 import { realloc } from '../../libc/stdlib.ts';
 import type { SubtleCryptoDigest } from '../../util/crypto.ts';
 import {
-	alignUp,
 	type ArrayBufferLikeData,
 	asUint8Array,
 	toUint8ArrayArrayBuffer,
 } from '../../util/memory.ts';
 import { errSecCSReqUnsupported } from '../CSCommon.ts';
 import { MacOSError, UnixError } from '../errors.ts';
+import { alignUp } from '../LowLevelMemoryUtilities/memutils.ts';
 import {
 	opAnchorHash,
 	opAppleAnchor,
