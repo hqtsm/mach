@@ -65,11 +65,19 @@ Deno.test('UnixError: instanceof', () => {
 
 Deno.test('UnixError: message', () => {
 	assertEquals(
-		new UnixError(42, true).message,
+		(
+			assertThrows(
+				() => UnixError.throwMeNoLogging(42),
+			) as UnixError
+		).message,
 		'',
 	);
 	assertEquals(
-		new UnixError(42, false).message,
+		(
+			assertThrows(
+				() => UnixError.throwMe(42),
+			) as UnixError
+		).message,
 		'UNIX error exception: 42',
 	);
 	assertEquals(
