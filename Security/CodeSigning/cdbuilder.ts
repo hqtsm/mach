@@ -504,7 +504,7 @@ export class CodeDirectoryBuilder {
 	 */
 	public static getHash(_this: CodeDirectoryBuilder): DynamicHash {
 		const hash = CodeDirectory.hashFor(_this.mHashType);
-		hash.crypto = _this.crypto;
+		hash.subtle = _this.subtle;
 		return hash;
 	}
 
@@ -637,7 +637,7 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Dynamic hash crypto.
 	 */
-	public crypto: SubtleCryptoDigest | null = null;
+	public subtle: SubtleCryptoDigest | null = null;
 
 	/**
 	 * Minimum compatibility version of described CodeDirectory.

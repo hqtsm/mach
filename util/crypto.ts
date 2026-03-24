@@ -199,11 +199,11 @@ export function subtleCryptoFromNodeCrypto(
 /**
  * Create subtle crypto from streaming crypto.
  *
- * @param crypto Streaming crypto.
+ * @param subtle Streaming crypto.
  * @returns Subtle crypto with async generator extension.
  */
 export function subtleCryptoFromStreaming(
-	crypto: SubtleCryptoStreaming,
+	subtle: SubtleCryptoStreaming,
 ): SubtleCryptoExtended {
 	return {
 		async digest(
@@ -211,7 +211,7 @@ export function subtleCryptoFromStreaming(
 			data: ArrayBufferData | AsyncGenerator<ArrayBuffer>,
 		): Promise<ArrayBuffer> {
 			if ('next' in data) {
-				const stream = new crypto.DigestStream(algorithm);
+				const stream = new subtle.DigestStream(algorithm);
 				const writer = stream.getWriter();
 				for await (const part of data) {
 					await writer.write(part);
@@ -219,7 +219,7 @@ export function subtleCryptoFromStreaming(
 				await writer.close();
 				return await stream.digest;
 			}
-			return await crypto.digest(algorithm, data);
+			return await subtle.digest(algorithm, data);
 		},
 	};
 }

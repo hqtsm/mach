@@ -96,7 +96,7 @@ export abstract class DynamicHash extends Hashing {
 	/**
 	 * Hash crypto.
 	 */
-	public crypto: SubtleCryptoDigest | null = null;
+	public subtle: SubtleCryptoDigest | null = null;
 
 	static {
 		toStringTag(this, 'DynamicHash');
@@ -158,8 +158,8 @@ export class CCHashInstance extends DynamicHash {
 			| SizeAsyncIterator<ArrayBufferData>,
 		size?: number,
 	): Promise<void> {
-		const { crypto, mDigest } = this;
-		mDigest.crypto = crypto;
+		const { subtle, mDigest } = this;
+		mDigest.subtle = subtle;
 		await CCDigestUpdate(
 			mDigest,
 			source as ArrayBufferPointer<ArrayBuffer>,
@@ -170,8 +170,8 @@ export class CCHashInstance extends DynamicHash {
 	public async finish(
 		digest: ArrayBufferLike | ArrayBufferPointer,
 	): Promise<void> {
-		const { crypto, mTruncate, mDigest } = this;
-		mDigest.crypto = crypto;
+		const { subtle, mTruncate, mDigest } = this;
+		mDigest.subtle = subtle;
 		if (mTruncate) {
 			const d = new ArrayBuffer(CCDigestOutputSize(mDigest));
 			await CCDigestFinal(mDigest, d);

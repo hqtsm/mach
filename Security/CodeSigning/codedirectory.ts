@@ -620,7 +620,7 @@ export class CodeDirectory extends Blob {
 	 * @param size Source size.
 	 * @param slot Slot index.
 	 * @param preEncrypted Pre-encrypt version.
-	 * @param crypto Hash crypto.
+	 * @param subtle Hash crypto.
 	 * @returns True if valid.
 	 */
 	public static async validateSlot(
@@ -629,10 +629,10 @@ export class CodeDirectory extends Blob {
 		size: number,
 		slot: number,
 		preEncrypted: boolean,
-		crypto: SubtleCryptoDigest | null = null,
+		subtle: SubtleCryptoDigest | null = null,
 	): Promise<boolean> {
 		const hash = CodeDirectory.getHash(_this);
-		hash.crypto = crypto;
+		hash.subtle = subtle;
 		const l = hash.digestLength();
 		const digest = new Uint8Array(l);
 		await (
@@ -723,16 +723,16 @@ export class CodeDirectory extends Blob {
 	 *
 	 * @param _this This.
 	 * @param truncate Truncate to kSecCodeCDHashLength.
-	 * @param crypto Dynamic hash crypto.
+	 * @param subtle Hash crypto.
 	 * @returns Hash digest.
 	 */
 	public static async cdhash(
 		_this: CodeDirectory,
 		truncate = false,
-		crypto: SubtleCryptoDigest | null = null,
+		subtle: SubtleCryptoDigest | null = null,
 	): Promise<ArrayBuffer> {
 		const hash = CodeDirectory.getHash(_this);
-		hash.crypto = crypto;
+		hash.subtle = subtle;
 		await hash.update(
 			toUint8ArrayArrayBuffer(
 				_this.buffer,
@@ -755,20 +755,20 @@ export class CodeDirectory extends Blob {
 	 * @param limit Limit.
 	 * @param types Types.
 	 * @param action Callback for each hash.
-	 * @param crypto Hash crypto.
+	 * @param subtle Hash crypto.
 	 */
 	public static async multipleHashFileData(
 		reader: Reader,
 		limit: number,
 		types: Set<number>,
 		action: (type: number, hasher: DynamicHash) => Promise<void>,
-		crypto: SubtleCryptoDigest | null = null,
+		subtle: SubtleCryptoDigest | null = null,
 	): Promise<void> {
 		const total = limit ? Math.min(limit, reader.size) : reader.size;
 		const hashes: [number, DynamicHash][] = [];
 		for (const type of types) {
 			const hash = CodeDirectory.hashFor(type);
-			hash.crypto = crypto;
+			hash.subtle = subtle;
 			hashes.push([type, hash]);
 		}
 		let i = 0;

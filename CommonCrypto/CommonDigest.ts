@@ -242,9 +242,9 @@ const digestIterator = async function (
  */
 export class CCDigestRef {
 	/**
-	 * Optional subtle crypto.
+	 * Optional hash crypto.
 	 */
-	public crypto: SubtleCryptoDigest | null = null;
+	public subtle: SubtleCryptoDigest | null = null;
 
 	/**
 	 * Algorithm.
@@ -371,7 +371,7 @@ export async function CCDigestUpdate(
 	}
 	const { a } = algo;
 
-	const s = c.crypto || crypto.subtle;
+	const s = c.subtle || crypto.subtle;
 
 	if (read) {
 		await (c['d'] = digestReader(read, size, a, s));
@@ -412,7 +412,7 @@ export async function CCDigestFinal(
 	c['d'] = null;
 
 	const digest = (await d) || (
-		await (c.crypto || crypto.subtle).digest(a, new ArrayBuffer(0))
+		await (c.subtle || crypto.subtle).digest(a, new ArrayBuffer(0))
 	);
 	asUint8Array(out, l).set(new Uint8Array(digest, 0, l));
 
@@ -425,7 +425,7 @@ export async function CCDigestFinal(
  * @param alg Digest algorithm.
  * @param data Source data.
  * @param out Digest.
- * @param subtle Subtle crypto.
+ * @param subtle Hash crypto.
  * @returns Status.
  */
 export async function CCDigest(
@@ -434,7 +434,7 @@ export async function CCDigest(
 		| Reader
 		| ArrayBufferData,
 	out: ArrayBufferLike | ArrayBufferPointer | null,
-	crypto?: SubtleCryptoDigest | null,
+	subtle?: SubtleCryptoDigest | null,
 ): Promise<number>;
 
 /**
@@ -444,7 +444,7 @@ export async function CCDigest(
  * @param data Source data.
  * @param len Source length.
  * @param out Digest.
- * @param subtle Subtle crypto.
+ * @param subtle Hash crypto.
  * @returns Status.
  */
 export async function CCDigest(
@@ -456,7 +456,7 @@ export async function CCDigest(
 		| null,
 	len: number,
 	out: ArrayBufferLike | ArrayBufferPointer | null,
-	crypto?: SubtleCryptoDigest | null,
+	subtle?: SubtleCryptoDigest | null,
 ): Promise<number>;
 
 /**
@@ -466,7 +466,7 @@ export async function CCDigest(
  * @param data Source data.
  * @param len Source length.
  * @param out Digest.
- * @param subtle Subtle crypto.
+ * @param subtle Hash crypto.
  * @returns Status.
  */
 export async function CCDigest(
@@ -632,5 +632,5 @@ export function CCDigestReset(ctx: CCDigestRef): void {
 export function CCDigestDestroy(ctx: CCDigestRef): void {
 	ctx['d'] = null;
 	ctx['a'] = 0;
-	ctx.crypto = null;
+	ctx.subtle = null;
 }

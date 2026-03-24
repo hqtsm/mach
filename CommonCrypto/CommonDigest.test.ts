@@ -104,7 +104,7 @@ Deno.test('CCDigestUpdate: ArrayBuffer', async () => {
 	for (const { tag, alg, crypto, output, size, data } of getCases()) {
 		const digest = new ArrayBuffer(size);
 		const ctx = CCDigestCreate(alg)!;
-		ctx.crypto = crypto;
+		ctx.subtle = crypto;
 		// deno-lint-ignore no-await-in-loop
 		assertEquals(await CCDigestUpdate(ctx, data), kCCSuccess, tag);
 		// deno-lint-ignore no-await-in-loop
@@ -117,7 +117,7 @@ Deno.test('CCDigestUpdate: Uint8Array<ArrayBuffer>', async () => {
 	for (const { tag, alg, crypto, output, size, data } of getCases()) {
 		const digest = new Uint8Array(size + 4);
 		const ctx = CCDigestCreate(alg)!;
-		ctx.crypto = crypto;
+		ctx.subtle = crypto;
 		const d = new Uint8Array(data.byteLength + 4);
 		d.set(new Uint8Array(data), 2);
 		assertEquals(
@@ -143,7 +143,7 @@ Deno.test('CCDigestUpdate: Blob', async () => {
 	for (const { tag, alg, crypto, output, size, data } of getCases()) {
 		const digest = new Uint8Array(size);
 		const ctx = CCDigestCreate(alg)!;
-		ctx.crypto = crypto;
+		ctx.subtle = crypto;
 		const blob = new Blob([data]);
 		// deno-lint-ignore no-await-in-loop
 		assertEquals(await CCDigestUpdate(ctx, blob), kCCSuccess, tag);
@@ -161,7 +161,7 @@ Deno.test('CCDigestUpdate: Blob over-read', async () => {
 	for (const [engine, crypto] of engines) {
 		const tag = `engine=${engine}`;
 		const ctx = CCDigestCreate(kCCDigestSHA1)!;
-		ctx.crypto = crypto;
+		ctx.subtle = crypto;
 		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
 			() => CCDigestUpdate(ctx, reader),
@@ -180,7 +180,7 @@ Deno.test('CCDigestUpdate: Blob under-read', async () => {
 	for (const [engine, crypto] of engines) {
 		const tag = `engine=${engine}`;
 		const ctx = CCDigestCreate(kCCDigestSHA1)!;
-		ctx.crypto = crypto;
+		ctx.subtle = crypto;
 		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
 			() => CCDigestUpdate(ctx, reader),
@@ -197,7 +197,7 @@ Deno.test('CCDigestUpdate: Iterator<ArrayBuffer>', async () => {
 			const digest = new Uint8Array(size);
 			const tags = `${tag} page=${page}`;
 			const ctx = CCDigestCreate(alg)!;
-			ctx.crypto = crypto;
+			ctx.subtle = crypto;
 			let returned = 0;
 			assertEquals(
 				// deno-lint-ignore no-await-in-loop
@@ -226,7 +226,7 @@ Deno.test('CCDigestUpdate: Iterator<Uint8Array<ArrayBuffer>>', async () => {
 			const digest = new Uint8Array(size);
 			const tags = `${tag} page=${page}`;
 			const ctx = CCDigestCreate(alg)!;
-			ctx.crypto = crypto;
+			ctx.subtle = crypto;
 			let returned = 0;
 			assertEquals(
 				// deno-lint-ignore no-await-in-loop
@@ -256,7 +256,7 @@ Deno.test('CCDigestUpdate: AsyncIterator<ArrayBuffer>', async () => {
 			const digest = new Uint8Array(size);
 			const tags = `${tag} page=${page}`;
 			const ctx = CCDigestCreate(alg)!;
-			ctx.crypto = crypto;
+			ctx.subtle = crypto;
 			let returned = 0;
 			assertEquals(
 				// deno-lint-ignore no-await-in-loop
@@ -286,7 +286,7 @@ Deno.test('CCDigestUpdate: AsyncIterator<Uint8Array<ArrayBuffer>>', async () => 
 			const digest = new Uint8Array(size);
 			const tags = `${tag} page=${page}`;
 			const ctx = CCDigestCreate(alg)!;
-			ctx.crypto = crypto;
+			ctx.subtle = crypto;
 			let returned = 0;
 			assertEquals(
 				// deno-lint-ignore no-await-in-loop
@@ -316,7 +316,7 @@ Deno.test('CCDigestUpdate: Iterator over-read', async () => {
 		for (const [engine, crypto] of engines) {
 			const tag = `name=${name} engine=${engine}`;
 			const ctx = CCDigestCreate(kCCDigestSHA1)!;
-			ctx.crypto = crypto;
+			ctx.subtle = crypto;
 			const data = source();
 			// deno-lint-ignore no-await-in-loop
 			await assertRejects(
@@ -335,7 +335,7 @@ Deno.test('CCDigestUpdate: Iterator under-read', async () => {
 		for (const [engine, crypto] of engines) {
 			const tag = `name=${name} engine=${engine}`;
 			const ctx = CCDigestCreate(kCCDigestSHA1)!;
-			ctx.crypto = crypto;
+			ctx.subtle = crypto;
 			const data = source();
 			// deno-lint-ignore no-await-in-loop
 			await assertRejects(
@@ -661,10 +661,10 @@ Deno.test('CCDigestCreate', () => {
 Deno.test('CCDigestReset', async () => {
 	const ctx = CCDigestCreate(kCCDigestSHA1)!;
 
-	ctx.crypto = stdCrypto.subtle;
+	ctx.subtle = stdCrypto.subtle;
 	CCDigestReset(ctx);
-	assertStrictEquals(ctx.crypto, stdCrypto.subtle);
-	ctx.crypto = null;
+	assertStrictEquals(ctx.subtle, stdCrypto.subtle);
+	ctx.subtle = null;
 
 	assertEquals(await CCDigestUpdate(ctx, EMPTY), kCCSuccess);
 	assertEquals(await CCDigestUpdate(ctx, EMPTY), kCCCallSequenceError);
@@ -677,7 +677,7 @@ Deno.test('CCDigestReset', async () => {
 
 Deno.test('CCDigestDestroy', () => {
 	const ctx = CCDigestCreate(kCCDigestSHA1)!;
-	ctx.crypto = stdCrypto.subtle;
+	ctx.subtle = stdCrypto.subtle;
 	CCDigestDestroy(ctx);
-	assertStrictEquals(ctx.crypto, null);
+	assertStrictEquals(ctx.subtle, null);
 });

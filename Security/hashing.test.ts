@@ -58,7 +58,7 @@ Deno.test('CCHashInstance: ArrayBuffer', async () => {
 	for (const { tag, alg, crypto, output, size, data } of getCases()) {
 		const digest = new ArrayBuffer(size);
 		const hash = new CCHashInstance(alg);
-		hash.crypto = crypto;
+		hash.subtle = crypto;
 		// deno-lint-ignore no-await-in-loop
 		await hash.update(data);
 		// deno-lint-ignore no-await-in-loop
@@ -71,7 +71,7 @@ Deno.test('CCHashInstance: Uint8Array<ArrayBuffer>', async () => {
 	for (const { tag, alg, crypto, output, size, data } of getCases()) {
 		const digest = new Uint8Array(size + 4);
 		const hash = new CCHashInstance(alg);
-		hash.crypto = crypto;
+		hash.subtle = crypto;
 		const d = new Uint8Array(data.byteLength + 4);
 		d.set(new Uint8Array(data), 2);
 		// deno-lint-ignore no-await-in-loop
@@ -86,7 +86,7 @@ Deno.test('CCHashInstance: Blob', async () => {
 	for (const { tag, alg, crypto, output, size, data } of getCases()) {
 		const digest = new Uint8Array(size);
 		const hash = new CCHashInstance(alg);
-		hash.crypto = crypto;
+		hash.subtle = crypto;
 		const blob = new Blob([data]);
 		// deno-lint-ignore no-await-in-loop
 		await hash.update(blob);
@@ -104,7 +104,7 @@ Deno.test('CCHashInstance: Blob over-read', async () => {
 	for (const [engine, crypto] of engines) {
 		const tag = `engine=${engine}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
-		hash.crypto = crypto;
+		hash.subtle = crypto;
 		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
 			() => hash.update(reader),
@@ -123,7 +123,7 @@ Deno.test('CCHashInstance: Blob under-read', async () => {
 	for (const [engine, crypto] of engines) {
 		const tag = `engine=${engine}`;
 		const hash = new CCHashInstance(kCCDigestSHA1);
-		hash.crypto = crypto;
+		hash.subtle = crypto;
 		// deno-lint-ignore no-await-in-loop
 		await assertRejects(
 			() => hash.update(reader),
@@ -138,7 +138,7 @@ Deno.test('CCHashInstance: ArrayBufferPointer', async () => {
 	for (const { tag, alg, crypto, output, size, data } of getCases()) {
 		const digest = new Uint8Array(size);
 		const hash = new CCHashInstance(alg);
-		hash.crypto = crypto;
+		hash.subtle = crypto;
 		const d = new Uint8Array(data.byteLength + 4);
 		d.set(new Uint8Array(data), 2);
 		// deno-lint-ignore no-await-in-loop
@@ -161,7 +161,7 @@ Deno.test('CCHashInstance: Iterator<ArrayBuffer>', async () => {
 			const tags = `${tag} page=${page}`;
 			const digest = new Uint8Array(size);
 			const hash = new CCHashInstance(alg);
-			hash.crypto = crypto;
+			hash.subtle = crypto;
 			let returned = 0;
 			// deno-lint-ignore no-await-in-loop
 			await hash.update(
@@ -186,7 +186,7 @@ Deno.test('CCHashInstance: Iterator<Uint8Array<ArrayBuffer>>', async () => {
 			const tags = `${tag} page=${page}`;
 			const digest = new Uint8Array(size);
 			const hash = new CCHashInstance(alg);
-			hash.crypto = crypto;
+			hash.subtle = crypto;
 			let returned = 0;
 			// deno-lint-ignore no-await-in-loop
 			await hash.update(
@@ -211,7 +211,7 @@ Deno.test('CCHashInstance: AsyncIterator<ArrayBuffer>', async () => {
 			const tags = `${tag} page=${page}`;
 			const digest = new Uint8Array(size);
 			const hash = new CCHashInstance(alg);
-			hash.crypto = crypto;
+			hash.subtle = crypto;
 			let returned = 0;
 			// deno-lint-ignore no-await-in-loop
 			await hash.update(
@@ -236,7 +236,7 @@ Deno.test('CCHashInstance: AsyncIterator<Uint8Array<ArrayBuffer>>', async () => 
 			const tags = `${tag} page=${page}`;
 			const digest = new Uint8Array(size);
 			const hash = new CCHashInstance(alg);
-			hash.crypto = crypto;
+			hash.subtle = crypto;
 			let returned = 0;
 			// deno-lint-ignore no-await-in-loop
 			await hash.update(
@@ -261,7 +261,7 @@ Deno.test('CCHashInstance: Iterator over-read', async () => {
 		for (const [engine, crypto] of engines) {
 			const tag = `name=${name} engine=${engine}`;
 			const hash = new CCHashInstance(kCCDigestSHA1);
-			hash.crypto = crypto;
+			hash.subtle = crypto;
 			const data = source();
 			// deno-lint-ignore no-await-in-loop
 			await assertRejects(
@@ -280,7 +280,7 @@ Deno.test('CCHashInstance: Iterator under-read', async () => {
 		for (const [engine, crypto] of engines) {
 			const tag = `name=${name} engine=${engine}`;
 			const hash = new CCHashInstance(kCCDigestSHA1);
-			hash.crypto = crypto;
+			hash.subtle = crypto;
 			const data = source();
 			// deno-lint-ignore no-await-in-loop
 			await assertRejects(
@@ -299,7 +299,7 @@ Deno.test('CCHashInstance: truncate', async () => {
 		const truncate = Math.floor(output.length / 2);
 		const hext = output.slice(0, truncate * 2);
 		const hash = new CCHashInstance(alg, truncate);
-		hash.crypto = crypto;
+		hash.subtle = crypto;
 		// deno-lint-ignore no-await-in-loop
 		await hash.update(data);
 		// deno-lint-ignore no-await-in-loop
