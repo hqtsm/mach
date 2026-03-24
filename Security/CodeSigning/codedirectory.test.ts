@@ -14,8 +14,11 @@ import { CodeDirectoryBuilder } from './cdbuilder.ts';
 import {
 	cdAlternateCodeDirectorySlots,
 	cdCodeDirectorySlot,
+	cdComponentIsBlob,
+	cdComponentPerArchitecture,
 	cdEntitlementDERSlot,
 	cdEntitlementSlot,
+	cdIdentificationSlot,
 	cdLaunchConstraintParent,
 	cdLaunchConstraintResponsible,
 	cdLaunchConstraintSelf,
@@ -26,6 +29,7 @@ import {
 	cdSignatureSlot,
 	cdSlotCount,
 	cdSlotMax,
+	cdTicketSlot,
 	cdTopDirectorySlot,
 	CodeDirectory,
 	CodeDirectoryScatter,
@@ -537,4 +541,72 @@ Deno.test('canonicalSlotName', () => {
 		kSecCS_LIBRARYCONSTRAINTFILE,
 	);
 	assertEquals(CodeDirectory.canonicalSlotName(cdSlotCount), null);
+});
+
+Deno.test('slotAttributes', () => {
+	assertEquals(
+		CodeDirectory.slotAttributes(cdRequirementsSlot),
+		cdComponentIsBlob,
+	);
+	assertEquals(
+		CodeDirectory.slotAttributes(cdCodeDirectorySlot),
+		cdComponentPerArchitecture | cdComponentIsBlob,
+	);
+	assertEquals(
+		CodeDirectory.slotAttributes(cdAlternateCodeDirectorySlots),
+		cdComponentPerArchitecture | cdComponentIsBlob,
+	);
+	assertEquals(
+		CodeDirectory.slotAttributes(cdAlternateCodeDirectorySlots + 1),
+		cdComponentPerArchitecture | cdComponentIsBlob,
+	);
+	assertEquals(
+		CodeDirectory.slotAttributes(cdAlternateCodeDirectorySlots + 2),
+		cdComponentPerArchitecture | cdComponentIsBlob,
+	);
+	assertEquals(
+		CodeDirectory.slotAttributes(cdAlternateCodeDirectorySlots + 3),
+		cdComponentPerArchitecture | cdComponentIsBlob,
+	);
+	assertEquals(
+		CodeDirectory.slotAttributes(cdAlternateCodeDirectorySlots + 4),
+		cdComponentPerArchitecture | cdComponentIsBlob,
+	);
+	assertEquals(
+		CodeDirectory.slotAttributes(cdSignatureSlot),
+		cdComponentPerArchitecture,
+	);
+	assertEquals(
+		CodeDirectory.slotAttributes(cdLaunchConstraintSelf),
+		cdComponentIsBlob,
+	);
+	assertEquals(
+		CodeDirectory.slotAttributes(cdLaunchConstraintParent),
+		cdComponentIsBlob,
+	);
+	assertEquals(
+		CodeDirectory.slotAttributes(cdLaunchConstraintResponsible),
+		cdComponentIsBlob,
+	);
+	assertEquals(
+		CodeDirectory.slotAttributes(cdLibraryConstraint),
+		cdComponentIsBlob,
+	);
+	assertEquals(
+		CodeDirectory.slotAttributes(cdEntitlementSlot),
+		cdComponentIsBlob,
+	);
+	assertEquals(
+		CodeDirectory.slotAttributes(cdEntitlementDERSlot),
+		cdComponentIsBlob,
+	);
+	assertEquals(
+		CodeDirectory.slotAttributes(cdIdentificationSlot),
+		cdComponentPerArchitecture,
+	);
+	assertEquals(
+		CodeDirectory.slotAttributes(cdTicketSlot),
+		0,
+	);
+	assertEquals(CodeDirectory.slotAttributes(cdSlotCount), 0);
 });

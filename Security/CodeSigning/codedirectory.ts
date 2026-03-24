@@ -906,6 +906,38 @@ export class CodeDirectory extends Blob {
 		return null;
 	}
 
+	/**
+	 * Get canonical slot attributes.
+	 *
+	 * @param slot Slot index.
+	 * @returns Slot attributes.
+	 */
+	public static slotAttributes(slot: number): number {
+		switch (slot) {
+			case cdRequirementsSlot:
+				return cdComponentIsBlob;
+			case cdCodeDirectorySlot:
+			case cdAlternateCodeDirectorySlots:
+			case cdAlternateCodeDirectorySlots + 1:
+			case cdAlternateCodeDirectorySlots + 2:
+			case cdAlternateCodeDirectorySlots + 3:
+			case cdAlternateCodeDirectorySlots + 4:
+				return cdComponentPerArchitecture | cdComponentIsBlob;
+			case cdSignatureSlot:
+				return cdComponentPerArchitecture;
+			case cdLaunchConstraintSelf:
+			case cdLaunchConstraintParent:
+			case cdLaunchConstraintResponsible:
+			case cdLibraryConstraint:
+			case cdEntitlementSlot:
+			case cdEntitlementDERSlot:
+				return cdComponentIsBlob;
+			case cdIdentificationSlot:
+				return cdComponentPerArchitecture;
+		}
+		return 0;
+	}
+
 	static {
 		toStringTag(this, 'CodeDirectory');
 		uint32BE(this, 'version');
