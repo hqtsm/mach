@@ -860,6 +860,52 @@ export class CodeDirectory extends Blob {
 		return size;
 	}
 
+	/**
+	 * Get canonical slot name.
+	 *
+	 * @param slot Slot index.
+	 * @returns Slot name, or null.
+	 */
+	public static canonicalSlotName(slot: number): string | null {
+		switch (slot) {
+			case cdRequirementsSlot:
+				return kSecCS_REQUIREMENTSFILE;
+			case cdAlternateCodeDirectorySlots:
+				return `${kSecCS_REQUIREMENTSFILE}-1`;
+			case cdAlternateCodeDirectorySlots + 1:
+				return `${kSecCS_REQUIREMENTSFILE}-2`;
+			case cdAlternateCodeDirectorySlots + 2:
+				return `${kSecCS_REQUIREMENTSFILE}-3`;
+			case cdAlternateCodeDirectorySlots + 3:
+				return `${kSecCS_REQUIREMENTSFILE}-4`;
+			case cdAlternateCodeDirectorySlots + 4:
+				return `${kSecCS_REQUIREMENTSFILE}-5`;
+			case cdResourceDirSlot:
+				return kSecCS_RESOURCEDIRFILE;
+			case cdCodeDirectorySlot:
+				return kSecCS_CODEDIRECTORYFILE;
+			case cdSignatureSlot:
+				return kSecCS_SIGNATUREFILE;
+			case cdTopDirectorySlot:
+				return kSecCS_TOPDIRECTORYFILE;
+			case cdEntitlementSlot:
+				return kSecCS_ENTITLEMENTFILE;
+			case cdEntitlementDERSlot:
+				return kSecCS_ENTITLEMENTDERFILE;
+			case cdRepSpecificSlot:
+				return kSecCS_REPSPECIFICFILE;
+			case cdLaunchConstraintSelf:
+				return kSecCS_LAUNCHCONSTRAINTSELFFILE;
+			case cdLaunchConstraintParent:
+				return kSecCS_LAUNCHCONSTRAINTPARENTFILE;
+			case cdLaunchConstraintResponsible:
+				return kSecCS_LAUNCHCONSTRAINTRESPONSIBLEFILE;
+			case cdLibraryConstraint:
+				return kSecCS_LIBRARYCONSTRAINTFILE;
+		}
+		return null;
+	}
+
 	static {
 		toStringTag(this, 'CodeDirectory');
 		uint32BE(this, 'version');

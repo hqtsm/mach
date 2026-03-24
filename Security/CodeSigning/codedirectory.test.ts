@@ -12,9 +12,35 @@ import {
 import { kSecCodeCDHashLength } from '../CSCommonPriv.ts';
 import { CodeDirectoryBuilder } from './cdbuilder.ts';
 import {
+	cdAlternateCodeDirectorySlots,
+	cdCodeDirectorySlot,
+	cdEntitlementDERSlot,
+	cdEntitlementSlot,
+	cdLaunchConstraintParent,
+	cdLaunchConstraintResponsible,
+	cdLaunchConstraintSelf,
+	cdLibraryConstraint,
+	cdRepSpecificSlot,
+	cdRequirementsSlot,
+	cdResourceDirSlot,
+	cdSignatureSlot,
+	cdSlotCount,
 	cdSlotMax,
+	cdTopDirectorySlot,
 	CodeDirectory,
 	CodeDirectoryScatter,
+	kSecCS_CODEDIRECTORYFILE,
+	kSecCS_ENTITLEMENTDERFILE,
+	kSecCS_ENTITLEMENTFILE,
+	kSecCS_LAUNCHCONSTRAINTPARENTFILE,
+	kSecCS_LAUNCHCONSTRAINTRESPONSIBLEFILE,
+	kSecCS_LAUNCHCONSTRAINTSELFFILE,
+	kSecCS_LIBRARYCONSTRAINTFILE,
+	kSecCS_REPSPECIFICFILE,
+	kSecCS_REQUIREMENTSFILE,
+	kSecCS_RESOURCEDIRFILE,
+	kSecCS_SIGNATUREFILE,
+	kSecCS_TOPDIRECTORYFILE,
 } from './codedirectory.ts';
 
 class ErrorReader implements Reader {
@@ -439,4 +465,76 @@ Deno.test('CodeDirectory: multipleHashFileData error', async () => {
 		Error,
 		'ErrorReader',
 	);
+});
+
+Deno.test('canonicalSlotName', () => {
+	assertEquals(
+		CodeDirectory.canonicalSlotName(cdRequirementsSlot),
+		kSecCS_REQUIREMENTSFILE,
+	);
+	assertEquals(
+		CodeDirectory.canonicalSlotName(cdAlternateCodeDirectorySlots),
+		`${kSecCS_REQUIREMENTSFILE}-1`,
+	);
+	assertEquals(
+		CodeDirectory.canonicalSlotName(cdAlternateCodeDirectorySlots + 1),
+		`${kSecCS_REQUIREMENTSFILE}-2`,
+	);
+	assertEquals(
+		CodeDirectory.canonicalSlotName(cdAlternateCodeDirectorySlots + 2),
+		`${kSecCS_REQUIREMENTSFILE}-3`,
+	);
+	assertEquals(
+		CodeDirectory.canonicalSlotName(cdAlternateCodeDirectorySlots + 3),
+		`${kSecCS_REQUIREMENTSFILE}-4`,
+	);
+	assertEquals(
+		CodeDirectory.canonicalSlotName(cdAlternateCodeDirectorySlots + 4),
+		`${kSecCS_REQUIREMENTSFILE}-5`,
+	);
+	assertEquals(
+		CodeDirectory.canonicalSlotName(cdResourceDirSlot),
+		kSecCS_RESOURCEDIRFILE,
+	);
+	assertEquals(
+		CodeDirectory.canonicalSlotName(cdCodeDirectorySlot),
+		kSecCS_CODEDIRECTORYFILE,
+	);
+	assertEquals(
+		CodeDirectory.canonicalSlotName(cdSignatureSlot),
+		kSecCS_SIGNATUREFILE,
+	);
+	assertEquals(
+		CodeDirectory.canonicalSlotName(cdTopDirectorySlot),
+		kSecCS_TOPDIRECTORYFILE,
+	);
+	assertEquals(
+		CodeDirectory.canonicalSlotName(cdEntitlementSlot),
+		kSecCS_ENTITLEMENTFILE,
+	);
+	assertEquals(
+		CodeDirectory.canonicalSlotName(cdEntitlementDERSlot),
+		kSecCS_ENTITLEMENTDERFILE,
+	);
+	assertEquals(
+		CodeDirectory.canonicalSlotName(cdRepSpecificSlot),
+		kSecCS_REPSPECIFICFILE,
+	);
+	assertEquals(
+		CodeDirectory.canonicalSlotName(cdLaunchConstraintSelf),
+		kSecCS_LAUNCHCONSTRAINTSELFFILE,
+	);
+	assertEquals(
+		CodeDirectory.canonicalSlotName(cdLaunchConstraintParent),
+		kSecCS_LAUNCHCONSTRAINTPARENTFILE,
+	);
+	assertEquals(
+		CodeDirectory.canonicalSlotName(cdLaunchConstraintResponsible),
+		kSecCS_LAUNCHCONSTRAINTRESPONSIBLEFILE,
+	);
+	assertEquals(
+		CodeDirectory.canonicalSlotName(cdLibraryConstraint),
+		kSecCS_LIBRARYCONSTRAINTFILE,
+	);
+	assertEquals(CodeDirectory.canonicalSlotName(cdSlotCount), null);
 });
