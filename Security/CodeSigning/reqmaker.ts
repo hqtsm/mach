@@ -2,6 +2,7 @@ import { toStringTag } from '@hqtsm/class';
 import { type ArrayBufferPointer, dataView, Ptr } from '@hqtsm/struct';
 import { ENOMEM } from '../../libc/errno.ts';
 import { realloc } from '../../libc/stdlib.ts';
+import type { SubtleCryptoDigest } from '../../util/crypto.ts';
 import {
 	alignUp,
 	type ArrayBufferLikeData,
@@ -209,8 +210,67 @@ export class RequirementMaker {
 	 *
 	 * @param _this This.
 	 */
-	public static anchor(_this: RequirementMaker): void {
-		RequirementMaker.put(_this, opAppleAnchor);
+	public static anchor(_this: RequirementMaker): void;
+
+	/**
+	 * Anchor digest.
+	 *
+	 * @param _this This.
+	 * @param slot Slot.
+	 * @param digest SHA1 digest.
+	 */
+	public static anchor(
+		_this: RequirementMaker,
+		slot: number,
+		digest: ArrayBufferPointer<ArrayBuffer>,
+	): void;
+
+	/**
+	 * Anchor certificate.
+	 *
+	 * @param _this This.
+	 * @param slot Slot.
+	 * @param cert Certificate.
+	 * @param length Length in bytes.
+	 * @param crypto Digest algorithm.
+	 */
+	public static anchor(
+		_this: RequirementMaker,
+		slot: number,
+		cert: ArrayBufferPointer<ArrayBuffer>,
+		length: number,
+		subtle?: SubtleCryptoDigest,
+	): Promise<void>;
+
+	/**
+	 * Anchor Apple.
+	 *
+	 * @param _this This.
+	 * @param slot Slot.
+	 * @param cert Certificate or SHA1 digest.
+	 * @param length Length in bytes.
+	 * @param crypto Digest algorithm.
+	 * @returns Promise or void.
+	 */
+	public static anchor(
+		_this: RequirementMaker,
+		slot?: number,
+		cert?: ArrayBufferPointer<ArrayBuffer>,
+		length?: number,
+		subtle?: SubtleCryptoDigest,
+	): Promise<void> | void {
+		if (length !== undefined) {
+			const c = asUint8Array(cert!, length);
+			return (subtle || crypto.subtle).digest('SHA-1', c).then((d) => {
+				RequirementMaker.anchor(_this, slot!, new Uint8Array(d));
+			});
+		} else if (cert) {
+			RequirementMaker.put(_this, opAnchorHash);
+			RequirementMaker.put(_this, slot!);
+			RequirementMaker.putData(_this, cert, 20);
+		} else {
+			RequirementMaker.put(_this, opAppleAnchor);
+		}
 	}
 
 	/**
@@ -220,24 +280,6 @@ export class RequirementMaker {
 	 */
 	public static anchorGeneric(_this: RequirementMaker): void {
 		RequirementMaker.put(_this, opAppleGenericAnchor);
-	}
-
-	/**
-	 * Anchor hash.
-	 *
-	 * @param _this This.
-	 * @param slot Slot index.
-	 * @param digest SHA1 digest.
-	 */
-	public static anchorDigest(
-		_this: RequirementMaker,
-		slot: number,
-		digest: ArrayBufferPointer,
-	): void {
-		RequirementMaker.put(_this, opAnchorHash);
-		RequirementMaker.put(_this, slot);
-		// SHA1 digest length:
-		RequirementMaker.putData(_this, digest, 20);
 	}
 
 	/**

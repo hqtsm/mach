@@ -244,12 +244,21 @@ Deno.test('RequirementMaker: (a or b) and (c or d)', () => {
 	);
 });
 
-Deno.test('RequirementMaker: anchorDigest', () => {
+Deno.test('RequirementMaker: anchor digested', () => {
 	const hash = new Uint8Array(
 		[1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4],
 	);
 	const maker = new RequirementMaker(Requirement.exprForm);
-	RequirementMaker.anchorDigest(maker, 1, hash);
+	RequirementMaker.anchor(maker, 1, hash);
+	RequirementMaker.make(maker);
+});
+
+Deno.test('RequirementMaker: anchor digest', async () => {
+	const cert = new Uint8Array(
+		[1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4],
+	);
+	const maker = new RequirementMaker(Requirement.exprForm);
+	await RequirementMaker.anchor(maker, 1, cert, cert.length);
 	RequirementMaker.make(maker);
 });
 
