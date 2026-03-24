@@ -130,6 +130,11 @@ Deno.test('UnixError: throwMeNoLogging', () => {
 	);
 });
 
+Deno.test('UnixError: make', () => {
+	assertEquals(UnixError.make(42).error, 42);
+	assertEquals(UnixError.make({ errno: 42 }).error, 42);
+});
+
 Deno.test('UnixError: isUnixError', () => {
 	assertEquals(UnixError.isUnixError(new UnixError(42, false)), true);
 	assertEquals(UnixError.isUnixError(new CommonError()), false);
@@ -195,6 +200,10 @@ Deno.test('MacOSError: check', () => {
 
 Deno.test('MacOSError: throwMe', () => {
 	assertThrows(() => MacOSError.throwMe(42), MacOSError, `MacOS error: 42`);
+});
+
+Deno.test('MacOSError: make', () => {
+	assertEquals(MacOSError.make(42).error, 42);
 });
 
 Deno.test('MacOSError: isMacOSError', () => {

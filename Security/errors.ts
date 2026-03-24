@@ -195,6 +195,16 @@ export class UnixError extends CommonError {
 	}
 
 	/**
+	 * Make UnixError.
+	 *
+	 * @param err Error code or context.
+	 * @returns UnixError.
+	 */
+	public static make(err: number | { errno: number }): UnixError {
+		return new UnixError(typeof err === 'number' ? err : err.errno, false);
+	}
+
+	/**
 	 * Is value a UnixError.
 	 *
 	 * @param arg Value.
@@ -277,6 +287,16 @@ export class MacOSError extends CommonError {
 	 */
 	public static throwMe(err: number): never {
 		throw new MacOSError(err);
+	}
+
+	/**
+	 * Make MacOSError.
+	 *
+	 * @param err Error code.
+	 * @returns MacOSError.
+	 */
+	public static make(err: number): MacOSError {
+		return new MacOSError(err);
 	}
 
 	/**
