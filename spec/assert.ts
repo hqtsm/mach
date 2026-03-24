@@ -6,9 +6,9 @@ export async function assertRejectsUnixError(
 	code: number,
 	msg?: string,
 ): Promise<UnixError> {
-	const e = await assertRejects(
+	const e: UnixError = await assertRejects(
 		f,
-		UnixError,
+		UnixError as never,
 		UnixError.make(code).message,
 		msg,
 	);
@@ -21,7 +21,12 @@ export function assertThrowsUnixError(
 	code: number,
 	msg?: string,
 ): UnixError {
-	const e = assertThrows(f, UnixError, UnixError.make(code).message, msg);
+	const e: UnixError = assertThrows(
+		f,
+		UnixError as never,
+		UnixError.make(code).message,
+		msg,
+	);
 	assertStrictEquals(e.error, code, msg);
 	return e;
 }
@@ -31,9 +36,9 @@ export async function assertRejectsMacOSError(
 	code: number,
 	msg?: string,
 ): Promise<MacOSError> {
-	const e = await assertRejects(
+	const e: MacOSError = await assertRejects(
 		f,
-		MacOSError,
+		MacOSError as never,
 		MacOSError.make(code).message,
 		msg,
 	);
@@ -46,7 +51,12 @@ export function assertThrowsMacOSError(
 	code: number,
 	msg?: string,
 ): MacOSError {
-	const e = assertThrows(f, MacOSError, MacOSError.make(code).message, msg);
+	const e: MacOSError = assertThrows(
+		f,
+		MacOSError as never,
+		MacOSError.make(code).message,
+		msg,
+	);
 	assertStrictEquals(e.error, code, msg);
 	return e;
 }

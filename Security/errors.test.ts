@@ -13,12 +13,18 @@ import {
 } from './errors.ts';
 import { errSecSuccess, errSecUnimplemented } from './SecBase.ts';
 
+class MyCommonError extends CommonError {
+	constructor() {
+		super();
+	}
+}
+
 Deno.test('CommonError: instanceof', () => {
-	assertInstanceOf(new CommonError(), Error);
+	assertInstanceOf(new MyCommonError(), Error);
 });
 
 Deno.test('CommonError: message', () => {
-	const err = new CommonError();
+	const err = new MyCommonError();
 	assertGreater(err.whatBufferSize, 0);
 	assertEquals(err.whatBuffer.length, err.whatBufferSize);
 	assertEquals(err.message, '');
@@ -30,17 +36,17 @@ Deno.test('CommonError: message', () => {
 });
 
 Deno.test('CommonError: osStatus', () => {
-	const err = new CommonError();
+	const err = new MyCommonError();
 	assertEquals(err.osStatus(), 0);
 });
 
 Deno.test('CommonError: unixError', () => {
-	const err = new CommonError();
+	const err = new MyCommonError();
 	assertEquals(err.unixError(), 0);
 });
 
 Deno.test('CommonError: isCommonError', () => {
-	assertEquals(CommonError.isCommonError(new CommonError()), true);
+	assertEquals(CommonError.isCommonError(new MyCommonError()), true);
 	assertEquals(CommonError.isCommonError(new Error()), false);
 	assertEquals(CommonError.isCommonError({}), false);
 	assertEquals(CommonError.isCommonError(null), false);
@@ -51,16 +57,16 @@ Deno.test('CommonError: isCommonError', () => {
 Deno.test('CommonError: throw', () => {
 	assertThrows(
 		() => {
-			throw new CommonError();
+			throw new MyCommonError();
 		},
-		CommonError,
+		MyCommonError,
 		'',
 	);
 });
 
 Deno.test('UnixError: instanceof', () => {
 	assertInstanceOf(UnixError.make(42), Error);
-	assertInstanceOf(UnixError.make(42), CommonError);
+	assertInstanceOf(UnixError.make(42), CommonError as never);
 });
 
 Deno.test('UnixError: message', () => {
@@ -81,7 +87,7 @@ Deno.test('UnixError: message', () => {
 		'UNIX error exception: 42',
 	);
 	assertEquals(
-		new UnixError({ errno: 42 }).message,
+		Reflect.construct(UnixError, [{ errno: 42 }]).message,
 		'UNIX errno exception: 42',
 	);
 });
@@ -106,7 +112,7 @@ Deno.test('UnixError: check', () => {
 	UnixError.check(0, { errno: 42 });
 	assertThrows(
 		() => UnixError.check(-1, { errno: 42 }),
-		UnixError,
+		UnixError as never,
 		'UNIX error exception: 42',
 	);
 	UnixError.check(-2, { errno: 42 });
@@ -115,12 +121,12 @@ Deno.test('UnixError: check', () => {
 Deno.test('UnixError: throwMe + throwMeNoLogging', () => {
 	assertThrows(
 		() => UnixError.throwMe(42),
-		UnixError,
+		UnixError as never,
 		'UNIX error exception: 42',
 	);
 	assertThrows(
 		() => UnixError.throwMe({ errno: 42 }),
-		UnixError,
+		UnixError as never,
 		'UNIX error exception: 42',
 	);
 });
@@ -128,12 +134,12 @@ Deno.test('UnixError: throwMe + throwMeNoLogging', () => {
 Deno.test('UnixError: throwMeNoLogging', () => {
 	assertThrows(
 		() => UnixError.throwMeNoLogging(42),
-		UnixError,
+		UnixError as never,
 		'',
 	);
 	assertThrows(
 		() => UnixError.throwMeNoLogging({ errno: 42 }),
-		UnixError,
+		UnixError as never,
 		'',
 	);
 });
@@ -145,7 +151,7 @@ Deno.test('UnixError: make', () => {
 
 Deno.test('UnixError: isUnixError', () => {
 	assertEquals(UnixError.isUnixError(UnixError.make(42)), true);
-	assertEquals(UnixError.isUnixError(new CommonError()), false);
+	assertEquals(UnixError.isUnixError(new MyCommonError()), false);
 	assertEquals(UnixError.isUnixError(new Error()), false);
 	assertEquals(UnixError.isUnixError({}), false);
 	assertEquals(UnixError.isUnixError(null), false);
@@ -157,7 +163,7 @@ Deno.test('UnixError: isUnixError', () => {
 
 Deno.test('MacOSError: instanceof', () => {
 	assertInstanceOf(MacOSError.make(42), Error);
-	assertInstanceOf(MacOSError.make(42), CommonError);
+	assertInstanceOf(MacOSError.make(42), CommonError as never);
 });
 
 Deno.test('MacOSError: message', () => {
@@ -207,13 +213,17 @@ Deno.test('MacOSError: check', () => {
 	MacOSError.check(errSecSuccess);
 	assertThrows(
 		() => MacOSError.check(errSecUnimplemented),
-		MacOSError,
+		MacOSError as never,
 		`MacOS error: ${errSecUnimplemented}`,
 	);
 });
 
 Deno.test('MacOSError: throwMe', () => {
-	assertThrows(() => MacOSError.throwMe(42), MacOSError, `MacOS error: 42`);
+	assertThrows(
+		() => MacOSError.throwMe(42),
+		MacOSError as never,
+		`MacOS error: 42`,
+	);
 });
 
 Deno.test('MacOSError: make', () => {
@@ -222,7 +232,7 @@ Deno.test('MacOSError: make', () => {
 
 Deno.test('MacOSError: isMacOSError', () => {
 	assertEquals(MacOSError.isMacOSError(MacOSError.make(42)), true);
-	assertEquals(MacOSError.isMacOSError(new CommonError()), false);
+	assertEquals(MacOSError.isMacOSError(new MyCommonError()), false);
 	assertEquals(MacOSError.isMacOSError(new Error()), false);
 	assertEquals(MacOSError.isMacOSError({}), false);
 	assertEquals(MacOSError.isMacOSError(null), false);

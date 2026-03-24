@@ -21,7 +21,7 @@ export class CommonError extends Error {
 	/**
 	 * Constructor.
 	 */
-	constructor() {
+	protected constructor() {
 		super();
 		this.whatBuffer = new (array(Int8Ptr, whatBufferSize))(
 			new ArrayBuffer(whatBufferSize),
@@ -108,21 +108,24 @@ export class UnixError extends CommonError {
 	 * @param err Error code.
 	 * @param suppresslogging Suppress logging.
 	 */
-	constructor(err: number, suppresslogging: boolean);
+	protected constructor(err: number, suppresslogging: boolean);
 
 	/**
 	 * Constructor.
 	 *
 	 * @param context Context.
 	 */
-	constructor(context: { errno: number });
+	protected constructor(context: { errno: number });
 
 	/**
 	 * Constructor.
 	 *
 	 * @param err Error code or context.
 	 */
-	constructor(err: number | { errno: number }, suppresslogging?: boolean) {
+	protected constructor(
+		err: number | { errno: number },
+		suppresslogging?: boolean,
+	) {
 		super();
 		let message;
 		if (typeof err === 'number') {
@@ -234,7 +237,7 @@ export class MacOSError extends CommonError {
 	 *
 	 * @param err Error code.
 	 */
-	constructor(err: number) {
+	protected constructor(err: number) {
 		super();
 		this.error = err;
 		const message = `MacOS error: ${err}`;
