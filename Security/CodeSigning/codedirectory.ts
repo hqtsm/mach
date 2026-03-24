@@ -1,3 +1,4 @@
+// deno-lint-ignore-file camelcase
 import { constant, toStringTag } from '@hqtsm/class';
 import {
 	type ArrayBufferPointer,
@@ -39,6 +40,67 @@ import { CCHashInstance, type DynamicHash } from '../hashing.ts';
 import { hashFileData } from './csutilities.ts';
 
 const max = (values: number[]) => Math.max(...values);
+
+/**
+ * Code directory.
+ */
+export const kSecCS_CODEDIRECTORYFILE = 'CodeDirectory';
+
+/**
+ * CMS signature.
+ */
+export const kSecCS_SIGNATUREFILE = 'CodeSignature';
+
+/**
+ * Internal requirements.
+ */
+export const kSecCS_REQUIREMENTSFILE = 'CodeRequirements';
+
+/**
+ * Resource directory.
+ */
+export const kSecCS_RESOURCEDIRFILE = 'CodeResources';
+
+/**
+ * Entitlement configuration.
+ */
+export const kSecCS_ENTITLEMENTFILE = 'CodeEntitlements';
+
+/**
+ * DiskRep-specific data.
+ */
+export const kSecCS_REPSPECIFICFILE = 'CodeRepSpecific';
+
+/**
+ * Top-level directory list.
+ */
+export const kSecCS_TOPDIRECTORYFILE = 'CodeTopDirectory';
+
+/**
+ * Entitlement DER.
+ */
+export const kSecCS_ENTITLEMENTDERFILE = 'CodeEntitlementDER';
+
+/**
+ * Launch constraints on self.
+ */
+export const kSecCS_LAUNCHCONSTRAINTSELFFILE = 'LaunchConstraintSelf';
+
+/**
+ * Launch constraints on parent.
+ */
+export const kSecCS_LAUNCHCONSTRAINTPARENTFILE = 'LaunchConstraintParent';
+
+/**
+ * Launch constraints on responsible.
+ */
+export const kSecCS_LAUNCHCONSTRAINTRESPONSIBLEFILE =
+	'LaunchConstraintResponsible';
+
+/**
+ * Library constraints.
+ */
+export const kSecCS_LIBRARYCONSTRAINTFILE = 'LibraryConstraint';
 
 // Special hash slot values:
 
