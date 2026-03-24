@@ -28,11 +28,6 @@ export class Hashing {
  */
 export abstract class DynamicHash extends Hashing {
 	/**
-	 * Hash crypto.
-	 */
-	public crypto: SubtleCryptoDigest | null = null;
-
-	/**
 	 * Get the digest length.
 	 *
 	 * @returns Digest byte length.
@@ -98,6 +93,11 @@ export abstract class DynamicHash extends Hashing {
 		return !diff;
 	}
 
+	/**
+	 * Hash crypto.
+	 */
+	public crypto: SubtleCryptoDigest | null = null;
+
 	static {
 		toStringTag(this, 'DynamicHash');
 	}
@@ -107,16 +107,6 @@ export abstract class DynamicHash extends Hashing {
  * CCHashInstance dynamic hash.
  */
 export class CCHashInstance extends DynamicHash {
-	/**
-	 * Digest algorithm.
-	 */
-	private mDigest: CCDigestRef;
-
-	/**
-	 * Truncate length.
-	 */
-	private mTruncate: number;
-
 	/**
 	 * CCHashInstance constructor.
 	 *
@@ -192,6 +182,16 @@ export class CCHashInstance extends DynamicHash {
 			await CCDigestFinal(mDigest, digest);
 		}
 	}
+
+	/**
+	 * Digest algorithm.
+	 */
+	private mDigest: CCDigestRef;
+
+	/**
+	 * Truncate length.
+	 */
+	private mTruncate: number;
 
 	static {
 		toStringTag(this, 'CCHashInstance');

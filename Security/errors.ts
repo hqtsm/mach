@@ -19,16 +19,6 @@ const whatBufferSize = 128;
  */
 export class CommonError extends Error {
 	/**
-	 * Error tag.
-	 */
-	declare public [Symbol.toStringTag]: string;
-
-	/**
-	 * Error message.
-	 */
-	public readonly whatBuffer: Arr<number>;
-
-	/**
 	 * Constructor.
 	 */
 	constructor() {
@@ -36,13 +26,6 @@ export class CommonError extends Error {
 		this.whatBuffer = new (array(Int8Ptr, whatBufferSize))(
 			new ArrayBuffer(whatBufferSize),
 		);
-	}
-
-	/**
-	 * Error message buffer size.
-	 */
-	public get whatBufferSize(): number {
-		return whatBufferSize;
 	}
 
 	/**
@@ -78,6 +61,23 @@ export class CommonError extends Error {
 	}
 
 	/**
+	 * Error message.
+	 */
+	public readonly whatBuffer: Arr<number>;
+
+	/**
+	 * Error message buffer size.
+	 */
+	public get whatBufferSize(): number {
+		return whatBufferSize;
+	}
+
+	/**
+	 * Error tag.
+	 */
+	declare public [Symbol.toStringTag]: string;
+
+	/**
 	 * Is value a CommonError.
 	 *
 	 * @param arg Value.
@@ -102,11 +102,6 @@ export class CommonError extends Error {
  * Unix error.
  */
 export class UnixError extends CommonError {
-	/**
-	 * Error code.
-	 */
-	public readonly error: number;
-
 	/**
 	 * Constructor.
 	 *
@@ -146,6 +141,11 @@ export class UnixError extends CommonError {
 			}
 		}
 	}
+
+	/**
+	 * Error code.
+	 */
+	public readonly error: number;
 
 	public override osStatus(): number {
 		return this.error + errSecErrnoBase;
@@ -220,11 +220,6 @@ export class UnixError extends CommonError {
  */
 export class MacOSError extends CommonError {
 	/**
-	 * Error code.
-	 */
-	public readonly error: number;
-
-	/**
 	 * Constructor.
 	 *
 	 * @param err Error code.
@@ -238,6 +233,11 @@ export class MacOSError extends CommonError {
 			whatBuffer[i] = message.charCodeAt(i);
 		}
 	}
+
+	/**
+	 * Error code.
+	 */
+	public readonly error: number;
 
 	public override osStatus(): number {
 		return this.error;

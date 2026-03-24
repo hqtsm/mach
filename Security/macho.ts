@@ -225,31 +225,6 @@ export class Architecture {
  */
 export class MachOBase {
 	/**
-	 * Mach-O header.
-	 */
-	private mHeader: mach_header | mach_header_64 | null = null;
-
-	/**
-	 * Mach-O commands.
-	 */
-	private mCommands: load_command | null = null;
-
-	/**
-	 * The end commands offset, from start of commands.
-	 */
-	private mEndCommands = 0;
-
-	/**
-	 * Is a 64-bit binary.
-	 */
-	private m64 = false;
-
-	/**
-	 * Does binary endian not matches the host endian.
-	 */
-	private mFlip = false;
-
-	/**
 	 * Create Mach-O base instance.
 	 */
 	constructor() {}
@@ -843,6 +818,31 @@ export class MachOBase {
 		return null;
 	}
 
+	/**
+	 * Mach-O header.
+	 */
+	private mHeader: mach_header | mach_header_64 | null = null;
+
+	/**
+	 * Mach-O commands.
+	 */
+	private mCommands: load_command | null = null;
+
+	/**
+	 * The end commands offset, from start of commands.
+	 */
+	private mEndCommands = 0;
+
+	/**
+	 * Is a 64-bit binary.
+	 */
+	private m64 = false;
+
+	/**
+	 * Does binary endian not matches the host endian.
+	 */
+	private mFlip = false;
+
 	static {
 		toStringTag(this, 'MachOBase');
 	}
@@ -856,21 +856,6 @@ export class MachO extends MachOBase {
 	 * Binary reader.
 	 */
 	private mReader: Reader | null = null;
-
-	/**
-	 * Offset in reader.
-	 */
-	private mOffset = 0;
-
-	/**
-	 * Length in reader.
-	 */
-	private mLength = 0;
-
-	/**
-	 * Suspicious flag.
-	 */
-	private mSuspicious = false;
 
 	/**
 	 * Create uninitialized Mach-O instance.
@@ -933,13 +918,19 @@ export class MachO extends MachOBase {
 	}
 
 	/**
-	 * Is a binary open.
+	 * Create Mach-O binary over a reader.
 	 *
-	 * @param _this This.
-	 * @returns Is open.
+	 * @param reader Reader object.
+	 * @param offset Offset for subsection.
+	 * @param length Length of subsection, requires offset.
+	 * @returns Mach-O binary.
 	 */
-	public static isOpen(_this: MachO): boolean {
-		return !!_this.mReader;
+	public static async MachO(
+		reader: Reader,
+		offset = 0,
+		length = 0,
+	): Promise<MachO> {
+		return await new MachO().MachO(reader, offset, length);
 	}
 
 	/**
@@ -1088,20 +1079,19 @@ export class MachO extends MachOBase {
 	}
 
 	/**
-	 * Create Mach-O binary over a reader.
-	 *
-	 * @param reader Reader object.
-	 * @param offset Offset for subsection.
-	 * @param length Length of subsection, requires offset.
-	 * @returns Mach-O binary.
+	 * Offset in reader.
 	 */
-	public static async MachO(
-		reader: Reader,
-		offset = 0,
-		length = 0,
-	): Promise<MachO> {
-		return await new MachO().MachO(reader, offset, length);
-	}
+	private mOffset = 0;
+
+	/**
+	 * Length in reader.
+	 */
+	private mLength = 0;
+
+	/**
+	 * Suspicious flag.
+	 */
+	private mSuspicious = false;
 
 	static {
 		toStringTag(this, 'MachO');
@@ -1162,49 +1152,25 @@ export class Universal {
 	private mReader: Reader | null = null;
 
 	/**
-	 * Architecture list, if fat.
-	 */
-	private mArchList: Ptr<fat_arch> | null = null;
-
-	/**
-	 * Architecture count, if fat.
-	 */
-	private mArchCount = 0;
-
-	/**
-	 * Single architecture, if thin.
-	 */
-	private mThinArch: Architecture | null = null;
-
-	/**
-	 * Offset in reader.
-	 */
-	private mBase = 0;
-
-	/**
-	 * Length in reader, if thin.
-	 */
-	private mLength = 0;
-
-	/**
-	 * Length of slice at each offset.
-	 */
-	private mSizes: Map<number, number> = new Map();
-
-	/**
-	 * Mach type.
-	 */
-	private mMachType = 0;
-
-	/**
-	 * Suspicious flag.
-	 */
-	private mSuspicious = false;
-
-	/**
 	 * Create uninitialized Universal instance.
 	 */
 	protected constructor() {}
+
+	/**
+	 * A universal binary over a readable.
+	 *
+	 * @param reader Reader.
+	 * @param offset Offset for subsection.
+	 * @param length Length of subsection.
+	 * @returns Universal instance.
+	 */
+	public static async Universal(
+		reader: Reader,
+		offset = 0,
+		length = 0,
+	): Promise<Universal> {
+		return await new Universal().Universal(reader, offset, length);
+	}
 
 	/**
 	 * Initialize instance.
@@ -1549,6 +1515,57 @@ export class Universal {
 	}
 
 	/**
+	 * Guess type of file.
+	 *
+	 * @param reader Reader object.
+	 * @returns Zero if not a valid Mach-O or Universal.
+	 */
+	public static async typeOf(reader: Reader): Promise<number> {
+		let data = await reader.slice(0, mach_header.BYTE_LENGTH).arrayBuffer();
+		if (data.byteLength !== mach_header.BYTE_LENGTH) {
+			return 0;
+		}
+		let header = new mach_header(data);
+		let arch1;
+		for (let tries = 3; tries--;) {
+			switch (header.magic) {
+				case MH_CIGAM:
+				case MH_CIGAM_64:
+					header = new mach_header(data, 0, !header.littleEndian);
+					// Falls through.
+				case MH_MAGIC:
+				case MH_MAGIC_64: {
+					return header.filetype;
+				}
+				case FAT_CIGAM:
+					arch1 = new fat_arch(
+						data,
+						fat_header.BYTE_LENGTH,
+						!header.littleEndian,
+					);
+					// Falls through.
+				case FAT_MAGIC: {
+					arch1 ??= new fat_arch(data, fat_header.BYTE_LENGTH);
+					const { offset } = arch1;
+					// deno-lint-ignore no-await-in-loop
+					data = await reader
+						.slice(offset, offset + header.byteLength)
+						.arrayBuffer();
+					if (data.byteLength !== header.byteLength) {
+						return 0;
+					}
+					header = new mach_header(data, 0, arch1.littleEndian);
+					continue;
+				}
+				default: {
+					return 0;
+				}
+			}
+		}
+		return 0;
+	}
+
+	/**
 	 * Find matching architecture in FAT file architecture list.
 	 *
 	 * @param _this This.
@@ -1636,71 +1653,44 @@ export class Universal {
 	}
 
 	/**
-	 * Guess type of file.
-	 *
-	 * @param reader Reader object.
-	 * @returns Zero if not a valid Mach-O or Universal.
+	 * Architecture list, if fat.
 	 */
-	public static async typeOf(reader: Reader): Promise<number> {
-		let data = await reader.slice(0, mach_header.BYTE_LENGTH).arrayBuffer();
-		if (data.byteLength !== mach_header.BYTE_LENGTH) {
-			return 0;
-		}
-		let header = new mach_header(data);
-		let arch1;
-		for (let tries = 3; tries--;) {
-			switch (header.magic) {
-				case MH_CIGAM:
-				case MH_CIGAM_64:
-					header = new mach_header(data, 0, !header.littleEndian);
-					// Falls through.
-				case MH_MAGIC:
-				case MH_MAGIC_64: {
-					return header.filetype;
-				}
-				case FAT_CIGAM:
-					arch1 = new fat_arch(
-						data,
-						fat_header.BYTE_LENGTH,
-						!header.littleEndian,
-					);
-					// Falls through.
-				case FAT_MAGIC: {
-					arch1 ??= new fat_arch(data, fat_header.BYTE_LENGTH);
-					const { offset } = arch1;
-					// deno-lint-ignore no-await-in-loop
-					data = await reader
-						.slice(offset, offset + header.byteLength)
-						.arrayBuffer();
-					if (data.byteLength !== header.byteLength) {
-						return 0;
-					}
-					header = new mach_header(data, 0, arch1.littleEndian);
-					continue;
-				}
-				default: {
-					return 0;
-				}
-			}
-		}
-		return 0;
-	}
+	private mArchList: Ptr<fat_arch> | null = null;
 
 	/**
-	 * A universal binary over a readable.
-	 *
-	 * @param reader Reader.
-	 * @param offset Offset for subsection.
-	 * @param length Length of subsection.
-	 * @returns Universal instance.
+	 * Architecture count, if fat.
 	 */
-	public static async Universal(
-		reader: Reader,
-		offset = 0,
-		length = 0,
-	): Promise<Universal> {
-		return await new Universal().Universal(reader, offset, length);
-	}
+	private mArchCount = 0;
+
+	/**
+	 * Single architecture, if thin.
+	 */
+	private mThinArch: Architecture | null = null;
+
+	/**
+	 * Offset in reader.
+	 */
+	private mBase = 0;
+
+	/**
+	 * Length in reader, if thin.
+	 */
+	private mLength = 0;
+
+	/**
+	 * Length of slice at each offset.
+	 */
+	private mSizes: Map<number, number> = new Map();
+
+	/**
+	 * Mach type.
+	 */
+	private mMachType = 0;
+
+	/**
+	 * Suspicious flag.
+	 */
+	private mSuspicious = false;
 
 	static {
 		toStringTag(this, 'Universal');

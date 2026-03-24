@@ -19,106 +19,6 @@ import { CodeDirectory, CodeDirectoryScatter } from './codedirectory.ts';
  */
 export class CodeDirectoryBuilder {
 	/**
-	 * Dynamic hash crypto.
-	 */
-	public crypto: SubtleCryptoDigest | null = null;
-
-	/**
-	 * Special slots.
-	 */
-	private readonly mSpecial = new Map<number, ArrayBuffer>();
-
-	/**
-	 * Executable file.
-	 */
-	private mExec: Reader | null = null;
-
-	/**
-	 * Starting offset inside mExec.
-	 */
-	private mExecOffset = 0;
-
-	/**
-	 * Total bytes to sign.
-	 */
-	private mExecLength = 0;
-
-	/**
-	 * Page size, must be a power of 2, or zero for infinite.
-	 */
-	private mPageSize = 0;
-
-	/**
-	 * Flags.
-	 */
-	private mFlags = 0;
-
-	/**
-	 * Hash algorithm.
-	 */
-	private readonly mHashType: number;
-
-	/**
-	 * Platform.
-	 */
-	private mPlatform = 0;
-
-	/**
-	 * Hash digest length.
-	 */
-	private readonly mDigestLength: number;
-
-	/**
-	 * Identifier.
-	 */
-	private mIdentifier: ArrayBufferLike = new ArrayBuffer(0);
-
-	/**
-	 * Team ID.
-	 */
-	private mTeamID: ArrayBufferLike = new ArrayBuffer(0);
-
-	/**
-	 * Highest special slot index.
-	 */
-	private mSpecialSlots = 0;
-
-	/**
-	 * Scatter vector.
-	 */
-	private mScatter: Ptr<CodeDirectoryScatter> | null = null;
-
-	/**
-	 * Scatter vector byte size, include sentinel.
-	 */
-	private mScatterSize = 0;
-
-	/**
-	 * Exec segment offset.
-	 */
-	private mExecSegOffset = 0n;
-
-	/**
-	 * Exec segment limit.
-	 */
-	private mExecSegLimit = 0n;
-
-	/**
-	 * Exec segment flags.
-	 */
-	private mExecSegFlags = 0n;
-
-	/**
-	 * Generate pre-encrypt hashes.
-	 */
-	private mGeneratePreEncryptHashes = false;
-
-	/**
-	 * Runtime version.
-	 */
-	private mRuntimeVersion = 0;
-
-	/**
 	 * CodeDirectoryBuilder constructor.
 	 *
 	 * @param digestAlgorithm Hash algorithm (kSecCodeSignatureHash* constants).
@@ -126,23 +26,6 @@ export class CodeDirectoryBuilder {
 	constructor(digestAlgorithm: number) {
 		this.mHashType = digestAlgorithm;
 		this.mDigestLength = CodeDirectoryBuilder.getHash(this).digestLength();
-	}
-
-	/**
-	 * Number of code slots.
-	 * Based on execLength and pageSize.
-	 */
-	private get mCodeSlots(): number {
-		const { mExecLength } = this;
-		if (mExecLength <= 0) {
-			return 0;
-		}
-		const { mPageSize } = this;
-		if (mPageSize === 0) {
-			return 1;
-		}
-		const o = mExecLength % mPageSize;
-		return o ? (mExecLength - o) / mPageSize + 1 : mExecLength / mPageSize;
 	}
 
 	/**
@@ -224,20 +107,6 @@ export class CodeDirectoryBuilder {
 		if (slot > _this.mSpecialSlots) {
 			_this.mSpecialSlots = slot;
 		}
-	}
-
-	/**
-	 * Get special slot.
-	 *
-	 * @param _this This.
-	 * @param slot Slot index, 1 indexed.
-	 * @returns Hash data, or null.
-	 */
-	private static getSpecialSlot(
-		_this: CodeDirectoryBuilder,
-		slot: number,
-	): ArrayBuffer | null {
-		return _this.mSpecial.get(slot) || null;
 	}
 
 	/**
@@ -588,16 +457,6 @@ export class CodeDirectoryBuilder {
 	}
 
 	/**
-	 * Hash type.
-	 *
-	 * @param _this This.
-	 * @returns Hash type.
-	 */
-	public static hashType(_this: CodeDirectoryBuilder): number {
-		return _this.mHashType;
-	}
-
-	/**
 	 * Get fixed size for compatibility version.
 	 *
 	 * @param _this This.
@@ -628,6 +487,16 @@ export class CodeDirectoryBuilder {
 	}
 
 	/**
+	 * Hash type.
+	 *
+	 * @param _this This.
+	 * @returns Hash type.
+	 */
+	public static hashType(_this: CodeDirectoryBuilder): number {
+		return _this.mHashType;
+	}
+
+	/**
 	 * Get hash creation instance.
 	 *
 	 * @param _this This.
@@ -638,6 +507,137 @@ export class CodeDirectoryBuilder {
 		hash.crypto = _this.crypto;
 		return hash;
 	}
+
+	/**
+	 * Get special slot.
+	 *
+	 * @param _this This.
+	 * @param slot Slot index, 1 indexed.
+	 * @returns Hash data, or null.
+	 */
+	private static getSpecialSlot(
+		_this: CodeDirectoryBuilder,
+		slot: number,
+	): ArrayBuffer | null {
+		return _this.mSpecial.get(slot) || null;
+	}
+
+	/**
+	 * Special slots.
+	 */
+	private readonly mSpecial = new Map<number, ArrayBuffer>();
+
+	/**
+	 * Executable file.
+	 */
+	private mExec: Reader | null = null;
+
+	/**
+	 * Starting offset inside mExec.
+	 */
+	private mExecOffset = 0;
+
+	/**
+	 * Total bytes to sign.
+	 */
+	private mExecLength = 0;
+
+	/**
+	 * Page size, must be a power of 2, or zero for infinite.
+	 */
+	private mPageSize = 0;
+
+	/**
+	 * Flags.
+	 */
+	private mFlags = 0;
+
+	/**
+	 * Hash algorithm.
+	 */
+	private readonly mHashType: number;
+
+	/**
+	 * Platform.
+	 */
+	private mPlatform = 0;
+
+	/**
+	 * Hash digest length.
+	 */
+	private readonly mDigestLength: number;
+
+	/**
+	 * Identifier.
+	 */
+	private mIdentifier: ArrayBufferLike = new ArrayBuffer(0);
+
+	/**
+	 * Team ID.
+	 */
+	private mTeamID: ArrayBufferLike = new ArrayBuffer(0);
+
+	/**
+	 * Highest special slot index.
+	 */
+	private mSpecialSlots = 0;
+
+	/**
+	 * Number of code slots.
+	 * Based on execLength and pageSize.
+	 */
+	private get mCodeSlots(): number {
+		const { mExecLength } = this;
+		if (mExecLength <= 0) {
+			return 0;
+		}
+		const { mPageSize } = this;
+		if (mPageSize === 0) {
+			return 1;
+		}
+		const o = mExecLength % mPageSize;
+		return o ? (mExecLength - o) / mPageSize + 1 : mExecLength / mPageSize;
+	}
+
+	/**
+	 * Scatter vector.
+	 */
+	private mScatter: Ptr<CodeDirectoryScatter> | null = null;
+
+	/**
+	 * Scatter vector byte size, include sentinel.
+	 */
+	private mScatterSize = 0;
+
+	/**
+	 * Exec segment offset.
+	 */
+	private mExecSegOffset = 0n;
+
+	/**
+	 * Exec segment limit.
+	 */
+	private mExecSegLimit = 0n;
+
+	/**
+	 * Exec segment flags.
+	 */
+	private mExecSegFlags = 0n;
+
+	/**
+	 * Generate pre-encrypt hashes.
+	 */
+	private mGeneratePreEncryptHashes = false;
+
+	/**
+	 * Runtime version.
+	 */
+	private mRuntimeVersion = 0;
+
+	/**
+	 * Dynamic hash crypto.
+	 */
+	public crypto: SubtleCryptoDigest | null = null;
 
 	/**
 	 * Minimum compatibility version of described CodeDirectory.

@@ -106,10 +106,7 @@ export class EntitlementBlob extends Blob {
  * For embedding entitlement configuration data, in DER format.
  */
 export class EntitlementDERBlob extends Blob {
-	/**
-	 * Data of payload (only).
-	 */
-	declare private readonly data: Uint8Ptr;
+	public static override readonly typeMagic = kSecCodeMagicEntitlementDER;
 
 	/**
 	 * DER data.
@@ -132,7 +129,10 @@ export class EntitlementDERBlob extends Blob {
 		return BlobCore.size(_this) - BlobCore.BYTE_LENGTH;
 	}
 
-	public static override readonly typeMagic = kSecCodeMagicEntitlementDER;
+	/**
+	 * Data of payload (only).
+	 */
+	declare private readonly data: Uint8Ptr;
 
 	static {
 		toStringTag(this, 'EntitlementDERBlob');
@@ -146,10 +146,7 @@ export class EntitlementDERBlob extends Blob {
  * Launch constraint in DER format.
  */
 export class LaunchConstraintBlob extends Blob {
-	/**
-	 * Data of payload (only).
-	 */
-	declare private readonly data: Uint8Ptr;
+	public static override readonly typeMagic = kSecCodeMagicLaunchConstraint;
 
 	/**
 	 * DER data.
@@ -172,7 +169,10 @@ export class LaunchConstraintBlob extends Blob {
 		return BlobCore.size(_this) - BlobCore.BYTE_LENGTH;
 	}
 
-	public static override readonly typeMagic = kSecCodeMagicLaunchConstraint;
+	/**
+	 * Data of payload (only).
+	 */
+	declare private readonly data: Uint8Ptr;
 
 	static {
 		toStringTag(this, 'LaunchConstraintBlob');

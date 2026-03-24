@@ -884,7 +884,6 @@ Deno.test('MachOBase: fixtures', async () => {
 				// deno-lint-ignore no-await-in-loop
 				: await MachO.MachO(blob);
 
-			assertEquals(MachO.isOpen(m), true, tag);
 			assertEquals(MachO.offset(m), offset, tag);
 			assertEquals(MachO.size(m), length, tag);
 			if (info) {

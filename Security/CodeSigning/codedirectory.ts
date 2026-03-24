@@ -267,6 +267,8 @@ export class CodeDirectoryScatter extends Struct {
  * Describes secured pieces of a program.
  */
 export class CodeDirectory extends Blob {
+	public static override readonly typeMagic = kSecCodeMagicCodeDirectory;
+
 	/**
 	 * Compatibility version.
 	 */
@@ -379,6 +381,46 @@ export class CodeDirectory extends Blob {
 	 * Assumes supportsPreEncrypt.
 	 */
 	declare public preEncryptOffset: number;
+
+	/**
+	 * Current version, subject to change.
+	 */
+	public static readonly currentVersion = 0x20500;
+
+	/**
+	 * Compatibility limit, subject to change.
+	 */
+	public static readonly compatibilityLimit = 0x2F000;
+
+	/**
+	 * Earliest supported version.
+	 */
+	public static readonly earliestVersion = 0x20001;
+
+	/**
+	 * First version to support scatter.
+	 */
+	public static readonly supportsScatter = 0x20100;
+
+	/**
+	 * First version to support team ID.
+	 */
+	public static readonly supportsTeamID = 0x20200;
+
+	/**
+	 * First version to support codeLimit64.
+	 */
+	public static readonly supportsCodeLimit64 = 0x20300;
+
+	/**
+	 * First version to support exec base and limit.
+	 */
+	public static readonly supportsExecSegment = 0x20400;
+
+	/**
+	 * First version to support pre-encrypt hashes and runtime version.
+	 */
+	public static readonly supportsPreEncrypt = 0x20500;
 
 	/**
 	 * Pointer to identifier string.
@@ -643,6 +685,30 @@ export class CodeDirectory extends Blob {
 	}
 
 	/**
+	 * Get hasher instance for hash type.
+	 *
+	 * @param hashType Hash type.
+	 * @returns Hasher instance.
+	 */
+	public static hashFor(hashType: number): DynamicHash {
+		switch (hashType) {
+			case kSecCodeSignatureHashSHA1: {
+				return new CCHashInstance(kCCDigestSHA1);
+			}
+			case kSecCodeSignatureHashSHA256: {
+				return new CCHashInstance(kCCDigestSHA256);
+			}
+			case kSecCodeSignatureHashSHA384: {
+				return new CCHashInstance(kCCDigestSHA384);
+			}
+			case kSecCodeSignatureHashSHA256Truncated: {
+				return new CCHashInstance(kCCDigestSHA256, 20);
+			}
+		}
+		throw new RangeError(`Unsupported hash type: ${hashType}`);
+	}
+
+	/**
 	 * Get hash for current hash type.
 	 *
 	 * @param _this This.
@@ -680,72 +746,6 @@ export class CodeDirectory extends Blob {
 		return truncate
 			? digest.slice(0, Math.min(l, kSecCodeCDHashLength))
 			: digest;
-	}
-
-	public static override readonly typeMagic = kSecCodeMagicCodeDirectory;
-
-	/**
-	 * Current version, subject to change.
-	 */
-	public static readonly currentVersion = 0x20500;
-
-	/**
-	 * Compatibility limit, subject to change.
-	 */
-	public static readonly compatibilityLimit = 0x2F000;
-
-	/**
-	 * Earliest supported version.
-	 */
-	public static readonly earliestVersion = 0x20001;
-
-	/**
-	 * First version to support scatter.
-	 */
-	public static readonly supportsScatter = 0x20100;
-
-	/**
-	 * First version to support team ID.
-	 */
-	public static readonly supportsTeamID = 0x20200;
-
-	/**
-	 * First version to support codeLimit64.
-	 */
-	public static readonly supportsCodeLimit64 = 0x20300;
-
-	/**
-	 * First version to support exec base and limit.
-	 */
-	public static readonly supportsExecSegment = 0x20400;
-
-	/**
-	 * First version to support pre-encrypt hashes and runtime version.
-	 */
-	public static readonly supportsPreEncrypt = 0x20500;
-
-	/**
-	 * Get hasher instance for hash type.
-	 *
-	 * @param hashType Hash type.
-	 * @returns Hasher instance.
-	 */
-	public static hashFor(hashType: number): DynamicHash {
-		switch (hashType) {
-			case kSecCodeSignatureHashSHA1: {
-				return new CCHashInstance(kCCDigestSHA1);
-			}
-			case kSecCodeSignatureHashSHA256: {
-				return new CCHashInstance(kCCDigestSHA256);
-			}
-			case kSecCodeSignatureHashSHA384: {
-				return new CCHashInstance(kCCDigestSHA384);
-			}
-			case kSecCodeSignatureHashSHA256Truncated: {
-				return new CCHashInstance(kCCDigestSHA256, 20);
-			}
-		}
-		throw new RangeError(`Unsupported hash type: ${hashType}`);
 	}
 
 	/**

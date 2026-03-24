@@ -32,16 +32,6 @@ export class SuperBlobCoreIndex extends Struct {
  */
 export abstract class SuperBlobCore extends Blob {
 	/**
-	 * Number of blobs in super blob.
-	 */
-	declare private mCount: number;
-
-	/**
-	 * Data of payload (only).
-	 */
-	declare private readonly mIndex: Ptr<SuperBlobCoreIndex>;
-
-	/**
 	 * Setup size and number of blobs in super blob.
 	 *
 	 * @param _this This.
@@ -114,6 +104,16 @@ export abstract class SuperBlobCore extends Blob {
 		return null;
 	}
 
+	/**
+	 * Number of blobs in super blob.
+	 */
+	declare private mCount: number;
+
+	/**
+	 * Data of payload (only).
+	 */
+	declare private readonly mIndex: Ptr<SuperBlobCoreIndex>;
+
 	static {
 		toStringTag(this, 'SuperBlobCore');
 		uint32BE(this, 'mCount' as never);
@@ -138,9 +138,9 @@ export type TemplateSuperBlobCoreMaker =
  */
 export abstract class SuperBlobCoreMaker {
 	/**
-	 * Blobs in super blob.
+	 * SuperBlob class.
 	 */
-	private readonly mPieces = new Map<number, BlobCore>();
+	public static readonly SuperBlob = SuperBlobCore;
 
 	/**
 	 * Add blob to super blob, by reference.
@@ -315,9 +315,9 @@ export abstract class SuperBlobCoreMaker {
 	}
 
 	/**
-	 * SuperBlob class.
+	 * Blobs in super blob.
 	 */
-	public static readonly SuperBlob = SuperBlobCore;
+	private readonly mPieces = new Map<number, BlobCore>();
 
 	static {
 		toStringTag(this, 'SuperBlobCoreMaker');

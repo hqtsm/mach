@@ -37,7 +37,7 @@ export class RequirementMakerLabel {
 	 * @param maker Maker reference.
 	 */
 	constructor(maker: RequirementMaker) {
-		this.pos = RequirementMaker.length(maker);
+		this.pos = RequirementMaker.size(maker);
 	}
 
 	static {
@@ -49,21 +49,6 @@ export class RequirementMakerLabel {
  * RequirementMaker chain.
  */
 export class RequirementMakerChain extends RequirementMakerLabel {
-	/**
-	 * Maker reference.
-	 */
-	public maker: RequirementMaker;
-
-	/**
-	 * Joiner opcode.
-	 */
-	private readonly mJoiner: number;
-
-	/**
-	 * Number of elements in the chain.
-	 */
-	private mCount: number;
-
 	/**
 	 * Chain constructor.
 	 *
@@ -90,6 +75,11 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	}
 
 	/**
+	 * Maker reference.
+	 */
+	public maker: RequirementMaker;
+
+	/**
 	 * Check if the chain has no elements.
 	 *
 	 * @param _this This.
@@ -98,6 +88,16 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	public static empty(_this: RequirementMakerChain): boolean {
 		return _this.mCount === 0;
 	}
+
+	/**
+	 * Joiner opcode.
+	 */
+	private readonly mJoiner: number;
+
+	/**
+	 * Number of elements in the chain.
+	 */
+	private mCount: number;
 
 	static {
 		toStringTag(this, 'RequirementMakerChain');
@@ -108,16 +108,6 @@ export class RequirementMakerChain extends RequirementMakerLabel {
  * For creating a new Requirement blob.
  */
 export class RequirementMaker {
-	/**
-	 * Buffer of allocated bytes.
-	 */
-	private mBuffer: ArrayBuffer | null;
-
-	/**
-	 * Current position in buffer.
-	 */
-	private mPC: number;
-
 	/**
 	 * Maker constructor.
 	 *
@@ -420,7 +410,7 @@ export class RequirementMaker {
 	 * @param _this This.
 	 * @returns Byte length.
 	 */
-	public static length(_this: RequirementMaker): number {
+	public static size(_this: RequirementMaker): number {
 		return _this.mPC;
 	}
 
@@ -457,6 +447,16 @@ export class RequirementMaker {
 			}
 		}
 	}
+
+	/**
+	 * Buffer of allocated bytes.
+	 */
+	private mBuffer: ArrayBuffer | null;
+
+	/**
+	 * Current position in buffer.
+	 */
+	private mPC: number;
 
 	static {
 		toStringTag(this, 'RequirementMaker');

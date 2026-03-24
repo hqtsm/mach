@@ -11,10 +11,17 @@ import { SuperBlob, SuperBlobMaker } from '../superblob.ts';
  * Single requirement.
  */
 export class Requirement extends Blob {
+	public static override readonly typeMagic = kSecCodeMagicRequirement;
+
 	/**
-	 * Requirement kind.
+	 * Kind: Prefix expr form.
 	 */
-	declare private mKind: number;
+	public static readonly exprForm = 1;
+
+	/**
+	 * Kind: DER encoded lightweight code requirement form.
+	 */
+	public static readonly lwcrForm = 2;
 
 	/**
 	 * Get kind.
@@ -46,7 +53,15 @@ export class Requirement extends Blob {
 		_this.mKind = k >>> 0;
 	}
 
-	public static override readonly typeMagic = kSecCodeMagicRequirement;
+	/**
+	 * Index for leaf.
+	 */
+	public static readonly leafCert = 0;
+
+	/**
+	 * Index for anchor.
+	 */
+	public static readonly anchorCert = -1;
 
 	/**
 	 * Common alignment rule for all requirement forms.
@@ -54,23 +69,20 @@ export class Requirement extends Blob {
 	public static readonly baseAlignment: number = 4;
 
 	/**
-	 * Kind: Prefix expr form.
+	 * Requirement kind.
 	 */
-	public static readonly exprForm = 1;
-
-	/**
-	 * Kind: DER encoded lightweight code requirement form.
-	 */
-	public static readonly lwcrForm = 2;
+	declare private mKind: number;
 
 	static {
 		toStringTag(this, 'Requirement');
 		uint32BE(this, 'mKind' as never);
 		constant(this, 'BYTE_LENGTH');
 		constant(this, 'typeMagic');
-		constant(this, 'baseAlignment');
 		constant(this, 'exprForm');
 		constant(this, 'lwcrForm');
+		constant(this, 'leafCert');
+		constant(this, 'anchorCert');
+		constant(this, 'baseAlignment');
 	}
 }
 

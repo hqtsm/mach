@@ -32,16 +32,6 @@ export type BlobCoreBlobType =
 export class BlobCore extends Struct {
 	/**
 	 * Magic number.
-	 */
-	declare protected mMagic: number;
-
-	/**
-	 * Blob length.
-	 */
-	declare protected mLength: number;
-
-	/**
-	 * Magic number.
 	 *
 	 * @param _this This.
 	 * @returns Magic number.
@@ -317,6 +307,16 @@ export class BlobCore extends Struct {
 		return new BlobCore(data);
 	}
 
+	/**
+	 * Magic number.
+	 */
+	declare protected mMagic: number;
+
+	/**
+	 * Blob length.
+	 */
+	declare protected mLength: number;
+
 	static {
 		toStringTag(this, 'BlobCore');
 		uint32BE(this, 'mMagic' as never);
@@ -343,6 +343,13 @@ export abstract class Blob extends BlobCore {
 	public static initializeSize(_this: Blob, size = 0): void {
 		BlobCore.initialize(_this, this.typeMagic, size);
 	}
+
+	/**
+	 * Type magic number for this blob.
+	 *
+	 * @returns Type magic number.
+	 */
+	public static readonly typeMagic: number = 0;
 
 	/**
 	 * Validate blob with length, using known type magic.
@@ -404,31 +411,6 @@ export abstract class Blob extends BlobCore {
 	}
 
 	/**
-	 * Clone blob.
-	 *
-	 * @template T Blob type.
-	 * @param this Blob class.
-	 * @param _this This.
-	 * @param context Context.
-	 * @returns Cloned blob.
-	 */
-	public static override clone<T extends TemplateBlob>(
-		this: T,
-		_this: Blob,
-		context?: { errno: number },
-	): T['prototype'] | null {
-		const c = BlobCore.clone(_this);
-		return c && Blob.specific.call(this, c, context);
-	}
-
-	/**
-	 * Type magic number for this blob.
-	 *
-	 * @returns Type magic number.
-	 */
-	public static readonly typeMagic: number = 0;
-
-	/**
 	 * Cast blob to specific type.
 	 *
 	 * @template T Blob type.
@@ -473,6 +455,24 @@ export abstract class Blob extends BlobCore {
 		B.initializeSize(new B(data), size);
 		new Uint8Array(data, BYTE_LENGTH).set(view);
 		return data;
+	}
+
+	/**
+	 * Clone blob.
+	 *
+	 * @template T Blob type.
+	 * @param this Blob class.
+	 * @param _this This.
+	 * @param context Context.
+	 * @returns Cloned blob.
+	 */
+	public static override clone<T extends TemplateBlob>(
+		this: T,
+		_this: Blob,
+		context?: { errno: number },
+	): T['prototype'] | null {
+		const c = BlobCore.clone(_this);
+		return c && Blob.specific.call(this, c, context);
 	}
 
 	/**
@@ -553,61 +553,6 @@ export abstract class Blob extends BlobCore {
  * Generic blob wrapping arbitrary binary data.
  */
 export class BlobWrapper extends Blob {
-	/**
-	 * Data of payload (only).
-	 */
-	declare public readonly dataArea: Uint8Ptr;
-
-	/**
-	 * Data of payload (only).
-	 *
-	 * @param _this This.
-	 * @returns Data pointer.
-	 */
-	public static override data(_this: BlobWrapper): Ptr {
-		// Overridden to point to payload (only).
-		const { dataArea } = _this;
-		return new Ptr(
-			dataArea.buffer,
-			dataArea.byteOffset,
-			_this.littleEndian,
-		);
-	}
-
-	/**
-	 * Length of payload (only), set length for full blob.
-	 *
-	 * @param _this This.
-	 * @returns Byte length.
-	 */
-	public static override length(_this: BlobWrapper): number;
-
-	/**
-	 * Set blob length for full blob, including magic and length.
-	 * Unchanged from parent.
-	 *
-	 * @param _this This.
-	 * @param size Byte length.
-	 */
-	public static override length(_this: BlobWrapper, size: number): void;
-
-	/**
-	 * Get or set blob length.
-	 *
-	 * @param _this This.
-	 * @param size Byte length to set or undefined to get.
-	 * @returns Byte length on get or undefined on set.
-	 */
-	public static override length(
-		_this: BlobWrapper,
-		size?: number,
-	): number | void {
-		if (size === undefined) {
-			return BlobCore.size(_this) - BlobCore.BYTE_LENGTH;
-		}
-		Blob.size(_this, size);
-	}
-
 	public static override readonly typeMagic = CSMAGIC_BLOBWRAPPER;
 
 	/**
@@ -664,6 +609,61 @@ export class BlobWrapper extends Blob {
 			new Uint8Array(buffer, BYTE_LENGTH).set(view);
 		}
 		return blob;
+	}
+
+	/**
+	 * Data of payload (only).
+	 */
+	declare public readonly dataArea: Uint8Ptr;
+
+	/**
+	 * Data of payload (only).
+	 *
+	 * @param _this This.
+	 * @returns Data pointer.
+	 */
+	public static override data(_this: BlobWrapper): Ptr {
+		// Overridden to point to payload (only).
+		const { dataArea } = _this;
+		return new Ptr(
+			dataArea.buffer,
+			dataArea.byteOffset,
+			_this.littleEndian,
+		);
+	}
+
+	/**
+	 * Length of payload (only), set length for full blob.
+	 *
+	 * @param _this This.
+	 * @returns Byte length.
+	 */
+	public static override length(_this: BlobWrapper): number;
+
+	/**
+	 * Set blob length for full blob, including magic and length.
+	 * Unchanged from parent.
+	 *
+	 * @param _this This.
+	 * @param size Byte length.
+	 */
+	public static override length(_this: BlobWrapper, size: number): void;
+
+	/**
+	 * Get or set blob length.
+	 *
+	 * @param _this This.
+	 * @param size Byte length to set or undefined to get.
+	 * @returns Byte length on get or undefined on set.
+	 */
+	public static override length(
+		_this: BlobWrapper,
+		size?: number,
+	): number | void {
+		if (size === undefined) {
+			return BlobCore.size(_this) - BlobCore.BYTE_LENGTH;
+		}
+		Blob.size(_this, size);
 	}
 
 	static {
