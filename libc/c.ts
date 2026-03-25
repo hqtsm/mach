@@ -43,20 +43,6 @@ export type int<_ = 32> = number;
 export type uint<_ = 32> = number;
 
 /**
- * Signed long.
- *
- * @template _ Bit size.
- */
-export type long<_ = 64> = bigint;
-
-/**
- * Unsigned long.
- *
- * @template _ Bit size.
- */
-export type ulong<_ = 64> = bigint;
-
-/**
  * Size type.
  */
 export type size_t = number;
