@@ -23,7 +23,7 @@ import {
 	sizeAsyncIterators,
 	type SizeIteratorNext,
 } from '../../util/iterator.ts';
-import { toUint8ArrayArrayBuffer } from '../../util/memory.ts';
+import { asUint8Array, toUint8ArrayArrayBuffer } from '../../util/memory.ts';
 import type { Reader } from '../../util/reader.ts';
 import { Blob } from '../blob.ts';
 import {
@@ -794,6 +794,28 @@ export class CodeDirectory extends Blob {
 		);
 		await Promise.all(hashes.map(([, h], i) => h.update(tee[i], total)));
 		await Promise.all(hashes.map(([t, h]) => action(t, h)));
+	}
+
+	/**
+	 * Hex encode hash buffer.
+	 *
+	 * @param _this This.
+	 * @param hash Hash buffer.
+	 * @returns Hex hash.
+	 */
+	public static hexHash(
+		_this: CodeDirectory,
+		hash: ArrayBufferLike | ArrayBufferPointer,
+	): Uint8Array {
+		const size = _this.hashSize;
+		const h = asUint8Array(hash, size);
+		const result = new Uint8Array(size * 2);
+		for (let i = 0, j = 0, c, b; i < size; i++) {
+			b = h[i];
+			result[j++] = (c = b >> 4) < 10 ? c + 48 : c + 87;
+			result[j++] = (c = b & 15) < 10 ? c + 48 : c + 87;
+		}
+		return result;
 	}
 
 	/**

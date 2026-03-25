@@ -471,6 +471,15 @@ Deno.test('CodeDirectory: multipleHashFileData error', async () => {
 	);
 });
 
+Deno.test('CodeDirectory: hexHash', () => {
+	const cd = new CodeDirectory(new ArrayBuffer(CodeDirectory.BYTE_LENGTH));
+	cd.hashSize = 20;
+	const sha1 = '01 23 45 67 89 ab cd ef f0 00 ff 0f fe dc ba 98 76 54 32 10';
+	const sha1d = new Uint8Array(sha1.split(/\s+/).map((x) => parseInt(x, 16)));
+	const hex = CodeDirectory.hexHash(cd, sha1d);
+	assertEquals(String.fromCharCode(...hex), sha1.replace(/\s+/g, ''));
+});
+
 Deno.test('CodeDirectory: canonicalSlotName', () => {
 	assertEquals(
 		CodeDirectory.canonicalSlotName(cdRequirementsSlot),
