@@ -164,7 +164,7 @@ export class CCHashInstance extends DynamicHash {
 			| ArrayBufferPointer<ArrayBuffer>
 			| SizeIterator<ArrayBufferData>
 			| SizeAsyncIterator<ArrayBufferData>,
-		length?: number,
+		length?: size_t,
 	): Promise<void> {
 		const { subtle, mDigest } = this;
 		mDigest.subtle = subtle;
