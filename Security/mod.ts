@@ -2,6 +2,7 @@ export * from './blob.ts';
 export * from './CodeSigning/mod.ts';
 export * from './CSCommon.ts';
 export * from './CSCommonPriv.ts';
+export * from './endian.ts';
 export * from './errors.ts';
 export * from './hashing.ts';
 export * from './LowLevelMemoryUtilities/mod.ts';

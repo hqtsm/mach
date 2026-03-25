@@ -13,17 +13,30 @@ import {
 } from '@hqtsm/struct';
 import { CSMAGIC_BLOBWRAPPER } from '../kern/cs_blobs.ts';
 import { EINVAL, ENOMEM } from '../libc/errno.ts';
+import type { bool, int, size_t, uchar } from '../libc/c.ts';
+import type { uint32_t, uint8_t } from '../libc/stdint.ts';
 import { malloc } from '../libc/stdlib.ts';
 import { type ArrayBufferLikeData, asUint8Array } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
+import type { Endian } from './endian.ts';
 import { MacOSError, UnixError } from './errors.ts';
 import { errSecAllocate } from './SecBase.ts';
+
+/**
+ * BlobCore offset.
+ */
+export type BlobCoreOffset = uint32_t;
+
+/**
+ * BlobCore magic number.
+ */
+export type BlobCoreMagic = uint32_t;
 
 /**
  * BlobCore BlobType.
  */
 export type BlobCoreBlobType =
-	& { readonly typeMagic: number }
+	& { readonly typeMagic: BlobCoreMagic }
 	& typeof BlobCore;
 
 /**
@@ -36,7 +49,7 @@ export class BlobCore extends Struct {
 	 * @param _this This.
 	 * @returns Magic number.
 	 */
-	public static magic(_this: BlobCore): number {
+	public static magic(_this: BlobCore): BlobCoreMagic {
 		return _this.mMagic;
 	}
 
@@ -48,7 +61,7 @@ export class BlobCore extends Struct {
 	 * @param _this This.
 	 * @returns Byte length.
 	 */
-	public static size(_this: BlobCore): number;
+	public static size(_this: BlobCore): size_t;
 
 	/**
 	 * Set blob length.
@@ -58,7 +71,7 @@ export class BlobCore extends Struct {
 	 * @param _this This.
 	 * @param size Byte length.
 	 */
-	public static size(_this: BlobCore, size: number): void;
+	public static size(_this: BlobCore, size: size_t): void;
 
 	/**
 	 * Get or set blob length.
@@ -67,7 +80,7 @@ export class BlobCore extends Struct {
 	 * @param size Byte length to set or undefined to get.
 	 * @returns Byte length on get or undefined on set.
 	 */
-	public static size(_this: BlobCore, size?: number): number | void {
+	public static size(_this: BlobCore, size?: size_t): size_t | void {
 		if (size === undefined) {
 			return _this.mLength;
 		}
@@ -80,7 +93,11 @@ export class BlobCore extends Struct {
 	 * @param magic Magic number.
 	 * @param length Length.
 	 */
-	public static initialize(_this: BlobCore, magic: number, length = 0): void {
+	public static initialize(
+		_this: BlobCore,
+		magic: BlobCoreMagic,
+		length: size_t = 0,
+	): void {
 		_this.mMagic = magic;
 		_this.mLength = length >>> 0;
 	}
@@ -97,11 +114,11 @@ export class BlobCore extends Struct {
 	 */
 	public static validateBlob(
 		_this: BlobCore,
-		magic: number,
-		minSize?: number,
-		maxSize?: number,
-		context?: { errno: number },
-	): boolean {
+		magic: BlobCoreMagic,
+		minSize?: size_t,
+		maxSize?: size_t,
+		context?: { errno: int },
+	): bool {
 		const length = _this.mLength;
 		if (magic && magic !== _this.mMagic) {
 			if (context) context.errno = EINVAL;
@@ -135,7 +152,7 @@ export class BlobCore extends Struct {
 			byteOffset?: number,
 			littleEndian?: boolean | null,
 		) => T,
-		offset: number,
+		offset: BlobCoreOffset,
 		littleEndian: boolean | null = null,
 	): T {
 		return new Type(
@@ -155,9 +172,9 @@ export class BlobCore extends Struct {
 	 */
 	public static contains(
 		_this: BlobCore,
-		offset: number,
-		size: number,
-	): boolean {
+		offset: size_t,
+		size: size_t,
+	): bool {
 		return (
 			offset >= BlobCore.BYTE_LENGTH &&
 			size >= 0 &&
@@ -172,7 +189,10 @@ export class BlobCore extends Struct {
 	 * @param offset Byte offset.
 	 * @returns String pointer if null terminated string or null.
 	 */
-	public static stringAt(_this: BlobCore, offset: number): Int8Ptr | null {
+	public static stringAt(
+		_this: BlobCore,
+		offset: BlobCoreOffset,
+	): Int8Ptr | null {
 		let length = BlobCore.size(_this);
 		if (offset >= 0 && offset < length) {
 			const s = BlobCore.at(_this, Int8Ptr, offset) as Int8Ptr;
@@ -222,7 +242,7 @@ export class BlobCore extends Struct {
 	 * @param _this This.
 	 * @returns Uint8 byte array.
 	 */
-	public static innerData(_this: BlobCore): Const<Arr<number>> {
+	public static innerData(_this: BlobCore): Const<Arr<uint8_t>> {
 		const o = BlobCore.BYTE_LENGTH;
 		const p = BlobCore.at(_this, Uint8Ptr, o);
 		return new (array(Uint8Ptr, BlobCore.size(_this) - o))(
@@ -240,7 +260,7 @@ export class BlobCore extends Struct {
 	 * @param BlobType Blob type.
 	 * @returns Is the same type.
 	 */
-	public static is(this: BlobCoreBlobType, _this: BlobCore): boolean {
+	public static is(this: BlobCoreBlobType, _this: BlobCore): bool {
 		return BlobCore.magic(_this) === this.typeMagic;
 	}
 
@@ -252,7 +272,7 @@ export class BlobCore extends Struct {
 	 */
 	public static async readBlob(
 		reader: Reader,
-		context?: { errno: number },
+		context?: { errno: int },
 	): Promise<BlobCore | null> {
 		return await BlobCore.readBlobInternal(reader, 0, 0, 0, 0, context);
 	}
@@ -269,11 +289,11 @@ export class BlobCore extends Struct {
 	 */
 	protected static async readBlobInternal(
 		reader: Reader,
-		offset: number,
-		magic: number,
-		minSize: number,
-		maxSize: number,
-		context?: { errno: number },
+		offset: size_t,
+		magic: uint32_t,
+		minSize: size_t,
+		maxSize: size_t,
+		context?: { errno: int },
 	): Promise<BlobCore | null> {
 		reader = reader.slice(offset);
 		if (reader.size < 8) {
@@ -310,12 +330,12 @@ export class BlobCore extends Struct {
 	/**
 	 * Magic number.
 	 */
-	declare protected mMagic: number;
+	declare protected mMagic: Endian<uint32_t>;
 
 	/**
 	 * Blob length.
 	 */
-	declare protected mLength: number;
+	declare protected mLength: Endian<uint32_t>;
 
 	static {
 		toStringTag(this, 'BlobCore');
@@ -340,7 +360,7 @@ export abstract class Blob extends BlobCore {
 	 * @param _this This.
 	 * @param size Length.
 	 */
-	public static initializeSize(_this: Blob, size = 0): void {
+	public static initializeSize(_this: Blob, size: size_t = 0): void {
 		BlobCore.initialize(_this, this.typeMagic, size);
 	}
 
@@ -349,7 +369,7 @@ export abstract class Blob extends BlobCore {
 	 *
 	 * @returns Type magic number.
 	 */
-	public static readonly typeMagic: number = 0;
+	public static readonly typeMagic: BlobCoreMagic = 0;
 
 	/**
 	 * Validate blob with length, using known type magic.
@@ -360,8 +380,8 @@ export abstract class Blob extends BlobCore {
 	 */
 	public static validateBlobSize(
 		_this: Blob,
-		context?: { errno: number },
-	): boolean;
+		context?: { errno: int },
+	): bool;
 
 	/**
 	 * Validate blob with length, using known type magic.
@@ -373,9 +393,9 @@ export abstract class Blob extends BlobCore {
 	 */
 	public static validateBlobSize(
 		_this: Blob,
-		length: number,
-		context?: { errno: number },
-	): boolean;
+		length: size_t,
+		context?: { errno: int },
+	): bool;
 
 	/**
 	 * Validate blob with length, using known type magic.
@@ -387,16 +407,16 @@ export abstract class Blob extends BlobCore {
 	 */
 	public static validateBlobSize(
 		_this: Blob,
-		length?: number | { errno: number },
-		context?: { errno: number },
-	): boolean {
+		length?: size_t | { errno: int },
+		context?: { errno: int },
+	): bool {
 		if (typeof length === 'number') {
 			return (
 				length >= _this.byteLength &&
 				Blob.validateBlobSize.call<
 					typeof this,
 					[typeof _this, typeof context],
-					boolean
+					bool
 				>(this, _this, context) &&
 				_this.mLength === length
 			);
@@ -422,13 +442,13 @@ export abstract class Blob extends BlobCore {
 	public static specific<T extends TemplateBlob>(
 		this: T,
 		blob: BlobCore,
-		context?: { errno: number },
+		context?: { errno: int },
 	): T['prototype'] | null {
 		const p = new this(blob.buffer, blob.byteOffset, blob.littleEndian);
 		return Blob.validateBlobSize.call<
 				typeof this,
 				[typeof p, typeof context],
-				boolean
+				bool
 			>(this, p, context)
 			? p
 			: null;
@@ -469,7 +489,7 @@ export abstract class Blob extends BlobCore {
 	public static override clone<T extends TemplateBlob>(
 		this: T,
 		_this: Blob,
-		context?: { errno: number },
+		context?: { errno: int },
 	): T['prototype'] | null {
 		const c = BlobCore.clone(_this);
 		return c && Blob.specific.call(this, c, context);
@@ -487,7 +507,7 @@ export abstract class Blob extends BlobCore {
 	public static override async readBlob<T extends TemplateBlob>(
 		this: T,
 		reader: Reader,
-		context?: { errno: number },
+		context?: { errno: int },
 	): Promise<T['prototype'] | null>;
 
 	/**
@@ -504,9 +524,9 @@ export abstract class Blob extends BlobCore {
 	public static override async readBlob<T extends TemplateBlob>(
 		this: T,
 		reader: Reader,
-		offset: number,
-		maxSize?: number,
-		context?: { errno: number },
+		offset: size_t,
+		maxSize?: size_t,
+		context?: { errno: int },
 	): Promise<T['prototype'] | null>;
 
 	/**
@@ -523,9 +543,9 @@ export abstract class Blob extends BlobCore {
 	public static override async readBlob<T extends TemplateBlob>(
 		this: T,
 		reader: Reader,
-		offset?: number | { errno: number },
-		maxSize?: number,
-		context?: { errno: number },
+		offset?: size_t | { errno: int },
+		maxSize?: size_t,
+		context?: { errno: int },
 	): Promise<T['prototype'] | null> {
 		if (typeof offset !== 'number') {
 			context = offset;
@@ -562,7 +582,7 @@ export class BlobWrapper extends Blob {
 	 * @param magic Magic number.
 	 * @returns Blob.
 	 */
-	public static alloc(length: number, magic?: number): BlobWrapper;
+	public static alloc(length: size_t, magic?: BlobCoreMagic): BlobWrapper;
 
 	/**
 	 * Wrap data into a new blob.
@@ -574,8 +594,8 @@ export class BlobWrapper extends Blob {
 	 */
 	public static alloc(
 		data: ArrayBufferPointer | ArrayBufferLike,
-		length: number,
-		magic?: number,
+		length: size_t,
+		magic?: BlobCoreMagic,
 	): BlobWrapper;
 
 	/**
@@ -587,9 +607,9 @@ export class BlobWrapper extends Blob {
 	 * @returns Blob.
 	 */
 	public static alloc(
-		data: number | ArrayBufferPointer | ArrayBufferLike,
-		length?: number,
-		magic?: number,
+		data: size_t | ArrayBufferPointer | ArrayBufferLike,
+		length?: size_t,
+		magic?: BlobCoreMagic,
 	): BlobWrapper {
 		const { BYTE_LENGTH } = BlobWrapper;
 		let view;
@@ -614,7 +634,7 @@ export class BlobWrapper extends Blob {
 	/**
 	 * Data of payload (only).
 	 */
-	declare public readonly dataArea: Uint8Ptr;
+	declare public readonly dataArea: Arr<uchar>;
 
 	/**
 	 * Data of payload (only).
@@ -638,7 +658,7 @@ export class BlobWrapper extends Blob {
 	 * @param _this This.
 	 * @returns Byte length.
 	 */
-	public static override length(_this: BlobWrapper): number;
+	public static override length(_this: BlobWrapper): size_t;
 
 	/**
 	 * Set blob length for full blob, including magic and length.
@@ -647,7 +667,7 @@ export class BlobWrapper extends Blob {
 	 * @param _this This.
 	 * @param size Byte length.
 	 */
-	public static override length(_this: BlobWrapper, size: number): void;
+	public static override length(_this: BlobWrapper, size: size_t): void;
 
 	/**
 	 * Get or set blob length.
@@ -658,8 +678,8 @@ export class BlobWrapper extends Blob {
 	 */
 	public static override length(
 		_this: BlobWrapper,
-		size?: number,
-	): number | void {
+		size?: size_t,
+	): size_t | void {
 		if (size === undefined) {
 			return BlobCore.size(_this) - BlobCore.BYTE_LENGTH;
 		}
