@@ -15,6 +15,14 @@ import {
 	Uint8Ptr,
 	Union,
 } from '@hqtsm/struct';
+import type { char } from '../libc/c.ts';
+import type {
+	int32_t,
+	uint16_t,
+	uint32_t,
+	uint64_t,
+	uint8_t,
+} from '../libc/stdint.ts';
 
 /**
  * Mach-O header, 32-bit.
@@ -23,32 +31,32 @@ export class mach_header extends Struct {
 	/**
 	 * Mach magic.
 	 */
-	declare public magic: number;
+	declare public magic: uint32_t;
 
 	/**
 	 * CPU type.
 	 */
-	declare public cputype: number;
+	declare public cputype: int32_t;
 
 	/**
 	 * Machine type.
 	 */
-	declare public cpusubtype: number;
+	declare public cpusubtype: int32_t;
 
 	/**
 	 * File type.
 	 */
-	declare public filetype: number;
+	declare public filetype: uint32_t;
 
 	/**
 	 * Number of load commands.
 	 */
-	declare public ncmds: number;
+	declare public ncmds: uint32_t;
 
 	/**
 	 * Size of load commands.
 	 */
-	declare public sizeofcmds: number;
+	declare public sizeofcmds: uint32_t;
 
 	/**
 	 * Flags.
@@ -87,42 +95,42 @@ export class mach_header_64 extends Struct {
 	/**
 	 * Mach magic.
 	 */
-	declare public magic: number;
+	declare public magic: uint32_t;
 
 	/**
 	 * CPU type.
 	 */
-	declare public cputype: number;
+	declare public cputype: int32_t;
 
 	/**
 	 * Machine type.
 	 */
-	declare public cpusubtype: number;
+	declare public cpusubtype: int32_t;
 
 	/**
 	 * File type.
 	 */
-	declare public filetype: number;
+	declare public filetype: uint32_t;
 
 	/**
 	 * Number of load commands.
 	 */
-	declare public ncmds: number;
+	declare public ncmds: uint32_t;
 
 	/**
 	 * Size of load commands.
 	 */
-	declare public sizeofcmds: number;
+	declare public sizeofcmds: uint32_t;
 
 	/**
 	 * Flags.
 	 */
-	declare public flags: number;
+	declare public flags: uint32_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved: number;
+	declare public reserved: uint32_t;
 
 	static {
 		toStringTag(this, 'mach_header_64');
@@ -381,12 +389,12 @@ export class load_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	static {
 		toStringTag(this, 'load_command');
@@ -718,7 +726,7 @@ export class lc_str extends Union {
 	/**
 	 * String offset.
 	 */
-	declare public offset: number;
+	declare public offset: uint32_t;
 
 	static {
 		toStringTag(this, 'lc_str');
@@ -735,57 +743,57 @@ export class segment_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Segment name.
 	 */
-	declare public segname: Arr<number>;
+	declare public segname: Arr<char>;
 
 	/**
 	 * Virtual memory address.
 	 */
-	declare public vmaddr: number;
+	declare public vmaddr: uint32_t;
 
 	/**
 	 * Virtual memory size.
 	 */
-	declare public vmsize: number;
+	declare public vmsize: uint32_t;
 
 	/**
 	 * File offset.
 	 */
-	declare public fileoff: number;
+	declare public fileoff: uint32_t;
 
 	/**
 	 * File size.
 	 */
-	declare public filesize: number;
+	declare public filesize: uint32_t;
 
 	/**
 	 * Maximum virtual memory protection.
 	 */
-	declare public maxprot: number;
+	declare public maxprot: int32_t;
 
 	/**
 	 * Initial virtual memory protection.
 	 */
-	declare public initprot: number;
+	declare public initprot: int32_t;
 
 	/**
 	 * Number of sections.
 	 */
-	declare public nsects: number;
+	declare public nsects: uint32_t;
 
 	/**
 	 * Flags.
 	 */
-	declare public flags: number;
+	declare public flags: uint32_t;
 
 	static {
 		toStringTag(this, 'segment_command');
@@ -811,57 +819,57 @@ export class segment_command_64 extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Segment name.
 	 */
-	declare public segname: Arr<number>;
+	declare public segname: Arr<char>;
 
 	/**
 	 * Virtual memory address.
 	 */
-	declare public vmaddr: bigint;
+	declare public vmaddr: uint64_t;
 
 	/**
 	 * Virtual memory size.
 	 */
-	declare public vmsize: bigint;
+	declare public vmsize: uint64_t;
 
 	/**
 	 * File offset.
 	 */
-	declare public fileoff: bigint;
+	declare public fileoff: uint64_t;
 
 	/**
 	 * File size.
 	 */
-	declare public filesize: bigint;
+	declare public filesize: uint64_t;
 
 	/**
 	 * Maximum virtual memory protection.
 	 */
-	declare public maxprot: number;
+	declare public maxprot: int32_t;
 
 	/**
 	 * Initial virtual memory protection.
 	 */
-	declare public initprot: number;
+	declare public initprot: int32_t;
 
 	/**
 	 * Number of sections.
 	 */
-	declare public nsects: number;
+	declare public nsects: uint32_t;
 
 	/**
 	 * Flags.
 	 */
-	declare public flags: number;
+	declare public flags: uint32_t;
 
 	static {
 		toStringTag(this, 'segment_command_64');
@@ -914,57 +922,57 @@ export class section extends Struct {
 	/**
 	 * Section name.
 	 */
-	declare public sectname: Arr<number>;
+	declare public sectname: Arr<char>;
 
 	/**
 	 * Segment name.
 	 */
-	declare public segname: Arr<number>;
+	declare public segname: Arr<char>;
 
 	/**
 	 * Memory address.
 	 */
-	declare public addr: number;
+	declare public addr: uint32_t;
 
 	/**
 	 * Size in bytes.
 	 */
-	declare public size: number;
+	declare public size: uint32_t;
 
 	/**
 	 * File offset.
 	 */
-	declare public offset: number;
+	declare public offset: uint32_t;
 
 	/**
 	 * Alignment (power of 2).
 	 */
-	declare public align: number;
+	declare public align: uint32_t;
 
 	/**
 	 * File offset of relocations.
 	 */
-	declare public reloff: number;
+	declare public reloff: uint32_t;
 
 	/**
 	 * Number of relocations.
 	 */
-	declare public nreloc: number;
+	declare public nreloc: uint32_t;
 
 	/**
 	 * Flags.
 	 */
-	declare public flags: number;
+	declare public flags: uint32_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved1: number;
+	declare public reserved1: uint32_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved2: number;
+	declare public reserved2: uint32_t;
 
 	static {
 		toStringTag(this, 'section');
@@ -990,62 +998,62 @@ export class section_64 extends Struct {
 	/**
 	 * Section name.
 	 */
-	declare public sectname: Arr<number>;
+	declare public sectname: Arr<char>;
 
 	/**
 	 * Segment name.
 	 */
-	declare public segname: Arr<number>;
+	declare public segname: Arr<char>;
 
 	/**
 	 * Memory address.
 	 */
-	declare public addr: bigint;
+	declare public addr: uint64_t;
 
 	/**
 	 * Size in bytes.
 	 */
-	declare public size: bigint;
+	declare public size: uint64_t;
 
 	/**
 	 * File offset.
 	 */
-	declare public offset: number;
+	declare public offset: uint32_t;
 
 	/**
 	 * Alignment (power of 2).
 	 */
-	declare public align: number;
+	declare public align: uint32_t;
 
 	/**
 	 * File offset of relocations.
 	 */
-	declare public reloff: number;
+	declare public reloff: uint32_t;
 
 	/**
 	 * Number of relocations.
 	 */
-	declare public nreloc: number;
+	declare public nreloc: uint32_t;
 
 	/**
 	 * Flags.
 	 */
-	declare public flags: number;
+	declare public flags: uint32_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved1: number;
+	declare public reserved1: uint32_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved2: number;
+	declare public reserved2: uint32_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved3: number;
+	declare public reserved3: uint32_t;
 
 	static {
 		toStringTag(this, 'section_64');
@@ -1370,12 +1378,12 @@ export class fvmlib extends Struct {
 	/**
 	 * Minor version.
 	 */
-	declare public minor_version: number;
+	declare public minor_version: uint32_t;
 
 	/**
 	 * Header address.
 	 */
-	declare public header_addr: number;
+	declare public header_addr: uint32_t;
 
 	static {
 		toStringTag(this, 'fvmlib');
@@ -1393,12 +1401,12 @@ export class fvmlib_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Library identification.
@@ -1426,17 +1434,17 @@ export class dylib extends Struct {
 	/**
 	 * Build timestamp.
 	 */
-	declare public timestamp: number;
+	declare public timestamp: uint32_t;
 
 	/**
 	 * Current version.
 	 */
-	declare public current_version: number;
+	declare public current_version: uint32_t;
 
 	/**
 	 * Compatibility version.
 	 */
-	declare public compatibility_version: number;
+	declare public compatibility_version: uint32_t;
 
 	static {
 		toStringTag(this, 'dylib');
@@ -1455,12 +1463,12 @@ export class dylib_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Library identification.
@@ -1483,37 +1491,37 @@ export class dylib_use_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Path offset.
 	 */
-	declare public nameoff: number;
+	declare public nameoff: uint32_t;
 
 	/**
 	 * Use marker.
 	 */
-	declare public marker: number;
+	declare public marker: uint32_t;
 
 	/**
 	 * Current version.
 	 */
-	declare public current_version: number;
+	declare public current_version: uint32_t;
 
 	/**
 	 * Compatibility version.
 	 */
-	declare public compat_version: number;
+	declare public compat_version: uint32_t;
 
 	/**
 	 * Flags.
 	 */
-	declare public flags: number;
+	declare public flags: uint32_t;
 
 	static {
 		toStringTag(this, 'dylib_use_command');
@@ -1562,12 +1570,12 @@ export class sub_framework_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * The umbrella framework name.
@@ -1590,12 +1598,12 @@ export class sub_client_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * The client name.
@@ -1618,12 +1626,12 @@ export class sub_umbrella_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * The framework name.
@@ -1646,12 +1654,12 @@ export class sub_library_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * The sub_library name.
@@ -1674,12 +1682,12 @@ export class prebound_dylib_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Path of library.
@@ -1689,7 +1697,7 @@ export class prebound_dylib_command extends Struct {
 	/**
 	 * Number of modules in library.
 	 */
-	declare public nmodules: number;
+	declare public nmodules: uint32_t;
 
 	/**
 	 * Bit vector of linked modules.
@@ -1714,12 +1722,12 @@ export class dylinker_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Path name.
@@ -1742,12 +1750,12 @@ export class thread_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	static {
 		toStringTag(this, 'thread_command');
@@ -1769,52 +1777,52 @@ export class routines_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Address of initialization routine.
 	 */
-	declare public init_address: number;
+	declare public init_address: uint32_t;
 
 	/**
 	 * Index of initialization routine in module table.
 	 */
-	declare public init_module: number;
+	declare public init_module: uint32_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved1: number;
+	declare public reserved1: uint32_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved2: number;
+	declare public reserved2: uint32_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved3: number;
+	declare public reserved3: uint32_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved4: number;
+	declare public reserved4: uint32_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved5: number;
+	declare public reserved5: uint32_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved6: number;
+	declare public reserved6: uint32_t;
 
 	static {
 		toStringTag(this, 'routines_command');
@@ -1839,52 +1847,52 @@ export class routines_command_64 extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Address of initialization routine.
 	 */
-	declare public init_address: bigint;
+	declare public init_address: uint64_t;
 
 	/**
 	 * Index of initialization routine in module table.
 	 */
-	declare public init_module: bigint;
+	declare public init_module: uint64_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved1: bigint;
+	declare public reserved1: uint64_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved2: bigint;
+	declare public reserved2: uint64_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved3: bigint;
+	declare public reserved3: uint64_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved4: bigint;
+	declare public reserved4: uint64_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved5: bigint;
+	declare public reserved5: uint64_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved6: bigint;
+	declare public reserved6: uint64_t;
 
 	static {
 		toStringTag(this, 'routines_command_64');
@@ -1909,32 +1917,32 @@ export class symtab_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Symbol table offset.
 	 */
-	declare public symoff: number;
+	declare public symoff: uint32_t;
 
 	/**
 	 * Symbol table entries.
 	 */
-	declare public nsyms: number;
+	declare public nsyms: uint32_t;
 
 	/**
 	 * String table offset.
 	 */
-	declare public stroff: number;
+	declare public stroff: uint32_t;
 
 	/**
 	 * String table byte length.
 	 */
-	declare public strsize: number;
+	declare public strsize: uint32_t;
 
 	static {
 		toStringTag(this, 'symtab_command');
@@ -1955,102 +1963,102 @@ export class dysymtab_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Index of local symbols.
 	 */
-	declare public ilocalsym: number;
+	declare public ilocalsym: uint32_t;
 
 	/**
 	 * Number of local symbols.
 	 */
-	declare public nlocalsym: number;
+	declare public nlocalsym: uint32_t;
 
 	/**
 	 * Index of externally defined symbols.
 	 */
-	declare public iextdefsym: number;
+	declare public iextdefsym: uint32_t;
 
 	/**
 	 * Number of externally defined symbols.
 	 */
-	declare public nextdefsym: number;
+	declare public nextdefsym: uint32_t;
 
 	/**
 	 * Index of undefined symbols.
 	 */
-	declare public iundefsym: number;
+	declare public iundefsym: uint32_t;
 
 	/**
 	 * Number of undefined symbols.
 	 */
-	declare public nundefsym: number;
+	declare public nundefsym: uint32_t;
 
 	/**
 	 * Table of contents file offset.
 	 */
-	declare public tocoff: number;
+	declare public tocoff: uint32_t;
 
 	/**
 	 * Number of table of contents entries.
 	 */
-	declare public ntoc: number;
+	declare public ntoc: uint32_t;
 
 	/**
 	 * Module table file offset.
 	 */
-	declare public modtaboff: number;
+	declare public modtaboff: uint32_t;
 
 	/**
 	 * Number of module table entries.
 	 */
-	declare public nmodtab: number;
+	declare public nmodtab: uint32_t;
 
 	/**
 	 * Offset of referenced symbol table.
 	 */
-	declare public extrefsymoff: number;
+	declare public extrefsymoff: uint32_t;
 
 	/**
 	 * Number of referenced symbol table entries.
 	 */
-	declare public nextrefsyms: number;
+	declare public nextrefsyms: uint32_t;
 
 	/**
 	 * Indirect symbol table file offset.
 	 */
-	declare public indirectsymoff: number;
+	declare public indirectsymoff: uint32_t;
 
 	/**
 	 * Number of indirect symbol table entries.
 	 */
-	declare public nindirectsyms: number;
+	declare public nindirectsyms: uint32_t;
 
 	/**
 	 * Offset of external relocation entries.
 	 */
-	declare public extreloff: number;
+	declare public extreloff: uint32_t;
 
 	/**
 	 * Number of external relocation entries.
 	 */
-	declare public nextrel: number;
+	declare public nextrel: uint32_t;
 
 	/**
 	 * Offset of local relocation entries.
 	 */
-	declare public locreloff: number;
+	declare public locreloff: uint32_t;
 
 	/**
 	 * Number of local relocation entries.
 	 */
-	declare public nlocrel: number;
+	declare public nlocrel: uint32_t;
 
 	static {
 		toStringTag(this, 'dysymtab_command');
@@ -2097,12 +2105,12 @@ export class dylib_table_of_contents extends Struct {
 	/**
 	 * External symbol index in symbol table.
 	 */
-	declare public symbol_index: number;
+	declare public symbol_index: uint32_t;
 
 	/**
 	 * Index in module table.
 	 */
-	declare public module_index: number;
+	declare public module_index: uint32_t;
 
 	static {
 		toStringTag(this, 'dylib_table_of_contents');
@@ -2119,69 +2127,69 @@ export class dylib_module extends Struct {
 	/**
 	 * Module name index in string table.
 	 */
-	declare public module_name: number;
+	declare public module_name: uint32_t;
 
 	/**
 	 * Index in external symbols.
 	 */
-	declare public iextdefsym: number;
+	declare public iextdefsym: uint32_t;
 
 	/**
 	 * Number of external symbols.
 	 */
-	declare public nextdefsym: number;
+	declare public nextdefsym: uint32_t;
 
 	/**
 	 * Index in reference symbol table.
 	 */
-	declare public irefsym: number;
+	declare public irefsym: uint32_t;
 
 	/**
 	 * Number of reference symbol table.
 	 */
-	declare public nrefsym: number;
+	declare public nrefsym: uint32_t;
 
 	/**
 	 * Index in local symbols.
 	 */
-	declare public ilocalsym: number;
+	declare public ilocalsym: uint32_t;
 
 	/**
 	 * Number of local symbols.
 	 */
-	declare public nlocalsym: number;
+	declare public nlocalsym: uint32_t;
 
 	/**
 	 * Index in external relocations.
 	 */
-	declare public iextrel: number;
+	declare public iextrel: uint32_t;
 
 	/**
 	 * Number of external relocations.
 	 */
-	declare public nextrel: number;
+	declare public nextrel: uint32_t;
 
 	/**
 	 * Low 16 bits index of init section.
 	 * High 16 bits index of term section.
 	 */
-	declare public iinit_iterm: number;
+	declare public iinit_iterm: uint32_t;
 
 	/**
 	 * Low 16 bits number of init section.
 	 * High 16 bits number of term section.
 	 */
-	declare public ninit_nterm: number;
+	declare public ninit_nterm: uint32_t;
 
 	/**
 	 * Address of start of module info section.
 	 */
-	declare public objc_module_info_addr: number;
+	declare public objc_module_info_addr: uint32_t;
 
 	/**
 	 * Size of module info section.
 	 */
-	declare public objc_module_info_size: number;
+	declare public objc_module_info_size: uint32_t;
 
 	static {
 		toStringTag(this, 'dylib_module');
@@ -2209,69 +2217,69 @@ export class dylib_module_64 extends Struct {
 	/**
 	 * Module name index in string table.
 	 */
-	declare public module_name: number;
+	declare public module_name: uint32_t;
 
 	/**
 	 * Index in external symbols.
 	 */
-	declare public iextdefsym: number;
+	declare public iextdefsym: uint32_t;
 
 	/**
 	 * Number of external symbols.
 	 */
-	declare public nextdefsym: number;
+	declare public nextdefsym: uint32_t;
 
 	/**
 	 * Index in reference symbol table.
 	 */
-	declare public irefsym: number;
+	declare public irefsym: uint32_t;
 
 	/**
 	 * Number of reference symbol table.
 	 */
-	declare public nrefsym: number;
+	declare public nrefsym: uint32_t;
 
 	/**
 	 * Index in local symbols.
 	 */
-	declare public ilocalsym: number;
+	declare public ilocalsym: uint32_t;
 
 	/**
 	 * Number of local symbols.
 	 */
-	declare public nlocalsym: number;
+	declare public nlocalsym: uint32_t;
 
 	/**
 	 * Index in external relocations.
 	 */
-	declare public iextrel: number;
+	declare public iextrel: uint32_t;
 
 	/**
 	 * Number of external relocations.
 	 */
-	declare public nextrel: number;
+	declare public nextrel: uint32_t;
 
 	/**
 	 * Low 16 bits index of init section.
 	 * High 16 bits index of term section.
 	 */
-	declare public iinit_iterm: number;
+	declare public iinit_iterm: uint32_t;
 
 	/**
 	 * Low 16 bits number of init section.
 	 * High 16 bits number of term section.
 	 */
-	declare public ninit_nterm: number;
+	declare public ninit_nterm: uint32_t;
 
 	/**
 	 * Size of module info section.
 	 */
-	declare public objc_module_info_size: number;
+	declare public objc_module_info_size: uint32_t;
 
 	/**
 	 * Address of start of module info section.
 	 */
-	declare public objc_module_info_addr: bigint;
+	declare public objc_module_info_addr: uint64_t;
 
 	static {
 		toStringTag(this, 'dylib_module_64');
@@ -2299,12 +2307,12 @@ export class dylib_reference extends Struct {
 	/**
 	 * Index in symbol table.
 	 */
-	declare public isym: number;
+	declare public isym: uint32_t<24>;
 
 	/**
 	 * Flags for reference type.
 	 */
-	declare public flags: number;
+	declare public flags: uint32_t<8>;
 
 	static {
 		toStringTag(this, 'dylib_reference');
@@ -2321,22 +2329,22 @@ export class twolevel_hints_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Hints table offset.
 	 */
-	declare public offset: number;
+	declare public offset: uint32_t;
 
 	/**
 	 * Number of hints in table.
 	 */
-	declare public nhints: number;
+	declare public nhints: uint32_t;
 
 	static {
 		toStringTag(this, 'twolevel_hints_command');
@@ -2355,12 +2363,12 @@ export class twolevel_hint extends Struct {
 	/**
 	 * Index in symbol table.
 	 */
-	declare public isub_image: number;
+	declare public isub_image: uint32_t<8>;
 
 	/**
 	 * Flags for reference type.
 	 */
-	declare public itoc: number;
+	declare public itoc: uint32_t<24>;
 
 	static {
 		toStringTag(this, 'twolevel_hint');
@@ -2377,17 +2385,17 @@ export class prebind_cksum_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Checksum or zero.
 	 */
-	declare public cksum: number;
+	declare public cksum: uint32_t;
 
 	static {
 		toStringTag(this, 'prebind_cksum_command');
@@ -2405,17 +2413,17 @@ export class uuid_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * 128-bit UUID.
 	 */
-	declare public uuid: Arr<number>;
+	declare public uuid: Arr<uint8_t>;
 
 	static {
 		toStringTag(this, 'uuid_command');
@@ -2433,12 +2441,12 @@ export class rpath_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Path to add to run path.
@@ -2461,12 +2469,12 @@ export class target_triple_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Target triple string.
@@ -2489,22 +2497,22 @@ export class linkedit_data_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * File offset of data in __LINKEDIT segment.
 	 */
-	declare public dataoff: number;
+	declare public dataoff: uint32_t;
 
 	/**
 	 * File size of data in __LINKEDIT segment.
 	 */
-	declare public datasize: number;
+	declare public datasize: uint32_t;
 
 	static {
 		toStringTag(this, 'linkedit_data_command');
@@ -2523,27 +2531,27 @@ export class encryption_info_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * File offset of encrypted range.
 	 */
-	declare public cryptoff: number;
+	declare public cryptoff: uint32_t;
 
 	/**
 	 * File size of encrypted range.
 	 */
-	declare public cryptsize: number;
+	declare public cryptsize: uint32_t;
 
 	/**
 	 * Encryption system ID, 0 for not encrypted yet.
 	 */
-	declare public cryptid: number;
+	declare public cryptid: uint32_t;
 
 	static {
 		toStringTag(this, 'encryption_info_command');
@@ -2563,32 +2571,32 @@ export class encryption_info_command_64 extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * File offset of encrypted range.
 	 */
-	declare public cryptoff: number;
+	declare public cryptoff: uint32_t;
 
 	/**
 	 * File size of encrypted range.
 	 */
-	declare public cryptsize: number;
+	declare public cryptsize: uint32_t;
 
 	/**
 	 * Encryption system ID, 0 for not encrypted yet.
 	 */
-	declare public cryptid: number;
+	declare public cryptid: uint32_t;
 
 	/**
 	 * Padding to align to 8 bytes.
 	 */
-	declare public pad: number;
+	declare public pad: uint32_t;
 
 	static {
 		toStringTag(this, 'encryption_info_command_64');
@@ -2609,22 +2617,22 @@ export class version_min_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * X.Y.Z in nibbles xxxx.yy.zz.
 	 */
-	declare public version: number;
+	declare public version: uint32_t;
 
 	/**
 	 * X.Y.Z in nibbles xxxx.yy.zz.
 	 */
-	declare public sdk: number;
+	declare public sdk: uint32_t;
 
 	static {
 		toStringTag(this, 'version_min_command');
@@ -2643,32 +2651,32 @@ export class build_version_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Platform.
 	 */
-	declare public platform: number;
+	declare public platform: uint32_t;
 
 	/**
 	 * X.Y.Z in nibbles xxxx.yy.zz.
 	 */
-	declare public minos: number;
+	declare public minos: uint32_t;
 
 	/**
 	 * X.Y.Z in nibbles xxxx.yy.zz.
 	 */
-	declare public sdk: number;
+	declare public sdk: uint32_t;
 
 	/**
 	 * Number of tool entries that follow.
 	 */
-	declare public ntools: number;
+	declare public ntools: uint32_t;
 
 	static {
 		toStringTag(this, 'build_version_command');
@@ -2689,12 +2697,12 @@ export class build_tool_version extends Struct {
 	/**
 	 * Tool ID.
 	 */
-	declare public tool: number;
+	declare public tool: uint32_t;
 
 	/**
 	 * Version number.
 	 */
-	declare public version: number;
+	declare public version: uint32_t;
 
 	static {
 		toStringTag(this, 'build_tool_version');
@@ -2902,62 +2910,62 @@ export class dyld_info_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * File offset of rebase info.
 	 */
-	declare public rebase_off: number;
+	declare public rebase_off: uint32_t;
 
 	/**
 	 * Size of rebase info.
 	 */
-	declare public rebase_size: number;
+	declare public rebase_size: uint32_t;
 
 	/**
 	 * File offset of binding info.
 	 */
-	declare public bind_off: number;
+	declare public bind_off: uint32_t;
 
 	/**
 	 * Size of binding info.
 	 */
-	declare public bind_size: number;
+	declare public bind_size: uint32_t;
 
 	/**
 	 * File offset of weak binding info.
 	 */
-	declare public weak_bind_off: number;
+	declare public weak_bind_off: uint32_t;
 
 	/**
 	 * Size of weak binding info.
 	 */
-	declare public weak_bind_size: number;
+	declare public weak_bind_size: uint32_t;
 
 	/**
 	 * File offset of lazy binding info.
 	 */
-	declare public lazy_bind_off: number;
+	declare public lazy_bind_off: uint32_t;
 
 	/**
 	 * Size of lazy binding info.
 	 */
-	declare public lazy_bind_size: number;
+	declare public lazy_bind_size: uint32_t;
 
 	/**
 	 * File offset of export info.
 	 */
-	declare public export_off: number;
+	declare public export_off: uint32_t;
 
 	/**
 	 * Size of export info.
 	 */
-	declare public export_size: number;
+	declare public export_size: uint32_t;
 
 	static {
 		toStringTag(this, 'dyld_info_command');
@@ -3235,17 +3243,17 @@ export class linker_option_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Number of following strings.
 	 */
-	declare public count: number;
+	declare public count: uint32_t;
 
 	static {
 		toStringTag(this, 'linker_option_command');
@@ -3263,22 +3271,22 @@ export class symseg_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Segment offset.
 	 */
-	declare public offset: number;
+	declare public offset: uint32_t;
 
 	/**
 	 * Segment size.
 	 */
-	declare public size: number;
+	declare public size: uint32_t;
 
 	static {
 		toStringTag(this, 'symseg_command');
@@ -3297,12 +3305,12 @@ export class ident_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	static {
 		toStringTag(this, 'ident_command');
@@ -3319,12 +3327,12 @@ export class fvmfile_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * File pathname.
@@ -3334,7 +3342,7 @@ export class fvmfile_command extends Struct {
 	/**
 	 * File virtual address.
 	 */
-	declare public header_addr: number;
+	declare public header_addr: uint32_t;
 
 	static {
 		toStringTag(this, 'fvmfile_command');
@@ -3353,22 +3361,22 @@ export class entry_point_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * File __TEXT offset of main entry point.
 	 */
-	declare public entryoff: bigint;
+	declare public entryoff: uint64_t;
 
 	/**
 	 * Initial stack size, if non-zero.
 	 */
-	declare public stacksize: bigint;
+	declare public stacksize: uint64_t;
 
 	static {
 		toStringTag(this, 'entry_point_command');
@@ -3387,17 +3395,17 @@ export class source_version_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * A.B.C.D.E packed as a24.b10.c10.d10.e10.
 	 */
-	declare public version: bigint;
+	declare public version: uint64_t;
 
 	static {
 		toStringTag(this, 'source_version_command');
@@ -3415,17 +3423,17 @@ export class data_in_code_entry extends Struct {
 	/**
 	 * Offset from mach_header to start of data range.
 	 */
-	declare public offset: number;
+	declare public offset: uint32_t;
 
 	/**
 	 * Data range byte length.
 	 */
-	declare public length: number;
+	declare public length: uint16_t;
 
 	/**
 	 * Kind (DICE_KIND_*).
 	 */
-	declare public kind: number;
+	declare public kind: uint16_t;
 
 	static {
 		toStringTag(this, 'data_in_code_entry');
@@ -3470,17 +3478,17 @@ export class tlv_descriptor extends Struct {
 	/**
 	 * A pointer.
 	 */
-	declare public thunk: number;
+	declare public thunk: uint32_t;
 
 	/**
 	 * Unsigned long.
 	 */
-	declare public key: number;
+	declare public key: uint32_t;
 
 	/**
 	 * Unsigned long.
 	 */
-	declare public offset: number;
+	declare public offset: uint32_t;
 
 	static {
 		toStringTag(this, 'tlv_descriptor');
@@ -3498,17 +3506,17 @@ export class tlv_descriptor_64 extends Struct {
 	/**
 	 * A pointer.
 	 */
-	declare public thunk: bigint;
+	declare public thunk: uint64_t;
 
 	/**
 	 * Unsigned long.
 	 */
-	declare public key: bigint;
+	declare public key: uint64_t;
 
 	/**
 	 * Unsigned long.
 	 */
-	declare public offset: bigint;
+	declare public offset: uint64_t;
 
 	static {
 		toStringTag(this, 'tlv_descriptor_64');
@@ -3526,27 +3534,27 @@ export class note_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Owner name.
 	 */
-	declare public data_owner: Arr<number>;
+	declare public data_owner: Arr<char>;
 
 	/**
 	 * File offset.
 	 */
-	declare public offset: bigint;
+	declare public offset: uint64_t;
 
 	/**
 	 * Byte length.
 	 */
-	declare public size: bigint;
+	declare public size: uint64_t;
 
 	static {
 		toStringTag(this, 'note_command');
@@ -3566,22 +3574,22 @@ export class fileset_entry_command extends Struct {
 	/**
 	 * Command type.
 	 */
-	declare public cmd: number;
+	declare public cmd: uint32_t;
 
 	/**
 	 * Command size.
 	 */
-	declare public cmdsize: number;
+	declare public cmdsize: uint32_t;
 
 	/**
 	 * Virtual memory address.
 	 */
-	declare public vmaddr: bigint;
+	declare public vmaddr: uint64_t;
 
 	/**
 	 * File offset.
 	 */
-	declare public fileoff: bigint;
+	declare public fileoff: uint64_t;
 
 	/**
 	 * File pathname.
@@ -3591,7 +3599,7 @@ export class fileset_entry_command extends Struct {
 	/**
 	 * Reserved.
 	 */
-	declare public reserved: number;
+	declare public reserved: uint32_t;
 
 	static {
 		toStringTag(this, 'fileset_entry_command');

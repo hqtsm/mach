@@ -1,6 +1,7 @@
 // deno-lint-ignore-file camelcase
 import { constant, toStringTag } from '@hqtsm/class';
 import { int32, Struct, uint32, uint64 } from '@hqtsm/struct';
+import type { int32_t, uint32_t, uint64_t } from '../libc/stdint.ts';
 
 // Constants for fat_header magic:
 
@@ -21,12 +22,12 @@ export class fat_header extends Struct {
 	/**
 	 * Fat magic.
 	 */
-	declare public magic: number;
+	declare public magic: uint32_t;
 
 	/**
 	 * Number of fat architectures that follow.
 	 */
-	declare public nfat_arch: number;
+	declare public nfat_arch: uint32_t;
 
 	static {
 		toStringTag(this, 'fat_header');
@@ -43,27 +44,27 @@ export class fat_arch extends Struct {
 	/**
 	 * CPU type.
 	 */
-	declare public cputype: number;
+	declare public cputype: int32_t;
 
 	/**
 	 * Machine type.
 	 */
-	declare public cpusubtype: number;
+	declare public cpusubtype: int32_t;
 
 	/**
 	 * File offset.
 	 */
-	declare public offset: number;
+	declare public offset: uint32_t;
 
 	/**
 	 * Byte length.
 	 */
-	declare public size: number;
+	declare public size: uint32_t;
 
 	/**
 	 * Alignment as a power of 2.
 	 */
-	declare public align: number;
+	declare public align: uint32_t;
 
 	static {
 		toStringTag(this, 'fat_arch');
@@ -95,32 +96,32 @@ export class fat_arch_64 extends Struct {
 	/**
 	 * CPU type.
 	 */
-	declare public cputype: number;
+	declare public cputype: int32_t;
 
 	/**
 	 * Machine type.
 	 */
-	declare public cpusubtype: number;
+	declare public cpusubtype: int32_t;
 
 	/**
 	 * File offset.
 	 */
-	declare public offset: bigint;
+	declare public offset: uint64_t;
 
 	/**
 	 * Byte length.
 	 */
-	declare public size: bigint;
+	declare public size: uint64_t;
 
 	/**
 	 * Alignment as a power of 2.
 	 */
-	declare public align: number;
+	declare public align: uint32_t;
 
 	/**
 	 * Reserved.
 	 */
-	declare public reserved: number;
+	declare public reserved: uint32_t;
 
 	static {
 		toStringTag(this, 'fat_arch_64');
