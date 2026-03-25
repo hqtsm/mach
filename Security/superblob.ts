@@ -1,7 +1,7 @@
 import { type Concrete, constant, toStringTag } from '@hqtsm/class';
 import { type Arr, array, member, Struct, uint32BE } from '@hqtsm/struct';
 import { Blob, BlobCore, type BlobCoreOffset } from './blob.ts';
-import type { uint } from '../libc/c.ts';
+import type { bool, uint } from '../libc/c.ts';
 import { ENOMEM } from '../libc/errno.ts';
 import type { size_t } from '../libc/stddef.ts';
 import type { uint32_t } from '../libc/stdint.ts';
@@ -244,7 +244,7 @@ export abstract class SuperBlobCoreMaker {
 	public static contains(
 		_this: SuperBlobCoreMaker,
 		type: SuperBlobCoreType,
-	): boolean {
+	): bool {
 		return _this.mPieces.has(type);
 	}
 
