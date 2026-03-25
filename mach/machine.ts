@@ -1,5 +1,20 @@
 // deno-lint-ignore-file camelcase
 
+/**
+ * CPU type.
+ */
+export type cpu_type_t = number;
+
+/**
+ * CPU subtype.
+ */
+export type cpu_subtype_t = number;
+
+/**
+ * CPU thread type.
+ */
+export type cpu_threadtype_t = number;
+
 // CPU states:
 
 /**
