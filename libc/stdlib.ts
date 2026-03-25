@@ -1,3 +1,4 @@
+import type { size_t } from './c.ts';
 import { ENOMEM } from './errno.ts';
 
 /**
@@ -8,7 +9,7 @@ import { ENOMEM } from './errno.ts';
  * @returns Allocated memory.
  */
 export function malloc(
-	size: number,
+	size: size_t,
 	context?: { errno: number },
 ): ArrayBuffer | null {
 	try {
@@ -30,7 +31,7 @@ export function malloc(
  * @returns Allocated memory.
  */
 export function calloc(
-	size: number,
+	size: size_t,
 	context?: { errno: number },
 ): ArrayBuffer | null {
 	return malloc(size, context);
@@ -46,7 +47,7 @@ export function calloc(
  */
 export function realloc(
 	buffer: ArrayBuffer,
-	size: number,
+	size: size_t,
 	context?: { errno: number },
 ): ArrayBuffer | null {
 	const m = malloc(size, context);
