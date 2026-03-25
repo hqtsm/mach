@@ -61,7 +61,7 @@ export class mach_header extends Struct {
 	/**
 	 * Flags.
 	 */
-	declare public flags: number;
+	declare public flags: uint32_t;
 
 	static {
 		toStringTag(this, 'mach_header');
