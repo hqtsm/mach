@@ -5,45 +5,33 @@ export type bool = boolean;
 
 /**
  * Signed char.
- *
- * @template _ Bit size.
  */
-export type char<_ = 8> = number;
+export type char = number;
 
 /**
  * Unsigned char.
- *
- * @template _ Bit size.
  */
-export type uchar<_ = 8> = number;
+export type uchar = number;
 
 /**
  * Signed short.
- *
- * @template _ Bit size.
  */
-export type short<_ = 16> = number;
+export type short = number;
 
 /**
  * Unsigned short.
- *
- * @template _ Bit size.
  */
-export type ushort<_ = 16> = number;
+export type ushort = number;
 
 /**
  * Signed integer.
- *
- * @template _ Bit size.
  */
-export type int<_ = 32> = number;
+export type int = number;
 
 /**
  * Unsigned integer.
- *
- * @template _ Bit size.
  */
-export type uint<_ = 32> = number;
+export type uint = number;
 
 /**
  * Floating point.
