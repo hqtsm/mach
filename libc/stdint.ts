@@ -2,59 +2,43 @@
 
 /**
  * Signed 8-bit integer.
- *
- * @template _ Bit size.
  */
-export type int8_t<_ = 8> = number;
+export type int8_t = number;
 
 /**
  * Signed 16-bit integer.
- *
- * @template _ Bit size.
  */
-export type int16_t<_ = 16> = number;
+export type int16_t = number;
 
 /**
  * Signed 32-bit integer.
- *
- * @template _ Bit size.
  */
-export type int32_t<_ = 32> = number;
+export type int32_t = number;
 
 /**
  * Signed 64-bit integer.
- *
- * @template _ Bit size.
  */
-export type int64_t<_ = 64> = bigint;
+export type int64_t = bigint;
 
 /**
  * Unsigned 8-bit integer.
- *
- * @template _ Bit size.
  */
-export type uint8_t<_ = 8> = number;
+export type uint8_t = number;
 
 /**
  * Unsigned 16-bit integer.
- *
- * @template _ Bit size.
  */
-export type uint16_t<_ = 16> = number;
+export type uint16_t = number;
 
 /**
  * Unsigned 32-bit integer.
- *
- * @template _ Bit size.
  */
-export type uint32_t<_ = 32> = number;
+export type uint32_t = number;
 
 /**
  * Unsigned 64-bit integer.
- *
- * @template _ Bit size.
  */
-export type uint64_t<_ = 64> = bigint;
+export type uint64_t = bigint;
 
 /**
  * Maximum signed 8-bit integer.

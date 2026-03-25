@@ -66,3 +66,11 @@ export type float = number;
  * Double precision floating point.
  */
 export type double = number;
+
+/**
+ * Bitfield.
+ *
+ * @template T Integer type.
+ * @template _ Bit size.
+ */
+export type bitfield<T extends number | bigint, _ extends number = number> = T;
