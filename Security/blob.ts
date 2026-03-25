@@ -13,7 +13,8 @@ import {
 } from '@hqtsm/struct';
 import { CSMAGIC_BLOBWRAPPER } from '../kern/cs_blobs.ts';
 import { EINVAL, ENOMEM } from '../libc/errno.ts';
-import type { bool, int, size_t, uchar } from '../libc/c.ts';
+import type { bool, int, uchar } from '../libc/c.ts';
+import type { size_t } from '../libc/stddef.ts';
 import type { uint32_t, uint8_t } from '../libc/stdint.ts';
 import { malloc } from '../libc/stdlib.ts';
 import { type ArrayBufferLikeData, asUint8Array } from '../util/memory.ts';

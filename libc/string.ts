@@ -1,5 +1,6 @@
 import type { ArrayBufferPointer } from '@hqtsm/struct';
-import type { int, size_t } from './c.ts';
+import type { int } from './c.ts';
+import type { size_t } from './stddef.ts';
 
 /**
  * Get length of string.

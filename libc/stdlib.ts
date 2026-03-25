@@ -1,5 +1,6 @@
-import type { int, size_t } from './c.ts';
+import type { int } from './c.ts';
 import { ENOMEM } from './errno.ts';
+import type { size_t } from './stddef.ts';
 
 /**
  * Memory allocate.

@@ -1,6 +1,7 @@
 import { toStringTag } from '@hqtsm/class';
 import type { ArrayBufferPointer } from '@hqtsm/struct';
-import type { int, size_t } from '../libc/c.ts';
+import type { int } from '../libc/c.ts';
+import type { size_t } from '../libc/stddef.ts';
 import type {
 	SubtleCryptoDigest,
 	SubtleCryptoDigestAlgorithm,

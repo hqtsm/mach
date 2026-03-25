@@ -1,5 +1,3 @@
-// deno-lint-ignore-file camelcase
-
 /**
  * Boolean.
  */
@@ -46,16 +44,6 @@ export type int<_ = 32> = number;
  * @template _ Bit size.
  */
 export type uint<_ = 32> = number;
-
-/**
- * Size type.
- */
-export type size_t = number;
-
-/**
- * Big size type.
- */
-export type big_size_t = bigint;
 
 /**
  * Floating point.
