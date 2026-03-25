@@ -1,3 +1,45 @@
+// deno-lint-ignore-file camelcase
+
+/**
+ * Signed 8-bit integer.
+ */
+export type int8_t = number;
+
+/**
+ * Signed 16-bit integer.
+ */
+export type int16_t = number;
+
+/**
+ * Signed 32-bit integer.
+ */
+export type int32_t = number;
+
+/**
+ * Signed 64-bit integer.
+ */
+export type int64_t = bigint;
+
+/**
+ * Unsigned 8-bit integer.
+ */
+export type uint8_t = number;
+
+/**
+ * Unsigned 16-bit integer.
+ */
+export type uint16_t = number;
+
+/**
+ * Unsigned 32-bit integer.
+ */
+export type uint32_t = number;
+
+/**
+ * Unsigned 64-bit integer.
+ */
+export type uint64_t = bigint;
+
 /**
  * Maximum signed 8-bit integer.
  */
