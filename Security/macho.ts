@@ -9,13 +9,18 @@ import {
 	type Ptr,
 	Uint32Ptr,
 } from '@hqtsm/struct';
+import type { bool, char, uint } from '../libc/c.ts';
 import { EIO, ENOEXEC } from '../libc/errno.ts';
+import type { size_t } from '../libc/stddef.ts';
+import type { uint32_t } from '../libc/stdint.ts';
 import { strlen, strncmp } from '../libc/string.ts';
 import {
 	CPU_ARCH_ABI64,
 	CPU_SUBTYPE_MASK,
 	CPU_SUBTYPE_MULTIPLE,
+	type cpu_subtype_t,
 	CPU_TYPE_ARM,
+	type cpu_type_t,
 } from '../mach/machine.ts';
 import { PAGE_MASK_ARM64 } from '../mach/vm_param.ts';
 import {
@@ -79,12 +84,12 @@ export class Architecture {
 	/**
 	 * CPU type.
 	 */
-	public first: number;
+	public first: cpu_type_t;
 
 	/**
 	 * CPU subtype.
 	 */
-	public second: number;
+	public second: cpu_subtype_t;
 
 	/**
 	 * Create architecture.
@@ -97,7 +102,7 @@ export class Architecture {
 	 * @param type CPU type.
 	 * @param sub CPU subtype, defaults to `CPU_SUBTYPE_MULTIPLE`.
 	 */
-	constructor(type: number, sub?: number | null);
+	constructor(type: cpu_type_t, sub?: cpu_subtype_t | null);
 
 	/**
 	 * Create architecture from fat architecture struct.
@@ -113,8 +118,8 @@ export class Architecture {
 	 * @param sub CPU subtype.
 	 */
 	constructor(
-		type?: number | fat_arch | fat_arch_64,
-		sub?: number,
+		type?: cpu_type_t | fat_arch | fat_arch_64,
+		sub?: cpu_subtype_t,
 	) {
 		switch (typeof type) {
 			case 'undefined': {
@@ -140,7 +145,7 @@ export class Architecture {
 	 * @param _this This.
 	 * @returns Type ID.
 	 */
-	public static cpuType(_this: Architecture): number {
+	public static cpuType(_this: Architecture): cpu_type_t {
 		return _this.first;
 	}
 
@@ -150,7 +155,7 @@ export class Architecture {
 	 * @param _this This.
 	 * @returns Masked subtype ID.
 	 */
-	public static cpuSubtype(_this: Architecture): number {
+	public static cpuSubtype(_this: Architecture): cpu_subtype_t {
 		return _this.second & ~CPU_SUBTYPE_MASK;
 	}
 
@@ -160,7 +165,7 @@ export class Architecture {
 	 * @param _this This.
 	 * @returns Full subtype ID.
 	 */
-	public static cpuSubtypeFull(_this: Architecture): number {
+	public static cpuSubtypeFull(_this: Architecture): cpu_subtype_t {
 		return _this.second;
 	}
 
@@ -170,7 +175,7 @@ export class Architecture {
 	 * @param _this This.
 	 * @returns Is valid.
 	 */
-	public static bool(_this: Architecture): boolean {
+	public static bool(_this: Architecture): bool {
 		return !!_this.first;
 	}
 
@@ -181,7 +186,7 @@ export class Architecture {
 	 * @param a2 Architecture B.
 	 * @returns Is equal.
 	 */
-	public static equals(a1: Architecture, a2: Architecture): boolean {
+	public static equals(a1: Architecture, a2: Architecture): bool {
 		return a1.first === a2.first && a1.second === a2.second;
 	}
 
@@ -192,7 +197,7 @@ export class Architecture {
 	 * @param a2 Architecture B.
 	 * @returns Is less than.
 	 */
-	public static lessThan(a1: Architecture, a2: Architecture): boolean {
+	public static lessThan(a1: Architecture, a2: Architecture): bool {
 		const x = a1.first;
 		const y = a2.first;
 		return x < y || (!(y < x) && a1.second < a2.second);
@@ -205,7 +210,7 @@ export class Architecture {
 	 * @param templ Template architecture.
 	 * @returns Matches template.
 	 */
-	public static matches(_this: Architecture, templ: Architecture): boolean {
+	public static matches(_this: Architecture, templ: Architecture): bool {
 		if (_this.first !== templ.first) {
 			return false;
 		}
@@ -235,7 +240,7 @@ export class MachOBase {
 	 * @param _this This.
 	 * @returns True if flipped, false if not.
 	 */
-	public static isFlipped(_this: MachOBase): boolean {
+	public static isFlipped(_this: MachOBase): bool {
 		return _this.mFlip;
 	}
 
@@ -245,7 +250,7 @@ export class MachOBase {
 	 * @param _this This.
 	 * @returns True if 64-bit, false if 32-bit.
 	 */
-	public static is64(_this: MachOBase): boolean {
+	public static is64(_this: MachOBase): bool {
 		return _this.m64;
 	}
 
@@ -278,7 +283,7 @@ export class MachOBase {
 	 * @param _this This.
 	 * @returns File type.
 	 */
-	public static type(_this: MachOBase): number {
+	public static type(_this: MachOBase): uint32_t {
 		return _this.mHeader!.filetype;
 	}
 
@@ -288,7 +293,7 @@ export class MachOBase {
 	 * @param _this This.
 	 * @returns Flags.
 	 */
-	public static flags(_this: MachOBase): number {
+	public static flags(_this: MachOBase): uint32_t {
 		return _this.mHeader!.flags;
 	}
 
@@ -341,7 +346,7 @@ export class MachOBase {
 	 *
 	 * @returns Byte length of commands.
 	 */
-	public static commandLength(_this: MachOBase): number {
+	public static commandLength(_this: MachOBase): size_t {
 		return _this.mHeader!.sizeofcmds;
 	}
 
@@ -354,7 +359,7 @@ export class MachOBase {
 	 */
 	public static findCommand(
 		_this: MachOBase,
-		cmd: number,
+		cmd: uint32_t,
 	): load_command | null {
 		for (
 			let c = MachOBase.loadCommands(_this);
@@ -474,7 +479,7 @@ export class MachOBase {
 		_this: MachOBase,
 		cmd: load_command,
 		str: lc_str,
-	): Const<Int8Ptr> | null {
+	): Const<Ptr<char>> | null {
 		const { offset } = str;
 		const sp = new Int8Ptr(
 			cmd.buffer,
@@ -539,7 +544,7 @@ export class MachOBase {
 	 * @param _this This.
 	 * @returns Code signature offset, or 0.
 	 */
-	public static signingOffset(_this: MachOBase): number {
+	public static signingOffset(_this: MachOBase): size_t {
 		const lec = MachOBase.findCodeSignature(_this);
 		return lec ? lec.dataoff : 0;
 	}
@@ -550,7 +555,7 @@ export class MachOBase {
 	 * @param _this This.
 	 * @returns Code signature length, or 0.
 	 */
-	public static signingLength(_this: MachOBase): number {
+	public static signingLength(_this: MachOBase): size_t {
 		const lec = MachOBase.findCodeSignature(_this);
 		return lec ? lec.datasize : 0;
 	}
@@ -566,10 +571,10 @@ export class MachOBase {
 	 */
 	public static version(
 		_this: MachOBase,
-		platform: Uint32Ptr | null,
-		minVersion: Uint32Ptr | null,
-		sdkVersion: Uint32Ptr | null,
-	): boolean {
+		platform: Ptr<uint32_t> | null,
+		minVersion: Ptr<uint32_t> | null,
+		sdkVersion: Ptr<uint32_t> | null,
+	): bool {
 		const bc = MachOBase.findBuildVersion(_this);
 		if (bc) {
 			if (platform) {
@@ -629,7 +634,7 @@ export class MachOBase {
 	 * @param _this This.
 	 * @returns Platform or 0.
 	 */
-	public static platform(_this: MachOBase): number {
+	public static platform(_this: MachOBase): uint32_t {
 		const p = new Uint32Ptr(new ArrayBuffer(4));
 		return MachOBase.version(_this, p, null, null) ? p[0] : 0;
 	}
@@ -640,7 +645,7 @@ export class MachOBase {
 	 * @param _this This.
 	 * @returns Minimum version or 0.
 	 */
-	public static minVersion(_this: MachOBase): number {
+	public static minVersion(_this: MachOBase): uint32_t {
 		const p = new Uint32Ptr(new ArrayBuffer(4));
 		return MachOBase.version(_this, null, p, null) ? p[0] : 0;
 	}
@@ -651,7 +656,7 @@ export class MachOBase {
 	 * @param _this This.
 	 * @returns SDK version or 0.
 	 */
-	public static sdkVersion(_this: MachOBase): number {
+	public static sdkVersion(_this: MachOBase): uint32_t {
 		const p = new Uint32Ptr(new ArrayBuffer(4));
 		return MachOBase.version(_this, null, null, p) ? p[0] : 0;
 	}
@@ -743,7 +748,7 @@ export class MachOBase {
 	 * @param _this This.
 	 * @returns Byte length of header.
 	 */
-	protected static headerSize(_this: MachOBase): number {
+	protected static headerSize(_this: MachOBase): size_t {
 		return _this.m64 ? mach_header_64.BYTE_LENGTH : mach_header.BYTE_LENGTH;
 	}
 
@@ -753,7 +758,7 @@ export class MachOBase {
 	 * @param _this This.
 	 * @returns Byte length of commands.
 	 */
-	protected static commandSize(_this: MachOBase): number {
+	protected static commandSize(_this: MachOBase): size_t {
 		return _this.mHeader!.sizeofcmds;
 	}
 
@@ -831,17 +836,17 @@ export class MachOBase {
 	/**
 	 * The end commands offset, from start of commands.
 	 */
-	private mEndCommands = 0;
+	private mEndCommands: size_t = 0;
 
 	/**
 	 * Is a 64-bit binary.
 	 */
-	private m64 = false;
+	private m64: bool = false;
 
 	/**
 	 * Does binary endian not matches the host endian.
 	 */
-	private mFlip = false;
+	private mFlip: bool = false;
 
 	static {
 		toStringTag(this, 'MachOBase');
@@ -874,8 +879,8 @@ export class MachO extends MachOBase {
 	 */
 	protected async MachO(
 		reader: Reader,
-		offset = 0,
-		length = 0,
+		offset: size_t = 0,
+		length: size_t = 0,
 	): Promise<this> {
 		this.mReader = reader;
 		this.mOffset = offset;
@@ -927,8 +932,8 @@ export class MachO extends MachOBase {
 	 */
 	public static async MachO(
 		reader: Reader,
-		offset = 0,
-		length = 0,
+		offset: size_t = 0,
+		length: size_t = 0,
 	): Promise<MachO> {
 		return await new MachO().MachO(reader, offset, length);
 	}
@@ -939,7 +944,7 @@ export class MachO extends MachOBase {
 	 * @param _this This.
 	 * @returns Offset in reader.
 	 */
-	public static offset(_this: MachO): number {
+	public static offset(_this: MachO): size_t {
 		return _this.mOffset;
 	}
 
@@ -949,7 +954,7 @@ export class MachO extends MachOBase {
 	 * @param _this This.
 	 * @returns Length in reader.
 	 */
-	public static size(_this: MachO): number {
+	public static size(_this: MachO): size_t {
 		return _this.mLength;
 	}
 
@@ -959,7 +964,7 @@ export class MachO extends MachOBase {
 	 * @param _this This.
 	 * @returns Signing offset or file length if none.
 	 */
-	public static signingExtent(_this: MachO): number {
+	public static signingExtent(_this: MachO): size_t {
 		return MachO.signingOffset(_this) || MachO.size(_this);
 	}
 
@@ -973,8 +978,8 @@ export class MachO extends MachOBase {
 	 */
 	public static async dataAt(
 		_this: MachO,
-		offset: number,
-		size: number,
+		offset: size_t,
+		size: size_t,
 	): Promise<ArrayBuffer> {
 		const o = _this.mOffset + offset;
 		const data = await _this.mReader!.slice(o, o + size).arrayBuffer();
@@ -1074,24 +1079,24 @@ export class MachO extends MachOBase {
 	 * @param _this This.
 	 * @returns Is suspicious.
 	 */
-	public static isSuspicious(_this: MachO): boolean {
+	public static isSuspicious(_this: MachO): bool {
 		return _this.mSuspicious;
 	}
 
 	/**
 	 * Offset in reader.
 	 */
-	private mOffset = 0;
+	private mOffset: size_t = 0;
 
 	/**
 	 * Length in reader.
 	 */
-	private mLength = 0;
+	private mLength: size_t = 0;
 
 	/**
 	 * Suspicious flag.
 	 */
-	private mSuspicious = false;
+	private mSuspicious: bool = false;
 
 	static {
 		toStringTag(this, 'MachO');
@@ -1142,6 +1147,16 @@ export class MachOImage extends MachOBase {
 }
 
 /**
+ * Universal architectures.
+ */
+export type UniversalArchitectures = Set<Architecture>;
+
+/**
+ * Universal offsets to length.
+ */
+export type UniversalOffsetsToLength = Map<size_t, size_t>;
+
+/**
  * A universal binary over a readable.
  * Works for fat binaries and also thin binaries.
  */
@@ -1166,8 +1181,8 @@ export class Universal {
 	 */
 	public static async Universal(
 		reader: Reader,
-		offset = 0,
-		length = 0,
+		offset: size_t = 0,
+		length: size_t = 0,
 	): Promise<Universal> {
 		return await new Universal().Universal(reader, offset, length);
 	}
@@ -1182,8 +1197,8 @@ export class Universal {
 	 */
 	protected async Universal(
 		reader: Reader,
-		offset = 0,
-		length = 0,
+		offset: size_t = 0,
+		length: size_t = 0,
 	): Promise<this> {
 		this.mReader = reader;
 		this.mBase = offset;
@@ -1349,36 +1364,36 @@ export class Universal {
 	 */
 	public static async architecture(
 		_this: Universal,
-		offset: number,
+		offset: size_t,
 	): Promise<MachO>;
 
 	/**
 	 * Get Mach-O for architecture or offset.
 	 *
 	 * @param _this This.
-	 * @param a Architecture or offset.
+	 * @param arch Architecture or offset.
 	 * @returns Mach-O.
 	 */
 	public static async architecture(
 		_this: Universal,
-		a: Architecture | number,
+		arch: Architecture | size_t,
 	): Promise<MachO> {
-		if (typeof a === 'number') {
+		if (typeof arch === 'number') {
 			if (Universal.isUniversal(_this)) {
-				const length = Universal.lengthOfSlice(_this, a);
+				const length = Universal.lengthOfSlice(_this, arch);
 				return Universal.make(
 					_this,
-					await MachO.MachO(_this.mReader!, a, length),
+					await MachO.MachO(_this.mReader!, arch, length),
 				);
 			}
-			if (a === _this.mBase) {
+			if (arch === _this.mBase) {
 				return MachO.MachO(_this.mReader!);
 			}
 		} else {
 			if (Universal.isUniversal(_this)) {
-				return Universal.findImage(_this, a);
+				return Universal.findImage(_this, arch);
 			}
-			if (Architecture.matches(a, _this.mThinArch!)) {
+			if (Architecture.matches(arch, _this.mThinArch!)) {
 				return MachO.MachO(_this.mReader!, _this.mBase, _this.mLength);
 			}
 		}
@@ -1392,7 +1407,7 @@ export class Universal {
 	 * @param arch Architecture to get the offset of.
 	 * @returns Architecture offset.
 	 */
-	public static archOffset(_this: Universal, arch: Architecture): number {
+	public static archOffset(_this: Universal, arch: Architecture): size_t {
 		if (Universal.isUniversal(_this)) {
 			return _this.mBase + Universal.findArch(_this, arch).offset;
 		}
@@ -1409,7 +1424,7 @@ export class Universal {
 	 * @param arch Architecture to get the length of.
 	 * @returns Architecture length.
 	 */
-	public static archLength(_this: Universal, arch: Architecture): number {
+	public static archLength(_this: Universal, arch: Architecture): size_t {
 		if (Universal.isUniversal(_this)) {
 			return _this.mBase + Universal.findArch(_this, arch).size;
 		}
@@ -1425,7 +1440,7 @@ export class Universal {
 	 * @param _this This.
 	 * @returns Narrowed range or not.
 	 */
-	public static narrowed(_this: Universal): boolean {
+	public static narrowed(_this: Universal): bool {
 		return !!_this.mBase;
 	}
 
@@ -1437,7 +1452,7 @@ export class Universal {
 	 */
 	public static architectures(
 		_this: Universal,
-		archs: Set<Architecture>,
+		archs: UniversalArchitectures,
 	): void {
 		const skip = new Set<string>();
 		for (const a of archs) {
@@ -1465,7 +1480,7 @@ export class Universal {
 	 * @param _this This.
 	 * @returns True if universal, even if only 1 architecture.
 	 */
-	public static isUniversal(_this: Universal): boolean {
+	public static isUniversal(_this: Universal): bool {
 		return !!_this.mArchList;
 	}
 
@@ -1476,7 +1491,7 @@ export class Universal {
 	 * @param offset Slice offset.
 	 * @returns Slice length.
 	 */
-	public static lengthOfSlice(_this: Universal, offset: number): number {
+	public static lengthOfSlice(_this: Universal, offset: size_t): size_t {
 		const value = _this.mSizes.get(offset);
 		if (value === undefined) {
 			MacOSError.throwMe(errSecInternalError);
@@ -1490,7 +1505,7 @@ export class Universal {
 	 * @param _this This.
 	 * @returns Byte offset in reader.
 	 */
-	public static offset(_this: Universal): number {
+	public static offset(_this: Universal): size_t {
 		return _this.mBase;
 	}
 
@@ -1500,7 +1515,7 @@ export class Universal {
 	 * @param _this This.
 	 * @returns Byte length in reader.
 	 */
-	public static size(_this: Universal): number {
+	public static size(_this: Universal): size_t {
 		return _this.mLength;
 	}
 
@@ -1510,7 +1525,7 @@ export class Universal {
 	 * @param _this This.
 	 * @returns Is suspicious.
 	 */
-	public static isSuspicious(_this: Universal): boolean {
+	public static isSuspicious(_this: Universal): bool {
 		return _this.mSuspicious;
 	}
 
@@ -1520,7 +1535,7 @@ export class Universal {
 	 * @param reader Reader object.
 	 * @returns Zero if not a valid Mach-O or Universal.
 	 */
-	public static async typeOf(reader: Reader): Promise<number> {
+	public static async typeOf(reader: Reader): Promise<uint32_t> {
 		let data = await reader.slice(0, mach_header.BYTE_LENGTH).arrayBuffer();
 		if (data.byteLength !== mach_header.BYTE_LENGTH) {
 			return 0;
@@ -1660,7 +1675,7 @@ export class Universal {
 	/**
 	 * Architecture count, if fat.
 	 */
-	private mArchCount = 0;
+	private mArchCount: uint = 0;
 
 	/**
 	 * Single architecture, if thin.
@@ -1670,27 +1685,27 @@ export class Universal {
 	/**
 	 * Offset in reader.
 	 */
-	private mBase = 0;
+	private mBase: size_t = 0;
 
 	/**
 	 * Length in reader, if thin.
 	 */
-	private mLength = 0;
+	private mLength: size_t = 0;
 
 	/**
 	 * Length of slice at each offset.
 	 */
-	private mSizes: Map<number, number> = new Map();
+	private mSizes: UniversalOffsetsToLength = new Map();
 
 	/**
 	 * Mach type.
 	 */
-	private mMachType = 0;
+	private mMachType: uint32_t = 0;
 
 	/**
 	 * Suspicious flag.
 	 */
-	private mSuspicious = false;
+	private mSuspicious: bool = false;
 
 	static {
 		toStringTag(this, 'Universal');
