@@ -41,13 +41,17 @@ export const PAGE_MAX_SHIFT_I386 = 14;
 
 /**
  * Page max size: i386.
+ *
+ * `1 << PAGE_MAX_SHIFT`
  */
-export const PAGE_MAX_SIZE_I386 = 0x4000; // 1 << PAGE_MAX_SHIFT
+export const PAGE_MAX_SIZE_I386 = 0x4000;
 
 /**
  * Page max mask: i386.
+ *
+ * `PAGE_MAX_SIZE - 1`
  */
-export const PAGE_MAX_MASK_I386 = 0x3fff; // PAGE_MAX_SIZE - 1
+export const PAGE_MAX_MASK_I386 = 0x3fff;
 
 /**
  * Page min shift: i386.
@@ -56,13 +60,17 @@ export const PAGE_MIN_SHIFT_I386 = 12;
 
 /**
  * Page min size: i386.
+ *
+ * `1 << PAGE_MIN_SHIFT`
  */
-export const PAGE_MIN_SIZE_I386 = 0x1000; // 1 << PAGE_MIN_SHIFT
+export const PAGE_MIN_SIZE_I386 = 0x1000;
 
 /**
  * Page min mask: i386.
+ *
+ * `PAGE_MIN_SIZE - 1`
  */
-export const PAGE_MIN_MASK_I386 = 0xfff; // PAGE_MIN_SIZE - 1
+export const PAGE_MIN_MASK_I386 = 0xfff;
 
 /**
  * VM min address 64-bit: i386.

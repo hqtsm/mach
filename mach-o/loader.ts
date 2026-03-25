@@ -520,8 +520,10 @@ export const LC_PREBIND_CKSUM = 0x17;
 
 /**
  * Load a dylib that is allow to be missing.
+ *
+ * `0x18 | LC_REQ_DYLD`
  */
-export const LC_LOAD_WEAK_DYLIB = 0x80000018; // 0x18 | LC_REQ_DYLD
+export const LC_LOAD_WEAK_DYLIB = 0x80000018;
 
 /**
  * 64-bit segment to be mapped.
@@ -540,8 +542,10 @@ export const LC_UUID = 0x1b;
 
 /**
  * Runpath additions.
+ *
+ * `0x1c | LC_REQ_DYLD`
  */
-export const LC_RPATH = 0x8000001c; // 0x1c | LC_REQ_DYLD
+export const LC_RPATH = 0x8000001c;
 
 /**
  * Code signature.
@@ -555,8 +559,10 @@ export const LC_SEGMENT_SPLIT_INFO = 0x1e;
 
 /**
  * Re-export dylib.
+ *
+ * `0x1f | LC_REQ_DYLD`
  */
-export const LC_REEXPORT_DYLIB = 0x8000001f; // 0x1f | LC_REQ_DYLD
+export const LC_REEXPORT_DYLIB = 0x8000001f;
 
 /**
  * Lazy load dylib on first use.
@@ -575,13 +581,17 @@ export const LC_DYLD_INFO = 0x22;
 
 /**
  * Compressed dyld info only.
+ *
+ * `0x22 | LC_REQ_DYLD`
  */
-export const LC_DYLD_INFO_ONLY = 0x80000022; // 0x22 | LC_REQ_DYLD
+export const LC_DYLD_INFO_ONLY = 0x80000022;
 
 /**
  * Load upward dylib.
+ *
+ * `0x23 | LC_REQ_DYLD`
  */
-export const LC_LOAD_UPWARD_DYLIB = 0x80000023; // 0x23 | LC_REQ_DYLD
+export const LC_LOAD_UPWARD_DYLIB = 0x80000023;
 
 /**
  * Minimum macOS version.
@@ -605,8 +615,10 @@ export const LC_DYLD_ENVIRONMENT = 0x27;
 
 /**
  * Replacement for LC_UNIXTHREAD.
+ *
+ * `0x28 | LC_REQ_DYLD`
  */
-export const LC_MAIN = 0x80000028; // 0x28 | LC_REQ_DYLD
+export const LC_MAIN = 0x80000028;
 
 /**
  * Table of non-instructions in __text.
@@ -660,18 +672,24 @@ export const LC_BUILD_VERSION = 0x32;
 
 /**
  * Used with linkedit_data_command.
+ *
+ * `0x33 | LC_REQ_DYLD`
  */
-export const LC_DYLD_EXPORTS_TRIE = 0x80000033; // 0x33 | LC_REQ_DYLD
+export const LC_DYLD_EXPORTS_TRIE = 0x80000033;
 
 /**
  * Used with linkedit_data_command.
+ *
+ * `0x34 | LC_REQ_DYLD`
  */
-export const LC_DYLD_CHAINED_FIXUPS = 0x80000034; // 0x34 | LC_REQ_DYLD
+export const LC_DYLD_CHAINED_FIXUPS = 0x80000034;
 
 /**
  * Used with fileset_entry_command.
+ *
+ * `0x35 | LC_REQ_DYLD`
  */
-export const LC_FILESET_ENTRY = 0x80000035; // 0x35 | LC_REQ_DYLD
+export const LC_FILESET_ENTRY = 0x80000035;
 
 /**
  * Used with linkedit_data_command.

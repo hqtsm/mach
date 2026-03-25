@@ -22,13 +22,17 @@ export const VM_PROT_EXECUTE = 0x4;
 
 /**
  * VM protection: default.
+ *
+ * `VM_PROT_READ | VM_PROT_WRITE`
  */
-export const VM_PROT_DEFAULT = 0x3; // VM_PROT_READ | VM_PROT_WRITE
+export const VM_PROT_DEFAULT = 0x3;
 
 /**
  * VM protection: all.
+ *
+ * `VM_PROT_READ | VM_PROT_WRITE | VM_PROT_EXECUTE`
  */
-export const VM_PROT_ALL = 0x7; // VM_PROT_READ | VM_PROT_WRITE | VM_PROT_EXECUTE
+export const VM_PROT_ALL = 0x7;
 
 /**
  * VM protection: no change legacy.
@@ -62,8 +66,10 @@ export const VM_PROT_STRIP_READ = 0x80;
 
 /**
  * VM protection: execute only.
+ *
+ * `VM_PROT_EXECUTE | VM_PROT_STRIP_READ`
  */
-export const VM_PROT_EXECUTE_ONLY = 0x84; // VM_PROT_EXECUTE | VM_PROT_STRIP_READ
+export const VM_PROT_EXECUTE_ONLY = 0x84;
 
 /**
  * VM protection: TPRO.
@@ -82,5 +88,7 @@ export const VM_PROT_ALLEXEC = VM_PROT_EXECUTE;
 
 /**
  * VM protection: all exec: x86_64.
+ *
+ * `VM_PROT_EXECUTE | VM_PROT_UEXEC`
  */
-export const VM_PROT_ALLEXEC_X86_64 = 0xc; // VM_PROT_EXECUTE | VM_PROT_UEXEC
+export const VM_PROT_ALLEXEC_X86_64 = 0xc;

@@ -73,8 +73,10 @@ export const CPU_TYPE_I386 = CPU_TYPE_X86;
 
 /**
  * CPU type: X86_64.
+ *
+ * `CPU_TYPE_X86 | CPU_ARCH_ABI64`
  */
-export const CPU_TYPE_X86_64 = 0x1000007; // CPU_TYPE_X86 | CPU_ARCH_ABI64
+export const CPU_TYPE_X86_64 = 0x1000007;
 
 /**
  * CPU type: MC98000.
@@ -93,13 +95,17 @@ export const CPU_TYPE_ARM = 12;
 
 /**
  * CPU type: ARM64.
+ *
+ * `CPU_TYPE_ARM | CPU_ARCH_ABI64`
  */
-export const CPU_TYPE_ARM64 = 0x100000c; // CPU_TYPE_ARM | CPU_ARCH_ABI64
+export const CPU_TYPE_ARM64 = 0x100000c;
 
 /**
  * CPU type: ARM64_32.
+ *
+ * `CPU_TYPE_ARM | CPU_ARCH_ABI64_32`
  */
-export const CPU_TYPE_ARM64_32 = 0x200000c; // CPU_TYPE_ARM | CPU_ARCH_ABI64_32
+export const CPU_TYPE_ARM64_32 = 0x200000c;
 
 /**
  * CPU type: MC88000.
@@ -123,8 +129,10 @@ export const CPU_TYPE_POWERPC = 18;
 
 /**
  * CPU type: PowerPC64.
+ *
+ * `CPU_TYPE_POWERPC | CPU_ARCH_ABI64`
  */
-export const CPU_TYPE_POWERPC64 = 0x1000012; // CPU_TYPE_POWERPC | CPU_ARCH_ABI64
+export const CPU_TYPE_POWERPC64 = 0x1000012;
 
 // CPU subtypes:
 
@@ -271,108 +279,149 @@ export const CPU_SUBTYPE_INTEL = (f: number, m: number): number =>
 
 /**
  * CPU subtype: Intel all.
+ *
+ * `CPU_SUBTYPE_INTEL(3, 0)`
  */
-export const CPU_SUBTYPE_I386_ALL = 3; // CPU_SUBTYPE_INTEL(3, 0)
+export const CPU_SUBTYPE_I386_ALL = 3;
 
 /**
  * CPU subtype: Intel 386.
+ *
+ * `CPU_SUBTYPE_INTEL(3, 0)`
  */
-export const CPU_SUBTYPE_386 = 3; // CPU_SUBTYPE_INTEL(3, 0)
+export const CPU_SUBTYPE_386 = 3;
 
 /**
  * CPU subtype: Intel 486.
+ *
+ * `CPU_SUBTYPE_INTEL(4, 0)`
  */
-export const CPU_SUBTYPE_486 = 4; // CPU_SUBTYPE_INTEL(4, 0)
+export const CPU_SUBTYPE_486 = 4;
 
 /**
  * CPU subtype: Intel 486SX.
+ *
+ * `CPU_SUBTYPE_INTEL(4, 8)`
  */
-export const CPU_SUBTYPE_486SX = 132; // CPU_SUBTYPE_INTEL(4, 8)
+export const CPU_SUBTYPE_486SX = 132;
 
 /**
  * CPU subtype: Intel 586.
+ *
+ * `CPU_SUBTYPE_INTEL(5, 0)`
  */
-export const CPU_SUBTYPE_586 = 5; // CPU_SUBTYPE_INTEL(5, 0)
+export const CPU_SUBTYPE_586 = 5;
 
 /**
  * CPU subtype: Intel Pentium.
+ *
+ * `CPU_SUBTYPE_INTEL(5, 0)`
  */
-export const CPU_SUBTYPE_PENT = 5; // CPU_SUBTYPE_INTEL(5, 0)
+export const CPU_SUBTYPE_PENT = 5;
 
 /**
  * CPU subtype: Intel Pentium Pro.
+ *
+ * `CPU_SUBTYPE_INTEL(6, 1)`
  */
-export const CPU_SUBTYPE_PENTPRO = 22; // CPU_SUBTYPE_INTEL(6, 1)
-
+export const CPU_SUBTYPE_PENTPRO = 22;
 /**
  * CPU subtype: Intel Pentium II M3.
+ *
+ * `CPU_SUBTYPE_INTEL(6, 3)`
  */
-export const CPU_SUBTYPE_PENTII_M3 = 54; // CPU_SUBTYPE_INTEL(6, 3)
+export const CPU_SUBTYPE_PENTII_M3 = 54;
 
 /**
  * CPU subtype: Intel Pentium II M5.
+ *
+ * `CPU_SUBTYPE_INTEL(6, 5)`
  */
-export const CPU_SUBTYPE_PENTII_M5 = 86; // CPU_SUBTYPE_INTEL(6, 5)
+export const CPU_SUBTYPE_PENTII_M5 = 86;
 
 /**
  * CPU subtype: Intel Celeron.
+ *
+ * `CPU_SUBTYPE_INTEL(7, 6)`
  */
-export const CPU_SUBTYPE_CELERON = 103; // CPU_SUBTYPE_INTEL(7, 6)
+export const CPU_SUBTYPE_CELERON = 103;
 
 /**
  * CPU subtype: Intel Celeron Mobile.
+ *
+ * `CPU_SUBTYPE_INTEL(7, 7)`
  */
-export const CPU_SUBTYPE_CELERON_MOBILE = 119; // CPU_SUBTYPE_INTEL(7, 7)
+export const CPU_SUBTYPE_CELERON_MOBILE = 119;
 
 /**
  * CPU subtype: Intel Pentium 3.
+ *
+ * `CPU_SUBTYPE_INTEL(8, 0)`
  */
-export const CPU_SUBTYPE_PENTIUM_3 = 8; // CPU_SUBTYPE_INTEL(8, 0)
+export const CPU_SUBTYPE_PENTIUM_3 = 8;
 
 /**
  * CPU subtype: Intel Pentium 3 M.
+ *
+ * `CPU_SUBTYPE_INTEL(8, 1)`
  */
-export const CPU_SUBTYPE_PENTIUM_3_M = 24; // CPU_SUBTYPE_INTEL(8, 1)
+export const CPU_SUBTYPE_PENTIUM_3_M = 24;
 
 /**
  * CPU subtype: Intel Pentium 3 Xeon.
+ *
+ * `CPU_SUBTYPE_INTEL(8, 2)`
  */
-export const CPU_SUBTYPE_PENTIUM_3_XEON = 40; // CPU_SUBTYPE_INTEL(8, 2)
+export const CPU_SUBTYPE_PENTIUM_3_XEON = 40;
 
 /**
  * CPU subtype: Intel Pentium M.
+ *
+ * `CPU_SUBTYPE_INTEL(9, 0)`
  */
-export const CPU_SUBTYPE_PENTIUM_M = 9; // CPU_SUBTYPE_INTEL(9, 0)
+export const CPU_SUBTYPE_PENTIUM_M = 9;
 
 /**
  * CPU subtype: Intel Pentium 4.
+ *
+ * `CPU_SUBTYPE_INTEL(10, 0)`
  */
-export const CPU_SUBTYPE_PENTIUM_4 = 10; // CPU_SUBTYPE_INTEL(10, 0)
+export const CPU_SUBTYPE_PENTIUM_4 = 10;
 
 /**
  * CPU subtype: Intel Pentium 4 M.
+ *
+ * `CPU_SUBTYPE_INTEL(10, 1)`
  */
-export const CPU_SUBTYPE_PENTIUM_4_M = 26; // CPU_SUBTYPE_INTEL(10, 1)
+export const CPU_SUBTYPE_PENTIUM_4_M = 26;
 
 /**
  * CPU subtype: Intel Itanium.
+ *
+ * `CPU_SUBTYPE_INTEL(11, 0)`
  */
-export const CPU_SUBTYPE_ITANIUM = 11; // CPU_SUBTYPE_INTEL(11, 0)
+export const CPU_SUBTYPE_ITANIUM = 11;
 
 /**
  * CPU subtype: Intel Itanium 2.
+ *
+ * `CPU_SUBTYPE_INTEL(11, 1)`
  */
-export const CPU_SUBTYPE_ITANIUM_2 = 27; // CPU_SUBTYPE_INTEL(11, 1)
+export const CPU_SUBTYPE_ITANIUM_2 = 27;
 
 /**
  * CPU subtype: Intel Xeon.
+ *
+ * `CPU_SUBTYPE_INTEL(12, 0)`
  */
-export const CPU_SUBTYPE_XEON = 12; // CPU_SUBTYPE_INTEL(12, 0)
+export const CPU_SUBTYPE_XEON = 12;
 
 /**
  * CPU subtype: Intel Xeon MP.
+ *
+ * `CPU_SUBTYPE_INTEL(12, 1)`
  */
-export const CPU_SUBTYPE_XEON_MP = 28; // CPU_SUBTYPE_INTEL(12, 1)
+export const CPU_SUBTYPE_XEON_MP = 28;
 
 /**
  * Get Intel family from CPU subtype.

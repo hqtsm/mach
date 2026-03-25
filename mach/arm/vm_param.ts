@@ -78,13 +78,17 @@ export const PAGE_MAX_SHIFT_ARM = 14;
 
 /**
  * Page max size: ARM.
+ *
+ * `1 << PAGE_MAX_SHIFT`
  */
-export const PAGE_MAX_SIZE_ARM = 0x4000; // 1 << PAGE_MAX_SHIFT
+export const PAGE_MAX_SIZE_ARM = 0x4000;
 
 /**
  * Page max mask: ARM.
+ *
+ * `PAGE_MAX_SIZE - 1`
  */
-export const PAGE_MAX_MASK_ARM = 0x3fff; // PAGE_MAX_SIZE - 1
+export const PAGE_MAX_MASK_ARM = 0x3fff;
 
 /**
  * Page min shift: ARM.
@@ -93,13 +97,17 @@ export const PAGE_MIN_SHIFT_ARM = 12;
 
 /**
  * Page min size: ARM.
+ *
+ * `1 << PAGE_MIN_SHIFT`
  */
-export const PAGE_MIN_SIZE_ARM = 0x1000; // 1 << PAGE_MIN_SHIFT
+export const PAGE_MIN_SIZE_ARM = 0x1000;
 
 /**
  * Page min mask: ARM.
+ *
+ * `PAGE_MIN_SIZE - 1`
  */
-export const PAGE_MIN_MASK_ARM = 0xfff; // PAGE_MIN_SIZE - 1
+export const PAGE_MIN_MASK_ARM = 0xfff;
 
 /**
  * VM min address: ARM.

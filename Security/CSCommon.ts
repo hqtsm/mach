@@ -436,48 +436,66 @@ export const kSecCSDefaultFlags = 0;
 
 /**
  * Code signing consider expired certificates invalid.
+ *
+ * `1 << 31`
  */
-export const kSecCSConsiderExpiration = 0x80000000; // 1 << 31
+export const kSecCSConsiderExpiration = 0x80000000;
 
 /**
  * Code signing enforce revocation checks.
+ *
+ * `1 << 30`
  */
-export const kSecCSEnforceRevocationChecks = 0x40000000; // 1 << 30
+export const kSecCSEnforceRevocationChecks = 0x40000000;
 
 /**
  * Code signing no network access.
+ *
+ * `1 << 29`
  */
-export const kSecCSNoNetworkAccess = 0x20000000; // 1 << 29
+export const kSecCSNoNetworkAccess = 0x20000000;
 
 /**
  * Code signing report progress.
+ *
+ * `1 << 28`
  */
-export const kSecCSReportProgress = 0x10000000; // 1 << 28
+export const kSecCSReportProgress = 0x10000000;
 
 /**
  * Code signing check trusted anchors.
+ *
+ * `1 << 27`
  */
-export const kSecCSCheckTrustedAnchors = 0x8000000; // 1 << 27
+export const kSecCSCheckTrustedAnchors = 0x8000000;
 
 /**
  * Code signing quick check.
+ *
+ * `1 << 26`
  */
-export const kSecCSQuickCheck = 0x4000000; // 1 << 26
+export const kSecCSQuickCheck = 0x4000000;
 
 /**
  * Code signing apply embedded policy.
+ *
+ * `1 << 25`
  */
-export const kSecCSApplyEmbeddedPolicy = 0x2000000; // 1 << 25
+export const kSecCSApplyEmbeddedPolicy = 0x2000000;
 
 /**
  * Code signing strip disallowed xattrs.
+ *
+ * `1 << 24`
  */
-export const kSecCSStripDisallowedXattrs = 0x1000000; // 1 << 24
+export const kSecCSStripDisallowedXattrs = 0x1000000;
 
 /**
  * Code signing match guest requirement in kernel.
+ *
+ * `1 << 23`
  */
-export const kSecCSMatchGuestRequirementInKernel = 0x800000; // 1 << 23
+export const kSecCSMatchGuestRequirementInKernel = 0x800000;
 
 // SecCodeSignatureFlags:
 
