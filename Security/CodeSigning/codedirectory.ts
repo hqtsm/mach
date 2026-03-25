@@ -806,7 +806,7 @@ export class CodeDirectory extends Blob {
 	public static hexHash(
 		_this: CodeDirectory,
 		hash: ArrayBufferLike | ArrayBufferPointer,
-	): Uint8Array {
+	): Uint8Array<ArrayBuffer> {
 		const size = _this.hashSize;
 		const h = asUint8Array(hash, size);
 		const result = new Uint8Array(size * 2);
