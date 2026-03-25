@@ -7,12 +7,20 @@ import {
 	type CCDigestRef,
 	CCDigestUpdate,
 } from '../CommonCrypto/CommonDigest.ts';
+import type { CCDigestAlg } from '../CommonCrypto/Private/CommonDigestSPI.ts';
+import type { bool, uchar } from '../libc/c.ts';
+import type { size_t } from '../libc/stddef.ts';
 import { ENOMEM } from '../libc/errno.ts';
 import type { SubtleCryptoDigest } from '../util/crypto.ts';
 import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
 import { type ArrayBufferData, asUint8Array } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import { UnixError } from './errors.ts';
+
+/**
+ * Hashing byte.
+ */
+export type HashingByte = uchar;
 
 /**
  * Base class for all hash objects.
@@ -32,7 +40,7 @@ export abstract class DynamicHash extends Hashing {
 	 *
 	 * @returns Digest byte length.
 	 */
-	public abstract digestLength(): number;
+	public abstract digestLength(): size_t;
 
 	/**
 	 * Update digest, can only be called once.
@@ -50,7 +58,7 @@ export abstract class DynamicHash extends Hashing {
 	 * Update digest, can only be called once.
 	 *
 	 * @param source Source data.
-	 * @param size Source size.
+	 * @param length Source size.
 	 * @returns Hash digest.
 	 */
 	public abstract update(
@@ -58,7 +66,7 @@ export abstract class DynamicHash extends Hashing {
 			| ArrayBufferPointer<ArrayBuffer>
 			| SizeIterator<ArrayBufferData>
 			| SizeAsyncIterator<ArrayBufferData>,
-		size: number,
+		length: size_t,
 	): Promise<void>;
 
 	/**
@@ -81,7 +89,7 @@ export abstract class DynamicHash extends Hashing {
 	public static async verify(
 		_this: DynamicHash,
 		digest: ArrayBufferLike | ArrayBufferPointer,
-	): Promise<boolean> {
+	): Promise<bool> {
 		const l = _this.digestLength();
 		const d = new Uint8Array(l);
 		await _this.finish(d);
@@ -113,7 +121,7 @@ export class CCHashInstance extends DynamicHash {
 	 * @param alg Digest algorithm.
 	 * @param truncate Truncate length if any.
 	 */
-	constructor(alg: number, truncate = 0) {
+	constructor(alg: CCDigestAlg, truncate: size_t = 0) {
 		super();
 		const d = CCDigestCreate(alg);
 		if (!d) {
@@ -124,7 +132,7 @@ export class CCHashInstance extends DynamicHash {
 		this.mTruncate = truncate;
 	}
 
-	public digestLength(): number {
+	public digestLength(): size_t {
 		return this.mTruncate || CCDigestOutputSize(this.mDigest);
 	}
 
@@ -139,14 +147,14 @@ export class CCHashInstance extends DynamicHash {
 			| ArrayBufferPointer<ArrayBuffer>
 			| SizeIterator<ArrayBufferData>
 			| SizeAsyncIterator<ArrayBufferData>,
-		size: number,
+		length: size_t,
 	): Promise<void>;
 
 	/**
 	 * Update digest, can only be called once.
 	 *
 	 * @param source Source data.
-	 * @param size Source size.
+	 * @param length Source size.
 	 * @returns Hash digest.
 	 */
 	public async update(
@@ -156,14 +164,14 @@ export class CCHashInstance extends DynamicHash {
 			| ArrayBufferPointer<ArrayBuffer>
 			| SizeIterator<ArrayBufferData>
 			| SizeAsyncIterator<ArrayBufferData>,
-		size?: number,
+		length?: number,
 	): Promise<void> {
 		const { subtle, mDigest } = this;
 		mDigest.subtle = subtle;
 		await CCDigestUpdate(
 			mDigest,
 			source as ArrayBufferPointer<ArrayBuffer>,
-			size!,
+			length!,
 		);
 	}
 
@@ -191,7 +199,7 @@ export class CCHashInstance extends DynamicHash {
 	/**
 	 * Truncate length.
 	 */
-	private mTruncate: number;
+	private mTruncate: size_t;
 
 	static {
 		toStringTag(this, 'CCHashInstance');
