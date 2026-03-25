@@ -1,4 +1,5 @@
 import type { ArrayBufferPointer } from '@hqtsm/struct';
+import type { int, size_t } from './c.ts';
 
 /**
  * Get length of string.
@@ -6,7 +7,7 @@ import type { ArrayBufferPointer } from '@hqtsm/struct';
  * @param str Character pointer, null terminated.
  * @returns Length of string.
  */
-export function strlen(str: ArrayBufferLike | ArrayBufferPointer): number {
+export function strlen(str: ArrayBufferLike | ArrayBufferPointer): size_t {
 	let b, o, c, r = 0;
 	if ('buffer' in str) {
 		b = str.buffer;
@@ -30,8 +31,8 @@ export function strlen(str: ArrayBufferLike | ArrayBufferPointer): number {
 export function strncmp(
 	str1: ArrayBufferLike | ArrayBufferPointer,
 	str2: ArrayBufferLike | ArrayBufferPointer,
-	num: number,
-): number {
+	num: size_t,
+): int {
 	let b1, o1, b2, o2;
 	if ('buffer' in str1) {
 		b1 = str1.buffer;
