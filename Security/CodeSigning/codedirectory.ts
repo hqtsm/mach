@@ -27,10 +27,12 @@ import { asUint8Array, toUint8ArrayArrayBuffer } from '../../util/memory.ts';
 import type { Reader } from '../../util/reader.ts';
 import { Blob } from '../blob.ts';
 import {
+	errSecCSUnsupportedDigestAlgorithm,
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
 	kSecCodeSignatureHashSHA256Truncated,
 	kSecCodeSignatureHashSHA384,
+	kSecCodeSignatureNoHash,
 } from '../CSCommon.ts';
 import {
 	kSecCodeCDHashLength,
@@ -38,8 +40,17 @@ import {
 } from '../CSCommonPriv.ts';
 import { CCHashInstance, type DynamicHash } from '../hashing.ts';
 import { hashFileData } from './csutilities.ts';
+import { MacOSError } from '../errors.ts';
 
 const max = (values: number[]) => Math.max(...values);
+
+const hashPriorities = [
+	kSecCodeSignatureHashSHA384,
+	kSecCodeSignatureHashSHA256,
+	kSecCodeSignatureHashSHA256Truncated,
+	kSecCodeSignatureHashSHA1,
+	kSecCodeSignatureNoHash,
+];
 
 // String names for code signature components:
 
@@ -794,6 +805,44 @@ export class CodeDirectory extends Blob {
 		);
 		await Promise.all(hashes.map(([, h], i) => h.update(tee[i], total)));
 		await Promise.all(hashes.map(([t, h]) => action(t, h)));
+	}
+
+	/**
+	 * Check if hash type is viable.
+	 *
+	 * @param type Hash type.
+	 * @returns True if viable.
+	 */
+	public static viableHash(type: number): boolean {
+		for (
+			let i = 0, t;
+			(t = hashPriorities[i]) !== kSecCodeSignatureNoHash;
+			i++
+		) {
+			if (t === type) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Find best hash type.
+	 *
+	 * @param types Type set.
+	 * @returns Hash type.
+	 */
+	public static bestHashOf(types: Set<number>): number {
+		for (
+			let i = 0, type;
+			(type = hashPriorities[i]) !== kSecCodeSignatureNoHash;
+			i++
+		) {
+			if (types.has(type)) {
+				return type;
+			}
+		}
+		MacOSError.throwMe(errSecCSUnsupportedDigestAlgorithm);
 	}
 
 	/**

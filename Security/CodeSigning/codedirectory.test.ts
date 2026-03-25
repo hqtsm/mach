@@ -3,11 +3,13 @@ import { crypto as stdCrypto } from '@std/crypto';
 import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../../mach/vm_param.ts';
 import type { Reader } from '../../util/reader.ts';
 import {
+	errSecCSUnsupportedDigestAlgorithm,
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
 	kSecCodeSignatureHashSHA256Truncated,
 	kSecCodeSignatureHashSHA384,
 	kSecCodeSignatureHashSHA512,
+	kSecCodeSignatureNoHash,
 } from '../CSCommon.ts';
 import { kSecCodeCDHashLength } from '../CSCommonPriv.ts';
 import { CodeDirectoryBuilder } from './cdbuilder.ts';
@@ -46,6 +48,7 @@ import {
 	kSecCS_SIGNATUREFILE,
 	kSecCS_TOPDIRECTORYFILE,
 } from './codedirectory.ts';
+import { assertThrowsMacOSError } from '../../spec/assert.ts';
 
 class ErrorReader implements Reader {
 	#size: number;
@@ -468,6 +471,51 @@ Deno.test('CodeDirectory: multipleHashFileData error', async () => {
 			),
 		Error,
 		'ErrorReader',
+	);
+});
+
+Deno.test('CodeDirectory: viableHash', () => {
+	assertEquals(CodeDirectory.viableHash(kSecCodeSignatureHashSHA1), true);
+	assertEquals(CodeDirectory.viableHash(kSecCodeSignatureHashSHA256), true);
+	assertEquals(CodeDirectory.viableHash(kSecCodeSignatureHashSHA384), true);
+	assertEquals(
+		CodeDirectory.viableHash(kSecCodeSignatureHashSHA256Truncated),
+		true,
+	);
+	assertEquals(CodeDirectory.viableHash(kSecCodeSignatureHashSHA512), false);
+});
+
+Deno.test('CodeDirectory: bestHashOf', () => {
+	const types = new Set([
+		kSecCodeSignatureHashSHA384,
+		kSecCodeSignatureHashSHA256,
+		kSecCodeSignatureHashSHA256Truncated,
+		kSecCodeSignatureHashSHA1,
+		kSecCodeSignatureNoHash,
+	]);
+	assertEquals(
+		CodeDirectory.bestHashOf(types),
+		kSecCodeSignatureHashSHA384,
+	);
+	types.delete(kSecCodeSignatureHashSHA384);
+	assertEquals(
+		CodeDirectory.bestHashOf(types),
+		kSecCodeSignatureHashSHA256,
+	);
+	types.delete(kSecCodeSignatureHashSHA256);
+	assertEquals(
+		CodeDirectory.bestHashOf(types),
+		kSecCodeSignatureHashSHA256Truncated,
+	);
+	types.delete(kSecCodeSignatureHashSHA256Truncated);
+	assertEquals(
+		CodeDirectory.bestHashOf(types),
+		kSecCodeSignatureHashSHA1,
+	);
+	types.delete(kSecCodeSignatureHashSHA1);
+	assertThrowsMacOSError(
+		() => CodeDirectory.bestHashOf(types),
+		errSecCSUnsupportedDigestAlgorithm,
 	);
 });
 
