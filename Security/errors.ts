@@ -1,5 +1,8 @@
 import { isToStringTag, toStringTag } from '@hqtsm/class';
-import { type Arr, array, type Const, Int8Ptr } from '@hqtsm/struct';
+import { type Arr, array, type Const, Int8Ptr, type Ptr } from '@hqtsm/struct';
+import type { bool, char, int } from '../libc/c.ts';
+import type { size_t } from '../libc/stddef.ts';
+import type { OSStatus } from '../MacOSX/MacTypes.ts';
 import { errSecSuccess } from './SecBase.ts';
 
 /**
@@ -47,7 +50,7 @@ export class CommonError extends Error {
 	 *
 	 * @returns Status code.
 	 */
-	public osStatus(): number {
+	public osStatus(): OSStatus {
 		return 0;
 	}
 
@@ -56,19 +59,19 @@ export class CommonError extends Error {
 	 *
 	 * @returns Error code.
 	 */
-	public unixError(): number {
+	public unixError(): int {
 		return 0;
 	}
 
 	/**
 	 * Error message.
 	 */
-	public readonly whatBuffer: Arr<number>;
+	public readonly whatBuffer: Arr<char>;
 
 	/**
 	 * Error message buffer size.
 	 */
-	public get whatBufferSize(): number {
+	public get whatBufferSize(): size_t {
 		return whatBufferSize;
 	}
 
@@ -108,14 +111,14 @@ export class UnixError extends CommonError {
 	 * @param err Error code.
 	 * @param suppresslogging Suppress logging.
 	 */
-	protected constructor(err: number, suppresslogging: boolean);
+	protected constructor(err: int, suppresslogging: bool);
 
 	/**
 	 * Constructor.
 	 *
 	 * @param context Context.
 	 */
-	protected constructor(context: { errno: number });
+	protected constructor(context: { errno: int });
 
 	/**
 	 * Constructor.
@@ -123,8 +126,8 @@ export class UnixError extends CommonError {
 	 * @param err Error code or context.
 	 */
 	protected constructor(
-		err: number | { errno: number },
-		suppresslogging?: boolean,
+		err: int | { errno: int },
+		suppresslogging?: bool,
 	) {
 		super();
 		let message;
@@ -148,13 +151,13 @@ export class UnixError extends CommonError {
 	/**
 	 * Error code.
 	 */
-	public readonly error: number;
+	public readonly error: int;
 
-	public override osStatus(): number {
+	public override osStatus(): OSStatus {
 		return this.error + errSecErrnoBase;
 	}
 
-	public override unixError(): number {
+	public override unixError(): int {
 		return this.error;
 	}
 
@@ -163,7 +166,7 @@ export class UnixError extends CommonError {
 	 *
 	 * @returns Error message buffer.
 	 */
-	public what(): Const<Int8Ptr> {
+	public what(): Const<Ptr<char>> {
 		return this.whatBuffer;
 	}
 
@@ -173,7 +176,7 @@ export class UnixError extends CommonError {
 	 * @param result Result.
 	 * @param context Context.
 	 */
-	public static check(result: number, context: { errno: number }): void {
+	public static check(result: int, context: { errno: int }): void {
 		if (result === -1) {
 			UnixError.throwMe(context);
 		}
@@ -184,7 +187,7 @@ export class UnixError extends CommonError {
 	 *
 	 * @param err Error code or context.
 	 */
-	public static throwMe(err: number | { errno: number }): never {
+	public static throwMe(err: int | { errno: int }): never {
 		throw new UnixError(typeof err === 'number' ? err : err.errno, false);
 	}
 
@@ -193,7 +196,7 @@ export class UnixError extends CommonError {
 	 *
 	 * @param err Error code or context.
 	 */
-	public static throwMeNoLogging(err: number | { errno: number }): never {
+	public static throwMeNoLogging(err: int | { errno: int }): never {
 		throw new UnixError(typeof err === 'number' ? err : err.errno, true);
 	}
 
@@ -203,7 +206,7 @@ export class UnixError extends CommonError {
 	 * @param err Error code or context.
 	 * @returns UnixError.
 	 */
-	public static make(err: number | { errno: number }): UnixError {
+	public static make(err: int | { errno: int }): UnixError {
 		return new UnixError(typeof err === 'number' ? err : err.errno, false);
 	}
 
@@ -237,7 +240,7 @@ export class MacOSError extends CommonError {
 	 *
 	 * @param err Error code.
 	 */
-	protected constructor(err: number) {
+	protected constructor(err: int) {
 		super();
 		this.error = err;
 		const message = `MacOS error: ${err}`;
@@ -250,13 +253,13 @@ export class MacOSError extends CommonError {
 	/**
 	 * Error code.
 	 */
-	public readonly error: number;
+	public readonly error: int;
 
-	public override osStatus(): number {
+	public override osStatus(): OSStatus {
 		return this.error;
 	}
 
-	public override unixError(): number {
+	public override unixError(): int {
 		const { error } = this;
 		return (error >= errSecErrnoBase && error <= errSecErrnoLimit)
 			? error - errSecErrnoBase
@@ -268,7 +271,7 @@ export class MacOSError extends CommonError {
 	 *
 	 * @returns Error message buffer.
 	 */
-	public what(): Const<Int8Ptr> {
+	public what(): Const<Ptr<char>> {
 		return this.whatBuffer;
 	}
 
@@ -277,7 +280,7 @@ export class MacOSError extends CommonError {
 	 *
 	 * @param status Status.
 	 */
-	public static check(status: number): void {
+	public static check(status: OSStatus): void {
 		if (status !== errSecSuccess) {
 			MacOSError.throwMe(status);
 		}
@@ -288,7 +291,7 @@ export class MacOSError extends CommonError {
 	 *
 	 * @param err Error code.
 	 */
-	public static throwMe(err: number): never {
+	public static throwMe(err: int): never {
 		throw new MacOSError(err);
 	}
 
@@ -298,7 +301,7 @@ export class MacOSError extends CommonError {
 	 * @param err Error code.
 	 * @returns MacOSError.
 	 */
-	public static make(err: number): MacOSError {
+	public static make(err: int): MacOSError {
 		return new MacOSError(err);
 	}
 
