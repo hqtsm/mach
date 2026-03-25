@@ -1,5 +1,7 @@
 // deno-lint-ignore-file camelcase
 
+import type { uint32_t } from '../../libc/stdint.ts';
+
 // CCDigestAlgorithm:
 
 /**
@@ -76,3 +78,13 @@ export const kCCDigestSHA3_512 = 16;
  * CommonCrypto digest algorithm: maximum.
  */
 export const kCCDigestMax = 17;
+
+/**
+ * CommonCrypto digest algorithm.
+ */
+export type CCDigestAlgorithm = uint32_t;
+
+/**
+ * CommonCrypto digest algorithm.
+ */
+export type CCDigestAlg = CCDigestAlgorithm;

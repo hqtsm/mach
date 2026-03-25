@@ -1,5 +1,6 @@
 import { toStringTag } from '@hqtsm/class';
 import type { ArrayBufferPointer } from '@hqtsm/struct';
+import type { int, size_t } from '../libc/c.ts';
 import type {
 	SubtleCryptoDigest,
 	SubtleCryptoDigestAlgorithm,
@@ -17,6 +18,7 @@ import {
 	kCCUnimplemented,
 } from './CommonCryptoError.ts';
 import {
+	type CCDigestAlgorithm,
 	kCCDigestSHA1,
 	kCCDigestSHA256,
 	kCCDigestSHA384,
@@ -35,16 +37,16 @@ interface Algo {
 	/**
 	 * Digest length.
 	 */
-	l: number;
+	l: size_t;
 
 	/**
 	 * Block length.
 	 */
-	b: number;
+	b: size_t;
 }
 
 // Supported hash algorithms with their names and lengths.
-const algorithms = new Map<number, Algo>([
+const algorithms = new Map<CCDigestAlgorithm, Algo>([
 	[kCCDigestSHA1, { a: 'SHA-1', l: 20, b: 64 }],
 	[kCCDigestSHA256, { a: 'SHA-256', l: 32, b: 64 }],
 	[kCCDigestSHA384, { a: 'SHA-384', l: 48, b: 128 }],
@@ -268,7 +270,10 @@ export class CCDigestRef {
  * @param c Digest context.
  * @returns Status.
  */
-export function CCDigestInit(alg: number, c: CCDigestRef | null): number {
+export function CCDigestInit(
+	alg: CCDigestAlgorithm,
+	c: CCDigestRef | null,
+): int {
 	if (!alg || alg >= CC_MAX_N_DIGESTS || !c) {
 		return kCCParamError;
 	}
@@ -292,7 +297,7 @@ export async function CCDigestUpdate(
 	data:
 		| Reader
 		| ArrayBufferData,
-): Promise<number>;
+): Promise<int>;
 
 /**
  * Update digest, can only be called once.
@@ -309,8 +314,8 @@ export async function CCDigestUpdate(
 		| SizeIterator<ArrayBufferData>
 		| SizeAsyncIterator<ArrayBufferData>
 		| null,
-	len: number,
-): Promise<number>;
+	len: size_t,
+): Promise<int>;
 
 /**
  * Update digest, can only be called once.
@@ -329,8 +334,8 @@ export async function CCDigestUpdate(
 		| SizeIterator<ArrayBufferData>
 		| SizeAsyncIterator<ArrayBufferData>
 		| null,
-	len?: number,
-): Promise<number> {
+	len?: size_t,
+): Promise<int> {
 	if (!c) {
 		return kCCParamError;
 	}
@@ -397,7 +402,7 @@ export async function CCDigestUpdate(
 export async function CCDigestFinal(
 	c: CCDigestRef | null,
 	out: ArrayBufferLike | ArrayBufferPointer | null,
-): Promise<number> {
+): Promise<int> {
 	if (!c || !out) {
 		return kCCParamError;
 	}
@@ -429,13 +434,13 @@ export async function CCDigestFinal(
  * @returns Status.
  */
 export async function CCDigest(
-	alg: number,
+	alg: CCDigestAlgorithm,
 	data:
 		| Reader
 		| ArrayBufferData,
 	out: ArrayBufferLike | ArrayBufferPointer | null,
 	subtle?: SubtleCryptoDigest | null,
-): Promise<number>;
+): Promise<int>;
 
 /**
  * Digest data.
@@ -448,16 +453,16 @@ export async function CCDigest(
  * @returns Status.
  */
 export async function CCDigest(
-	alg: number,
+	alg: CCDigestAlgorithm,
 	data:
 		| ArrayBufferPointer<ArrayBuffer>
 		| SizeIterator<ArrayBufferData>
 		| SizeAsyncIterator<ArrayBufferData>
 		| null,
-	len: number,
+	len: size_t,
 	out: ArrayBufferLike | ArrayBufferPointer | null,
 	subtle?: SubtleCryptoDigest | null,
-): Promise<number>;
+): Promise<int>;
 
 /**
  * Digest data.
@@ -470,7 +475,7 @@ export async function CCDigest(
  * @returns Status.
  */
 export async function CCDigest(
-	alg: number,
+	alg: CCDigestAlgorithm,
 	data:
 		| Reader
 		| ArrayBufferData
@@ -478,10 +483,10 @@ export async function CCDigest(
 		| SizeIterator<ArrayBufferData>
 		| SizeAsyncIterator<ArrayBufferData>
 		| null,
-	len: number | ArrayBufferLike | ArrayBufferPointer | null,
+	len: size_t | ArrayBufferLike | ArrayBufferPointer | null,
 	out?: ArrayBufferLike | ArrayBufferPointer | null | SubtleCryptoDigest,
 	subtle?: SubtleCryptoDigest | null,
-): Promise<number> {
+): Promise<int> {
 	const algo = algorithms.get(alg);
 	if (!algo) {
 		return kCCUnimplemented;
@@ -546,7 +551,7 @@ export async function CCDigest(
  * @param algorithm Digest algorithm.
  * @returns Block size.
  */
-export function CCDigestGetBlockSize(algorithm: number): number {
+export function CCDigestGetBlockSize(algorithm: CCDigestAlgorithm): size_t {
 	const algo = algorithms.get(algorithm);
 	return algo ? algo.b : kCCUnimplemented;
 }
@@ -557,7 +562,7 @@ export function CCDigestGetBlockSize(algorithm: number): number {
  * @param algorithm Digest algorithm.
  * @returns Output size.
  */
-export function CCDigestGetOutputSize(algorithm: number): number {
+export function CCDigestGetOutputSize(algorithm: CCDigestAlgorithm): size_t {
 	const algo = algorithms.get(algorithm);
 	return algo ? algo.l : kCCUnimplemented;
 }
@@ -568,7 +573,7 @@ export function CCDigestGetOutputSize(algorithm: number): number {
  * @param ctx Digest context.
  * @returns Block size.
  */
-export function CCDigestGetBlockSizeFromRef(ctx: CCDigestRef): number {
+export function CCDigestGetBlockSizeFromRef(ctx: CCDigestRef): size_t {
 	const algo = algorithms.get(ctx['a']);
 	return algo ? algo.b : kCCUnimplemented;
 }
@@ -579,7 +584,7 @@ export function CCDigestGetBlockSizeFromRef(ctx: CCDigestRef): number {
  * @param ctx Digest context.
  * @returns Block size.
  */
-export function CCDigestBlockSize(ctx: CCDigestRef): number {
+export function CCDigestBlockSize(ctx: CCDigestRef): size_t {
 	return CCDigestGetBlockSizeFromRef(ctx);
 }
 
@@ -589,7 +594,7 @@ export function CCDigestBlockSize(ctx: CCDigestRef): number {
  * @param ctx Digest context.
  * @returns Output size.
  */
-export function CCDigestOutputSize(ctx: CCDigestRef): number {
+export function CCDigestOutputSize(ctx: CCDigestRef): size_t {
 	return CCDigestGetOutputSizeFromRef(ctx);
 }
 
@@ -599,7 +604,7 @@ export function CCDigestOutputSize(ctx: CCDigestRef): number {
  * @param ctx Digest context.
  * @returns Output size.
  */
-export function CCDigestGetOutputSizeFromRef(ctx: CCDigestRef): number {
+export function CCDigestGetOutputSizeFromRef(ctx: CCDigestRef): size_t {
 	const algo = algorithms.get(ctx['a']);
 	return algo ? algo.l : kCCUnimplemented;
 }
@@ -610,7 +615,7 @@ export function CCDigestGetOutputSizeFromRef(ctx: CCDigestRef): number {
  * @param alg Digest algorithm.
  * @returns Digest context.
  */
-export function CCDigestCreate(alg: number): CCDigestRef | null {
+export function CCDigestCreate(alg: CCDigestAlgorithm): CCDigestRef | null {
 	const r = new CCDigestRef();
 	return CCDigestInit(alg, r) ? null : r;
 }
