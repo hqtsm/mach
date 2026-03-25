@@ -1,4 +1,6 @@
 // deno-lint-ignore-file camelcase
+
+import type { int, uint } from '../../libc/c.ts';
 import {
 	vm_page_mask_arm,
 	vm_page_mask_arm64,
@@ -59,8 +61,7 @@ export const VM_PAGE_SIZE_ARM64 = vm_page_size_arm64;
  * @param x Pages.
  * @returns Bytes.
  */
-export const machine_ptob_arm = (x: number): number =>
-	(x << PAGE_SHIFT_ARM) >>> 0;
+export const machine_ptob_arm = (x: int): uint => (x << PAGE_SHIFT_ARM) >>> 0;
 
 /**
  * Machine pages to bytes: ARM64.
@@ -68,7 +69,7 @@ export const machine_ptob_arm = (x: number): number =>
  * @param x Pages.
  * @returns Bytes.
  */
-export const machine_ptob_arm64 = (x: number): number =>
+export const machine_ptob_arm64 = (x: int): uint =>
 	(x << PAGE_SHIFT_ARM64) >>> 0;
 
 /**

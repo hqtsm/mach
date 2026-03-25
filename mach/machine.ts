@@ -1,5 +1,7 @@
 // deno-lint-ignore-file camelcase
 
+import type { int, uint } from '../libc/c.ts';
+
 /**
  * CPU type.
  */
@@ -289,8 +291,7 @@ export const CPU_SUBTYPE_MC68030_ONLY = 3;
  * @param m Model.
  * @returns CPU subtype.
  */
-export const CPU_SUBTYPE_INTEL = (f: number, m: number): number =>
-	(f + (m << 4)) >>> 0;
+export const CPU_SUBTYPE_INTEL = (f: int, m: int): uint => (f + (m << 4)) >>> 0;
 
 /**
  * CPU subtype: Intel all.
