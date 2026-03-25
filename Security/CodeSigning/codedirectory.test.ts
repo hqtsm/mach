@@ -471,7 +471,7 @@ Deno.test('CodeDirectory: multipleHashFileData error', async () => {
 	);
 });
 
-Deno.test('canonicalSlotName', () => {
+Deno.test('CodeDirectory: canonicalSlotName', () => {
 	assertEquals(
 		CodeDirectory.canonicalSlotName(cdRequirementsSlot),
 		kSecCS_REQUIREMENTSFILE,
@@ -543,7 +543,7 @@ Deno.test('canonicalSlotName', () => {
 	assertEquals(CodeDirectory.canonicalSlotName(cdSlotCount), null);
 });
 
-Deno.test('slotAttributes', () => {
+Deno.test('CodeDirectory: slotAttributes', () => {
 	assertEquals(
 		CodeDirectory.slotAttributes(cdRequirementsSlot),
 		cdComponentIsBlob,
