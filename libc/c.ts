@@ -1,6 +1,11 @@
 // deno-lint-ignore-file camelcase
 
 /**
+ * Boolean.
+ */
+export type bool = boolean;
+
+/**
  * Signed char.
  *
  * @template _ Bit size.
