@@ -1,16 +1,21 @@
+import type { size_t } from '../../libc/stddef.ts';
+
 /**
  * System alignment.
  */
 export const systemAlignment = 4;
 
 /**
- * Align a number up.
+ * Align a size up.
  *
- * @param value Number.
+ * @param size Size.
  * @param alignment Alignment.
- * @returns Aligned number.
+ * @returns Aligned size.
  */
-export function alignUp(value: number, alignment = systemAlignment): number {
-	const over = value % alignment;
-	return over ? value + alignment - over : value;
+export function alignUp(
+	size: size_t,
+	alignment: size_t = systemAlignment,
+): size_t {
+	const over = size % alignment;
+	return over ? size + alignment - over : size;
 }
