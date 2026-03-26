@@ -30,6 +30,7 @@ import { asUint8Array, toUint8ArrayArrayBuffer } from '../../util/memory.ts';
 import type { Reader } from '../../util/reader.ts';
 import { Blob } from '../blob.ts';
 import {
+	errSecCSSignatureUnsupported,
 	errSecCSUnsupportedDigestAlgorithm,
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
@@ -748,7 +749,7 @@ export class CodeDirectory extends Blob {
 				return new CCHashInstance(kCCDigestSHA256, 20);
 			}
 		}
-		throw new RangeError(`Unsupported hash type: ${hashType}`);
+		MacOSError.throwMe(errSecCSSignatureUnsupported);
 	}
 
 	/**

@@ -1,8 +1,9 @@
-import { assert, assertEquals, assertRejects, assertThrows } from '@std/assert';
+import { assert, assertEquals, assertRejects } from '@std/assert';
 import { crypto as stdCrypto } from '@std/crypto';
 import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../../mach/vm_param.ts';
 import type { Reader } from '../../util/reader.ts';
 import {
+	errSecCSSignatureUnsupported,
 	errSecCSUnsupportedDigestAlgorithm,
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
@@ -332,10 +333,9 @@ Deno.test('CodeDirectory: getHash', () => {
 
 	// Not supported, intentional or an oversight?
 	cd.hashType = kSecCodeSignatureHashSHA512;
-	assertThrows(
+	assertThrowsMacOSError(
 		() => CodeDirectory.getHash(cd),
-		RangeError,
-		`Unsupported hash type: ${kSecCodeSignatureHashSHA512}`,
+		errSecCSSignatureUnsupported,
 	);
 });
 
@@ -391,10 +391,9 @@ Deno.test('CodeDirectory: hashFor', () => {
 	);
 
 	// Not supported, intentional or an oversight?
-	assertThrows(
+	assertThrowsMacOSError(
 		() => CodeDirectory.hashFor(kSecCodeSignatureHashSHA512),
-		RangeError,
-		`Unsupported hash type: ${kSecCodeSignatureHashSHA512}`,
+		errSecCSSignatureUnsupported,
 	);
 });
 
