@@ -1,3 +1,5 @@
+import type { int32_t } from '../libc/stdint.ts';
+
 // CCCryptorStatus:
 
 /**
@@ -64,3 +66,13 @@ export const kCCKeySizeError = -4310;
  * CommonCrypto: Invalid key.
  */
 export const kCCInvalidKey = -4311;
+
+/**
+ * CommonCrypto: Status.
+ */
+export type CCStatus = int32_t;
+
+/**
+ * CommonCrypto: Cryptor status.
+ */
+export type CCCryptorStatus = int32_t;
