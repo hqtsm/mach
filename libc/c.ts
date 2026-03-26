@@ -4,42 +4,72 @@
 export type bool = boolean;
 
 /**
- * Signed char.
+ * Signed char (8-bit).
  */
 export type char = number;
 
 /**
- * Unsigned char.
+ * Signed char (8-bit).
+ */
+export type schar = number;
+
+/**
+ * Unsigned char (8-bit).
  */
 export type uchar = number;
 
 /**
- * Signed short.
+ * Signed short (16-bit).
  */
 export type short = number;
 
 /**
- * Unsigned short.
+ * Signed short (16-bit).
+ */
+export type sshort = number;
+
+/**
+ * Unsigned short (16-bit).
  */
 export type ushort = number;
 
 /**
- * Signed integer.
+ * Signed integer (32-bit).
  */
 export type int = number;
 
 /**
- * Unsigned integer.
+ * Signed integer (32-bit).
+ */
+export type sint = number;
+
+/**
+ * Unsigned integer (32-bit).
  */
 export type uint = number;
 
 /**
- * Floating point.
+ * Signed integer (64-bit).
+ */
+export type llong = bigint;
+
+/**
+ * Signed integer (64-bit).
+ */
+export type sllong = bigint;
+
+/**
+ * Unsigned integer (64-bit).
+ */
+export type ullong = bigint;
+
+/**
+ * Floating point (32-bit).
  */
 export type float = number;
 
 /**
- * Double precision floating point.
+ * Double precision floating point (64-bit).
  */
 export type double = number;
 

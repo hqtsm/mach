@@ -1,44 +1,75 @@
 // deno-lint-ignore-file camelcase
 
+import type {
+	char,
+	int,
+	llong,
+	short,
+	uchar,
+	uint,
+	ullong,
+	ushort,
+} from './c.ts';
+
 /**
  * Signed 8-bit integer.
  */
-export type int8_t = number;
+export type int8_t = char;
 
 /**
  * Signed 16-bit integer.
  */
-export type int16_t = number;
+export type int16_t = short;
 
 /**
  * Signed 32-bit integer.
  */
-export type int32_t = number;
+export type int32_t = int;
 
 /**
  * Signed 64-bit integer.
  */
-export type int64_t = bigint;
+export type int64_t = llong;
 
 /**
  * Unsigned 8-bit integer.
  */
-export type uint8_t = number;
+export type uint8_t = uchar;
+
+/**
+ * Unsigned 8-bit integer.
+ */
+export type u_int8_t = uchar;
 
 /**
  * Unsigned 16-bit integer.
  */
-export type uint16_t = number;
+export type uint16_t = ushort;
+
+/**
+ * Unsigned 16-bit integer.
+ */
+export type u_int16_t = ushort;
 
 /**
  * Unsigned 32-bit integer.
  */
-export type uint32_t = number;
+export type uint32_t = uint;
+
+/**
+ * Unsigned 32-bit integer.
+ */
+export type u_int32_t = uint;
 
 /**
  * Unsigned 64-bit integer.
  */
-export type uint64_t = bigint;
+export type uint64_t = ullong;
+
+/**
+ * Unsigned 64-bit integer.
+ */
+export type u_int64_t = ullong;
 
 /**
  * Maximum signed 8-bit integer.
