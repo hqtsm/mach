@@ -17,6 +17,9 @@ import {
 	kCCDigestSHA256,
 	kCCDigestSHA384,
 } from '../../CommonCrypto/Private/CommonDigestSPI.ts';
+import type { bool, char, int, uchar, uint } from '../../libc/c.ts';
+import type { big_size_t, size_t } from '../../libc/stddef.ts';
+import type { uint32_t, uint64_t, uint8_t } from '../../libc/stdint.ts';
 import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../../mach/vm_param.ts';
 import type { SubtleCryptoDigest } from '../../util/crypto.ts';
 import {
@@ -38,9 +41,10 @@ import {
 	kSecCodeCDHashLength,
 	kSecCodeMagicCodeDirectory,
 } from '../CSCommonPriv.ts';
+import { MacOSError } from '../errors.ts';
+import type { Endian } from '../endian.ts';
 import { CCHashInstance, type DynamicHash } from '../hashing.ts';
 import { hashFileData } from './csutilities.ts';
-import { MacOSError } from '../errors.ts';
 
 const max = (values: number[]) => Math.max(...values);
 
@@ -228,7 +232,10 @@ export const cdComponentPerArchitecture = 1;
  */
 export const cdComponentIsBlob = 2;
 
-// Platform values:
+/**
+ * Platform identifier.
+ */
+export type PlatformIdentifier = uint8_t;
 
 /**
  * No platform.
@@ -241,28 +248,48 @@ export const noPlatform = 0;
 export const maxPlatform = 255;
 
 /**
+ * Hash algorithm.
+ */
+export type HashAlgorithm = uint32_t;
+
+/**
+ * Set of hash algorithms.
+ */
+export type HashAlgorithms = Set<HashAlgorithm>;
+
+/**
+ * Slot index.
+ */
+export type CodeDirectorySlot = int;
+
+/**
+ * Special slot.
+ */
+export type CodeDirectorySpecialSlot = uint;
+
+/**
  * CodeDirectory scatter vector element.
  */
 export class CodeDirectoryScatter extends Struct {
 	/**
 	 * Page count; zero for sentinel (only).
 	 */
-	declare public count: number;
+	declare public count: Endian<uint32_t>;
 
 	/**
 	 * First page number.
 	 */
-	declare public base: number;
+	declare public base: Endian<uint32_t>;
 
 	/**
 	 * Byte offset in target.
 	 */
-	declare public targetOffset: bigint;
+	declare public targetOffset: Endian<uint64_t>;
 
 	/**
 	 * Reserved, must be zero.
 	 */
-	declare public spare: bigint;
+	declare public spare: Endian<uint64_t>;
 
 	static {
 		toStringTag(this, 'CodeDirectoryScatter');
@@ -283,115 +310,115 @@ export class CodeDirectory extends Blob {
 	/**
 	 * Compatibility version.
 	 */
-	declare public version: number;
+	declare public version: Endian<uint32_t>;
 
 	/**
 	 * Setup and mode flags (SecCodeSignatureFlags kSecCodeSignature*).
 	 */
-	declare public flags: number;
+	declare public flags: Endian<uint32_t>;
 
 	/**
 	 * Offset of hash slot element at index zero.
 	 */
-	declare public hashOffset: number;
+	declare public hashOffset: Endian<uint32_t>;
 
 	/**
 	 * Offset of identifier string.
 	 */
-	declare public identOffset: number;
+	declare public identOffset: Endian<uint32_t>;
 
 	/**
 	 * Number of special hash slots.
 	 */
-	declare public nSpecialSlots: number;
+	declare public nSpecialSlots: Endian<uint32_t>;
 
 	/**
 	 * Number of ordinary (code) hash slots.
 	 */
-	declare public nCodeSlots: number;
+	declare public nCodeSlots: Endian<uint32_t>;
 
 	/**
 	 * Limit to main image signature range, 32 bits.
 	 */
-	declare public codeLimit: number;
+	declare public codeLimit: Endian<uint32_t>;
 
 	/**
 	 * Size of each hash in bytes.
 	 */
-	declare public hashSize: number;
+	declare public hashSize: Endian<uint8_t>;
 
 	/**
 	 * Hash type (SecCSDigestAlgorithm kSecCodeSignatureHash*).
 	 */
-	declare public hashType: number;
+	declare public hashType: Endian<uint8_t>;
 
 	/**
 	 * Platform identifier, zero if not platform binary.
 	 */
-	declare public platform: number;
+	declare public platform: Endian<uint8_t>;
 
 	/**
 	 * The page size, log2(page size in bytes), 0 => infinite.
 	 */
-	declare public pageSize: number;
+	declare public pageSize: Endian<uint8_t>;
 
 	/**
 	 * Unused, must be zero.
 	 */
-	declare public spare2: number;
+	declare public spare2: Endian<uint32_t>;
 
 	/**
 	 * Offset of scatter vector or 0 for none.
 	 * Assumes supportsScatter.
 	 */
-	declare public scatterOffset: number;
+	declare public scatterOffset: Endian<uint32_t>;
 
 	/**
 	 * Offset of team identifier or 0 for none.
 	 * Assumes supportsTeamID.
 	 */
-	declare public teamIDOffset: number;
+	declare public teamIDOffset: Endian<uint32_t>;
 
 	/**
 	 * Unused, must be zero.
 	 */
-	declare public spare3: number;
+	declare public spare3: Endian<uint32_t>;
 
 	/**
 	 * Limit to main image signature range, 64 bits.
 	 * Assumes supportsCodeLimit64.
 	 */
-	declare public codeLimit64: bigint;
+	declare public codeLimit64: Endian<uint64_t>;
 
 	/**
 	 * Offset of executable segment (TEXT segment file offset),
 	 * Assumes supportsExecSegment.
 	 */
-	declare public execSegBase: bigint;
+	declare public execSegBase: Endian<uint64_t>;
 
 	/**
 	 * Limit of executable segment (TEXT segment file size).
 	 * Assumes supportsExecSegment.
 	 */
-	declare public execSegLimit: bigint;
+	declare public execSegLimit: Endian<uint64_t>;
 
 	/**
 	 * The exec segment flags (SecCodeExecSegFlags kSecCodeExecSeg*).
 	 * Assumes supportsExecSegment.
 	 */
-	declare public execSegFlags: bigint;
+	declare public execSegFlags: Endian<uint64_t>;
 
 	/**
 	 * Runtime version encoded as an unsigned integer.
 	 * Assumes supportsPreEncrypt.
 	 */
-	declare public runtime: number;
+	declare public runtime: Endian<uint32_t>;
 
 	/**
 	 * Offset of pre-encrypt hash slots.
 	 * Assumes supportsPreEncrypt.
 	 */
-	declare public preEncryptOffset: number;
+	declare public preEncryptOffset: Endian<uint32_t>;
 
 	/**
 	 * Current version, subject to change.
@@ -439,7 +466,7 @@ export class CodeDirectory extends Blob {
 	 * @param _this This.
 	 * @returns Char pointer.
 	 */
-	public static identifier(_this: CodeDirectory): Int8Ptr {
+	public static identifier(_this: CodeDirectory): Ptr<char> {
 		return new Int8Ptr(
 			_this.buffer,
 			_this.byteOffset + _this.identOffset,
@@ -453,7 +480,7 @@ export class CodeDirectory extends Blob {
 	 * @param _this This.
 	 * @returns Code limit.
 	 */
-	public static signingLimit(_this: CodeDirectory): bigint {
+	public static signingLimit(_this: CodeDirectory): big_size_t {
 		if (_this.version >= CodeDirectory.supportsCodeLimit64) {
 			const { codeLimit64 } = _this;
 			if (codeLimit64) {
@@ -469,7 +496,9 @@ export class CodeDirectory extends Blob {
 	 * @param _this This.
 	 * @returns Slot index.
 	 */
-	public static maxSpecialSlot(_this: CodeDirectory): number {
+	public static maxSpecialSlot(
+		_this: CodeDirectory,
+	): CodeDirectorySpecialSlot {
 		const slot = _this.nSpecialSlots;
 		return slot > cdSlotMax ? cdSlotMax : slot;
 	}
@@ -484,9 +513,9 @@ export class CodeDirectory extends Blob {
 	 */
 	public static getSlotMutable(
 		_this: CodeDirectory,
-		slot: number,
-		preEncrypt: boolean,
-	): Uint8Ptr | null {
+		slot: CodeDirectorySlot,
+		preEncrypt: bool,
+	): Ptr<uchar> | null {
 		let offset;
 		if (preEncrypt) {
 			if (
@@ -515,9 +544,9 @@ export class CodeDirectory extends Blob {
 	 */
 	public static getSlot(
 		_this: CodeDirectory,
-		slot: number,
-		preEncrypt: boolean,
-	): Const<Uint8Ptr> | null {
+		slot: CodeDirectorySlot,
+		preEncrypt: bool,
+	): Const<Ptr<uchar>> | null {
 		return CodeDirectory.getSlotMutable(_this, slot, preEncrypt);
 	}
 
@@ -549,7 +578,7 @@ export class CodeDirectory extends Blob {
 	 * @param _this This.
 	 * @returns Char pointer, or null.
 	 */
-	public static teamID(_this: CodeDirectory): Int8Ptr | null {
+	public static teamID(_this: CodeDirectory): Ptr<char> | null {
 		if (_this.version >= CodeDirectory.supportsTeamID) {
 			const { teamIDOffset } = _this;
 			if (teamIDOffset) {
@@ -569,7 +598,7 @@ export class CodeDirectory extends Blob {
 	 * @param _this This.
 	 * @returns Byte offset, zero if not supported.
 	 */
-	public static execSegmentBase(_this: CodeDirectory): bigint {
+	public static execSegmentBase(_this: CodeDirectory): uint64_t {
 		return _this.version >= CodeDirectory.supportsExecSegment
 			? _this.execSegBase
 			: 0n;
@@ -581,7 +610,7 @@ export class CodeDirectory extends Blob {
 	 * @param _this This.
 	 * @returns Byte length, zero if not supported.
 	 */
-	public static execSegmentLimit(_this: CodeDirectory): bigint {
+	public static execSegmentLimit(_this: CodeDirectory): uint64_t {
 		return _this.version >= CodeDirectory.supportsExecSegment
 			? _this.execSegLimit
 			: 0n;
@@ -593,7 +622,7 @@ export class CodeDirectory extends Blob {
 	 * @param _this This.
 	 * @returns Flags, zero if not supported.
 	 */
-	public static execSegmentFlags(_this: CodeDirectory): bigint {
+	public static execSegmentFlags(_this: CodeDirectory): uint64_t {
 		return _this.version >= CodeDirectory.supportsExecSegment
 			? _this.execSegFlags
 			: 0n;
@@ -607,7 +636,7 @@ export class CodeDirectory extends Blob {
 	 */
 	public static preEncryptHashes(
 		_this: CodeDirectory,
-	): Const<Uint8Ptr> | null {
+	): Const<Ptr<uchar>> | null {
 		return CodeDirectory.getSlot(_this, 0, true);
 	}
 
@@ -617,7 +646,7 @@ export class CodeDirectory extends Blob {
 	 * @param _this This.
 	 * @returns Version, zero if not supported.
 	 */
-	public static runtimeVersion(_this: CodeDirectory): number {
+	public static runtimeVersion(_this: CodeDirectory): uint32_t {
 		return _this.version >= CodeDirectory.supportsPreEncrypt
 			? _this.runtime
 			: 0;
@@ -637,11 +666,11 @@ export class CodeDirectory extends Blob {
 	public static async validateSlot(
 		_this: CodeDirectory,
 		source: ArrayBufferLike | ArrayBufferPointer | Reader,
-		size: number,
-		slot: number,
-		preEncrypted: boolean,
+		size: size_t,
+		slot: CodeDirectorySlot,
+		preEncrypted: bool,
 		subtle: SubtleCryptoDigest | null = null,
-	): Promise<boolean> {
+	): Promise<bool> {
 		const hash = CodeDirectory.getHash(_this);
 		hash.subtle = subtle;
 		const l = hash.digestLength();
@@ -681,7 +710,10 @@ export class CodeDirectory extends Blob {
 	 * @param slot Slot index.
 	 * @returns True if present.
 	 */
-	public static slotIsPresent(_this: CodeDirectory, slot: number): boolean {
+	public static slotIsPresent(
+		_this: CodeDirectory,
+		slot: CodeDirectorySlot,
+	): bool {
 		if (slot >= -_this.nSpecialSlots && slot < _this.nCodeSlots) {
 			const digest = CodeDirectory.getSlot(_this, slot, false);
 			if (digest) {
@@ -701,7 +733,7 @@ export class CodeDirectory extends Blob {
 	 * @param hashType Hash type.
 	 * @returns Hasher instance.
 	 */
-	public static hashFor(hashType: number): DynamicHash {
+	public static hashFor(hashType: HashAlgorithm): DynamicHash {
 		switch (hashType) {
 			case kSecCodeSignatureHashSHA1: {
 				return new CCHashInstance(kCCDigestSHA1);
@@ -770,13 +802,13 @@ export class CodeDirectory extends Blob {
 	 */
 	public static async multipleHashFileData(
 		reader: Reader,
-		limit: number,
-		types: Set<number>,
-		action: (type: number, hasher: DynamicHash) => Promise<void>,
+		limit: size_t,
+		types: HashAlgorithms,
+		action: (type: HashAlgorithm, hasher: DynamicHash) => Promise<void>,
 		subtle: SubtleCryptoDigest | null = null,
 	): Promise<void> {
 		const total = limit ? Math.min(limit, reader.size) : reader.size;
-		const hashes: [number, DynamicHash][] = [];
+		const hashes: [HashAlgorithm, DynamicHash][] = [];
 		for (const type of types) {
 			const hash = CodeDirectory.hashFor(type);
 			hash.subtle = subtle;
@@ -813,7 +845,7 @@ export class CodeDirectory extends Blob {
 	 * @param type Hash type.
 	 * @returns True if viable.
 	 */
-	public static viableHash(type: number): boolean {
+	public static viableHash(type: HashAlgorithm): bool {
 		for (
 			let i = 0, t;
 			(t = hashPriorities[i]) !== kSecCodeSignatureNoHash;
@@ -832,7 +864,7 @@ export class CodeDirectory extends Blob {
 	 * @param types Type set.
 	 * @returns Hash type.
 	 */
-	public static bestHashOf(types: Set<number>): number {
+	public static bestHashOf(types: HashAlgorithms): HashAlgorithm {
 		for (
 			let i = 0, type;
 			(type = hashPriorities[i]) !== kSecCodeSignatureNoHash;
@@ -880,8 +912,8 @@ export class CodeDirectory extends Blob {
 		hasher: DynamicHash,
 		reader: Reader,
 		digest: ArrayBufferLike | ArrayBufferPointer,
-		limit?: number,
-	): Promise<number>;
+		limit?: size_t,
+	): Promise<size_t>;
 
 	/**
 	 * Gernerate hash of data.
@@ -895,9 +927,9 @@ export class CodeDirectory extends Blob {
 	protected static async generateHash(
 		hasher: DynamicHash,
 		data: ArrayBufferPointer<ArrayBuffer>,
-		length: number,
+		length: size_t,
 		digest: ArrayBufferLike | ArrayBufferPointer,
-	): Promise<number>;
+	): Promise<size_t>;
 
 	/**
 	 * Generate hash.
@@ -911,9 +943,9 @@ export class CodeDirectory extends Blob {
 	protected static async generateHash(
 		hasher: DynamicHash,
 		reader: Reader | ArrayBufferPointer<ArrayBuffer>,
-		digest: ArrayBufferLike | ArrayBufferPointer | number,
-		limit?: number | ArrayBufferLike | ArrayBufferPointer,
-	): Promise<number> {
+		digest: ArrayBufferLike | ArrayBufferPointer | size_t,
+		limit?: size_t | ArrayBufferLike | ArrayBufferPointer,
+	): Promise<size_t> {
 		if (typeof digest === 'number') {
 			await hasher.update(
 				reader as ArrayBufferPointer<ArrayBuffer>,
@@ -937,7 +969,9 @@ export class CodeDirectory extends Blob {
 	 * @param slot Slot index.
 	 * @returns Slot name, or null.
 	 */
-	public static canonicalSlotName(slot: number): string | null {
+	public static canonicalSlotName(
+		slot: CodeDirectorySpecialSlot,
+	): string | null {
 		switch (slot) {
 			case cdRequirementsSlot:
 				return kSecCS_REQUIREMENTSFILE;
@@ -983,7 +1017,7 @@ export class CodeDirectory extends Blob {
 	 * @param slot Slot index.
 	 * @returns Slot attributes.
 	 */
-	public static slotAttributes(slot: number): number {
+	public static slotAttributes(slot: CodeDirectorySpecialSlot): uint {
 		switch (slot) {
 			case cdRequirementsSlot:
 				return cdComponentIsBlob;
