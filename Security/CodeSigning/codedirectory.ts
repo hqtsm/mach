@@ -957,7 +957,7 @@ export class CodeDirectory extends Blob {
 		const size = await hashFileData(
 			reader as Reader,
 			hasher,
-			limit as number | undefined,
+			limit as size_t | undefined,
 		);
 		await hasher.finish(digest);
 		return size;
