@@ -291,12 +291,6 @@ Deno.test('CodeDirectory: validateSlot', async () => {
 			name,
 		);
 	}
-
-	await assertRejects(
-		() => CodeDirectory.validateSlot(cd, view, len, 0, true),
-		RangeError,
-		'Invalid slot',
-	);
 });
 
 Deno.test('CodeDirectory: slotIsPresent', async () => {

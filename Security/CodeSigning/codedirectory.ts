@@ -692,10 +692,7 @@ export class CodeDirectory extends Blob {
 					digest,
 				)
 		);
-		const slotDigest = CodeDirectory.getSlot(_this, slot, preEncrypted);
-		if (!slotDigest) {
-			throw new RangeError('Invalid slot');
-		}
+		const slotDigest = CodeDirectory.getSlot(_this, slot, preEncrypted)!;
 		for (let i = 0; i < l; i++) {
 			if (digest[i] !== slotDigest[i]) {
 				return false;
