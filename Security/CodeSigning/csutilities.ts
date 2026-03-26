@@ -1,3 +1,4 @@
+import type { size_t } from '../../libc/stddef.ts';
 import type { DynamicHash } from '../../Security/hashing.ts';
 import type { Reader } from '../../util/reader.ts';
 
@@ -12,8 +13,8 @@ import type { Reader } from '../../util/reader.ts';
 export async function hashFileData(
 	reader: Reader,
 	hasher: DynamicHash,
-	limit = 0,
-): Promise<number> {
+	limit: size_t = 0,
+): Promise<size_t> {
 	await hasher.update(reader = limit ? reader.slice(0, limit) : reader);
 	return reader.size;
 }
