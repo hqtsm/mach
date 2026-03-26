@@ -195,7 +195,7 @@ export class CodeDirectoryBuilder {
 	 */
 	public static scatter(
 		_this: CodeDirectoryBuilder,
-		count: number,
+		count: uint,
 	): Ptr<CodeDirectoryScatter>;
 
 	/**
@@ -660,7 +660,7 @@ export class CodeDirectoryBuilder {
 	 * @param _this This.
 	 * @returns Minimum version.
 	 */
-	public static minVersion(_this: CodeDirectoryBuilder): number {
+	public static minVersion(_this: CodeDirectoryBuilder): uint32_t {
 		if (_this.mGeneratePreEncryptHashes || _this.mRuntimeVersion) {
 			return CodeDirectory.supportsPreEncrypt;
 		}
