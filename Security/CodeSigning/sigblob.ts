@@ -1,5 +1,7 @@
 import { constant, toStringTag } from '@hqtsm/class';
-import { array, member, Uint8Ptr } from '@hqtsm/struct';
+import { array, member, type Ptr, Uint8Ptr } from '@hqtsm/struct';
+import type { size_t } from '../../libc/stddef.ts';
+import type { uint8_t } from '../../libc/stdint.ts';
 import { Blob, BlobCore } from '../blob.ts';
 import {
 	kSecCodeMagicDetachedSignature,
@@ -114,7 +116,7 @@ export class EntitlementDERBlob extends Blob {
 	 * @param _this This.
 	 * @returns Data pointer.
 	 */
-	public static der(_this: EntitlementDERBlob): Uint8Ptr {
+	public static der(_this: EntitlementDERBlob): Ptr<uint8_t> {
 		const { data } = _this;
 		return new Uint8Ptr(data.buffer, data.byteOffset, _this.littleEndian);
 	}
@@ -125,7 +127,7 @@ export class EntitlementDERBlob extends Blob {
 	 * @param _this This.
 	 * @returns Byte length.
 	 */
-	public static derLength(_this: EntitlementDERBlob): number {
+	public static derLength(_this: EntitlementDERBlob): size_t {
 		return BlobCore.size(_this) - BlobCore.BYTE_LENGTH;
 	}
 
@@ -154,7 +156,7 @@ export class LaunchConstraintBlob extends Blob {
 	 * @param _this This.
 	 * @returns Data pointer.
 	 */
-	public static der(_this: LaunchConstraintBlob): Uint8Ptr {
+	public static der(_this: LaunchConstraintBlob): Ptr<uint8_t> {
 		const { data } = _this;
 		return new Uint8Ptr(data.buffer, data.byteOffset, _this.littleEndian);
 	}
@@ -165,7 +167,7 @@ export class LaunchConstraintBlob extends Blob {
 	 * @param _this This.
 	 * @returns Byte length.
 	 */
-	public static derLength(_this: LaunchConstraintBlob): number {
+	public static derLength(_this: LaunchConstraintBlob): size_t {
 		return BlobCore.size(_this) - BlobCore.BYTE_LENGTH;
 	}
 
