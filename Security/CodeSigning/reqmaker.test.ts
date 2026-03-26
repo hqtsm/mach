@@ -264,7 +264,7 @@ Deno.test('RequirementMaker: anchor digest', async () => {
 
 Deno.test('RequirementMaker: trustedAnchor', () => {
 	const maker = new RequirementMaker(Requirement.exprForm);
-	RequirementMaker.trustedAnchor(maker, null);
+	RequirementMaker.trustedAnchor(maker);
 	RequirementMaker.trustedAnchor(maker, 1);
 	RequirementMaker.make(maker);
 });

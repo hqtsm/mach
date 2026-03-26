@@ -1,6 +1,9 @@
 import { toStringTag } from '@hqtsm/class';
 import { type ArrayBufferPointer, dataView, Ptr } from '@hqtsm/struct';
+import type { bool, int, uint } from '../../libc/c.ts';
 import { ENOMEM } from '../../libc/errno.ts';
+import type { size_t } from '../../libc/stddef.ts';
+import type { uint32_t } from '../../libc/stdint.ts';
 import { realloc } from '../../libc/stdlib.ts';
 import type { SubtleCryptoDigest } from '../../util/crypto.ts';
 import {
@@ -8,10 +11,13 @@ import {
 	asUint8Array,
 	toUint8ArrayArrayBuffer,
 } from '../../util/memory.ts';
+import type { BlobCoreOffset } from '../blob.ts';
 import { errSecCSReqUnsupported } from '../CSCommon.ts';
 import { MacOSError, UnixError } from '../errors.ts';
 import { alignUp } from '../LowLevelMemoryUtilities/memutils.ts';
 import {
+	type ExprOp,
+	type MatchOperation,
 	opAnchorHash,
 	opAppleAnchor,
 	opAppleGenericAnchor,
@@ -22,6 +28,7 @@ import {
 	opTrustedCert,
 	opTrustedCerts,
 	Requirement,
+	type RequirementKind,
 } from './requirement.ts';
 
 /**
@@ -31,7 +38,7 @@ export class RequirementMakerLabel {
 	/**
 	 * Label position.
 	 */
-	public pos: number;
+	public pos: BlobCoreOffset;
 
 	/**
 	 * Label constructor.
@@ -57,7 +64,7 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	 * @param maker Maker reference.
 	 * @param op Joiner opcode.
 	 */
-	constructor(maker: RequirementMaker, op: number) {
+	constructor(maker: RequirementMaker, op: ExprOp) {
 		super(maker);
 		this.maker = maker;
 		this.mJoiner = op;
@@ -87,19 +94,19 @@ export class RequirementMakerChain extends RequirementMakerLabel {
 	 * @param _this This.
 	 * @returns Is empty.
 	 */
-	public static empty(_this: RequirementMakerChain): boolean {
-		return _this.mCount === 0;
+	public static empty(_this: RequirementMakerChain): bool {
+		return !_this.mCount;
 	}
 
 	/**
 	 * Joiner opcode.
 	 */
-	private readonly mJoiner: number;
+	private readonly mJoiner: ExprOp;
 
 	/**
 	 * Number of elements in the chain.
 	 */
-	private mCount: number;
+	private mCount: uint;
 
 	static {
 		toStringTag(this, 'RequirementMakerChain');
@@ -115,7 +122,7 @@ export class RequirementMaker {
 	 *
 	 * @param k Kind.
 	 */
-	constructor(k: number) {
+	constructor(k: RequirementKind) {
 		const buffer = new ArrayBuffer(1024);
 		const r = new Requirement(buffer);
 		Requirement.initializeSize(r);
@@ -133,7 +140,7 @@ export class RequirementMaker {
 	 */
 	public static alloc(
 		_this: RequirementMaker,
-		size: number,
+		size: size_t,
 	): Uint8Array<ArrayBuffer> {
 		const usedSize = alignUp(size, Requirement.baseAlignment);
 		RequirementMaker.require(_this, usedSize);
@@ -150,7 +157,7 @@ export class RequirementMaker {
 	 */
 	public static put(
 		_this: RequirementMaker,
-		data: ArrayBufferLikeData | number,
+		data: uint32_t | ExprOp | MatchOperation | ArrayBufferLikeData,
 	): void {
 		if (typeof data === 'number') {
 			const a = RequirementMaker.alloc(_this, 4);
@@ -171,7 +178,7 @@ export class RequirementMaker {
 	public static putData(
 		_this: RequirementMaker,
 		data: ArrayBufferPointer,
-		length: number,
+		length: size_t,
 	): void;
 
 	/**
@@ -195,7 +202,7 @@ export class RequirementMaker {
 	public static putData(
 		_this: RequirementMaker,
 		data: ArrayBufferLikeData | ArrayBufferPointer,
-		length?: number,
+		length?: size_t,
 	): void {
 		asUint8Array(data, length ?? (data as ArrayBufferView).byteLength);
 		const d = asUint8Array(
@@ -222,7 +229,7 @@ export class RequirementMaker {
 	 */
 	public static anchor(
 		_this: RequirementMaker,
-		slot: number,
+		slot: int,
 		digest: ArrayBufferPointer<ArrayBuffer>,
 	): void;
 
@@ -237,9 +244,9 @@ export class RequirementMaker {
 	 */
 	public static anchor(
 		_this: RequirementMaker,
-		slot: number,
+		slot: int,
 		cert: ArrayBufferPointer,
-		length: number,
+		length: size_t,
 		subtle?: SubtleCryptoDigest,
 	): Promise<void>;
 
@@ -255,9 +262,9 @@ export class RequirementMaker {
 	 */
 	public static anchor(
 		_this: RequirementMaker,
-		slot?: number,
+		slot?: int,
 		cert?: ArrayBufferPointer,
-		length?: number,
+		length?: size_t,
 		subtle?: SubtleCryptoDigest,
 	): Promise<void> | void {
 		if (length !== undefined) {
@@ -295,11 +302,8 @@ export class RequirementMaker {
 	 * @param _this This.
 	 * @param slot Slot index or null.
 	 */
-	public static trustedAnchor(
-		_this: RequirementMaker,
-		slot: number | null = null,
-	): void {
-		if (slot === null) {
+	public static trustedAnchor(_this: RequirementMaker, slot?: number): void {
+		if (slot === undefined) {
 			RequirementMaker.put(_this, opTrustedCerts);
 		} else {
 			RequirementMaker.put(_this, opTrustedCert);
@@ -360,7 +364,7 @@ export class RequirementMaker {
 	 */
 	public static platform(
 		_this: RequirementMaker,
-		platformIdentifier: number,
+		platformIdentifier: int,
 	): void {
 		RequirementMaker.put(_this, opPlatform);
 		RequirementMaker.put(_this, platformIdentifier);
@@ -376,7 +380,7 @@ export class RequirementMaker {
 	public static copy(
 		_this: RequirementMaker,
 		data: ArrayBufferPointer,
-		length: number,
+		length: size_t,
 	): void;
 
 	/**
@@ -397,7 +401,7 @@ export class RequirementMaker {
 	public static copy(
 		_this: RequirementMaker,
 		data: ArrayBufferPointer | Requirement,
-		length?: number,
+		length?: size_t,
 	): void {
 		if (length === undefined) {
 			const req = data as Requirement;
@@ -428,7 +432,7 @@ export class RequirementMaker {
 	public static insert(
 		_this: RequirementMaker,
 		label: RequirementMakerLabel,
-		length = 4,
+		length: size_t = 4,
 	): Ptr {
 		const { pos } = label;
 		const req = new Requirement(_this.mBuffer!);
@@ -449,7 +453,7 @@ export class RequirementMaker {
 	 * @param _this This.
 	 * @param kind Requirement kind.
 	 */
-	public static kind(_this: RequirementMaker, kind: number): void {
+	public static kind(_this: RequirementMaker, kind: RequirementKind): void {
 		Requirement.kind(new Requirement(_this.mBuffer!), kind);
 	}
 
@@ -482,7 +486,7 @@ export class RequirementMaker {
 	 * @param _this This.
 	 * @param size Number of bytes required.
 	 */
-	protected static require(_this: RequirementMaker, size: number): void {
+	protected static require(_this: RequirementMaker, size: size_t): void {
 		const { mBuffer } = _this;
 		const end = _this.mPC + size;
 		let mSize = mBuffer!.byteLength;
@@ -505,7 +509,7 @@ export class RequirementMaker {
 	/**
 	 * Current position in buffer.
 	 */
-	private mPC: number;
+	private mPC: BlobCoreOffset;
 
 	static {
 		toStringTag(this, 'RequirementMaker');
