@@ -1,6 +1,7 @@
 import type { int32_t } from '../libc/stdint.ts';
 
 // CCCryptorStatus:
+// enum {
 
 /**
  * CommonCrypto: Success.
@@ -66,6 +67,8 @@ export const kCCKeySizeError = -4310;
  * CommonCrypto: Invalid key.
  */
 export const kCCInvalidKey = -4311;
+
+// }
 
 /**
  * CommonCrypto: Status.

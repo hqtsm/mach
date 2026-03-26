@@ -121,6 +121,7 @@ export const kSecCS_LAUNCHCONSTRAINTRESPONSIBLEFILE =
 export const kSecCS_LIBRARYCONSTRAINTFILE = 'LibraryConstraint';
 
 // Special hash slot values:
+// enum {
 
 // Primary slots:
 
@@ -221,7 +222,10 @@ export const cdIdentificationSlot = 0x10001;
  */
 export const cdTicketSlot = 0x10002;
 
+// }
+
 // Special hash slot flags:
+// enum {
 
 /**
  * Slot values differs for each architecture.
@@ -232,6 +236,8 @@ export const cdComponentPerArchitecture = 1;
  * Slot value is Blob.
  */
 export const cdComponentIsBlob = 2;
+
+// }
 
 /**
  * Platform identifier.

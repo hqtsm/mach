@@ -1,4 +1,7 @@
+import type { uint32_t } from '../libc/stdint.ts';
+
 // Blob types used for code signing:
+// enum {
 
 /**
  * Security code magic: Single requirement.
@@ -45,7 +48,24 @@ export const kSecCodeMagicLaunchConstraint = 0xfade8181;
  */
 export const kSecCodeMagicByte = 0xfa;
 
-// SecCodeExecSegFlags:
+// }
+
+// CF_OPTIONS(uint32_t, SecCodeExecSegFlags) {
+
+/**
+ * Executable code segment flags.
+ */
+export type SecCodeExecSegFlags =
+	& uint32_t
+	& (
+		| typeof kSecCodeExecSegMainBinary
+		| typeof kSecCodeExecSegAllowUnsigned
+		| typeof kSecCodeExecSegDebugger
+		| typeof kSecCodeExecSegJit
+		| typeof kSecCodeExecSegSkipLibraryVal
+		| typeof kSecCodeExecSegCanLoadCdHash
+		| typeof kSecCodeExecSegCanExecCdHash
+	);
 
 /**
  * SecCodeExecSegFlags: Main binary.
@@ -82,7 +102,13 @@ export const kSecCodeExecSegCanLoadCdHash = 0x0100;
  */
 export const kSecCodeExecSegCanExecCdHash = 0x0200;
 
+// }
+
+// enum {
+
 /**
  * The current fixed side of cdhash.
  */
 export const kSecCodeCDHashLength = 20;
+
+// }

@@ -3,6 +3,7 @@
 import type { uint32_t } from '../../libc/stdint.ts';
 
 // CCDigestAlgorithm:
+// enum {
 
 /**
  * CommonCrypto digest algorithm: none.
@@ -78,6 +79,8 @@ export const kCCDigestSHA3_512 = 16;
  * CommonCrypto digest algorithm: maximum.
  */
 export const kCCDigestMax = 17;
+
+// }
 
 /**
  * CommonCrypto digest algorithm.

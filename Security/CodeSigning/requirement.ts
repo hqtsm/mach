@@ -98,7 +98,8 @@ export class Requirement extends Blob {
 	}
 }
 
-// Opcodes exprForm:
+// Opcode exprForm:
+// enum {
 
 /**
  * Opcode flag mask.
@@ -114,6 +115,10 @@ export const opGenericFalse = 0x80000000;
  * Opcode generic skip.
  */
 export const opGenericSkip = 0x40000000;
+
+// }
+
+// enum ExprOp {
 
 /**
  * Expression opcode.
@@ -270,6 +275,10 @@ export const opLegacyDevID = 23;
  */
 export const exprOpCount = 24;
 
+// }
+
+// enum MatchOperation {
+
 /**
  * Match operation.
  */
@@ -364,6 +373,8 @@ export const matchOnOrAfter = 13;
  * Match: Absent.
  */
 export const matchAbsent = 14;
+
+// }
 
 /**
  * Requirement groups indexed by SecRequirementType.

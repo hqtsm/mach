@@ -1,4 +1,6 @@
-// Code signing OSStatus codes:
+import type { u_int32_t, uint32_t } from '../libc/stdint.ts';
+
+// CF_ENUM(OSStatus) {
 
 /**
  * Security error: Code signing unimplemented.
@@ -420,14 +422,37 @@ export const errSecCSCMSConstructionFailed = -66991;
  */
 export const errSecCSRemoteSignerFailed = -66990;
 
-// SecGuestRef:
+// }
+
+/**
+ * Guest reference.
+ */
+export type SecGuestRef = u_int32_t;
 
 /**
  * Not a valid SecGuestRef.
  */
 export const kSecNoGuest = 0;
 
-// SecCSFlags:
+// CF_OPTIONS(uint32_t, SecCSFlags) {
+
+/**
+ * Code signing flags.
+ */
+export type SecCSFlags =
+	& uint32_t
+	& (
+		| typeof kSecCSDefaultFlags
+		| typeof kSecCSConsiderExpiration
+		| typeof kSecCSEnforceRevocationChecks
+		| typeof kSecCSNoNetworkAccess
+		| typeof kSecCSReportProgress
+		| typeof kSecCSCheckTrustedAnchors
+		| typeof kSecCSQuickCheck
+		| typeof kSecCSApplyEmbeddedPolicy
+		| typeof kSecCSStripDisallowedXattrs
+		| typeof kSecCSMatchGuestRequirementInKernel
+	);
 
 /**
  * Code signing default flags.
@@ -497,7 +522,27 @@ export const kSecCSStripDisallowedXattrs = 0x1000000;
  */
 export const kSecCSMatchGuestRequirementInKernel = 0x800000;
 
-// SecCodeSignatureFlags:
+// }
+
+// CF_OPTIONS(uint32_t, SecCodeSignatureFlags) {
+
+/**
+ * Code signature flags.
+ */
+export type SecCodeSignatureFlags =
+	& uint32_t
+	& (
+		| typeof kSecCodeSignatureHost
+		| typeof kSecCodeSignatureAdhoc
+		| typeof kSecCodeSignatureForceHard
+		| typeof kSecCodeSignatureForceKill
+		| typeof kSecCodeSignatureForceExpiration
+		| typeof kSecCodeSignatureRestrict
+		| typeof kSecCodeSignatureEnforcement
+		| typeof kSecCodeSignatureLibraryValidation
+		| typeof kSecCodeSignatureRuntime
+		| typeof kSecCodeSignatureLinkerSigned
+	);
 
 /**
  * Code signature may host uest code.
@@ -549,7 +594,22 @@ export const kSecCodeSignatureRuntime = 0x10000;
  */
 export const kSecCodeSignatureLinkerSigned = 0x20000;
 
-// SecCodeStatus:
+// }
+
+// CF_OPTIONS(uint32_t, SecCodeStatus) {
+
+/**
+ * Code status.
+ */
+export type SecCodeStatus =
+	& uint32_t
+	& (
+		| typeof kSecCodeStatusValid
+		| typeof kSecCodeStatusHard
+		| typeof kSecCodeStatusKill
+		| typeof kSecCodeStatusDebugged
+		| typeof kSecCodeStatusPlatform
+	);
 
 /**
  * Code is dynamically valid.
@@ -576,7 +636,24 @@ export const kSecCodeStatusDebugged = 0x10000000;
  */
 export const kSecCodeStatusPlatform = 0x04000000;
 
-// SecRequirementType:
+// }
+
+// CF_ENUM(uint32_t, SecRequirementType) {
+
+/**
+ * Internal requirements for code.
+ */
+export type SecRequirementType =
+	& uint32_t
+	& (
+		| typeof kSecHostRequirementType
+		| typeof kSecGuestRequirementType
+		| typeof kSecDesignatedRequirementType
+		| typeof kSecLibraryRequirementType
+		| typeof kSecPluginRequirementType
+		| typeof kSecInvalidRequirementType
+		| typeof kSecRequirementTypeCount
+	);
 
 /**
  * Host requirement type.
@@ -613,7 +690,23 @@ export const kSecInvalidRequirementType = 6;
  */
 export const kSecRequirementTypeCount = kSecInvalidRequirementType;
 
-// SecCSDigestAlgorithm:
+// }
+
+// CF_ENUM(uint32_t, SecCSDigestAlgorithm) {
+
+/**
+ * Code signature digest algorithm.
+ */
+export type SecCSDigestAlgorithm =
+	& uint32_t
+	& (
+		| typeof kSecCodeSignatureNoHash
+		| typeof kSecCodeSignatureHashSHA1
+		| typeof kSecCodeSignatureHashSHA256
+		| typeof kSecCodeSignatureHashSHA256Truncated
+		| typeof kSecCodeSignatureHashSHA384
+		| typeof kSecCodeSignatureHashSHA512
+	);
 
 /**
  * Code signature no hash.
@@ -644,3 +737,5 @@ export const kSecCodeSignatureHashSHA384 = 4;
  * Code signature hash: SHA-512.
  */
 export const kSecCodeSignatureHashSHA512 = 5;
+
+// }

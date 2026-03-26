@@ -1,4 +1,5 @@
 // Security Error Codes:
+// CF_ENUM(OSStatus) {
 
 /**
  * Security error: No error.
@@ -1920,7 +1921,10 @@ export const errSecCertificateDuplicateExtension = -67903;
  */
 export const errSecMissingQualifiedCertStatement = -67904;
 
+// }
+
 // SecureTransport Error Codes:
+// CF_ENUM(OSStatus) {
 
 /**
  * SSL error: Protocol.
@@ -2291,3 +2295,5 @@ export const errSSLATSCertificateTrustViolation = -9886;
  * SSL error: Early data rejected.
  */
 export const errSSLEarlyDataRejected = -9890;
+
+// }
