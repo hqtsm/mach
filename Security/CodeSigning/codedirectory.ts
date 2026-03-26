@@ -250,12 +250,12 @@ export const maxPlatform = 255;
 /**
  * Hash algorithm.
  */
-export type HashAlgorithm = uint32_t;
+export type CodeDirectoryHashAlgorithm = uint32_t;
 
 /**
  * Set of hash algorithms.
  */
-export type HashAlgorithms = Set<HashAlgorithm>;
+export type CodeDirectoryHashAlgorithms = Set<CodeDirectoryHashAlgorithm>;
 
 /**
  * Slot index.
@@ -733,7 +733,7 @@ export class CodeDirectory extends Blob {
 	 * @param hashType Hash type.
 	 * @returns Hasher instance.
 	 */
-	public static hashFor(hashType: HashAlgorithm): DynamicHash {
+	public static hashFor(hashType: CodeDirectoryHashAlgorithm): DynamicHash {
 		switch (hashType) {
 			case kSecCodeSignatureHashSHA1: {
 				return new CCHashInstance(kCCDigestSHA1);
@@ -803,12 +803,15 @@ export class CodeDirectory extends Blob {
 	public static async multipleHashFileData(
 		reader: Reader,
 		limit: size_t,
-		types: HashAlgorithms,
-		action: (type: HashAlgorithm, hasher: DynamicHash) => Promise<void>,
+		types: CodeDirectoryHashAlgorithms,
+		action: (
+			type: CodeDirectoryHashAlgorithm,
+			hasher: DynamicHash,
+		) => Promise<void>,
 		subtle: SubtleCryptoDigest | null = null,
 	): Promise<void> {
 		const total = limit ? Math.min(limit, reader.size) : reader.size;
-		const hashes: [HashAlgorithm, DynamicHash][] = [];
+		const hashes: [CodeDirectoryHashAlgorithm, DynamicHash][] = [];
 		for (const type of types) {
 			const hash = CodeDirectory.hashFor(type);
 			hash.subtle = subtle;
@@ -845,7 +848,7 @@ export class CodeDirectory extends Blob {
 	 * @param type Hash type.
 	 * @returns True if viable.
 	 */
-	public static viableHash(type: HashAlgorithm): bool {
+	public static viableHash(type: CodeDirectoryHashAlgorithm): bool {
 		for (
 			let i = 0, t;
 			(t = hashPriorities[i]) !== kSecCodeSignatureNoHash;
@@ -864,7 +867,9 @@ export class CodeDirectory extends Blob {
 	 * @param types Type set.
 	 * @returns Hash type.
 	 */
-	public static bestHashOf(types: HashAlgorithms): HashAlgorithm {
+	public static bestHashOf(
+		types: CodeDirectoryHashAlgorithms,
+	): CodeDirectoryHashAlgorithm {
 		for (
 			let i = 0, type;
 			(type = hashPriorities[i]) !== kSecCodeSignatureNoHash;
