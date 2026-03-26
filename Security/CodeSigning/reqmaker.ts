@@ -302,7 +302,7 @@ export class RequirementMaker {
 	 * @param _this This.
 	 * @param slot Slot index or null.
 	 */
-	public static trustedAnchor(_this: RequirementMaker, slot?: number): void {
+	public static trustedAnchor(_this: RequirementMaker, slot?: int): void {
 		if (slot === undefined) {
 			RequirementMaker.put(_this, opTrustedCerts);
 		} else {
@@ -463,7 +463,7 @@ export class RequirementMaker {
 	 * @param _this This.
 	 * @returns Byte length.
 	 */
-	public static size(_this: RequirementMaker): number {
+	public static size(_this: RequirementMaker): size_t {
 		return _this.mPC;
 	}
 
