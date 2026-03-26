@@ -1,7 +1,14 @@
 import { toStringTag } from '@hqtsm/class';
 import { pointer, type Ptr } from '@hqtsm/struct';
+import type { bool, uint } from '../../libc/c.ts';
 import { ENOMEM } from '../../libc/errno.ts';
-import { UINT32_MAX } from '../../libc/stdint.ts';
+import type { size_t } from '../../libc/stddef.ts';
+import {
+	UINT32_MAX,
+	type uint32_t,
+	type uint64_t,
+	type uint8_t,
+} from '../../libc/stdint.ts';
 import { calloc } from '../../libc/stdlib.ts';
 import type { SubtleCryptoDigest } from '../../util/crypto.ts';
 import {
@@ -12,7 +19,12 @@ import type { Reader } from '../../util/reader.ts';
 import { errSecCSTooBig } from '../CSCommon.ts';
 import { MacOSError, UnixError } from '../errors.ts';
 import type { DynamicHash } from '../hashing.ts';
-import { CodeDirectory, CodeDirectoryScatter } from './codedirectory.ts';
+import {
+	CodeDirectory,
+	type CodeDirectoryHashAlgorithm,
+	CodeDirectoryScatter,
+	type CodeDirectorySpecialSlot,
+} from './codedirectory.ts';
 
 /**
  * Builder for building CodeDirectories from pieces.
@@ -23,7 +35,7 @@ export class CodeDirectoryBuilder {
 	 *
 	 * @param digestAlgorithm Hash algorithm (kSecCodeSignatureHash* constants).
 	 */
-	constructor(digestAlgorithm: number) {
+	constructor(digestAlgorithm: CodeDirectoryHashAlgorithm) {
 		this.mHashType = digestAlgorithm;
 		this.mDigestLength = CodeDirectoryBuilder.getHash(this).digestLength();
 	}
@@ -40,9 +52,9 @@ export class CodeDirectoryBuilder {
 	public static executable(
 		_this: CodeDirectoryBuilder,
 		file: Reader,
-		pagesize: number,
-		offset: number,
-		length: number,
+		pagesize: size_t,
+		offset: size_t,
+		length: size_t,
 	): void {
 		_this.mExec = file;
 		_this.mPageSize = pagesize;
@@ -61,8 +73,8 @@ export class CodeDirectoryBuilder {
 	public static reopen(
 		_this: CodeDirectoryBuilder,
 		file: Reader,
-		offset: number,
-		length: number,
+		offset: size_t,
+		length: size_t,
 	): void {
 		_this.mExec = file;
 		_this.mExecOffset = offset;
@@ -75,7 +87,7 @@ export class CodeDirectoryBuilder {
 	 * @param _this This.
 	 * @returns Is open.
 	 */
-	public static opened(_this: CodeDirectoryBuilder): boolean {
+	public static opened(_this: CodeDirectoryBuilder): bool {
 		return !!_this.mExec;
 	}
 
@@ -88,7 +100,7 @@ export class CodeDirectoryBuilder {
 	 */
 	public static async specialSlot(
 		_this: CodeDirectoryBuilder,
-		slot: number,
+		slot: CodeDirectorySpecialSlot,
 		data: ArrayBufferLikeData,
 	): Promise<void> {
 		const hash = CodeDirectoryBuilder.getHash(_this);
@@ -157,7 +169,7 @@ export class CodeDirectoryBuilder {
 	 * @param _this This.
 	 * @param flags Flags.
 	 */
-	public static flags(_this: CodeDirectoryBuilder, flags: number): void {
+	public static flags(_this: CodeDirectoryBuilder, flags: uint32_t): void {
 		_this.mFlags = flags;
 	}
 
@@ -169,7 +181,7 @@ export class CodeDirectoryBuilder {
 	 */
 	public static platform(
 		_this: CodeDirectoryBuilder,
-		platform: number,
+		platform: uint8_t,
 	): void {
 		_this.mPlatform = platform;
 	}
@@ -205,7 +217,7 @@ export class CodeDirectoryBuilder {
 	 */
 	public static scatter(
 		_this: CodeDirectoryBuilder,
-		count?: number,
+		count?: uint,
 	): Ptr<CodeDirectoryScatter> | null {
 		if (count !== undefined) {
 			const { BYTE_LENGTH } = CodeDirectoryScatter;
@@ -229,9 +241,9 @@ export class CodeDirectoryBuilder {
 	 */
 	public static execSeg(
 		_this: CodeDirectoryBuilder,
-		base: bigint,
-		limit: bigint,
-		flags: bigint,
+		base: uint64_t,
+		limit: uint64_t,
+		flags: uint64_t,
 	): void {
 		_this.mExecSegOffset = base;
 		_this.mExecSegLimit = limit;
@@ -246,7 +258,7 @@ export class CodeDirectoryBuilder {
 	 */
 	public static addExecSegFlags(
 		_this: CodeDirectoryBuilder,
-		flags: bigint,
+		flags: uint64_t,
 	): void {
 		_this.mExecSegFlags |= flags;
 	}
@@ -259,7 +271,7 @@ export class CodeDirectoryBuilder {
 	 */
 	public static generatePreEncryptHashes(
 		_this: CodeDirectoryBuilder,
-		pre: boolean,
+		pre: bool,
 	): void {
 		_this.mGeneratePreEncryptHashes = pre;
 	}
@@ -272,7 +284,7 @@ export class CodeDirectoryBuilder {
 	 */
 	public static runTimeVersion(
 		_this: CodeDirectoryBuilder,
-		runtime: number,
+		runtime: uint32_t,
 	): void {
 		_this.mRuntimeVersion = runtime;
 	}
@@ -286,8 +298,8 @@ export class CodeDirectoryBuilder {
 	 */
 	public static size(
 		_this: CodeDirectoryBuilder,
-		version: number | null = null,
-	): number {
+		version: uint32_t | null = null,
+	): size_t {
 		version ??= CodeDirectoryBuilder.minVersion(_this);
 		const {
 			mIdentifier,
@@ -324,7 +336,7 @@ export class CodeDirectoryBuilder {
 	 */
 	public static async build(
 		_this: CodeDirectoryBuilder,
-		version: number | null = null,
+		version: uint32_t | null = null,
 	): Promise<CodeDirectory> {
 		version ??= CodeDirectoryBuilder.minVersion(_this);
 		const {
@@ -465,8 +477,8 @@ export class CodeDirectoryBuilder {
 	 */
 	public static fixedSize(
 		_this: CodeDirectoryBuilder,
-		version: number,
-	): number {
+		version: uint32_t,
+	): size_t {
 		let size = CodeDirectory.BYTE_LENGTH;
 		if (version < CodeDirectory.supportsPreEncrypt) {
 			size -= 8;
@@ -492,7 +504,7 @@ export class CodeDirectoryBuilder {
 	 * @param _this This.
 	 * @returns Hash type.
 	 */
-	public static hashType(_this: CodeDirectoryBuilder): number {
+	public static hashType(_this: CodeDirectoryBuilder): uint32_t {
 		return _this.mHashType;
 	}
 
@@ -517,7 +529,7 @@ export class CodeDirectoryBuilder {
 	 */
 	private static getSpecialSlot(
 		_this: CodeDirectoryBuilder,
-		slot: number,
+		slot: CodeDirectorySpecialSlot,
 	): ArrayBuffer | null {
 		return _this.mSpecial.get(slot) || null;
 	}
@@ -525,7 +537,10 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Special slots.
 	 */
-	private readonly mSpecial = new Map<number, ArrayBuffer>();
+	private readonly mSpecial = new Map<
+		CodeDirectorySpecialSlot,
+		ArrayBuffer
+	>();
 
 	/**
 	 * Executable file.
@@ -535,37 +550,37 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Starting offset inside mExec.
 	 */
-	private mExecOffset = 0;
+	private mExecOffset: size_t = 0;
 
 	/**
 	 * Total bytes to sign.
 	 */
-	private mExecLength = 0;
+	private mExecLength: size_t = 0;
 
 	/**
 	 * Page size, must be a power of 2, or zero for infinite.
 	 */
-	private mPageSize = 0;
+	private mPageSize: size_t = 0;
 
 	/**
 	 * Flags.
 	 */
-	private mFlags = 0;
+	private mFlags: uint32_t = 0;
 
 	/**
 	 * Hash algorithm.
 	 */
-	private readonly mHashType: number;
+	private readonly mHashType: uint32_t;
 
 	/**
 	 * Platform.
 	 */
-	private mPlatform = 0;
+	private mPlatform: uint8_t = 0;
 
 	/**
 	 * Hash digest length.
 	 */
-	private readonly mDigestLength: number;
+	private readonly mDigestLength: uint32_t;
 
 	/**
 	 * Identifier.
@@ -580,13 +595,13 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Highest special slot index.
 	 */
-	private mSpecialSlots = 0;
+	private mSpecialSlots: size_t = 0;
 
 	/**
 	 * Number of code slots.
 	 * Based on execLength and pageSize.
 	 */
-	private get mCodeSlots(): number {
+	private get mCodeSlots(): size_t {
 		const { mExecLength } = this;
 		if (mExecLength <= 0) {
 			return 0;
@@ -607,32 +622,32 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Scatter vector byte size, include sentinel.
 	 */
-	private mScatterSize = 0;
+	private mScatterSize: size_t = 0;
 
 	/**
 	 * Exec segment offset.
 	 */
-	private mExecSegOffset = 0n;
+	private mExecSegOffset: uint64_t = 0n;
 
 	/**
 	 * Exec segment limit.
 	 */
-	private mExecSegLimit = 0n;
+	private mExecSegLimit: uint64_t = 0n;
 
 	/**
 	 * Exec segment flags.
 	 */
-	private mExecSegFlags = 0n;
+	private mExecSegFlags: uint64_t = 0n;
 
 	/**
 	 * Generate pre-encrypt hashes.
 	 */
-	private mGeneratePreEncryptHashes = false;
+	private mGeneratePreEncryptHashes: bool = false;
 
 	/**
 	 * Runtime version.
 	 */
-	private mRuntimeVersion = 0;
+	private mRuntimeVersion: uint32_t = 0;
 
 	/**
 	 * Dynamic hash crypto.
