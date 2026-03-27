@@ -8,8 +8,9 @@ import { realloc } from '../../libc/stdlib.ts';
 import type { SubtleCryptoDigest } from '../../util/crypto.ts';
 import {
 	type ArrayBufferLikeData,
-	asUint8Array,
+	pointerBytes,
 	toUint8ArrayArrayBuffer,
+	viewBytes,
 } from '../../util/memory.ts';
 import type { BlobCoreOffset } from '../blob.ts';
 import { errSecCSReqUnsupported } from '../CSCommon.ts';
@@ -160,10 +161,10 @@ export class RequirementMaker {
 		data: uint32_t | ExprOp | MatchOperation | ArrayBufferLikeData,
 	): void {
 		if (typeof data === 'number') {
-			const a = RequirementMaker.alloc(_this, 4);
-			dataView(a.buffer).setUint32(a.byteOffset, data);
+			const d = RequirementMaker.alloc(_this, 4);
+			dataView(d.buffer).setUint32(d.byteOffset, data);
 		} else {
-			const d = asUint8Array(data);
+			const d = pointerBytes(data);
 			RequirementMaker.alloc(_this, d.byteLength).set(d);
 		}
 	}
@@ -204,11 +205,9 @@ export class RequirementMaker {
 		data: ArrayBufferLikeData | ArrayBufferPointer,
 		length?: size_t,
 	): void {
-		asUint8Array(data, length ?? (data as ArrayBufferView).byteLength);
-		const d = asUint8Array(
-			data,
-			length ?? (data as ArrayBufferView).byteLength,
-		);
+		const d = length === undefined
+			? viewBytes(data as ArrayBufferLikeData)
+			: pointerBytes(data, length);
 		RequirementMaker.put(_this, d.byteLength);
 		RequirementMaker.put(_this, d);
 	}

@@ -17,7 +17,11 @@ import type { bool, int, uchar } from '../libc/c.ts';
 import type { size_t } from '../libc/stddef.ts';
 import type { uint32_t, uint8_t } from '../libc/stdint.ts';
 import { malloc } from '../libc/stdlib.ts';
-import { type ArrayBufferLikeData, asUint8Array } from '../util/memory.ts';
+import {
+	type ArrayBufferLikeData,
+	pointerBytes,
+	viewBytes,
+} from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import type { Endian } from './endian.ts';
 import { MacOSError, UnixError } from './errors.ts';
@@ -464,7 +468,7 @@ export abstract class Blob extends BlobCore {
 	public static blobify(content: ArrayBufferLikeData): ArrayBuffer {
 		const { typeMagic } = this;
 		const { BYTE_LENGTH } = BlobCore;
-		const view = asUint8Array(content);
+		const view = viewBytes(content);
 		const size = BYTE_LENGTH + view.byteLength;
 		const data = malloc(size);
 		if (!data) {
@@ -619,7 +623,7 @@ export class BlobWrapper extends Blob {
 			size += data;
 			magic = length;
 		} else {
-			view = asUint8Array(data, length!);
+			view = pointerBytes(data, length!);
 			size += view.byteLength;
 		}
 		magic ??= BlobWrapper.typeMagic;

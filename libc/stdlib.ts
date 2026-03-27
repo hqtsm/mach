@@ -1,5 +1,5 @@
 import type { ArrayBufferPointer } from '@hqtsm/struct';
-import { asUint8Array } from '../util/memory.ts';
+import { pointerBytes } from '../util/memory.ts';
 import type { int } from './c.ts';
 import { ENOMEM } from './errno.ts';
 import type { size_t } from './stddef.ts';
@@ -57,7 +57,7 @@ export function realloc(
 ): ArrayBuffer | null {
 	const m = malloc(size, context);
 	if (m && buffer) {
-		new Uint8Array(m).set(asUint8Array(buffer).slice(0, size));
+		new Uint8Array(m).set(pointerBytes(buffer).slice(0, size));
 	}
 	return m;
 }

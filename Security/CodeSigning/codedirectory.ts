@@ -26,7 +26,7 @@ import {
 	sizeAsyncIterators,
 	type SizeIteratorNext,
 } from '../../util/iterator.ts';
-import { asUint8Array, toUint8ArrayArrayBuffer } from '../../util/memory.ts';
+import { pointerBytes, toUint8ArrayArrayBuffer } from '../../util/memory.ts';
 import type { Reader } from '../../util/reader.ts';
 import { Blob } from '../blob.ts';
 import {
@@ -898,7 +898,7 @@ export class CodeDirectory extends Blob {
 		hash: ArrayBufferLike | ArrayBufferPointer,
 	): Uint8Array<ArrayBuffer> {
 		const size = _this.hashSize;
-		const h = asUint8Array(hash, size);
+		const h = pointerBytes(hash, size);
 		const result = new Uint8Array(size * 2);
 		for (let i = 0, j = 0, c, b; i < size; i++) {
 			b = h[i];

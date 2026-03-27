@@ -4,9 +4,10 @@ import {
 	assertStrictEquals,
 } from '@std/assert';
 import {
-	asUint8Array,
 	isSharedArrayBuffer,
+	pointerBytes,
 	toUint8ArrayArrayBuffer,
+	viewBytes,
 } from './memory.ts';
 
 Deno.test('isSharedArrayBuffer', () => {
@@ -14,30 +15,42 @@ Deno.test('isSharedArrayBuffer', () => {
 	assertEquals(isSharedArrayBuffer(new ArrayBuffer(0)), false);
 });
 
-Deno.test('asUint8Array', () => {
+Deno.test('pointerBytes', () => {
 	const ab = new ArrayBuffer(4);
 	new Uint8Array(ab).set([1, 2, 3, 4]);
 	const uab = new Uint8Array(ab, 1, 2);
 
-	assertStrictEquals(asUint8Array(ab).buffer, ab);
-	assertEquals(asUint8Array(ab).byteOffset, 0);
-	assertEquals(asUint8Array(ab).byteLength, 4);
-	assertStrictEquals(asUint8Array(uab).buffer, ab);
-	assertEquals(asUint8Array(uab).byteOffset, 1);
-	assertEquals(asUint8Array(uab).byteLength, 2);
-	assertEquals(asUint8Array(uab, 1).byteLength, 1);
+	assertEquals(pointerBytes(uab, 1).byteLength, 1);
 
 	const sab = new SharedArrayBuffer(4);
 	new Uint8Array(sab).set([5, 6, 7, 8]);
 	const usab = new Uint8Array(sab, 1, 2);
 
-	assertStrictEquals(asUint8Array(sab).buffer, sab);
-	assertEquals(asUint8Array(sab).byteOffset, 0);
-	assertEquals(asUint8Array(sab).byteLength, 4);
-	assertStrictEquals(asUint8Array(usab).buffer, sab);
-	assertEquals(asUint8Array(usab).byteOffset, 1);
-	assertEquals(asUint8Array(usab).byteLength, 2);
-	assertEquals(asUint8Array(usab, 1).byteLength, 1);
+	assertEquals(pointerBytes(usab, 1).byteLength, 1);
+});
+
+Deno.test('viewBytes', () => {
+	const ab = new ArrayBuffer(4);
+	new Uint8Array(ab).set([1, 2, 3, 4]);
+	const uab = new Uint8Array(ab, 1, 2);
+
+	assertStrictEquals(viewBytes(ab).buffer, ab);
+	assertEquals(viewBytes(ab).byteOffset, 0);
+	assertEquals(viewBytes(ab).byteLength, 4);
+	assertStrictEquals(viewBytes(uab).buffer, ab);
+	assertEquals(viewBytes(uab).byteOffset, 1);
+	assertEquals(viewBytes(uab).byteLength, 2);
+
+	const sab = new SharedArrayBuffer(4);
+	new Uint8Array(sab).set([5, 6, 7, 8]);
+	const usab = new Uint8Array(sab, 1, 2);
+
+	assertStrictEquals(viewBytes(sab).buffer, sab);
+	assertEquals(viewBytes(sab).byteOffset, 0);
+	assertEquals(viewBytes(sab).byteLength, 4);
+	assertStrictEquals(viewBytes(usab).buffer, sab);
+	assertEquals(viewBytes(usab).byteOffset, 1);
+	assertEquals(viewBytes(usab).byteLength, 2);
 });
 
 Deno.test('toUint8ArrayArrayBuffer', () => {

@@ -13,7 +13,7 @@ import type { size_t } from '../libc/stddef.ts';
 import { ENOMEM } from '../libc/errno.ts';
 import type { SubtleCryptoDigest } from '../util/crypto.ts';
 import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
-import { type ArrayBufferData, asUint8Array } from '../util/memory.ts';
+import { type ArrayBufferData, pointerBytes } from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import { UnixError } from './errors.ts';
 
@@ -93,7 +93,7 @@ export abstract class DynamicHash extends Hashing {
 		const l = _this.digestLength();
 		const d = new Uint8Array(l);
 		await _this.finish(d);
-		const e = asUint8Array(digest, l);
+		const e = pointerBytes(digest, l);
 		let diff = 0;
 		for (let i = 0; i < l; i++) {
 			diff |= d[i] ^ e[i];
@@ -183,7 +183,7 @@ export class CCHashInstance extends DynamicHash {
 		if (mTruncate) {
 			const d = new ArrayBuffer(CCDigestOutputSize(mDigest));
 			await CCDigestFinal(mDigest, d);
-			asUint8Array(digest, mTruncate).set(
+			pointerBytes(digest, mTruncate).set(
 				new Uint8Array(d, 0, mTruncate),
 			);
 		} else {

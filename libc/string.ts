@@ -1,5 +1,5 @@
 import type { ArrayBufferPointer } from '@hqtsm/struct';
-import { asUint8Array } from '../util/memory.ts';
+import { pointerBytes } from '../util/memory.ts';
 import type { int } from './c.ts';
 import type { size_t } from './stddef.ts';
 
@@ -10,7 +10,7 @@ import type { size_t } from './stddef.ts';
  * @returns Length of string.
  */
 export function strlen(str: ArrayBufferLike | ArrayBufferPointer): size_t {
-	const s = asUint8Array(str);
+	const s = pointerBytes(str);
 	let i = 0;
 	for (; s[i]; i++);
 	return i;
@@ -29,8 +29,8 @@ export function strncmp(
 	str2: ArrayBufferLike | ArrayBufferPointer,
 	n: size_t,
 ): int {
-	const s1 = asUint8Array(str1);
-	const s2 = asUint8Array(str2);
+	const s1 = pointerBytes(str1);
+	const s2 = pointerBytes(str2);
 	for (let i = 0, c1, c2; n-- > 0; i++) {
 		c1 = s1[i];
 		c2 = s2[i];

@@ -25,47 +25,35 @@ export function isSharedArrayBuffer(
 }
 
 /**
- * Get Uint8Array from a buffer or buffer pointer.
+ * Pointer to Uint8Array.
  *
- * @param value Buffer or buffer view.
+ * @template T Buffer type.
+ * @param value Buffer or buffer pointer.
  * @param length Optional length.
  * @returns Uint8Array.
  */
-export function asUint8Array<T extends ArrayBufferLike>(
+export function pointerBytes<T extends ArrayBufferLike>(
 	value: T | ArrayBufferPointer<T>,
-	length?: number,
-): Uint8Array<T>;
-
-/**
- * Get Uint8Array from a buffer or buffer view.
- *
- * @param value Buffer or buffer view.
- * @param length Optional length.
- * @returns Uint8Array.
- */
-export function asUint8Array<T extends ArrayBufferLike>(
-	value: T | ArrayBufferView<T>,
-	length?: number,
-): Uint8Array<T>;
-
-/**
- * Get Uint8Array from a buffer or buffer view or pointer.
- *
- * @param value Buffer or buffer view.
- * @param length Optional length.
- * @returns Uint8Array.
- */
-export function asUint8Array<T extends ArrayBufferLike>(
-	value: T | ArrayBufferView<T> | ArrayBufferPointer<T>,
 	length?: number,
 ): Uint8Array<T> {
 	return 'buffer' in value
-		? new Uint8Array(
-			value.buffer,
-			value.byteOffset,
-			length ?? (value as ArrayBufferView).byteLength,
-		)
+		? new Uint8Array(value.buffer, value.byteOffset, length)
 		: new Uint8Array(value, 0, length);
+}
+
+/**
+ * View to Uint8Array.
+ *
+ * @template T Buffer type.
+ * @param value Buffer or buffer view.
+ * @returns Uint8Array.
+ */
+export function viewBytes<T extends ArrayBufferLike>(
+	value: T | ArrayBufferView<T>,
+): Uint8Array<T> {
+	return 'buffer' in value
+		? new Uint8Array(value.buffer, value.byteOffset, value.byteLength)
+		: new Uint8Array(value);
 }
 
 /**

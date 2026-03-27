@@ -1,4 +1,4 @@
-import { type ArrayBufferData, asUint8Array } from './memory.ts';
+import { type ArrayBufferData, viewBytes } from './memory.ts';
 
 /**
  * Subtle crypto digest algorithm.
@@ -177,13 +177,13 @@ export function subtleCryptoFromNodeCrypto(
 			const hash = crypto.createHash(nodeHash[algorithm]);
 			if ('next' in data) {
 				for await (const part of data) {
-					const d = asUint8Array(part);
+					const d = viewBytes(part);
 					await new Promise<void>((r, f) =>
 						hash.write(d, (e) => e ? f(e) : r())
 					);
 				}
 			} else {
-				const d = asUint8Array(data);
+				const d = viewBytes(data);
 				await new Promise<void>((r, f) =>
 					hash.write(d, (e) => e ? f(e) : r())
 				);

@@ -8,7 +8,11 @@ import type {
 	SubtleCryptoExtended,
 } from '../util/crypto.ts';
 import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
-import { type ArrayBufferData, asUint8Array } from '../util/memory.ts';
+import {
+	type ArrayBufferData,
+	pointerBytes,
+	viewBytes,
+} from '../util/memory.ts';
 import type { Reader } from '../util/reader.ts';
 import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../mach/vm_param.ts';
 import { CC_MAX_N_DIGESTS } from './ccGlobals.ts';
@@ -213,13 +217,13 @@ const digestIterator = async function (
 						break;
 					}
 					if (all) {
-						all.set(asUint8Array(b), i);
+						all.set(viewBytes(b), i);
 					} else {
 						if (o) {
 							all = new Uint8Array(size);
-							all.set(asUint8Array(b));
+							all.set(viewBytes(b));
 						} else {
-							all = asUint8Array(b);
+							all = viewBytes(b);
 						}
 						ps = PAGE_SIZE;
 					}
@@ -386,7 +390,7 @@ export async function CCDigestUpdate(
 	} else {
 		await (c['d'] = s.digest(
 			a,
-			asUint8Array(data as ArrayBufferData, size),
+			pointerBytes(data as ArrayBufferData, size),
 		));
 	}
 
@@ -420,7 +424,7 @@ export async function CCDigestFinal(
 	const digest = (await d) || (
 		await (c.subtle || crypto.subtle).digest(a, new ArrayBuffer(0))
 	);
-	asUint8Array(out, l).set(new Uint8Array(digest, 0, l));
+	pointerBytes(out, l).set(new Uint8Array(digest, 0, l));
 
 	return kCCSuccess;
 }
@@ -538,10 +542,10 @@ export async function CCDigest(
 	} else {
 		d = await s.digest(
 			a,
-			asUint8Array(data as ArrayBufferData, size),
+			pointerBytes(data as ArrayBufferData, size),
 		);
 	}
-	asUint8Array(o, l).set(new Uint8Array(d, 0, l));
+	pointerBytes(o, l).set(new Uint8Array(d, 0, l));
 
 	return kCCSuccess;
 }
