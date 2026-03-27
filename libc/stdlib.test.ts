@@ -39,34 +39,34 @@ Deno.test('malloc', () => {
 });
 
 Deno.test('calloc', () => {
-	assertEquals(calloc(Infinity), null);
+	assertEquals(calloc(1, Infinity), null);
 	{
-		const ptr = calloc(0);
+		const ptr = calloc(1, 0);
 		assertInstanceOf(ptr, ArrayBuffer);
 		assertEquals(ptr.byteLength, 0);
 	}
 	{
-		const ptr = calloc(1);
+		const ptr = calloc(1, 1);
 		assertInstanceOf(ptr, ArrayBuffer);
 		assertEquals(ptr.byteLength, 1);
 	}
 	{
-		const ptr = calloc(42);
+		const ptr = calloc(21, 2);
 		assertInstanceOf(ptr, ArrayBuffer);
 		assertEquals(ptr.byteLength, 42);
 	}
 
 	testOOM([42], () => {
-		assertEquals(calloc(42), null);
+		assertEquals(calloc(1, 42), null);
 		const context = { errno: 0 };
-		assertEquals(calloc(42, context), null);
+		assertEquals(calloc(1, 42, context), null);
 		assertEquals(context.errno, ENOMEM);
 	});
 
 	testOOM(
 		[42],
 		() => {
-			assertThrows(() => calloc(42), Error, 'OTHER-ERROR');
+			assertThrows(() => calloc(1, 42), Error, 'OTHER-ERROR');
 		},
 		Error,
 		'OTHER-ERROR',

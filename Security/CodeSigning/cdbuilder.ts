@@ -222,7 +222,7 @@ export class CodeDirectoryBuilder {
 		if (count !== undefined) {
 			const { BYTE_LENGTH } = CodeDirectoryScatter;
 			const total = _this.mScatterSize = (count + 1) * BYTE_LENGTH;
-			const s = calloc(total);
+			const s = calloc(1, total);
 			if (!s) {
 				UnixError.throwMe(ENOMEM);
 			}
@@ -358,7 +358,7 @@ export class CodeDirectoryBuilder {
 		}
 
 		const total = CodeDirectoryBuilder.size(_this, version);
-		const buffer = calloc(total);
+		const buffer = calloc(1, total);
 		if (!buffer) {
 			UnixError.throwMe(ENOMEM);
 		}

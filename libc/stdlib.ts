@@ -27,15 +27,17 @@ export function malloc(
 /**
  * Clear memory allocate.
  *
- * @param size Size in bytes.
+ * @param count Number of elements.
+ * @param size Size of each element in bytes.
  * @param context Context.
  * @returns Allocated memory.
  */
 export function calloc(
+	count: size_t,
 	size: size_t,
 	context?: { errno: int },
 ): ArrayBuffer | null {
-	return malloc(size, context);
+	return malloc(count * size, context);
 }
 
 /**
