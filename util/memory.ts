@@ -26,8 +26,7 @@ export type ArrayBufferLikeData = ArrayBufferLike | ArrayBufferView;
  * @returns True if value is a ArrayBuffer.
  */
 export function isArrayBuffer(value: ArrayBufferLike): value is ArrayBuffer {
-	const p = Object.getPrototypeOf(value);
-	let r = abp.get(p);
+	let p, r = abp.get(p = Object.getPrototypeOf(value));
 	if (r === undefined) {
 		try {
 			abbl.call(value);
