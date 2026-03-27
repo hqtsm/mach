@@ -1,4 +1,5 @@
 import type { ArrayBufferPointer } from '@hqtsm/struct';
+import { asUint8Array } from '../util/memory.ts';
 import type { int } from './c.ts';
 import type { size_t } from './stddef.ts';
 
@@ -9,16 +10,10 @@ import type { size_t } from './stddef.ts';
  * @returns Length of string.
  */
 export function strlen(str: ArrayBufferLike | ArrayBufferPointer): size_t {
-	let b, o, c, r = 0;
-	if ('buffer' in str) {
-		b = str.buffer;
-		o = str.byteOffset;
-	} else {
-		b = str;
-		o = 0;
-	}
-	for (c = new Uint8Array(b); c[o++]; r++);
-	return r;
+	const s = asUint8Array(str);
+	let i = 0;
+	for (; s[i]; i++);
+	return i;
 }
 
 /**
@@ -26,39 +21,23 @@ export function strlen(str: ArrayBufferLike | ArrayBufferPointer): size_t {
  *
  * @param str1 Character pointer.
  * @param str2 Character pointer.
- * @param num Maximum characters to compare.
+ * @param n Maximum characters to compare.
  * @returns Difference of first non-matching character, 0 if equal.
  */
 export function strncmp(
 	str1: ArrayBufferLike | ArrayBufferPointer,
 	str2: ArrayBufferLike | ArrayBufferPointer,
-	num: size_t,
+	n: size_t,
 ): int {
-	let b1, o1, b2, o2;
-	if ('buffer' in str1) {
-		b1 = str1.buffer;
-		o1 = str1.byteOffset;
-	} else {
-		b1 = str1;
-		o1 = 0;
-	}
-	if ('buffer' in str2) {
-		b2 = str2.buffer;
-		o2 = str2.byteOffset;
-	} else {
-		b2 = str2;
-		o2 = 0;
-	}
-	for (
-		let c1 = new Uint8Array(b1), c2 = new Uint8Array(b2), u1, u2;
-		num-- > 0;
-	) {
-		u1 = c1[o1++];
-		u2 = c2[o2++];
-		if (u1 !== u2) {
-			return u1 - u2;
+	const s1 = asUint8Array(str1);
+	const s2 = asUint8Array(str2);
+	for (let i = 0, c1, c2; n-- > 0; i++) {
+		c1 = s1[i];
+		c2 = s2[i];
+		if (c1 !== c2) {
+			return c1 - c2;
 		}
-		if (!u1) {
+		if (!c1) {
 			return 0;
 		}
 	}
