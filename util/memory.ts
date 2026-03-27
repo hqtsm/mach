@@ -19,7 +19,7 @@ export type ArrayBufferLikeData = ArrayBufferLike | ArrayBufferView;
  * @returns True if value is a SharedArrayBuffer.
  */
 export function isSharedArrayBuffer(
-	value: unknown,
+	value: ArrayBufferLike,
 ): value is SharedArrayBuffer {
 	return toString.call(value) === '[object SharedArrayBuffer]';
 }
