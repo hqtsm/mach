@@ -33,7 +33,7 @@ export function isSharedArrayBuffer(
  */
 export function asUint8Array<T extends ArrayBufferLike>(
 	value: T | ArrayBufferPointer<T>,
-	length: number,
+	length?: number,
 ): Uint8Array<T>;
 
 /**

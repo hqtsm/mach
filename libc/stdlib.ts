@@ -1,3 +1,5 @@
+import type { ArrayBufferPointer } from '@hqtsm/struct';
+import { asUint8Array } from '../util/memory.ts';
 import type { int } from './c.ts';
 import { ENOMEM } from './errno.ts';
 import type { size_t } from './stddef.ts';
@@ -49,14 +51,13 @@ export function calloc(
  * @returns Reallocated memory.
  */
 export function realloc(
-	buffer: ArrayBuffer | null,
+	buffer: ArrayBuffer | ArrayBufferPointer | null,
 	size: size_t,
 	context?: { errno: int },
 ): ArrayBuffer | null {
 	const m = malloc(size, context);
 	if (m && buffer) {
-		const l = buffer.byteLength;
-		new Uint8Array(m).set(new Uint8Array(buffer, 0, size > l ? l : size));
+		new Uint8Array(m).set(asUint8Array(buffer).slice(0, size));
 	}
 	return m;
 }
