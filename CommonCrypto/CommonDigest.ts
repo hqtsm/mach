@@ -252,7 +252,7 @@ export class CCDigestRef {
 	/**
 	 * Algorithm.
 	 */
-	protected a = 0;
+	protected a: CCDigestAlgorithm = 0;
 
 	/**
 	 * Digest.
