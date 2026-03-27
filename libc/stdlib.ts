@@ -49,12 +49,12 @@ export function calloc(
  * @returns Reallocated memory.
  */
 export function realloc(
-	buffer: ArrayBuffer,
+	buffer: ArrayBuffer | null,
 	size: size_t,
 	context?: { errno: int },
 ): ArrayBuffer | null {
 	const m = malloc(size, context);
-	if (m) {
+	if (m && buffer) {
 		const l = buffer.byteLength;
 		new Uint8Array(m).set(new Uint8Array(buffer, 0, size > l ? l : size));
 	}

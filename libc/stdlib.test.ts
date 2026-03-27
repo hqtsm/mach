@@ -86,6 +86,11 @@ Deno.test('realloc', () => {
 		assertEquals(ptr.byteLength, 0);
 	}
 	{
+		const ptr = realloc(null, 10);
+		assertInstanceOf(ptr, ArrayBuffer);
+		assertEquals(ptr.byteLength, 10);
+	}
+	{
 		const ptr = realloc(src, 5);
 		assertInstanceOf(ptr, ArrayBuffer);
 		assertEquals(ptr.byteLength, 5);
