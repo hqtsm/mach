@@ -64,7 +64,7 @@ export function viewBytes<T extends ArrayBufferLike>(
  * @param length Optional length.
  * @returns Uint8Array<ArrayBuffer>.
  */
-export function toUint8ArrayArrayBuffer(
+export function bufferBytes(
 	buffer: ArrayBuffer | SharedArrayBuffer,
 	offset?: number,
 	length?: number,

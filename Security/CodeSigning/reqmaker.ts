@@ -8,8 +8,8 @@ import { realloc } from '../../libc/stdlib.ts';
 import type { SubtleCryptoDigest } from '../../util/crypto.ts';
 import {
 	type ArrayBufferLikeData,
+	bufferBytes,
 	pointerBytes,
-	toUint8ArrayArrayBuffer,
 	viewBytes,
 } from '../../util/memory.ts';
 import type { BlobCoreOffset } from '../blob.ts';
@@ -269,11 +269,7 @@ export class RequirementMaker {
 		if (length !== undefined) {
 			return (subtle || crypto.subtle).digest(
 				'SHA-1',
-				toUint8ArrayArrayBuffer(
-					cert!.buffer,
-					cert!.byteOffset,
-					length,
-				),
+				bufferBytes(cert!.buffer, cert!.byteOffset, length),
 			).then((d) => {
 				RequirementMaker.anchor(_this, slot!, new Uint8Array(d));
 			});

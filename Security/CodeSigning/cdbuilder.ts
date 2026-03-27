@@ -11,10 +11,7 @@ import {
 } from '../../libc/stdint.ts';
 import { calloc } from '../../libc/stdlib.ts';
 import type { SubtleCryptoDigest } from '../../util/crypto.ts';
-import {
-	type ArrayBufferLikeData,
-	toUint8ArrayArrayBuffer,
-} from '../../util/memory.ts';
+import { type ArrayBufferLikeData, bufferBytes } from '../../util/memory.ts';
 import type { Reader } from '../../util/reader.ts';
 import { errSecCSTooBig } from '../CSCommon.ts';
 import { MacOSError, UnixError } from '../errors.ts';
@@ -106,12 +103,8 @@ export class CodeDirectoryBuilder {
 		const hash = CodeDirectoryBuilder.getHash(_this);
 		await hash.update(
 			'buffer' in data
-				? toUint8ArrayArrayBuffer(
-					data.buffer,
-					data.byteOffset,
-					data.byteLength,
-				)
-				: toUint8ArrayArrayBuffer(data),
+				? bufferBytes(data.buffer, data.byteOffset, data.byteLength)
+				: bufferBytes(data),
 		);
 		const digest = new ArrayBuffer(hash.digestLength());
 		await hash.finish(digest);

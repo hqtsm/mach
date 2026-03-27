@@ -26,7 +26,7 @@ import {
 	sizeAsyncIterators,
 	type SizeIteratorNext,
 } from '../../util/iterator.ts';
-import { pointerBytes, toUint8ArrayArrayBuffer } from '../../util/memory.ts';
+import { bufferBytes, pointerBytes } from '../../util/memory.ts';
 import type { Reader } from '../../util/reader.ts';
 import { Blob } from '../blob.ts';
 import {
@@ -688,12 +688,8 @@ export class CodeDirectory extends Blob {
 				: CodeDirectory.generateHash(
 					hash,
 					'buffer' in source
-						? toUint8ArrayArrayBuffer(
-							source.buffer,
-							source.byteOffset,
-							size,
-						)
-						: toUint8ArrayArrayBuffer(source, 0, size),
+						? bufferBytes(source.buffer, source.byteOffset, size)
+						: bufferBytes(source, 0, size),
 					size,
 					digest,
 				)
@@ -781,7 +777,7 @@ export class CodeDirectory extends Blob {
 		const hash = CodeDirectory.getHash(_this);
 		hash.subtle = subtle;
 		await hash.update(
-			toUint8ArrayArrayBuffer(
+			bufferBytes(
 				_this.buffer,
 				_this.byteOffset,
 				CodeDirectory.size(_this),
