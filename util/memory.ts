@@ -1,6 +1,13 @@
 import type { ArrayBufferPointer } from '@hqtsm/struct';
 
-const { toString } = Object.prototype;
+// Spec says ArrayBuffer byteLength getter throws for SharedArrayBuffer.
+const abbl = Object.getOwnPropertyDescriptor(
+	ArrayBuffer.prototype,
+	'byteLength',
+)!.get!;
+
+// Cache which prototypes are for ArrayBuffer.
+const abp = new WeakMap<object, boolean>();
 
 /**
  * ArrayBuffer data.
@@ -13,15 +20,26 @@ export type ArrayBufferData = ArrayBuffer | ArrayBufferView<ArrayBuffer>;
 export type ArrayBufferLikeData = ArrayBufferLike | ArrayBufferView;
 
 /**
- * Is value a SharedArrayBuffer.
+ * Is value an ArrayBuffer, not SharedArrayBuffer.
  *
  * @param value Value.
- * @returns True if value is a SharedArrayBuffer.
+ * @returns True if value is a ArrayBuffer.
  */
-export function isSharedArrayBuffer(
+export function isArrayBuffer(
 	value: ArrayBufferLike,
-): value is SharedArrayBuffer {
-	return toString.call(value) === '[object SharedArrayBuffer]';
+): value is ArrayBuffer {
+	const p = Object.getPrototypeOf(value);
+	let r = abp.get(p);
+	if (r === undefined) {
+		try {
+			abbl.call(value);
+			r = true;
+		} catch {
+			r = false;
+		}
+		abp.set(p, r);
+	}
+	return r;
 }
 
 /**
@@ -69,7 +87,7 @@ export function bufferBytes(
 	offset?: number,
 	length?: number,
 ): Uint8Array<ArrayBuffer> {
-	return isSharedArrayBuffer(buffer)
-		? new Uint8Array(buffer, offset, length).slice()
-		: new Uint8Array(buffer, offset, length);
+	return isArrayBuffer(buffer)
+		? new Uint8Array(buffer, offset, length)
+		: new Uint8Array(buffer, offset, length).slice();
 }

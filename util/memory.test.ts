@@ -5,14 +5,16 @@ import {
 } from '@std/assert';
 import {
 	bufferBytes,
-	isSharedArrayBuffer,
+	isArrayBuffer,
 	pointerBytes,
 	viewBytes,
 } from './memory.ts';
 
-Deno.test('isSharedArrayBuffer', () => {
-	assertEquals(isSharedArrayBuffer(new SharedArrayBuffer(0)), true);
-	assertEquals(isSharedArrayBuffer(new ArrayBuffer(0)), false);
+Deno.test('isArrayBuffer', () => {
+	assertEquals(isArrayBuffer(new ArrayBuffer(0)), true);
+	assertEquals(isArrayBuffer(new SharedArrayBuffer(0)), false);
+	assertEquals(isArrayBuffer(new ArrayBuffer(0)), true);
+	assertEquals(isArrayBuffer(new SharedArrayBuffer(0)), false);
 });
 
 Deno.test('pointerBytes', () => {
