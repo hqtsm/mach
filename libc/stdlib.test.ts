@@ -1,4 +1,9 @@
-import { assertEquals, assertInstanceOf, assertThrows } from '@std/assert';
+import {
+	assertEquals,
+	assertInstanceOf,
+	assertStrictEquals,
+	assertThrows,
+} from '@std/assert';
 import { testOOM } from '../spec/memory.ts';
 import { ENOMEM } from './errno.ts';
 import { calloc, malloc, realloc } from './stdlib.ts';
@@ -104,6 +109,10 @@ Deno.test('realloc', () => {
 			new Uint8Array(ptr),
 			new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0, 0, 0]),
 		);
+	}
+	{
+		const ptr = realloc(src, 10);
+		assertStrictEquals(ptr, src);
 	}
 
 	testOOM([42], () => {
