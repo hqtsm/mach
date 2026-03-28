@@ -9,7 +9,7 @@ import {
 	type uint64_t,
 	type uint8_t,
 } from '../../libc/stdint.ts';
-import { calloc } from '../../libc/stdlib.ts';
+import { calloc, memset, realloc } from '../../libc/stdlib.ts';
 import type { SubtleCryptoDigest } from '../../util/crypto.ts';
 import { type ArrayBufferLikeData, bufferBytes } from '../../util/memory.ts';
 import type { Reader } from '../../util/reader.ts';
@@ -215,10 +215,11 @@ export class CodeDirectoryBuilder {
 		if (count !== undefined) {
 			const { BYTE_LENGTH } = CodeDirectoryScatter;
 			const total = _this.mScatterSize = (count + 1) * BYTE_LENGTH;
-			const s = calloc(1, total);
+			const s = realloc(_this.mScatter?.buffer ?? null, total);
 			if (!s) {
 				UnixError.throwMe(ENOMEM);
 			}
+			memset(s, 0, total);
 			return _this.mScatter = new (pointer(CodeDirectoryScatter))(s);
 		}
 		return _this.mScatter;
@@ -610,7 +611,7 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Scatter vector.
 	 */
-	private mScatter: Ptr<CodeDirectoryScatter> | null = null;
+	private mScatter: Ptr<CodeDirectoryScatter<ArrayBuffer>> | null = null;
 
 	/**
 	 * Scatter vector byte size, include sentinel.

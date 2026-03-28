@@ -259,6 +259,7 @@ Deno.test('CodeDirectoryBuilder: version and size', () => {
 	);
 	assertGreater(CodeDirectoryBuilder.size(builder), size);
 
+	CodeDirectoryBuilder.scatter(builder, 0);
 	testOOM([CodeDirectoryScatter.BYTE_LENGTH * 2], () => {
 		assertThrowsUnixError(
 			() => CodeDirectoryBuilder.scatter(builder, 1),
