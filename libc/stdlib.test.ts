@@ -6,7 +6,7 @@ import {
 } from '@std/assert';
 import { testOOM } from '../spec/memory.ts';
 import { ENOMEM } from './errno.ts';
-import { calloc, malloc, realloc } from './stdlib.ts';
+import { calloc, malloc, memset, realloc } from './stdlib.ts';
 
 Deno.test('malloc', () => {
 	assertEquals(malloc(Infinity), null);
@@ -130,4 +130,34 @@ Deno.test('realloc', () => {
 		Error,
 		'OTHER-ERROR',
 	);
+});
+
+Deno.test('memset', () => {
+	{
+		const ab = new ArrayBuffer(10);
+		memset(ab, 1, 10);
+		memset(ab, 2, 5);
+		assertEquals(
+			new Uint8Array(ab),
+			new Uint8Array([2, 2, 2, 2, 2, 1, 1, 1, 1, 1]),
+		);
+	}
+	{
+		const sab = new SharedArrayBuffer(10);
+		memset(sab, 1, 10);
+		memset(sab, 2, 5);
+		assertEquals(
+			new Uint8Array<ArrayBufferLike>(sab),
+			new Uint8Array([2, 2, 2, 2, 2, 1, 1, 1, 1, 1]),
+		);
+	}
+	{
+		const arr = new Uint8Array(10);
+		memset(arr, 1, 10);
+		memset(arr, 2, 5);
+		assertEquals(
+			arr,
+			new Uint8Array([2, 2, 2, 2, 2, 1, 1, 1, 1, 1]),
+		);
+	}
 });

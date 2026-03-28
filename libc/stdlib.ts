@@ -1,3 +1,5 @@
+import type { ArrayBufferPointer } from '@hqtsm/struct';
+import { pointerBytes } from '../util/mod.ts';
 import type { int } from './c.ts';
 import { ENOMEM } from './errno.ts';
 import type { size_t } from './stddef.ts';
@@ -65,4 +67,19 @@ export function realloc(
 		new Uint8Array(m).set(new Uint8Array(buffer, 0, size < l ? size : l));
 	}
 	return m;
+}
+
+/**
+ * Memory set.
+ *
+ * @param buffer Memory pointer.
+ * @param value Fill value.
+ * @param size Size in bytes.
+ */
+export function memset(
+	buffer: ArrayBufferLike | ArrayBufferPointer,
+	value: int,
+	size: size_t,
+): void {
+	pointerBytes(buffer, size).fill(value);
 }
