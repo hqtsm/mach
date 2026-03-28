@@ -21,8 +21,12 @@ export type SuperBlobCoreType = uint32_t;
 
 /**
  * Super blob index entry.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class SuperBlobCoreIndex extends Struct {
+export class SuperBlobCoreIndex<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Blob type.
 	 */

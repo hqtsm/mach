@@ -39,15 +39,23 @@ export type BlobCoreMagic = uint32_t;
 
 /**
  * BlobCore BlobType.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export type BlobCoreBlobType =
+export type BlobCoreBlobType<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> =
 	& { readonly typeMagic: BlobCoreMagic }
-	& typeof BlobCore;
+	& typeof BlobCore<TArrayBuffer>;
 
 /**
  * Polymorphic memory blobs with magics numbers.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class BlobCore extends Struct {
+export class BlobCore<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Magic number.
 	 *

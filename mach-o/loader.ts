@@ -26,8 +26,12 @@ import type {
 
 /**
  * Mach-O header, 32-bit.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class mach_header extends Struct {
+export class mach_header<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Mach magic.
 	 */
@@ -90,8 +94,12 @@ export const MH_CIGAM = 0xcefaedfe;
 
 /**
  * Mach-O header, 64-bit.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class mach_header_64 extends Struct {
+export class mach_header_64<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Mach magic.
 	 */
@@ -384,8 +392,12 @@ export const MH_DYLIB_IN_CACHE = 0x80000000;
 
 /**
  * Load command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class load_command extends Struct {
+export class load_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -721,8 +733,12 @@ export const LC_TARGET_TRIPLE = 0x39;
 
 /**
  * Load command string union.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class lc_str extends Union {
+export class lc_str<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Union<TArrayBuffer> {
 	/**
 	 * String offset.
 	 */
@@ -738,8 +754,12 @@ export class lc_str extends Union {
 
 /**
  * Segment command, 32-bit.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class segment_command extends Struct {
+export class segment_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -814,8 +834,12 @@ export class segment_command extends Struct {
 
 /**
  * Segment command, 64-bit.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class segment_command_64 extends Struct {
+export class segment_command_64<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -917,8 +941,12 @@ export const SG_READ_ONLY = 0x10;
 
 /**
  * Section, 32-bit.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class section extends Struct {
+export class section<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Section name.
 	 */
@@ -993,8 +1021,12 @@ export class section extends Struct {
 
 /**
  * Section, 64-bit.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class section_64 extends Struct {
+export class section_64<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Section name.
 	 */
@@ -1368,8 +1400,12 @@ export const SEG_IMPORT = '__IMPORT';
 
 /**
  * Fixed virtual memory shared library.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class fvmlib extends Struct {
+export class fvmlib<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Target pathname.
 	 */
@@ -1396,8 +1432,12 @@ export class fvmlib extends Struct {
 
 /**
  * Fixed virtual memory shared library command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class fvmlib_command extends Struct {
+export class fvmlib_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -1424,8 +1464,12 @@ export class fvmlib_command extends Struct {
 
 /**
  * Dynamically linked shared library.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class dylib extends Struct {
+export class dylib<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Pathname.
 	 */
@@ -1458,8 +1502,12 @@ export class dylib extends Struct {
 
 /**
  * Dynamically linked shared library command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class dylib_command extends Struct {
+export class dylib_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -1486,8 +1534,12 @@ export class dylib_command extends Struct {
 
 /**
  * Dynamically linked shared library use command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class dylib_use_command extends Struct {
+export class dylib_use_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -1565,8 +1617,12 @@ export const DYLIB_USE_MARKER = 0x1a741800;
 
 /**
  * Sub framework command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class sub_framework_command extends Struct {
+export class sub_framework_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -1593,8 +1649,12 @@ export class sub_framework_command extends Struct {
 
 /**
  * Sub client command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class sub_client_command extends Struct {
+export class sub_client_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -1621,8 +1681,12 @@ export class sub_client_command extends Struct {
 
 /**
  * Sub client command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class sub_umbrella_command extends Struct {
+export class sub_umbrella_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -1649,8 +1713,12 @@ export class sub_umbrella_command extends Struct {
 
 /**
  * Sub library command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class sub_library_command extends Struct {
+export class sub_library_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -1677,8 +1745,12 @@ export class sub_library_command extends Struct {
 
 /**
  * Prebound dynamic library command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class prebound_dylib_command extends Struct {
+export class prebound_dylib_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -1717,8 +1789,12 @@ export class prebound_dylib_command extends Struct {
 
 /**
  * Dynamic linker command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class dylinker_command extends Struct {
+export class dylinker_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -1745,8 +1821,12 @@ export class dylinker_command extends Struct {
 
 /**
  * Thread command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class thread_command extends Struct {
+export class thread_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -1772,8 +1852,12 @@ export class thread_command extends Struct {
 
 /**
  * Routines command, 32-bit.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class routines_command extends Struct {
+export class routines_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -1842,8 +1926,12 @@ export class routines_command extends Struct {
 
 /**
  * Routines command, 64-bit.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class routines_command_64 extends Struct {
+export class routines_command_64<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -1912,8 +2000,12 @@ export class routines_command_64 extends Struct {
 
 /**
  * Symtab command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class symtab_command extends Struct {
+export class symtab_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -1958,8 +2050,12 @@ export class symtab_command extends Struct {
 
 /**
  * Dysymtab command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class dysymtab_command extends Struct {
+export class dysymtab_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -2100,8 +2196,12 @@ export const INDIRECT_SYMBOL_ABS = 0x40000000;
 
 /**
  * Dylib table of contents entry.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class dylib_table_of_contents extends Struct {
+export class dylib_table_of_contents<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * External symbol index in symbol table.
 	 */
@@ -2122,8 +2222,12 @@ export class dylib_table_of_contents extends Struct {
 
 /**
  * Dylib module table entry, 32-bit.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class dylib_module extends Struct {
+export class dylib_module<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Module name index in string table.
 	 */
@@ -2212,8 +2316,12 @@ export class dylib_module extends Struct {
 
 /**
  * Dylib module table entry, 64-bit.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class dylib_module_64 extends Struct {
+export class dylib_module_64<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Module name index in string table.
 	 */
@@ -2302,8 +2410,12 @@ export class dylib_module_64 extends Struct {
 
 /**
  * Reference symbol table entry.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class dylib_reference extends Struct {
+export class dylib_reference<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Index in symbol table.
 	 */
@@ -2324,8 +2436,12 @@ export class dylib_reference extends Struct {
 
 /**
  * Two-level namespace lookup hints table command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class twolevel_hints_command extends Struct {
+export class twolevel_hints_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -2358,8 +2474,12 @@ export class twolevel_hints_command extends Struct {
 
 /**
  * Two-level namespace lookup hints table entry.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class twolevel_hint extends Struct {
+export class twolevel_hint<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Index in symbol table.
 	 */
@@ -2380,8 +2500,12 @@ export class twolevel_hint extends Struct {
 
 /**
  * Prebind checksum command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class prebind_cksum_command extends Struct {
+export class prebind_cksum_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -2408,8 +2532,12 @@ export class prebind_cksum_command extends Struct {
 
 /**
  * UUID command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class uuid_command extends Struct {
+export class uuid_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -2436,8 +2564,12 @@ export class uuid_command extends Struct {
 
 /**
  * Rpath command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class rpath_command extends Struct {
+export class rpath_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -2464,8 +2596,12 @@ export class rpath_command extends Struct {
 
 /**
  * Target triple command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class target_triple_command extends Struct {
+export class target_triple_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -2492,8 +2628,12 @@ export class target_triple_command extends Struct {
 
 /**
  * Linkedit data command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class linkedit_data_command extends Struct {
+export class linkedit_data_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -2526,8 +2666,12 @@ export class linkedit_data_command extends Struct {
 
 /**
  * Encryption info command, 32-bit.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class encryption_info_command extends Struct {
+export class encryption_info_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -2566,8 +2710,12 @@ export class encryption_info_command extends Struct {
 
 /**
  * Encryption info command, 64-bit.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class encryption_info_command_64 extends Struct {
+export class encryption_info_command_64<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -2612,8 +2760,12 @@ export class encryption_info_command_64 extends Struct {
 
 /**
  * Minimum OS version command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class version_min_command extends Struct {
+export class version_min_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -2646,8 +2798,12 @@ export class version_min_command extends Struct {
 
 /**
  * Minimum OS build version command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class build_version_command extends Struct {
+export class build_version_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -2692,8 +2848,12 @@ export class build_version_command extends Struct {
 
 /**
  * Build tool version.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class build_tool_version extends Struct {
+export class build_tool_version<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Tool ID.
 	 */
@@ -2905,8 +3065,12 @@ export const TOOL_METAL_FRAMEWORK = 1032;
 
 /**
  * Dyld info command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class dyld_info_command extends Struct {
+export class dyld_info_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -3238,8 +3402,12 @@ export const EXPORT_SYMBOL_FLAGS_STATIC_RESOLVER = 0x20;
 
 /**
  * Linker option command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class linker_option_command extends Struct {
+export class linker_option_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -3266,8 +3434,12 @@ export class linker_option_command extends Struct {
 
 /**
  * Symbol table command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class symseg_command extends Struct {
+export class symseg_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -3300,8 +3472,12 @@ export class symseg_command extends Struct {
 
 /**
  * Ident command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class ident_command extends Struct {
+export class ident_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -3322,8 +3498,12 @@ export class ident_command extends Struct {
 
 /**
  * Fixed virtual memory file command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class fvmfile_command extends Struct {
+export class fvmfile_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -3356,8 +3536,12 @@ export class fvmfile_command extends Struct {
 
 /**
  * Entry point command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class entry_point_command extends Struct {
+export class entry_point_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -3390,8 +3574,12 @@ export class entry_point_command extends Struct {
 
 /**
  * Source version command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class source_version_command extends Struct {
+export class source_version_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -3418,8 +3606,12 @@ export class source_version_command extends Struct {
 
 /**
  * Data in code entry.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class data_in_code_entry extends Struct {
+export class data_in_code_entry<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Offset from mach_header to start of data range.
 	 */
@@ -3473,8 +3665,12 @@ export const DICE_KIND_ABS_JUMP_TABLE32 = 0x0005;
 
 /**
  * Thread local variable entry, 32-bit.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class tlv_descriptor extends Struct {
+export class tlv_descriptor<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * A pointer.
 	 */
@@ -3501,8 +3697,12 @@ export class tlv_descriptor extends Struct {
 
 /**
  * Thread local variable entry, 64-bit.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class tlv_descriptor_64 extends Struct {
+export class tlv_descriptor_64<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * A pointer.
 	 */
@@ -3529,8 +3729,12 @@ export class tlv_descriptor_64 extends Struct {
 
 /**
  * Note command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class note_command extends Struct {
+export class note_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */
@@ -3569,8 +3773,12 @@ export class note_command extends Struct {
 
 /**
  * Fileset entry command.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class fileset_entry_command extends Struct {
+export class fileset_entry_command<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Command type.
 	 */

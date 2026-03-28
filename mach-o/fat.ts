@@ -17,8 +17,12 @@ export const FAT_CIGAM = 0xbebafeca;
 
 /**
  * Fat header.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class fat_header extends Struct {
+export class fat_header<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Fat magic.
 	 */
@@ -39,8 +43,12 @@ export class fat_header extends Struct {
 
 /**
  * Fat architecture, 32-bit.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class fat_arch extends Struct {
+export class fat_arch<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * CPU type.
 	 */
@@ -91,8 +99,12 @@ export const FAT_CIGAM_64 = 0xbfbafeca;
 
 /**
  * Fat architecture, 64-bit.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class fat_arch_64 extends Struct {
+export class fat_arch_64<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * CPU type.
 	 */

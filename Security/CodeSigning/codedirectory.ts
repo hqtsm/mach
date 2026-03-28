@@ -276,8 +276,12 @@ export type CodeDirectorySpecialSlot = uint;
 
 /**
  * CodeDirectory scatter vector element.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class CodeDirectoryScatter extends Struct {
+export class CodeDirectoryScatter<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Struct<TArrayBuffer> {
 	/**
 	 * Page count; zero for sentinel (only).
 	 */
