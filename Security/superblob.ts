@@ -164,7 +164,7 @@ export abstract class SuperBlobCoreMaker {
 	 * SuperBlob class.
 	 */
 	public static readonly SuperBlob: typeof SuperBlobCore<ArrayBuffer> =
-		SuperBlobCore<ArrayBuffer>;
+		SuperBlobCore;
 
 	/**
 	 * Add blob to super blob, by reference.
@@ -369,7 +369,8 @@ export abstract class SuperBlob<
  * SuperBlob maker.
  */
 export abstract class SuperBlobMaker extends SuperBlobCoreMaker {
-	public static override readonly SuperBlob = SuperBlob;
+	public static override readonly SuperBlob: typeof SuperBlob<ArrayBuffer> =
+		SuperBlob;
 
 	static {
 		toStringTag(this, 'SuperBlobMaker');

@@ -400,7 +400,9 @@ export class Requirements<
  * SuperBlob maker for Requirements.
  */
 export class RequirementsMaker extends SuperBlobMaker {
-	public static override readonly SuperBlob = Requirements;
+	public static override readonly SuperBlob: typeof Requirements<
+		ArrayBuffer
+	> = Requirements;
 
 	static {
 		toStringTag(this, 'RequirementsMaker');

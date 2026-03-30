@@ -38,7 +38,9 @@ export class EmbeddedSignatureBlob<
  * SuperBlob maker for EmbeddedSignatureBlob.
  */
 export class EmbeddedSignatureBlobMaker extends SuperBlobCoreMaker {
-	public static override readonly SuperBlob = EmbeddedSignatureBlob;
+	public static override readonly SuperBlob: typeof EmbeddedSignatureBlob<
+		ArrayBuffer
+	> = EmbeddedSignatureBlob;
 
 	static {
 		toStringTag(this, 'EmbeddedSignatureBlobMaker');
@@ -67,7 +69,9 @@ export class DetachedSignatureBlob<
  * SuperBlob maker for DetachedSignatureBlob.
  */
 export class DetachedSignatureBlobMaker extends SuperBlobMaker {
-	public static override readonly SuperBlob = DetachedSignatureBlob;
+	public static override readonly SuperBlob: typeof DetachedSignatureBlob<
+		ArrayBuffer
+	> = DetachedSignatureBlob;
 
 	static {
 		toStringTag(this, 'DetachedSignatureBlobMaker');
@@ -96,7 +100,9 @@ export class LibraryDependencyBlob<
  * SuperBlob maker for LibraryDependencyBlob.
  */
 export class LibraryDependencyBlobMaker extends SuperBlobMaker {
-	public static override readonly SuperBlob = LibraryDependencyBlob;
+	public static override readonly SuperBlob: typeof LibraryDependencyBlob<
+		ArrayBuffer
+	> = LibraryDependencyBlob;
 
 	static {
 		toStringTag(this, 'LibraryDependencyBlobMaker');

@@ -35,7 +35,8 @@ class Example<
 }
 
 class ExampleMaker extends SuperBlobMaker {
-	public static override readonly SuperBlob = Example;
+	public static override readonly SuperBlob: typeof Example<ArrayBuffer> =
+		Example;
 
 	static {
 		constant(this, 'SuperBlob');
