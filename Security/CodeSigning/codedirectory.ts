@@ -2,6 +2,7 @@
 import { constant, toStringTag } from '@hqtsm/class';
 import {
 	type ArrayBufferPointer,
+	type ArrayBufferType,
 	type Const,
 	Int8Ptr,
 	pointer,
@@ -314,8 +315,12 @@ export class CodeDirectoryScatter<
 
 /**
  * Describes secured pieces of a program.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class CodeDirectory extends Blob {
+export class CodeDirectory<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Blob<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicCodeDirectory;
 
 	/**
@@ -564,12 +569,13 @@ export class CodeDirectory extends Blob {
 	/**
 	 * Pointer to scatter vector.
 	 *
+	 * @template T This type.
 	 * @param _this This.
 	 * @returns Scatter pointer, or null.
 	 */
-	public static scatterVector(
-		_this: CodeDirectory,
-	): Ptr<CodeDirectoryScatter> | null {
+	public static scatterVector<T extends CodeDirectory>(
+		_this: T,
+	): Ptr<CodeDirectoryScatter<ArrayBufferType<T>>> | null {
 		if (_this.version >= CodeDirectory.supportsScatter) {
 			const { scatterOffset } = _this;
 			if (scatterOffset) {

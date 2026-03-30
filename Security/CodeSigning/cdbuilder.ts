@@ -331,7 +331,7 @@ export class CodeDirectoryBuilder {
 	public static async build(
 		_this: CodeDirectoryBuilder,
 		version: uint32_t | null = null,
-	): Promise<CodeDirectory> {
+	): Promise<CodeDirectory<ArrayBuffer>> {
 		version ??= CodeDirectoryBuilder.minVersion(_this);
 		const {
 			mExec,
