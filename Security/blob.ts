@@ -360,13 +360,21 @@ export class BlobCore<
 
 /**
  * Blob template.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export type TemplateBlob = Concrete<typeof Blob> & typeof Blob;
+export type TemplateBlob<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> = Concrete<typeof Blob<TArrayBuffer>> & typeof Blob<TArrayBuffer>;
 
 /**
  * Polymorphic memory blob for magic number.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export abstract class Blob extends BlobCore {
+export abstract class Blob<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends BlobCore<TArrayBuffer> {
 	/**
 	 * Initialize blob with length, using known type magic.
 	 *
@@ -584,8 +592,12 @@ export abstract class Blob extends BlobCore {
 
 /**
  * Generic blob wrapping arbitrary binary data.
+ *
+ * @template TArrayBuffer Array buffer type.
  */
-export class BlobWrapper extends Blob {
+export class BlobWrapper<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Blob<TArrayBuffer> {
 	public static override readonly typeMagic = CSMAGIC_BLOBWRAPPER;
 
 	/**
