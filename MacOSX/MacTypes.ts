@@ -52,13 +52,21 @@ export type Float64 = double;
 
 /**
  * Char pointer.
+ *
+ * @template TArrayBuffer Array buffer type.
  */
-export type Ptr = _Ptr<char>;
+export type Ptr<
+	TArrayBuffer extends ArrayBuffer = ArrayBuffer,
+> = _Ptr<char, TArrayBuffer>;
 
 /**
  * Handle pointer.
+ *
+ * @template TArrayBuffer Array buffer type.
  */
-export type Handle = _Ptr<Ptr>;
+export type Handle<
+	TArrayBuffer extends ArrayBuffer = ArrayBuffer,
+> = _Ptr<Ptr, TArrayBuffer>;
 
 /**
  * Size in bytes.
@@ -82,8 +90,12 @@ export type OSStatus = SInt32;
 
 /**
  * Byte pointer.
+ *
+ * @template TArrayBuffer Array buffer type.
  */
-export type BytePtr = _Ptr<UInt8>;
+export type BytePtr<
+	TArrayBuffer extends ArrayBuffer = ArrayBuffer,
+> = _Ptr<UInt8, TArrayBuffer>;
 
 /**
  * Byte count.
@@ -157,13 +169,21 @@ export type ResType = FourCharCode;
 
 /**
  * OS type pointer.
+ *
+ * @template TArrayBuffer Array buffer type.
  */
-export type OSTypePtr = _Ptr<OSType>;
+export type OSTypePtr<
+	TArrayBuffer extends ArrayBuffer = ArrayBuffer,
+> = _Ptr<OSType, TArrayBuffer>;
 
 /**
  * Resource type pointer.
+ *
+ * @template TArrayBuffer Array buffer type.
  */
-export type ResTypePtr = _Ptr<ResType>;
+export type ResTypePtr<
+	TArrayBuffer extends ArrayBuffer = ArrayBuffer,
+> = _Ptr<ResType, TArrayBuffer>;
 
 /**
  * Boolean.
