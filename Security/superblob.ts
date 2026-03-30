@@ -130,7 +130,7 @@ export abstract class SuperBlobCore<
 	/**
 	 * Data of payload (only).
 	 */
-	declare private readonly mIndex: Arr<SuperBlobCoreIndex>;
+	declare private readonly mIndex: Arr<SuperBlobCoreIndex<TArrayBuffer>>;
 
 	static {
 		toStringTag(this, 'SuperBlobCore');
