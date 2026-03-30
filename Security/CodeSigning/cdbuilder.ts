@@ -189,7 +189,7 @@ export class CodeDirectoryBuilder {
 	public static scatter(
 		_this: CodeDirectoryBuilder,
 		count: uint,
-	): Ptr<CodeDirectoryScatter>;
+	): Ptr<CodeDirectoryScatter<ArrayBuffer>>;
 
 	/**
 	 * Get existing scatter vector.
@@ -199,7 +199,7 @@ export class CodeDirectoryBuilder {
 	 */
 	public static scatter(
 		_this: CodeDirectoryBuilder,
-	): Ptr<CodeDirectoryScatter> | null;
+	): Ptr<CodeDirectoryScatter<ArrayBuffer>> | null;
 
 	/**
 	 * Get or create scatter vector.
@@ -211,7 +211,7 @@ export class CodeDirectoryBuilder {
 	public static scatter(
 		_this: CodeDirectoryBuilder,
 		count?: uint,
-	): Ptr<CodeDirectoryScatter> | null {
+	): Ptr<CodeDirectoryScatter<ArrayBuffer>> | null {
 		if (count !== undefined) {
 			const { BYTE_LENGTH } = CodeDirectoryScatter;
 			const total = _this.mScatterSize = (count + 1) * BYTE_LENGTH;
