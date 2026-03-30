@@ -20,8 +20,12 @@ import {
 /**
  * An EmbeddedSignatureBlob is a SuperBlob indexed by component slot number.
  * For embedded Mach-O signatures and detached non-Mach-O binaries.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class EmbeddedSignatureBlob extends SuperBlobCore {
+export class EmbeddedSignatureBlob<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends SuperBlobCore<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicEmbeddedSignature;
 
 	static {
@@ -45,8 +49,12 @@ export class EmbeddedSignatureBlobMaker extends SuperBlobCoreMaker {
 /**
  * Multiple architecture EmbeddedSignatureBlobs for Mach-O detached signatures.
  * Indexed by main architecture.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class DetachedSignatureBlob extends SuperBlob {
+export class DetachedSignatureBlob<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends SuperBlob<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicDetachedSignature;
 
 	static {
@@ -70,8 +78,12 @@ export class DetachedSignatureBlobMaker extends SuperBlobMaker {
 /**
  * Dependency records from dylib inputs.
  * Indexed sequentially from 0.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class LibraryDependencyBlob extends SuperBlob {
+export class LibraryDependencyBlob<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends SuperBlob<TArrayBuffer> {
 	public static override readonly typeMagic = 0xfade0c05;
 
 	static {
@@ -94,8 +106,12 @@ export class LibraryDependencyBlobMaker extends SuperBlobMaker {
 
 /**
  * For embedding entitlement configuration data.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class EntitlementBlob extends Blob {
+export class EntitlementBlob<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Blob<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicEntitlement;
 
 	static {
@@ -106,8 +122,12 @@ export class EntitlementBlob extends Blob {
 
 /**
  * For embedding entitlement configuration data, in DER format.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class EntitlementDERBlob extends Blob {
+export class EntitlementDERBlob<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Blob<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicEntitlementDER;
 
 	/**
@@ -146,8 +166,12 @@ export class EntitlementDERBlob extends Blob {
 
 /**
  * Launch constraint in DER format.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class LaunchConstraintBlob extends Blob {
+export class LaunchConstraintBlob<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Blob<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicLaunchConstraint;
 
 	/**

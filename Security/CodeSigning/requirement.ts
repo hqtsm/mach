@@ -18,8 +18,12 @@ export type RequirementKind =
 
 /**
  * Single requirement.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class Requirement extends Blob {
+export class Requirement<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Blob<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicRequirement;
 
 	/**
@@ -378,8 +382,12 @@ export const matchAbsent = 14;
 
 /**
  * Requirement groups indexed by SecRequirementType.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export class Requirements extends SuperBlob {
+export class Requirements<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends SuperBlob<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicRequirementSet;
 
 	static {

@@ -14,7 +14,9 @@ import {
 
 const MAGIC = 0x12345678;
 
-class ExampleCore extends SuperBlobCore {
+class ExampleCore<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends SuperBlobCore<TArrayBuffer> {
 	public static override readonly typeMagic = MAGIC;
 
 	static {
@@ -22,7 +24,9 @@ class ExampleCore extends SuperBlobCore {
 	}
 }
 
-class Example extends SuperBlob {
+class Example<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends SuperBlob<TArrayBuffer> {
 	public static override readonly typeMagic = MAGIC;
 
 	static {

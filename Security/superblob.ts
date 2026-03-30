@@ -47,8 +47,12 @@ export class SuperBlobCoreIndex<
 
 /**
  * Multiple Blobs wrapped in a single indexed blob.
+ *
+ * @template TArrayBuffer Buffer type.
  */
-export abstract class SuperBlobCore extends Blob {
+export abstract class SuperBlobCore<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends Blob<TArrayBuffer> {
 	/**
 	 * Setup size and number of blobs in super blob.
 	 *
@@ -147,8 +151,8 @@ export type SuperBlobCoreMakerBlobMap = Map<SuperBlobCoreType, BlobCore>;
 export type TemplateSuperBlobCoreMaker =
 	& {
 		readonly SuperBlob:
-			& Concrete<typeof SuperBlobCore>
-			& typeof SuperBlobCore;
+			& Concrete<typeof SuperBlobCore<ArrayBuffer>>
+			& typeof SuperBlobCore<ArrayBuffer>;
 	}
 	& typeof SuperBlobCoreMaker;
 
@@ -159,7 +163,8 @@ export abstract class SuperBlobCoreMaker {
 	/**
 	 * SuperBlob class.
 	 */
-	public static readonly SuperBlob = SuperBlobCore;
+	public static readonly SuperBlob: typeof SuperBlobCore<ArrayBuffer> =
+		SuperBlobCore<ArrayBuffer>;
 
 	/**
 	 * Add blob to super blob, by reference.
@@ -349,8 +354,12 @@ export abstract class SuperBlobCoreMaker {
 
 /**
  * A generic SuperBlob base.
+ *
+ * @template TArrayBuffer Array buffer type.
  */
-export abstract class SuperBlob extends SuperBlobCore {
+export abstract class SuperBlob<
+	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
+> extends SuperBlobCore<TArrayBuffer> {
 	static {
 		toStringTag(this, 'SuperBlob');
 	}
