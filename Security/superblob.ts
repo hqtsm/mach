@@ -312,8 +312,8 @@ export abstract class SuperBlobCoreMaker {
 	 */
 	public static make<T extends TemplateSuperBlobCoreMaker>(
 		this: T,
-		_this: T['prototype'],
-	): T['SuperBlob']['prototype'] {
+		_this: InstanceType<T>,
+	): InstanceType<T['SuperBlob']> {
 		const { mPieces } = _this;
 		const count = mPieces.size;
 		const total = SuperBlobCoreMaker.size(_this, []);
@@ -338,7 +338,7 @@ export abstract class SuperBlobCoreMaker {
 			pc += l;
 			n++;
 		}
-		return result;
+		return result as InstanceType<T['SuperBlob']>;
 	}
 
 	/**

@@ -464,14 +464,14 @@ export abstract class Blob<
 		this: T,
 		blob: BlobCore,
 		context?: { errno: int },
-	): T['prototype'] | null {
+	): InstanceType<T> | null {
 		const p = new this(blob.buffer, blob.byteOffset, blob.littleEndian);
 		return Blob.validateBlobSize.call<
 				typeof this,
 				[typeof p, typeof context],
 				bool
 			>(this, p, context)
-			? p
+			? p as InstanceType<T>
 			: null;
 	}
 
@@ -511,9 +511,9 @@ export abstract class Blob<
 		this: T,
 		_this: Blob,
 		context?: { errno: int },
-	): T['prototype'] | null {
+	): InstanceType<T> | null {
 		const c = BlobCore.clone(_this);
-		return c && Blob.specific.call(this, c, context);
+		return c && Blob.specific.call(this, c, context) as InstanceType<T>;
 	}
 
 	/**
@@ -529,7 +529,7 @@ export abstract class Blob<
 		this: T,
 		reader: Reader,
 		context?: { errno: int },
-	): Promise<T['prototype'] | null>;
+	): Promise<InstanceType<T> | null>;
 
 	/**
 	 * Read blob from reader.
