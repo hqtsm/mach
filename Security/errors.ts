@@ -66,7 +66,7 @@ export class CommonError extends Error {
 	/**
 	 * Error message.
 	 */
-	public readonly whatBuffer: Arr<char>;
+	public readonly whatBuffer: Arr<char, ArrayBuffer>;
 
 	/**
 	 * Error message buffer size.
@@ -166,7 +166,7 @@ export class UnixError extends CommonError {
 	 *
 	 * @returns Error message buffer.
 	 */
-	public what(): Const<Ptr<char>> {
+	public what(): Const<Ptr<char, ArrayBuffer>> {
 		return this.whatBuffer;
 	}
 
@@ -271,7 +271,7 @@ export class MacOSError extends CommonError {
 	 *
 	 * @returns Error message buffer.
 	 */
-	public what(): Const<Ptr<char>> {
+	public what(): Const<Ptr<char, ArrayBuffer>> {
 		return this.whatBuffer;
 	}
 
