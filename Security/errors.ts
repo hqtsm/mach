@@ -124,6 +124,7 @@ export class UnixError extends CommonError {
 	 * Constructor.
 	 *
 	 * @param err Error code or context.
+	 * @param suppresslogging Suppress logging.
 	 */
 	protected constructor(
 		err: int | { errno: int },
