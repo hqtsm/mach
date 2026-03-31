@@ -39,7 +39,7 @@ export class CommonError extends Error {
 	public override get message(): string {
 		const { whatBuffer } = this;
 		let message = '';
-		for (let i = 0, c; i < whatBufferSize && (c = whatBuffer[i]); i++) {
+		for (let i = 0, c; i < whatBufferSize && (c = whatBuffer[i++]);) {
 			message += String.fromCharCode(c & 0xff);
 		}
 		return message;
