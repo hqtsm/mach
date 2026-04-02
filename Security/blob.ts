@@ -454,24 +454,24 @@ export abstract class Blob<
 	/**
 	 * Cast blob to specific type.
 	 *
-	 * @template T Blob type.
+	 * @template TBlob Blob type.
 	 * @param this Blob class.
 	 * @param blob Blob.
 	 * @param context Context.
 	 * @returns Cast blob or null.
 	 */
-	public static specific<T extends TemplateBlob>(
-		this: T,
+	public static specific<TBlob extends TemplateBlob>(
+		this: TBlob,
 		blob: BlobCore,
 		context?: { errno: int },
-	): InstanceType<T> | null {
+	): InstanceType<TBlob> | null {
 		const p = new this(blob.buffer, blob.byteOffset, blob.littleEndian);
 		return Blob.validateBlobSize.call<
 				typeof this,
 				[typeof p, typeof context],
 				bool
 			>(this, p, context)
-			? p as InstanceType<T>
+			? p as InstanceType<TBlob>
 			: null;
 	}
 
@@ -501,44 +501,44 @@ export abstract class Blob<
 	/**
 	 * Clone blob.
 	 *
-	 * @template T Blob type.
+	 * @template TBlob Blob type.
 	 * @param this Blob class.
 	 * @param _this This.
 	 * @param context Context.
 	 * @returns Cloned blob.
 	 */
-	public static override clone<T extends TemplateBlob>(
-		this: T,
+	public static override clone<TBlob extends TemplateBlob>(
+		this: TBlob,
 		_this: Blob,
 		context?: { errno: int },
-	): (InstanceType<T> & Blob<ArrayBuffer>) | null {
+	): (InstanceType<TBlob> & Blob<ArrayBuffer>) | null {
 		const c = BlobCore.clone(_this);
 		return c && Blob.specific.call(
 			this,
 			c,
 			context,
-		) as (InstanceType<T> & Blob<ArrayBuffer>);
+		) as (InstanceType<TBlob> & Blob<ArrayBuffer>);
 	}
 
 	/**
 	 * Read blob from reader.
 	 *
-	 * @template T Blob type.
+	 * @template TBlob Blob type.
 	 * @param this Blob class.
 	 * @param reader Reader.
 	 * @param context Context.
 	 * @returns Blob or null if not valid.
 	 */
-	public static override async readBlob<T extends TemplateBlob>(
-		this: T,
+	public static override async readBlob<TBlob extends TemplateBlob>(
+		this: TBlob,
 		reader: Reader,
 		context?: { errno: int },
-	): Promise<(InstanceType<T> & Blob<ArrayBuffer>) | null>;
+	): Promise<(InstanceType<TBlob> & Blob<ArrayBuffer>) | null>;
 
 	/**
 	 * Read blob from reader.
 	 *
-	 * @template T Blob type.
+	 * @template TBlob Blob type.
 	 * @param this Blob class.
 	 * @param reader Reader.
 	 * @param offset Byte offset.
@@ -546,18 +546,18 @@ export abstract class Blob<
 	 * @param context Context.
 	 * @returns Blob or null if not valid.
 	 */
-	public static override async readBlob<T extends TemplateBlob>(
-		this: T,
+	public static override async readBlob<TBlob extends TemplateBlob>(
+		this: TBlob,
 		reader: Reader,
 		offset: size_t,
 		maxSize?: size_t,
 		context?: { errno: int },
-	): Promise<(InstanceType<T> & Blob<ArrayBuffer>) | null>;
+	): Promise<(InstanceType<TBlob> & Blob<ArrayBuffer>) | null>;
 
 	/**
 	 * Read blob from reader.
 	 *
-	 * @template T Blob type.
+	 * @template TBlob Blob type.
 	 * @param this Blob class.
 	 * @param reader Reader.
 	 * @param offset Byte offset or context.
@@ -565,13 +565,13 @@ export abstract class Blob<
 	 * @param context Context.
 	 * @returns Blob or null if not valid.
 	 */
-	public static override async readBlob<T extends TemplateBlob>(
-		this: T,
+	public static override async readBlob<TBlob extends TemplateBlob>(
+		this: TBlob,
 		reader: Reader,
 		offset?: size_t | { errno: int },
 		maxSize?: size_t,
 		context?: { errno: int },
-	): Promise<(InstanceType<T> & Blob<ArrayBuffer>) | null> {
+	): Promise<(InstanceType<TBlob> & Blob<ArrayBuffer>) | null> {
 		if (typeof offset !== 'number') {
 			context = offset;
 			maxSize = offset = 0;
@@ -589,7 +589,7 @@ export abstract class Blob<
 				this,
 				p,
 				context,
-			) as ((InstanceType<T> & Blob<ArrayBuffer>) | null)
+			) as ((InstanceType<TBlob> & Blob<ArrayBuffer>) | null)
 			: p;
 	}
 
