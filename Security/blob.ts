@@ -552,7 +552,7 @@ export abstract class Blob<
 		offset: size_t,
 		maxSize?: size_t,
 		context?: { errno: int },
-	): Promise<T['prototype'] | null>;
+	): Promise<InstanceType<T> | null>;
 
 	/**
 	 * Read blob from reader.
@@ -571,7 +571,7 @@ export abstract class Blob<
 		offset?: size_t | { errno: int },
 		maxSize?: size_t,
 		context?: { errno: int },
-	): Promise<T['prototype'] | null> {
+	): Promise<InstanceType<T> | null> {
 		if (typeof offset !== 'number') {
 			context = offset;
 			maxSize = offset = 0;
@@ -584,7 +584,9 @@ export abstract class Blob<
 			maxSize || 0,
 			context,
 		);
-		return p ? Blob.specific.call(this, p, context) : p;
+		return p
+			? Blob.specific.call(this, p, context) as (InstanceType<T> | null)
+			: p;
 	}
 
 	static {
