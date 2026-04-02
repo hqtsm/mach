@@ -286,7 +286,7 @@ export class BlobCore<
 	public static async readBlob(
 		reader: Reader,
 		context?: { errno: int },
-	): Promise<BlobCore | null> {
+	): Promise<BlobCore<ArrayBuffer> | null> {
 		return await BlobCore.readBlobInternal(reader, 0, 0, 0, 0, context);
 	}
 
