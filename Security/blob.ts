@@ -696,7 +696,7 @@ export class BlobWrapper<
 	 * @param _this This.
 	 * @returns Byte length.
 	 */
-	public static override length(_this: BlobWrapper): size_t;
+	public static override size(_this: BlobWrapper): size_t;
 
 	/**
 	 * Set blob length for full blob, including magic and length.
@@ -705,7 +705,7 @@ export class BlobWrapper<
 	 * @param _this This.
 	 * @param size Byte length.
 	 */
-	public static override length(_this: BlobWrapper, size: size_t): void;
+	public static override size(_this: BlobWrapper, size: size_t): void;
 
 	/**
 	 * Get or set blob length.
@@ -714,7 +714,7 @@ export class BlobWrapper<
 	 * @param size Byte length to set or undefined to get.
 	 * @returns Byte length on get or undefined on set.
 	 */
-	public static override length(
+	public static override size(
 		_this: BlobWrapper,
 		size?: size_t,
 	): size_t | void {

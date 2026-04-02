@@ -452,11 +452,11 @@ Deno.test('BlobWrapper: BYTE_LENGTH', () => {
 
 Deno.test('BlobWrapper: length', () => {
 	const bw = new BlobWrapper(new ArrayBuffer(BlobWrapper.BYTE_LENGTH));
-	assertEquals(BlobWrapper.length(bw), -8);
-	assertEquals(BlobWrapper.length(bw, 8), undefined);
-	assertEquals(BlobWrapper.length(bw), 0);
-	assertEquals(BlobWrapper.length(bw, 16), undefined);
-	assertEquals(BlobWrapper.length(bw), 8);
+	assertEquals(BlobWrapper.size(bw), -8);
+	assertEquals(BlobWrapper.size(bw, 8), undefined);
+	assertEquals(BlobWrapper.size(bw), 0);
+	assertEquals(BlobWrapper.size(bw, 16), undefined);
+	assertEquals(BlobWrapper.size(bw), 8);
 });
 
 Deno.test('BlobWrapper: empty', () => {
@@ -477,10 +477,10 @@ Deno.test('BlobWrapper: alloc length', () => {
 	new Uint8Array(ptr.buffer, ptr.byteOffset).set(data);
 	const dv = new DataView(bw.buffer, bw.byteOffset, 8);
 	assertEquals(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
-	assertEquals(dv.getUint32(4), BlobWrapper.length(bw) + 8);
+	assertEquals(dv.getUint32(4), BlobWrapper.size(bw) + 8);
 	ptr = BlobWrapper.data(bw);
 	assertEquals(
-		new Uint8Array(ptr.buffer, ptr.byteOffset, BlobWrapper.length(bw)),
+		new Uint8Array(ptr.buffer, ptr.byteOffset, BlobWrapper.size(bw)),
 		data,
 	);
 });
@@ -490,10 +490,10 @@ Deno.test('BlobWrapper: alloc size', () => {
 	const bw = BlobWrapper.alloc(data.byteLength);
 	const dv = new DataView(bw.buffer, bw.byteOffset, 8);
 	assertEquals(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
-	assertEquals(dv.getUint32(4), BlobWrapper.length(bw) + 8);
+	assertEquals(dv.getUint32(4), BlobWrapper.size(bw) + 8);
 	const ptr = BlobWrapper.data(bw);
 	assertEquals(
-		new Uint8Array(ptr.buffer, ptr.byteOffset, BlobWrapper.length(bw)),
+		new Uint8Array(ptr.buffer, ptr.byteOffset, BlobWrapper.size(bw)),
 		data,
 	);
 });
@@ -503,10 +503,10 @@ Deno.test('BlobWrapper: alloc buffer', () => {
 	const bw = BlobWrapper.alloc(data.buffer, data.byteLength);
 	const dv = new DataView(bw.buffer, bw.byteOffset, 8);
 	assertEquals(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
-	assertEquals(dv.getUint32(4), BlobWrapper.length(bw) + 8);
+	assertEquals(dv.getUint32(4), BlobWrapper.size(bw) + 8);
 	const ptr = BlobWrapper.data(bw);
 	assertEquals(
-		new Uint8Array(ptr.buffer, ptr.byteOffset, BlobWrapper.length(bw)),
+		new Uint8Array(ptr.buffer, ptr.byteOffset, BlobWrapper.size(bw)),
 		data,
 	);
 });
@@ -517,10 +517,10 @@ Deno.test('BlobWrapper: alloc view', () => {
 	const bw = BlobWrapper.alloc(view, view.byteLength);
 	const dv = new DataView(bw.buffer, bw.byteOffset, 8);
 	assertEquals(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
-	assertEquals(dv.getUint32(4), BlobWrapper.length(bw) + 8);
+	assertEquals(dv.getUint32(4), BlobWrapper.size(bw) + 8);
 	const ptr = BlobWrapper.data(bw);
 	assertEquals(
-		new Uint8Array(ptr.buffer, ptr.byteOffset, BlobWrapper.length(bw)),
+		new Uint8Array(ptr.buffer, ptr.byteOffset, BlobWrapper.size(bw)),
 		data,
 	);
 });
