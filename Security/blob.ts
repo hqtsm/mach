@@ -307,7 +307,7 @@ export class BlobCore<
 		minSize: size_t,
 		maxSize: size_t,
 		context?: { errno: int },
-	): Promise<BlobCore | null> {
+	): Promise<BlobCore<ArrayBuffer> | null> {
 		reader = reader.slice(offset);
 		if (reader.size < 8) {
 			return null;
