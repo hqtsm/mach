@@ -617,7 +617,10 @@ export class BlobWrapper<
 	 * @param magic Magic number.
 	 * @returns Blob.
 	 */
-	public static alloc(length: size_t, magic?: BlobCoreMagic): BlobWrapper;
+	public static alloc(
+		length: size_t,
+		magic?: BlobCoreMagic,
+	): BlobWrapper<ArrayBuffer>;
 
 	/**
 	 * Wrap data into a new blob.
@@ -631,7 +634,7 @@ export class BlobWrapper<
 		data: ArrayBufferPointer | ArrayBufferLike,
 		length: size_t,
 		magic?: BlobCoreMagic,
-	): BlobWrapper;
+	): BlobWrapper<ArrayBuffer>;
 
 	/**
 	 * Wrap data into a new blob.
@@ -645,7 +648,7 @@ export class BlobWrapper<
 		data: size_t | ArrayBufferPointer | ArrayBufferLike,
 		length?: size_t,
 		magic?: BlobCoreMagic,
-	): BlobWrapper {
+	): BlobWrapper<ArrayBuffer> {
 		const { BYTE_LENGTH } = BlobWrapper;
 		let view;
 		let size = BYTE_LENGTH;
