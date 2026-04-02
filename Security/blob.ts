@@ -533,7 +533,7 @@ export abstract class Blob<
 		this: T,
 		reader: Reader,
 		context?: { errno: int },
-	): Promise<InstanceType<T> | null>;
+	): Promise<(InstanceType<T> & Blob<ArrayBuffer>) | null>;
 
 	/**
 	 * Read blob from reader.
@@ -552,7 +552,7 @@ export abstract class Blob<
 		offset: size_t,
 		maxSize?: size_t,
 		context?: { errno: int },
-	): Promise<InstanceType<T> | null>;
+	): Promise<(InstanceType<T> & Blob<ArrayBuffer>) | null>;
 
 	/**
 	 * Read blob from reader.
@@ -571,7 +571,7 @@ export abstract class Blob<
 		offset?: size_t | { errno: int },
 		maxSize?: size_t,
 		context?: { errno: int },
-	): Promise<InstanceType<T> | null> {
+	): Promise<(InstanceType<T> & Blob<ArrayBuffer>) | null> {
 		if (typeof offset !== 'number') {
 			context = offset;
 			maxSize = offset = 0;
@@ -585,7 +585,11 @@ export abstract class Blob<
 			context,
 		);
 		return p
-			? Blob.specific.call(this, p, context) as (InstanceType<T> | null)
+			? Blob.specific.call(
+				this,
+				p,
+				context,
+			) as ((InstanceType<T> & Blob<ArrayBuffer>) | null)
 			: p;
 	}
 
