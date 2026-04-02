@@ -237,7 +237,7 @@ export class BlobCore<
 	 * @param _this This.
 	 * @returns Cloned blob.
 	 */
-	public static clone(_this: BlobCore): BlobCore | null {
+	public static clone(_this: BlobCore): BlobCore<ArrayBuffer> | null {
 		const l = BlobCore.size(_this);
 		const b = malloc(l);
 		if (b) {
@@ -511,9 +511,13 @@ export abstract class Blob<
 		this: T,
 		_this: Blob,
 		context?: { errno: int },
-	): InstanceType<T> | null {
+	): (InstanceType<T> & Blob<ArrayBuffer>) | null {
 		const c = BlobCore.clone(_this);
-		return c && Blob.specific.call(this, c, context) as InstanceType<T>;
+		return c && Blob.specific.call(
+			this,
+			c,
+			context,
+		) as (InstanceType<T> & Blob<ArrayBuffer>);
 	}
 
 	/**
