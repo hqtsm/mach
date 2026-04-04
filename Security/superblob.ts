@@ -1,5 +1,12 @@
 import { type Concrete, constant, toStringTag } from '@hqtsm/class';
-import { type Arr, array, member, Struct, uint32BE } from '@hqtsm/struct';
+import {
+	type Arr,
+	array,
+	type ArrayBufferType,
+	member,
+	Struct,
+	uint32BE,
+} from '@hqtsm/struct';
 import { Blob, BlobCore, type BlobCoreOffset } from './blob.ts';
 import type { bool, uint } from '../libc/c.ts';
 import { ENOMEM } from '../libc/errno.ts';
@@ -90,11 +97,15 @@ export abstract class SuperBlobCore<
 	/**
 	 * Get blob at index.
 	 *
+	 * @template TSuperBlobCore Super blob type.
 	 * @param _this This.
 	 * @param n Index.
 	 * @returns Blob or null if no offset in index.
 	 */
-	public static blob(_this: SuperBlobCore, n: uint): BlobCore | null {
+	public static blob<TSuperBlobCore extends SuperBlobCore>(
+		_this: TSuperBlobCore,
+		n: uint,
+	): BlobCore<ArrayBufferType<TSuperBlobCore>> | null {
 		n >>>= 0;
 		const { offset } = _this.mIndex[n];
 		return offset ? SuperBlobCore.at(_this, BlobCore, offset) : null;
@@ -103,11 +114,15 @@ export abstract class SuperBlobCore<
 	/**
 	 * Find blob by type.
 	 *
+	 * @template TSuperBlobCore Super blob type.
 	 * @param _this This.
 	 * @param type Index type.
 	 * @returns First match or null.
 	 */
-	public static find(_this: SuperBlobCore, type: uint): BlobCore | null {
+	public static find<TSuperBlobCore extends SuperBlobCore>(
+		_this: TSuperBlobCore,
+		type: uint,
+	): BlobCore<ArrayBufferType<TSuperBlobCore>> | null {
 		type >>>= 0;
 		const { mCount, mIndex } = _this;
 		for (let i = 0; i < mCount; i++) {
@@ -260,14 +275,15 @@ export abstract class SuperBlobCoreMaker {
 	/**
 	 * Get blob by type.
 	 *
+	 * @template TSuperBlobCoreMaker SuperBlob core maker.
 	 * @param _this This.
 	 * @param type Index type.
 	 * @returns Blob or null if not found.
 	 */
-	public static get(
-		_this: SuperBlobCoreMaker,
+	public static get<TSuperBlobCoreMaker extends SuperBlobCoreMaker>(
+		_this: TSuperBlobCoreMaker,
 		type: SuperBlobCoreType,
-	): BlobCore | null {
+	): BlobCore<ArrayBufferType<TSuperBlobCoreMaker>> | null {
 		return _this.mPieces.get(type) || null;
 	}
 
