@@ -55,7 +55,7 @@ export type BlobCoreBlobType<
  */
 export class BlobCore<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
-> extends Struct<TArrayBuffer> {
+> extends Struct<TArrayBuffer | ArrayBuffer> {
 	/**
 	 * Magic number.
 	 *
