@@ -460,18 +460,21 @@ export abstract class Blob<
 	 * @param context Context.
 	 * @returns Cast blob or null.
 	 */
-	public static specific<TBlob extends TemplateBlob>(
+	public static specific<
+		TBlob extends TemplateBlob,
+		TBlobCore extends BlobCore,
+	>(
 		this: TBlob,
-		blob: BlobCore,
+		blob: TBlobCore,
 		context?: { errno: int },
-	): InstanceType<TBlob> | null {
+	): (InstanceType<TBlob> & TBlobCore) | null {
 		const p = new this(blob.buffer, blob.byteOffset, blob.littleEndian);
 		return Blob.validateBlobSize.call<
 				typeof this,
 				[typeof p, typeof context],
 				bool
 			>(this, p, context)
-			? p as InstanceType<TBlob>
+			? p as InstanceType<TBlob> & TBlobCore
 			: null;
 	}
 
