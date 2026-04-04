@@ -455,6 +455,7 @@ export abstract class Blob<
 	 * Cast blob to specific type.
 	 *
 	 * @template TBlob Blob type.
+	 * @template TBlobCore Blob core type.
 	 * @param this Blob class.
 	 * @param blob Blob.
 	 * @param context Context.
