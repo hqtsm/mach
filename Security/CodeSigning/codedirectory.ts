@@ -3,7 +3,6 @@ import { constant, toStringTag } from '@hqtsm/class';
 import {
 	type ArrayBufferPointer,
 	type ArrayBufferType,
-	type Const,
 	Int8Ptr,
 	pointer,
 	type Ptr,
@@ -479,10 +478,13 @@ export class CodeDirectory<
 	/**
 	 * Pointer to identifier string.
 	 *
+	 * @template T This type.
 	 * @param _this This.
 	 * @returns Char pointer.
 	 */
-	public static identifier(_this: CodeDirectory): Ptr<char> {
+	public static identifier<T extends CodeDirectory>(
+		_this: T,
+	): Ptr<char, ArrayBufferType<T>> {
 		return new Int8Ptr(
 			_this.buffer,
 			_this.byteOffset + _this.identOffset,
@@ -522,16 +524,17 @@ export class CodeDirectory<
 	/**
 	 * Get slot data view, for writing.
 	 *
+	 * @template T This type.
 	 * @param _this This.
 	 * @param slot Slot index.
 	 * @param preEncrypt Pre-encrypt version.
 	 * @returns Hash value, or null.
 	 */
-	public static getSlotMutable(
-		_this: CodeDirectory,
+	public static getSlotMutable<T extends CodeDirectory>(
+		_this: T,
 		slot: CodeDirectorySlot,
 		preEncrypt: bool,
-	): Ptr<uchar> | null {
+	): Ptr<uchar, ArrayBufferType<T>> | null {
 		let offset;
 		if (preEncrypt) {
 			if (
@@ -553,16 +556,17 @@ export class CodeDirectory<
 	/**
 	 * Get slot data view, for reading.
 	 *
+	 * @template T Code directory type.
 	 * @param _this This.
 	 * @param slot Slot index.
 	 * @param preEncrypt Pre-encrypt version.
 	 * @returns Hash value, or null.
 	 */
-	public static getSlot(
-		_this: CodeDirectory,
+	public static getSlot<T extends CodeDirectory>(
+		_this: T,
 		slot: CodeDirectorySlot,
 		preEncrypt: bool,
-	): Const<Ptr<uchar>> | null {
+	): Ptr<uchar, ArrayBufferType<T>> | null {
 		return CodeDirectory.getSlotMutable(_this, slot, preEncrypt);
 	}
 
@@ -592,10 +596,13 @@ export class CodeDirectory<
 	/**
 	 * Pointer to team identifier string.
 	 *
+	 * @template T This type.
 	 * @param _this This.
 	 * @returns Char pointer, or null.
 	 */
-	public static teamID(_this: CodeDirectory): Ptr<char> | null {
+	public static teamID<T extends CodeDirectory>(
+		_this: T,
+	): Ptr<char, ArrayBufferType<T>> | null {
 		if (_this.version >= CodeDirectory.supportsTeamID) {
 			const { teamIDOffset } = _this;
 			if (teamIDOffset) {
@@ -648,12 +655,13 @@ export class CodeDirectory<
 	/**
 	 * Pointer to pre-encrypt hashes.
 	 *
+	 * @template T This type.
 	 * @param _this This.
 	 * @returns Hash pointer, or null.
 	 */
-	public static preEncryptHashes(
-		_this: CodeDirectory,
-	): Const<Ptr<uchar>> | null {
+	public static preEncryptHashes<T extends CodeDirectory>(
+		_this: T,
+	): Ptr<uchar, ArrayBufferType<T>> | null {
 		return CodeDirectory.getSlot(_this, 0, true);
 	}
 
