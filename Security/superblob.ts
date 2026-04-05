@@ -97,15 +97,15 @@ export abstract class SuperBlobCore<
 	/**
 	 * Get blob at index.
 	 *
-	 * @template TSuperBlobCore Super blob type.
+	 * @template T This type.
 	 * @param _this This.
 	 * @param n Index.
 	 * @returns Blob or null if no offset in index.
 	 */
-	public static blob<TSuperBlobCore extends SuperBlobCore>(
-		_this: TSuperBlobCore,
+	public static blob<T extends SuperBlobCore>(
+		_this: T,
 		n: uint,
-	): BlobCore<ArrayBufferType<TSuperBlobCore>> | null {
+	): BlobCore<ArrayBufferType<T>> | null {
 		n >>>= 0;
 		const { offset } = _this.mIndex[n];
 		return offset ? SuperBlobCore.at(_this, BlobCore, offset) : null;
@@ -114,15 +114,15 @@ export abstract class SuperBlobCore<
 	/**
 	 * Find blob by type.
 	 *
-	 * @template TSuperBlobCore Super blob type.
+	 * @template T This type.
 	 * @param _this This.
 	 * @param type Index type.
 	 * @returns First match or null.
 	 */
-	public static find<TSuperBlobCore extends SuperBlobCore>(
-		_this: TSuperBlobCore,
+	public static find<T extends SuperBlobCore>(
+		_this: T,
 		type: uint,
-	): BlobCore<ArrayBufferType<TSuperBlobCore>> | null {
+	): BlobCore<ArrayBufferType<T>> | null {
 		type >>>= 0;
 		const { mCount, mIndex } = _this;
 		for (let i = 0; i < mCount; i++) {
@@ -275,15 +275,15 @@ export abstract class SuperBlobCoreMaker {
 	/**
 	 * Get blob by type.
 	 *
-	 * @template TSuperBlobCoreMaker SuperBlob core maker.
+	 * @template T This type.
 	 * @param _this This.
 	 * @param type Index type.
 	 * @returns Blob or null if not found.
 	 */
-	public static get<TSuperBlobCoreMaker extends SuperBlobCoreMaker>(
-		_this: TSuperBlobCoreMaker,
+	public static get<T extends SuperBlobCoreMaker>(
+		_this: T,
 		type: SuperBlobCoreType,
-	): BlobCore<ArrayBufferType<TSuperBlobCoreMaker>> | null {
+	): BlobCore<ArrayBufferType<T>> | null {
 		return _this.mPieces.get(type) || null;
 	}
 
