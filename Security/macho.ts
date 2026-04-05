@@ -1148,12 +1148,12 @@ export class MachOImage extends MachOBase {
 /**
  * Universal architectures.
  */
-export type UniversalArchitectures = Set<Architecture>;
+export type Universal_Architectures = Set<Architecture>;
 
 /**
  * Universal offsets to length.
  */
-export type UniversalOffsetsToLength = Map<size_t, size_t>;
+export type Universal_OffsetsToLength = Map<size_t, size_t>;
 
 /**
  * A universal binary over a readable.
@@ -1451,7 +1451,7 @@ export class Universal {
 	 */
 	public static architectures(
 		_this: Universal,
-		archs: UniversalArchitectures,
+		archs: Universal_Architectures,
 	): void {
 		const skip = new Set<string>();
 		for (const a of archs) {
@@ -1694,7 +1694,7 @@ export class Universal {
 	/**
 	 * Length of slice at each offset.
 	 */
-	private mSizes: UniversalOffsetsToLength = new Map();
+	private mSizes: Universal_OffsetsToLength = new Map();
 
 	/**
 	 * Mach type.

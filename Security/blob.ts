@@ -27,24 +27,24 @@ import { MacOSError, UnixError } from './errors.ts';
 import { errSecAllocate } from './SecBase.ts';
 
 /**
- * BlobCore offset.
+ * BlobCore Offset.
  */
-export type BlobCoreOffset = uint32_t;
+export type BlobCore_Offset = uint32_t;
 
 /**
- * BlobCore magic number.
+ * BlobCore Magic number.
  */
-export type BlobCoreMagic = uint32_t;
+export type BlobCore_Magic = uint32_t;
 
 /**
  * BlobCore BlobType.
  *
  * @template TArrayBuffer Buffer type.
  */
-export type BlobCoreBlobType<
+export type BlobCore_BlobType<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
 > =
-	& { readonly typeMagic: BlobCoreMagic }
+	& { readonly typeMagic: BlobCore_Magic }
 	& typeof BlobCore<TArrayBuffer>;
 
 /**
@@ -61,7 +61,7 @@ export class BlobCore<
 	 * @param _this This.
 	 * @returns Magic number.
 	 */
-	public static magic(_this: BlobCore): BlobCoreMagic {
+	public static magic(_this: BlobCore): BlobCore_Magic {
 		return _this.mMagic;
 	}
 
@@ -107,7 +107,7 @@ export class BlobCore<
 	 */
 	public static initialize(
 		_this: BlobCore,
-		magic: BlobCoreMagic,
+		magic: BlobCore_Magic,
 		length: size_t = 0,
 	): void {
 		_this.mMagic = magic;
@@ -126,7 +126,7 @@ export class BlobCore<
 	 */
 	public static validateBlob(
 		_this: BlobCore,
-		magic: BlobCoreMagic,
+		magic: BlobCore_Magic,
 		minSize?: size_t,
 		maxSize?: size_t,
 		context?: { errno: int },
@@ -164,7 +164,7 @@ export class BlobCore<
 			byteOffset?: number,
 			littleEndian?: boolean | null,
 		) => T,
-		offset: BlobCoreOffset,
+		offset: BlobCore_Offset,
 		littleEndian: boolean | null = null,
 	): T {
 		return new Type(
@@ -203,7 +203,7 @@ export class BlobCore<
 	 */
 	public static stringAt(
 		_this: BlobCore,
-		offset: BlobCoreOffset,
+		offset: BlobCore_Offset,
 	): Int8Ptr | null {
 		let length = BlobCore.size(_this);
 		if (offset >= 0 && offset < length) {
@@ -272,7 +272,7 @@ export class BlobCore<
 	 * @param BlobType Blob type.
 	 * @returns Is the same type.
 	 */
-	public static is(this: BlobCoreBlobType, _this: BlobCore): bool {
+	public static is(this: BlobCore_BlobType, _this: BlobCore): bool {
 		return BlobCore.magic(_this) === this.typeMagic;
 	}
 
@@ -362,7 +362,7 @@ export class BlobCore<
  *
  * @template TArrayBuffer Buffer type.
  */
-export type TemplateBlob<
+export type Template_Blob<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
 > = Concrete<typeof Blob<TArrayBuffer>> & typeof Blob<TArrayBuffer>;
 
@@ -389,7 +389,7 @@ export abstract class Blob<
 	 *
 	 * @returns Type magic number.
 	 */
-	public static readonly typeMagic: BlobCoreMagic = 0;
+	public static readonly typeMagic: BlobCore_Magic = 0;
 
 	/**
 	 * Validate blob with length, using known type magic.
@@ -461,7 +461,7 @@ export abstract class Blob<
 	 * @returns Cast blob or null.
 	 */
 	public static specific<
-		TBlob extends TemplateBlob,
+		TBlob extends Template_Blob,
 		TBlobCore extends BlobCore,
 	>(
 		this: TBlob,
@@ -510,7 +510,7 @@ export abstract class Blob<
 	 * @param context Context.
 	 * @returns Cloned blob.
 	 */
-	public static override clone<TBlob extends TemplateBlob>(
+	public static override clone<TBlob extends Template_Blob>(
 		this: TBlob,
 		_this: Blob,
 		context?: { errno: int },
@@ -532,7 +532,7 @@ export abstract class Blob<
 	 * @param context Context.
 	 * @returns Blob or null if not valid.
 	 */
-	public static override async readBlob<TBlob extends TemplateBlob>(
+	public static override async readBlob<TBlob extends Template_Blob>(
 		this: TBlob,
 		reader: Reader,
 		context?: { errno: int },
@@ -549,7 +549,7 @@ export abstract class Blob<
 	 * @param context Context.
 	 * @returns Blob or null if not valid.
 	 */
-	public static override async readBlob<TBlob extends TemplateBlob>(
+	public static override async readBlob<TBlob extends Template_Blob>(
 		this: TBlob,
 		reader: Reader,
 		offset: size_t,
@@ -568,7 +568,7 @@ export abstract class Blob<
 	 * @param context Context.
 	 * @returns Blob or null if not valid.
 	 */
-	public static override async readBlob<TBlob extends TemplateBlob>(
+	public static override async readBlob<TBlob extends Template_Blob>(
 		this: TBlob,
 		reader: Reader,
 		offset?: size_t | { errno: int },
@@ -622,7 +622,7 @@ export class BlobWrapper<
 	 */
 	public static alloc(
 		length: size_t,
-		magic?: BlobCoreMagic,
+		magic?: BlobCore_Magic,
 	): BlobWrapper<ArrayBuffer>;
 
 	/**
@@ -636,7 +636,7 @@ export class BlobWrapper<
 	public static alloc(
 		data: ArrayBufferPointer | ArrayBufferLike,
 		length: size_t,
-		magic?: BlobCoreMagic,
+		magic?: BlobCore_Magic,
 	): BlobWrapper<ArrayBuffer>;
 
 	/**
@@ -650,7 +650,7 @@ export class BlobWrapper<
 	public static alloc(
 		data: size_t | ArrayBufferPointer | ArrayBufferLike,
 		length?: size_t,
-		magic?: BlobCoreMagic,
+		magic?: BlobCore_Magic,
 	): BlobWrapper<ArrayBuffer> {
 		const { BYTE_LENGTH } = BlobWrapper;
 		let view;

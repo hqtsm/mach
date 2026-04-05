@@ -7,9 +7,9 @@ import { testOOM } from '../spec/memory.ts';
 import { BlobCore, BlobWrapper } from './blob.ts';
 import {
 	SuperBlob,
+	SuperBlob_Maker,
 	SuperBlobCore,
 	SuperBlobCoreIndex,
-	SuperBlobMaker,
 } from './superblob.ts';
 
 const MAGIC = 0x12345678;
@@ -34,7 +34,7 @@ class Example<
 	}
 }
 
-class ExampleMaker extends SuperBlobMaker {
+class ExampleMaker extends SuperBlob_Maker {
 	public static override readonly SuperBlob: typeof Example<ArrayBuffer> =
 		Example;
 

@@ -12,9 +12,9 @@ import {
 } from '../CSCommonPriv.ts';
 import {
 	SuperBlob,
+	SuperBlob_Maker,
 	SuperBlobCore,
-	SuperBlobCoreMaker,
-	SuperBlobMaker,
+	SuperBlobCore_Maker,
 } from '../superblob.ts';
 
 /**
@@ -37,13 +37,13 @@ export class EmbeddedSignatureBlob<
 /**
  * SuperBlob maker for EmbeddedSignatureBlob.
  */
-export class EmbeddedSignatureBlobMaker extends SuperBlobCoreMaker {
+export class EmbeddedSignatureBlob_Maker extends SuperBlobCore_Maker {
 	public static override readonly SuperBlob: typeof EmbeddedSignatureBlob<
 		ArrayBuffer
 	> = EmbeddedSignatureBlob;
 
 	static {
-		toStringTag(this, 'EmbeddedSignatureBlobMaker');
+		toStringTag(this, 'EmbeddedSignatureBlob_Maker');
 		constant(this, 'SuperBlob');
 	}
 }
@@ -68,13 +68,13 @@ export class DetachedSignatureBlob<
 /**
  * SuperBlob maker for DetachedSignatureBlob.
  */
-export class DetachedSignatureBlobMaker extends SuperBlobMaker {
+export class DetachedSignatureBlob_Maker extends SuperBlob_Maker {
 	public static override readonly SuperBlob: typeof DetachedSignatureBlob<
 		ArrayBuffer
 	> = DetachedSignatureBlob;
 
 	static {
-		toStringTag(this, 'DetachedSignatureBlobMaker');
+		toStringTag(this, 'DetachedSignatureBlob_Maker');
 		constant(this, 'SuperBlob');
 	}
 }
@@ -99,13 +99,13 @@ export class LibraryDependencyBlob<
 /**
  * SuperBlob maker for LibraryDependencyBlob.
  */
-export class LibraryDependencyBlobMaker extends SuperBlobMaker {
+export class LibraryDependencyBlob_Maker extends SuperBlob_Maker {
 	public static override readonly SuperBlob: typeof LibraryDependencyBlob<
 		ArrayBuffer
 	> = LibraryDependencyBlob;
 
 	static {
-		toStringTag(this, 'LibraryDependencyBlobMaker');
+		toStringTag(this, 'LibraryDependencyBlob_Maker');
 		constant(this, 'SuperBlob');
 	}
 }

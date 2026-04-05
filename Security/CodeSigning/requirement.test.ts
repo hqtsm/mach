@@ -4,7 +4,11 @@ import {
 	kSecDesignatedRequirementType,
 	kSecHostRequirementType,
 } from '../CSCommon.ts';
-import { Requirement, Requirements, RequirementsMaker } from './requirement.ts';
+import {
+	Requirement,
+	Requirements,
+	Requirements_Maker,
+} from './requirement.ts';
 
 Deno.test('Requirement: BYTE_LENGTH', () => {
 	assertEquals(Requirement.BYTE_LENGTH, 12);
@@ -61,7 +65,7 @@ Deno.test('Requirements: empty', () => {
 });
 
 Deno.test('RequirementsMaker: empty', () => {
-	const rs = RequirementsMaker.make(new RequirementsMaker());
+	const rs = Requirements_Maker.make(new Requirements_Maker());
 	assertEquals(
 		new Uint8Array(rs.buffer, rs.byteOffset, Requirements.size(rs)),
 		unhex('FA DE 0C 01 00 00 00 0C 00 00 00 00'),
@@ -91,18 +95,18 @@ Deno.test('RequirementsMaker: host + designated', () => {
 		...unhex('FA DE 0C 00 00 00 00 28'),
 		...designated,
 	]);
-	const rsm = new RequirementsMaker();
-	RequirementsMaker.add(
+	const rsm = new Requirements_Maker();
+	Requirements_Maker.add(
 		rsm,
 		kSecHostRequirementType,
 		new Requirement(Requirement.blobify(host)),
 	);
-	RequirementsMaker.add(
+	Requirements_Maker.add(
 		rsm,
 		kSecDesignatedRequirementType,
 		new Requirement(Requirement.blobify(designated)),
 	);
-	const rs = RequirementsMaker.make(rsm);
+	const rs = Requirements_Maker.make(rsm);
 	assertEquals(
 		new Uint8Array(rs.buffer, rs.byteOffset, Requirements.size(rs)),
 		data,

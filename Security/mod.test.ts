@@ -1,6 +1,6 @@
 import { assert } from '@std/assert';
 import { Blob } from './blob.ts';
-import { SuperBlobMaker } from './superblob.ts';
+import { SuperBlob_Maker } from './superblob.ts';
 import * as mod from './mod.ts';
 
 // deno-lint-ignore ban-types
@@ -22,7 +22,7 @@ Deno.test('Blob typeMagic', () => {
 
 Deno.test('SuperBlobMaker SuperBlob', () => {
 	for (const [name, value] of Object.entries(mod)) {
-		if (isSubclass(SuperBlobMaker, value)) {
+		if (isSubclass(SuperBlob_Maker, value)) {
 			assert(Object.hasOwn(value, 'SuperBlob'), name);
 		}
 	}

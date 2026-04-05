@@ -18,15 +18,15 @@ import { MacOSError, UnixError } from '../errors.ts';
 import type { DynamicHash } from '../hashing.ts';
 import {
 	CodeDirectory,
+	CodeDirectory_Scatter,
 	type CodeDirectoryHashAlgorithm,
-	CodeDirectoryScatter,
 	type CodeDirectorySpecialSlot,
 } from './codedirectory.ts';
 
 /**
  * Builder for building CodeDirectories from pieces.
  */
-export class CodeDirectoryBuilder {
+export class CodeDirectory_Builder {
 	/**
 	 * CodeDirectoryBuilder constructor.
 	 *
@@ -34,7 +34,7 @@ export class CodeDirectoryBuilder {
 	 */
 	constructor(digestAlgorithm: CodeDirectoryHashAlgorithm) {
 		this.mHashType = digestAlgorithm;
-		this.mDigestLength = CodeDirectoryBuilder.getHash(this).digestLength();
+		this.mDigestLength = CodeDirectory_Builder.getHash(this).digestLength();
 	}
 
 	/**
@@ -47,7 +47,7 @@ export class CodeDirectoryBuilder {
 	 * @param length Length in file.
 	 */
 	public static executable(
-		_this: CodeDirectoryBuilder,
+		_this: CodeDirectory_Builder,
 		file: Reader,
 		pagesize: size_t,
 		offset: size_t,
@@ -68,7 +68,7 @@ export class CodeDirectoryBuilder {
 	 * @param length Length in file.
 	 */
 	public static reopen(
-		_this: CodeDirectoryBuilder,
+		_this: CodeDirectory_Builder,
 		file: Reader,
 		offset: size_t,
 		length: size_t,
@@ -84,7 +84,7 @@ export class CodeDirectoryBuilder {
 	 * @param _this This.
 	 * @returns Is open.
 	 */
-	public static opened(_this: CodeDirectoryBuilder): bool {
+	public static opened(_this: CodeDirectory_Builder): bool {
 		return !!_this.mExec;
 	}
 
@@ -96,11 +96,11 @@ export class CodeDirectoryBuilder {
 	 * @param hash Hash data.
 	 */
 	public static async specialSlot(
-		_this: CodeDirectoryBuilder,
+		_this: CodeDirectory_Builder,
 		slot: CodeDirectorySpecialSlot,
 		data: ArrayBufferLikeData,
 	): Promise<void> {
-		const hash = CodeDirectoryBuilder.getHash(_this);
+		const hash = CodeDirectory_Builder.getHash(_this);
 		await hash.update(
 			'buffer' in data
 				? bufferBytes(data.buffer, data.byteOffset, data.byteLength)
@@ -121,7 +121,7 @@ export class CodeDirectoryBuilder {
 	 * @param code Identifier.
 	 */
 	public static identifier(
-		_this: CodeDirectoryBuilder,
+		_this: CodeDirectory_Builder,
 		code: ArrayBufferLikeData,
 	): void {
 		if ('buffer' in code) {
@@ -142,7 +142,7 @@ export class CodeDirectoryBuilder {
 	 * @param team Team ID.
 	 */
 	public static teamID(
-		_this: CodeDirectoryBuilder,
+		_this: CodeDirectory_Builder,
 		team: ArrayBufferLikeData,
 	): void {
 		if ('buffer' in team) {
@@ -162,7 +162,7 @@ export class CodeDirectoryBuilder {
 	 * @param _this This.
 	 * @param flags Flags.
 	 */
-	public static flags(_this: CodeDirectoryBuilder, flags: uint32_t): void {
+	public static flags(_this: CodeDirectory_Builder, flags: uint32_t): void {
 		_this.mFlags = flags;
 	}
 
@@ -173,7 +173,7 @@ export class CodeDirectoryBuilder {
 	 * @param platform Platform.
 	 */
 	public static platform(
-		_this: CodeDirectoryBuilder,
+		_this: CodeDirectory_Builder,
 		platform: uint8_t,
 	): void {
 		_this.mPlatform = platform;
@@ -187,9 +187,9 @@ export class CodeDirectoryBuilder {
 	 * @returns Scatter vector.
 	 */
 	public static scatter(
-		_this: CodeDirectoryBuilder,
+		_this: CodeDirectory_Builder,
 		count: uint,
-	): Ptr<CodeDirectoryScatter<ArrayBuffer>>;
+	): Ptr<CodeDirectory_Scatter<ArrayBuffer>>;
 
 	/**
 	 * Get existing scatter vector.
@@ -198,8 +198,8 @@ export class CodeDirectoryBuilder {
 	 * @returns Scatter vector.
 	 */
 	public static scatter(
-		_this: CodeDirectoryBuilder,
-	): Ptr<CodeDirectoryScatter<ArrayBuffer>> | null;
+		_this: CodeDirectory_Builder,
+	): Ptr<CodeDirectory_Scatter<ArrayBuffer>> | null;
 
 	/**
 	 * Get or create scatter vector.
@@ -209,18 +209,18 @@ export class CodeDirectoryBuilder {
 	 * @returns Scatter vector or null.
 	 */
 	public static scatter(
-		_this: CodeDirectoryBuilder,
+		_this: CodeDirectory_Builder,
 		count?: uint,
-	): Ptr<CodeDirectoryScatter<ArrayBuffer>> | null {
+	): Ptr<CodeDirectory_Scatter<ArrayBuffer>> | null {
 		if (count !== undefined) {
-			const { BYTE_LENGTH } = CodeDirectoryScatter;
+			const { BYTE_LENGTH } = CodeDirectory_Scatter;
 			const total = _this.mScatterSize = (count + 1) * BYTE_LENGTH;
 			const s = realloc(_this.mScatter?.buffer ?? null, total);
 			if (!s) {
 				UnixError.throwMe(ENOMEM);
 			}
 			memset(s, 0, total);
-			return _this.mScatter = new (pointer(CodeDirectoryScatter))(s);
+			return _this.mScatter = new (pointer(CodeDirectory_Scatter))(s);
 		}
 		return _this.mScatter;
 	}
@@ -234,7 +234,7 @@ export class CodeDirectoryBuilder {
 	 * @param flags Flags.
 	 */
 	public static execSeg(
-		_this: CodeDirectoryBuilder,
+		_this: CodeDirectory_Builder,
 		base: uint64_t,
 		limit: uint64_t,
 		flags: uint64_t,
@@ -251,7 +251,7 @@ export class CodeDirectoryBuilder {
 	 * @param flags Flags.
 	 */
 	public static addExecSegFlags(
-		_this: CodeDirectoryBuilder,
+		_this: CodeDirectory_Builder,
 		flags: uint64_t,
 	): void {
 		_this.mExecSegFlags |= flags;
@@ -264,7 +264,7 @@ export class CodeDirectoryBuilder {
 	 * @param pre Generate pre-encrypt hashes.
 	 */
 	public static generatePreEncryptHashes(
-		_this: CodeDirectoryBuilder,
+		_this: CodeDirectory_Builder,
 		pre: bool,
 	): void {
 		_this.mGeneratePreEncryptHashes = pre;
@@ -277,7 +277,7 @@ export class CodeDirectoryBuilder {
 	 * @param runtime Runtime version.
 	 */
 	public static runTimeVersion(
-		_this: CodeDirectoryBuilder,
+		_this: CodeDirectory_Builder,
 		runtime: uint32_t,
 	): void {
 		_this.mRuntimeVersion = runtime;
@@ -291,10 +291,10 @@ export class CodeDirectoryBuilder {
 	 * @returns Byte size.
 	 */
 	public static size(
-		_this: CodeDirectoryBuilder,
+		_this: CodeDirectory_Builder,
 		version: uint32_t | null = null,
 	): size_t {
-		version ??= CodeDirectoryBuilder.minVersion(_this);
+		version ??= CodeDirectory_Builder.minVersion(_this);
 		const {
 			mIdentifier,
 			mTeamID,
@@ -303,7 +303,7 @@ export class CodeDirectoryBuilder {
 			mDigestLength,
 			mGeneratePreEncryptHashes,
 		} = _this;
-		let size = CodeDirectoryBuilder.fixedSize(_this, version);
+		let size = CodeDirectory_Builder.fixedSize(_this, version);
 		if (!(version < CodeDirectory.supportsScatter)) {
 			size += _this.mScatterSize;
 		}
@@ -329,10 +329,10 @@ export class CodeDirectoryBuilder {
 	 * @returns CodeDirectory instance.
 	 */
 	public static async build(
-		_this: CodeDirectoryBuilder,
+		_this: CodeDirectory_Builder,
 		version: uint32_t | null = null,
 	): Promise<CodeDirectory<ArrayBuffer>> {
-		version ??= CodeDirectoryBuilder.minVersion(_this);
+		version ??= CodeDirectory_Builder.minVersion(_this);
 		const {
 			mExec,
 			mExecOffset,
@@ -351,7 +351,7 @@ export class CodeDirectoryBuilder {
 			MacOSError.throwMe(errSecCSTooBig);
 		}
 
-		const total = CodeDirectoryBuilder.size(_this, version);
+		const total = CodeDirectory_Builder.size(_this, version);
 		const buffer = calloc(1, total);
 		if (!buffer) {
 			UnixError.throwMe(ENOMEM);
@@ -390,7 +390,7 @@ export class CodeDirectoryBuilder {
 			dir.runtime = _this.mRuntimeVersion;
 		}
 
-		let offset = CodeDirectoryBuilder.fixedSize(_this, version);
+		let offset = CodeDirectory_Builder.fixedSize(_this, version);
 
 		if (mScatter && !(version < CodeDirectory.supportsScatter)) {
 			dir.scatterOffset = offset;
@@ -425,7 +425,7 @@ export class CodeDirectoryBuilder {
 		dir.hashOffset = offset + mSpecialSlots * mDigestLength;
 
 		for (let i = 1; i <= mSpecialSlots; i++) {
-			const hash = CodeDirectoryBuilder.getSpecialSlot(_this, i);
+			const hash = CodeDirectory_Builder.getSpecialSlot(_this, i);
 			if (hash) {
 				const slot = CodeDirectory.getSlotMutable(dir, -i, false)!;
 				new Uint8Array(slot.buffer, slot.byteOffset).set(
@@ -441,7 +441,7 @@ export class CodeDirectoryBuilder {
 			if (mPageSize && thisPage > mPageSize) {
 				thisPage = mPageSize;
 			}
-			const hasher = CodeDirectoryBuilder.getHash(_this);
+			const hasher = CodeDirectory_Builder.getHash(_this);
 			const data = new Uint8Array(hasher.digestLength());
 			// deno-lint-ignore no-await-in-loop
 			await CodeDirectory['generateHash'](
@@ -470,7 +470,7 @@ export class CodeDirectoryBuilder {
 	 * @returns Byte size.
 	 */
 	public static fixedSize(
-		_this: CodeDirectoryBuilder,
+		_this: CodeDirectory_Builder,
 		version: uint32_t,
 	): size_t {
 		let size = CodeDirectory.BYTE_LENGTH;
@@ -498,7 +498,7 @@ export class CodeDirectoryBuilder {
 	 * @param _this This.
 	 * @returns Hash type.
 	 */
-	public static hashType(_this: CodeDirectoryBuilder): uint32_t {
+	public static hashType(_this: CodeDirectory_Builder): uint32_t {
 		return _this.mHashType;
 	}
 
@@ -508,7 +508,7 @@ export class CodeDirectoryBuilder {
 	 * @param _this This.
 	 * @returns Hash instance.
 	 */
-	public static getHash(_this: CodeDirectoryBuilder): DynamicHash {
+	public static getHash(_this: CodeDirectory_Builder): DynamicHash {
 		const hash = CodeDirectory.hashFor(_this.mHashType);
 		hash.subtle = _this.subtle;
 		return hash;
@@ -522,7 +522,7 @@ export class CodeDirectoryBuilder {
 	 * @returns Hash data, or null.
 	 */
 	private static getSpecialSlot(
-		_this: CodeDirectoryBuilder,
+		_this: CodeDirectory_Builder,
 		slot: CodeDirectorySpecialSlot,
 	): ArrayBuffer | null {
 		return _this.mSpecial.get(slot) || null;
@@ -611,7 +611,7 @@ export class CodeDirectoryBuilder {
 	/**
 	 * Scatter vector.
 	 */
-	private mScatter: Ptr<CodeDirectoryScatter<ArrayBuffer>> | null = null;
+	private mScatter: Ptr<CodeDirectory_Scatter<ArrayBuffer>> | null = null;
 
 	/**
 	 * Scatter vector byte size, include sentinel.
@@ -654,7 +654,7 @@ export class CodeDirectoryBuilder {
 	 * @param _this This.
 	 * @returns Minimum version.
 	 */
-	public static minVersion(_this: CodeDirectoryBuilder): uint32_t {
+	public static minVersion(_this: CodeDirectory_Builder): uint32_t {
 		if (_this.mGeneratePreEncryptHashes || _this.mRuntimeVersion) {
 			return CodeDirectory.supportsPreEncrypt;
 		}
@@ -674,6 +674,6 @@ export class CodeDirectoryBuilder {
 	}
 
 	static {
-		toStringTag(this, 'CodeDirectoryBuilder');
+		toStringTag(this, 'CodeDirectory_Builder');
 	}
 }

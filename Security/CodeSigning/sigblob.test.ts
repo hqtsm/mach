@@ -17,7 +17,7 @@ import {
 	kSecCodeMagicEntitlementDER,
 	kSecCodeMagicLaunchConstraint,
 } from '../CSCommonPriv.ts';
-import { CodeDirectoryBuilder } from './cdbuilder.ts';
+import { CodeDirectory_Builder } from './cdbuilder.ts';
 import {
 	cdAlternateCodeDirectorySlots,
 	cdCodeDirectorySlot,
@@ -27,11 +27,11 @@ import {
 	cdSignatureSlot,
 	CodeDirectory,
 } from './codedirectory.ts';
-import { Requirements, RequirementsMaker } from './requirement.ts';
+import { Requirements, Requirements_Maker } from './requirement.ts';
 import {
 	DetachedSignatureBlob,
 	EmbeddedSignatureBlob,
-	EmbeddedSignatureBlobMaker,
+	EmbeddedSignatureBlob_Maker,
 	EntitlementBlob,
 	EntitlementDERBlob,
 	LaunchConstraintBlob,
@@ -40,7 +40,7 @@ import {
 
 const fixtures = fixtureMachos();
 
-const emptyRequirements = RequirementsMaker.make(new RequirementsMaker());
+const emptyRequirements = Requirements_Maker.make(new Requirements_Maker());
 const emptyRequirementsData = new Uint8Array(
 	emptyRequirements.buffer,
 	emptyRequirements.byteOffset,
@@ -57,26 +57,26 @@ export async function* createCodeDirectories(
 	for (const hashType of info.hashes) {
 		const identifier = new TextEncoder().encode(info.identifier);
 		const teamID = new TextEncoder().encode(info.teamid);
-		const builder = new CodeDirectoryBuilder(hashType);
-		CodeDirectoryBuilder.executable(
+		const builder = new CodeDirectory_Builder(hashType);
+		CodeDirectory_Builder.executable(
 			builder,
 			new Blob([thin.slice()]),
 			info.page,
 			0,
 			info.offset,
 		);
-		CodeDirectoryBuilder.flags(builder, info.flags);
-		CodeDirectoryBuilder.execSeg(
+		CodeDirectory_Builder.flags(builder, info.flags);
+		CodeDirectory_Builder.execSeg(
 			builder,
 			info.execsegbase,
 			info.execseglimit,
 			info.execsegflags,
 		);
-		CodeDirectoryBuilder.identifier(builder, identifier);
-		CodeDirectoryBuilder.teamID(builder, teamID);
+		CodeDirectory_Builder.identifier(builder, identifier);
+		CodeDirectory_Builder.teamID(builder, teamID);
 		if (infoPlist) {
 			// deno-lint-ignore no-await-in-loop
-			await CodeDirectoryBuilder.specialSlot(
+			await CodeDirectory_Builder.specialSlot(
 				builder,
 				cdInfoSlot,
 				infoPlist,
@@ -89,7 +89,7 @@ export async function* createCodeDirectories(
 			}
 			case 'count=0 size=12': {
 				// deno-lint-ignore no-await-in-loop
-				await CodeDirectoryBuilder.specialSlot(
+				await CodeDirectory_Builder.specialSlot(
 					builder,
 					cdRequirementsSlot,
 					emptyRequirementsData,
@@ -102,7 +102,7 @@ export async function* createCodeDirectories(
 		}
 		if (codeResources) {
 			// deno-lint-ignore no-await-in-loop
-			await CodeDirectoryBuilder.specialSlot(
+			await CodeDirectory_Builder.specialSlot(
 				builder,
 				cdResourceDirSlot,
 				codeResources,
@@ -112,13 +112,13 @@ export async function* createCodeDirectories(
 		// Offical library always minimum supports scatter.
 		assertEquals(
 			Math.max(
-				CodeDirectoryBuilder.minVersion(builder),
+				CodeDirectory_Builder.minVersion(builder),
 				CodeDirectory.supportsScatter,
 			),
 			info.version,
 		);
 
-		yield CodeDirectoryBuilder.build(builder, info.version);
+		yield CodeDirectory_Builder.build(builder, info.version);
 	}
 }
 
@@ -185,13 +185,13 @@ Deno.test('EmbeddedSignatureBlob: fixtures', async () => {
 				cd0.flags & kSecCodeSignatureLinkerSigned
 			);
 
-			const maker = new EmbeddedSignatureBlobMaker();
-			EmbeddedSignatureBlobMaker.add(maker, cdCodeDirectorySlot, cd0);
+			const maker = new EmbeddedSignatureBlob_Maker();
+			EmbeddedSignatureBlob_Maker.add(maker, cdCodeDirectorySlot, cd0);
 
 			if (!linkerSigned) {
 				let cdAlt = cdAlternateCodeDirectorySlots;
 				for (const cd of cds) {
-					EmbeddedSignatureBlobMaker.add(maker, cdAlt++, cd);
+					EmbeddedSignatureBlob_Maker.add(maker, cdAlt++, cd);
 				}
 
 				const { requirements } = info;
@@ -201,7 +201,7 @@ Deno.test('EmbeddedSignatureBlob: fixtures', async () => {
 						break;
 					}
 					case 'count=0 size=12': {
-						EmbeddedSignatureBlobMaker.add(
+						EmbeddedSignatureBlob_Maker.add(
 							maker,
 							cdRequirementsSlot,
 							emptyRequirements,
@@ -216,7 +216,7 @@ Deno.test('EmbeddedSignatureBlob: fixtures', async () => {
 				}
 
 				// Empty signature.
-				EmbeddedSignatureBlobMaker.add(
+				EmbeddedSignatureBlob_Maker.add(
 					maker,
 					cdSignatureSlot,
 					BlobWrapper.alloc(0),
@@ -227,7 +227,7 @@ Deno.test('EmbeddedSignatureBlob: fixtures', async () => {
 				);
 			}
 
-			const cs = EmbeddedSignatureBlobMaker.make(maker);
+			const cs = EmbeddedSignatureBlob_Maker.make(maker);
 
 			const csBuffer = new Uint8Array(
 				cs.buffer,

@@ -278,7 +278,7 @@ export type CodeDirectorySpecialSlot = uint;
  *
  * @template TArrayBuffer Buffer type.
  */
-export class CodeDirectoryScatter<
+export class CodeDirectory_Scatter<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
 > extends Struct<TArrayBuffer> {
 	/**
@@ -302,7 +302,7 @@ export class CodeDirectoryScatter<
 	declare public spare: Endian<uint64_t>;
 
 	static {
-		toStringTag(this, 'CodeDirectoryScatter');
+		toStringTag(this, 'CodeDirectory_Scatter');
 		uint32BE(this, 'count');
 		uint32BE(this, 'base');
 		uint64BE(this, 'targetOffset');
@@ -578,11 +578,11 @@ export class CodeDirectory<
 	 */
 	public static scatterVector<T extends CodeDirectory>(
 		_this: T,
-	): Ptr<CodeDirectoryScatter<ArrayBufferType<T>>> | null {
+	): Ptr<CodeDirectory_Scatter<ArrayBufferType<T>>> | null {
 		if (_this.version >= CodeDirectory.supportsScatter) {
 			const { scatterOffset } = _this;
 			if (scatterOffset) {
-				return new (pointer(CodeDirectoryScatter))(
+				return new (pointer(CodeDirectory_Scatter))(
 					_this.buffer,
 					_this.byteOffset + scatterOffset,
 					_this.littleEndian,

@@ -18,9 +18,9 @@ import type { Reader } from '../util/reader.ts';
 import { UnixError } from './errors.ts';
 
 /**
- * Hashing byte.
+ * Hashing Byte.
  */
-export type HashingByte = uchar;
+export type Hashing_Byte = uchar;
 
 /**
  * Base class for all hash objects.

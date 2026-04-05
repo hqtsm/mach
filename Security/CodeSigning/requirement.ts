@@ -7,7 +7,7 @@ import {
 	kSecCodeMagicRequirementSet,
 } from '../CSCommonPriv.ts';
 import type { Endian } from '../endian.ts';
-import { SuperBlob, SuperBlobMaker } from '../superblob.ts';
+import { SuperBlob, SuperBlob_Maker } from '../superblob.ts';
 
 /**
  * Requirement kind.
@@ -399,13 +399,13 @@ export class Requirements<
 /**
  * SuperBlob maker for Requirements.
  */
-export class RequirementsMaker extends SuperBlobMaker {
+export class Requirements_Maker extends SuperBlob_Maker {
 	public static override readonly SuperBlob: typeof Requirements<
 		ArrayBuffer
 	> = Requirements;
 
 	static {
-		toStringTag(this, 'RequirementsMaker');
+		toStringTag(this, 'Requirements_Maker');
 		constant(this, 'SuperBlob');
 	}
 }
