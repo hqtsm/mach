@@ -79,9 +79,9 @@ export type double = number;
 export type _const<T> = T;
 
 /**
- * Bitfield.
+ * Bitfield bits.
  *
  * @template T Integer type.
  * @template _ Bit size.
  */
-export type bitfield<T extends number | bigint, _ extends number = number> = T;
+export type _bits<T extends number | bigint, _ extends number = number> = T;

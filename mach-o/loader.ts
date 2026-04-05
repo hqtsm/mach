@@ -15,7 +15,7 @@ import {
 	Uint8Ptr,
 	Union,
 } from '@hqtsm/struct';
-import type { bitfield, char } from '../libc/c.ts';
+import type { _bits, char } from '../libc/c.ts';
 import type {
 	int32_t,
 	uint16_t,
@@ -2419,12 +2419,12 @@ export class dylib_reference<
 	/**
 	 * Index in symbol table.
 	 */
-	declare public isym: bitfield<uint32_t, 24>;
+	declare public isym: _bits<uint32_t, 24>;
 
 	/**
 	 * Flags for reference type.
 	 */
-	declare public flags: bitfield<uint32_t, 8>;
+	declare public flags: _bits<uint32_t, 8>;
 
 	static {
 		toStringTag(this, 'dylib_reference');
@@ -2483,12 +2483,12 @@ export class twolevel_hint<
 	/**
 	 * Index in symbol table.
 	 */
-	declare public isub_image: bitfield<uint32_t, 8>;
+	declare public isub_image: _bits<uint32_t, 8>;
 
 	/**
 	 * Flags for reference type.
 	 */
-	declare public itoc: bitfield<uint32_t, 24>;
+	declare public itoc: _bits<uint32_t, 24>;
 
 	static {
 		toStringTag(this, 'twolevel_hint');
