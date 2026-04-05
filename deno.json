@@ -29,10 +29,10 @@
 	"lint": {
 		"rules": {
 			"exclude": [
+				"camelcase",
 				"no-boolean-literal-for-arguments"
 			],
 			"include": [
-				"camelcase",
 				"default-param-last",
 				"eqeqeq",
 				"explicit-function-return-type",

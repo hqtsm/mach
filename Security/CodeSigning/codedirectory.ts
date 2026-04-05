@@ -1,4 +1,3 @@
-// deno-lint-ignore-file camelcase
 import { constant, toStringTag } from '@hqtsm/class';
 import {
 	type ArrayBufferPointer,

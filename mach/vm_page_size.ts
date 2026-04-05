@@ -1,5 +1,3 @@
-// deno-lint-ignore-file camelcase
-
 /**
  * Page size: i386.
  */

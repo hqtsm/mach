@@ -1,5 +1,3 @@
-// deno-lint-ignore-file camelcase
-
 /**
  * Size type.
  */

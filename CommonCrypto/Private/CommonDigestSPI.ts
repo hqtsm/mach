@@ -1,5 +1,3 @@
-// deno-lint-ignore-file camelcase
-
 import type { uint32_t } from '../../libc/stdint.ts';
 
 // CCDigestAlgorithm:

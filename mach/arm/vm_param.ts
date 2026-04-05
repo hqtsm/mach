@@ -1,5 +1,3 @@
-// deno-lint-ignore-file camelcase
-
 import type { int, uint } from '../../libc/c.ts';
 import {
 	vm_page_mask_arm,
