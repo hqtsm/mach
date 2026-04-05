@@ -1,7 +1,6 @@
 import { toStringTag } from '@hqtsm/class';
 import {
 	type ArrayBufferPointer,
-	type Const,
 	getByteLength,
 	Int8Ptr,
 	LITTLE_ENDIAN,
@@ -9,7 +8,7 @@ import {
 	type Ptr,
 	Uint32Ptr,
 } from '@hqtsm/struct';
-import type { bool, char, uint } from '../libc/c.ts';
+import type { _const, bool, char, uint } from '../libc/c.ts';
 import { EIO, ENOEXEC } from '../libc/errno.ts';
 import type { size_t } from '../libc/stddef.ts';
 import type { uint32_t } from '../libc/stdint.ts';
@@ -479,7 +478,7 @@ export class MachOBase {
 		_this: MachOBase,
 		cmd: load_command,
 		str: lc_str,
-	): Const<Ptr<char>> | null {
+	): _const<Ptr<char>> | null {
 		const { offset } = str;
 		const sp = new Int8Ptr(
 			cmd.buffer,

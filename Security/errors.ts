@@ -1,6 +1,6 @@
 import { isToStringTag, toStringTag } from '@hqtsm/class';
-import { type Arr, array, type Const, Int8Ptr, type Ptr } from '@hqtsm/struct';
-import type { bool, char, int } from '../libc/c.ts';
+import { type Arr, array, Int8Ptr, type Ptr } from '@hqtsm/struct';
+import type { _const, bool, char, int } from '../libc/c.ts';
 import type { size_t } from '../libc/stddef.ts';
 import type { OSStatus } from '../MacOSX/MacTypes.ts';
 import { errSecSuccess } from './SecBase.ts';
@@ -167,7 +167,7 @@ export class UnixError extends CommonError {
 	 *
 	 * @returns Error message buffer.
 	 */
-	public what(): Const<Ptr<char, ArrayBuffer>> {
+	public what(): _const<Ptr<char, ArrayBuffer>> {
 		return this.whatBuffer;
 	}
 
@@ -272,7 +272,7 @@ export class MacOSError extends CommonError {
 	 *
 	 * @returns Error message buffer.
 	 */
-	public what(): Const<Ptr<char, ArrayBuffer>> {
+	public what(): _const<Ptr<char, ArrayBuffer>> {
 		return this.whatBuffer;
 	}
 

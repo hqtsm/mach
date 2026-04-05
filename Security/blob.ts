@@ -3,7 +3,6 @@ import {
 	type Arr,
 	array,
 	type ArrayBufferPointer,
-	type Const,
 	Int8Ptr,
 	member,
 	Ptr,
@@ -13,7 +12,7 @@ import {
 } from '@hqtsm/struct';
 import { CSMAGIC_BLOBWRAPPER } from '../kern/cs_blobs.ts';
 import { EINVAL, ENOMEM } from '../libc/errno.ts';
-import type { bool, int, uchar } from '../libc/c.ts';
+import type { _const, bool, int, uchar } from '../libc/c.ts';
 import type { size_t } from '../libc/stddef.ts';
 import type { uint32_t, uint8_t } from '../libc/stdint.ts';
 import { malloc } from '../libc/stdlib.ts';
@@ -255,7 +254,7 @@ export class BlobCore<
 	 * @param _this This.
 	 * @returns Uint8 byte array.
 	 */
-	public static innerData(_this: BlobCore): Const<Arr<uint8_t>> {
+	public static innerData(_this: BlobCore): _const<Arr<uint8_t>> {
 		const o = BlobCore.BYTE_LENGTH;
 		const p = BlobCore.at(_this, Uint8Ptr, o);
 		return new (array(Uint8Ptr, BlobCore.size(_this) - o))(

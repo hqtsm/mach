@@ -74,6 +74,11 @@ export type float = number;
 export type double = number;
 
 /**
+ * Constant modifier.
+ */
+export type _const<T> = T;
+
+/**
  * Bitfield.
  *
  * @template T Integer type.

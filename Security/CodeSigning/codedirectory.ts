@@ -17,7 +17,7 @@ import {
 	kCCDigestSHA256,
 	kCCDigestSHA384,
 } from '../../CommonCrypto/Private/CommonDigestSPI.ts';
-import type { bool, char, int, uchar, uint } from '../../libc/c.ts';
+import type { _const, bool, char, int, uchar, uint } from '../../libc/c.ts';
 import type { big_size_t, size_t } from '../../libc/stddef.ts';
 import type { uint32_t, uint64_t, uint8_t } from '../../libc/stdint.ts';
 import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../../mach/vm_param.ts';
@@ -566,7 +566,7 @@ export class CodeDirectory<
 		_this: T,
 		slot: CodeDirectorySlot,
 		preEncrypt: bool,
-	): Ptr<uchar, ArrayBufferType<T>> | null {
+	): _const<Ptr<uchar, ArrayBufferType<T>>> | null {
 		return CodeDirectory.getSlotMutable(_this, slot, preEncrypt);
 	}
 
@@ -661,7 +661,7 @@ export class CodeDirectory<
 	 */
 	public static preEncryptHashes<T extends CodeDirectory>(
 		_this: T,
-	): Ptr<uchar, ArrayBufferType<T>> | null {
+	): _const<Ptr<uchar, ArrayBufferType<T>>> | null {
 		return CodeDirectory.getSlot(_this, 0, true);
 	}
 
