@@ -17,12 +17,18 @@ const ext = `.${file.split('.').at(-1)!}`;
 
 const exports = (() => {
 	let r;
+	const exclude = new Set([
+		'./struct',
+	]);
+	const filter = ([k, _]: [string, string]) => !exclude.has(k);
 	return (): Promise<[string, Exports][]> =>
 		r ??= Promise.all(
-			Object.entries(deno.exports).map(async ([name, path]) => [
-				name,
-				await import(`${dir}/${path.replace(/\.ts$/, ext)}`),
-			]),
+			Object.entries(deno.exports).filter(filter).map(
+				async ([name, path]) => [
+					name,
+					await import(`${dir}/${path.replace(/\.ts$/, ext)}`),
+				],
+			),
 		);
 })();
 

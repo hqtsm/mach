@@ -3,7 +3,16 @@
 	"version": "0.0.0",
 	"license": "MIT",
 	"exports": {
-		".": "./mod.ts"
+		".": "./mod.ts",
+		"./CommonCrypto": "./CommonCrypto/mod.ts",
+		"./kern": "./kern/mod.ts",
+		"./libc": "./libc/mod.ts",
+		"./mach": "./mach/mod.ts",
+		"./mach-o": "./mach-o/mod.ts",
+		"./MacOSX": "./MacOSX/mod.ts",
+		"./Security": "./Security/mod.ts",
+		"./struct": "./struct/mod.ts",
+		"./util": "./util/mod.ts"
 	},
 	"imports": {
 		"@deno/dnt": "jsr:@deno/dnt@^0.42.3",
