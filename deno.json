@@ -12,6 +12,8 @@
 		"./MacOSX": "./MacOSX/mod.ts",
 		"./plist": "./plist/mod.ts",
 		"./Security": "./Security/mod.ts",
+		"./Security/CodeSigning": "./Security/CodeSigning/mod.ts",
+		"./Security/LowLevelMemoryUtilities": "./Security/LowLevelMemoryUtilities/mod.ts",
 		"./struct": "./struct/mod.ts",
 		"./util": "./util/mod.ts"
 	},
