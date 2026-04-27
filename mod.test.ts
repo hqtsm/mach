@@ -18,6 +18,7 @@ const ext = `.${file.split('.').at(-1)!}`;
 const exports = (() => {
 	let r;
 	const exclude = new Set([
+		'./plist',
 		'./struct',
 	]);
 	const filter = ([k, _]: [string, string]) => !exclude.has(k);

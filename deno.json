@@ -10,6 +10,7 @@
 		"./mach": "./mach/mod.ts",
 		"./mach-o": "./mach-o/mod.ts",
 		"./MacOSX": "./MacOSX/mod.ts",
+		"./plist": "./plist/mod.ts",
 		"./Security": "./Security/mod.ts",
 		"./struct": "./struct/mod.ts",
 		"./util": "./util/mod.ts"
