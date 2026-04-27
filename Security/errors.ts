@@ -1,9 +1,10 @@
 import { isToStringTag, toStringTag } from '@hqtsm/class';
 import { type Arr, array, Int8Ptr, type Ptr } from '@hqtsm/struct';
 import type { _const, bool, char, int } from '../libc/c.ts';
+import { EFAULT } from '../libc/errno.ts';
 import type { size_t } from '../libc/stddef.ts';
 import type { OSStatus } from '../MacOSX/MacTypes.ts';
-import { errSecSuccess } from './SecBase.ts';
+import { errSecCoreFoundationUnknown, errSecSuccess } from './SecBase.ts';
 
 /**
  * Security error code base.
@@ -320,6 +321,78 @@ export class MacOSError extends CommonError {
 		toStringTag(this, 'MacOSError');
 		Object.defineProperty(this.prototype, 'name', {
 			value: 'MacOSError',
+			configurable: true,
+			enumerable: false,
+			writable: true,
+		});
+	}
+}
+
+/**
+ * CoreFoundation error.
+ */
+export class CFError extends CommonError {
+	/**
+	 * Constructor.
+	 */
+	protected constructor() {
+		super();
+		const message = 'CoreFoundation error';
+		const { whatBuffer } = this;
+		for (let i = message.length; i--;) {
+			whatBuffer[i] = message.charCodeAt(i);
+		}
+	}
+
+	public override osStatus(): OSStatus {
+		return errSecCoreFoundationUnknown;
+	}
+
+	public override unixError(): int {
+		return EFAULT;
+	}
+
+	/**
+	 * Get error message buffer.
+	 *
+	 * @returns Error message buffer.
+	 */
+	public what(): _const<Ptr<char, ArrayBuffer>> {
+		return this.whatBuffer;
+	}
+
+	/**
+	 * Check if value should throw CFError.
+	 *
+	 * @param p Value.
+	 */
+	public static check(p: unknown): void {
+		if (!p) {
+			CFError.throwMe();
+		}
+	}
+
+	/**
+	 * Throw CFError.
+	 */
+	public static throwMe(): never {
+		throw new CFError();
+	}
+
+	/**
+	 * Is value a CFError.
+	 *
+	 * @param arg Value.
+	 * @returns Is CFError.
+	 */
+	public static isCFError(arg: unknown): arg is CFError {
+		return isToStringTag(CFError, arg);
+	}
+
+	static {
+		toStringTag(this, 'CFError');
+		Object.defineProperty(this.prototype, 'name', {
+			value: 'CFError',
 			configurable: true,
 			enumerable: false,
 			writable: true,

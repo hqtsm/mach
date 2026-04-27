@@ -5,19 +5,35 @@ import {
 	assertThrows,
 } from '@std/assert';
 import {
+	CFError,
 	CommonError,
 	errSecErrnoBase,
 	errSecErrnoLimit,
 	MacOSError,
 	UnixError,
 } from './errors.ts';
-import { errSecSuccess, errSecUnimplemented } from './SecBase.ts';
+import {
+	errSecCoreFoundationUnknown,
+	errSecSuccess,
+	errSecUnimplemented,
+} from './SecBase.ts';
+import { EFAULT } from '../libc/errno.ts';
 
 class MyCommonError extends CommonError {
 	constructor() {
 		super();
 	}
 }
+
+const cfError = (): CFError => {
+	let r: CFError;
+	try {
+		CFError.throwMe();
+	} catch (e) {
+		r = e as CFError;
+	}
+	return r;
+};
 
 Deno.test('CommonError: instanceof', () => {
 	assertInstanceOf(new MyCommonError(), Error);
@@ -240,4 +256,47 @@ Deno.test('MacOSError: isMacOSError', () => {
 	assertEquals(MacOSError.isMacOSError(0), false);
 	assertEquals(CommonError.isCommonError(MacOSError.make(42)), true);
 	assertEquals(MacOSError.isCommonError(MacOSError.make(42)), true);
+});
+
+Deno.test('CFError: instanceof', () => {
+	assertInstanceOf(cfError(), Error);
+	assertInstanceOf(cfError(), CommonError as never);
+});
+
+Deno.test('CFError: message', () => {
+	assertEquals(cfError().message, 'CoreFoundation error');
+});
+
+Deno.test('CFError: osStatus', () => {
+	assertEquals(cfError().osStatus(), errSecCoreFoundationUnknown);
+});
+
+Deno.test('CFError: unixError', () => {
+	assertEquals(cfError().unixError(), EFAULT);
+});
+
+Deno.test('CFError: what', () => {
+	const err = cfError();
+	assertEquals(err.what(), err.whatBuffer);
+});
+
+Deno.test('CFError: check', () => {
+	CFError.check(1);
+	assertThrows(
+		() => CFError.check(null),
+		CFError as never,
+		'CoreFoundation error',
+	);
+});
+
+Deno.test('CFError: isCFError', () => {
+	assertEquals(CFError.isCFError(cfError()), true);
+	assertEquals(CFError.isCFError(new MyCommonError()), false);
+	assertEquals(CFError.isCFError(new Error()), false);
+	assertEquals(CFError.isCFError({}), false);
+	assertEquals(CFError.isCFError(null), false);
+	assertEquals(CFError.isCFError(undefined), false);
+	assertEquals(CFError.isCFError(0), false);
+	assertEquals(CommonError.isCommonError(cfError()), true);
+	assertEquals(CFError.isCommonError(cfError()), true);
 });
