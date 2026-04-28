@@ -1,5 +1,7 @@
 import { assertRejects, assertStrictEquals, assertThrows } from '@std/assert';
-import { MacOSError, UnixError } from '../Security/errors.ts';
+import { CFError, MacOSError, UnixError } from '../Security/errors.ts';
+
+const cfMessage = 'CoreFoundation error';
 
 export async function assertRejectsUnixError(
 	f: () => Promise<unknown>,
@@ -59,4 +61,14 @@ export function assertThrowsMacOSError(
 	);
 	assertStrictEquals(e.error, code, msg);
 	return e;
+}
+
+export async function assertRejectsCFError(
+	f: () => Promise<unknown>,
+): Promise<CFError> {
+	return await assertRejects(f, CFError as never, cfMessage);
+}
+
+export function assertThrowsCFError(f: () => unknown): CFError {
+	return assertThrows(f, CFError as never, cfMessage) as CFError;
 }
