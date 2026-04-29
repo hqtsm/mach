@@ -1,4 +1,5 @@
-import { assertEquals } from '@std/assert';
+import { assertEquals, assertInstanceOf } from '@std/assert';
+import { PLBoolean, PLDictionary } from '@hqtsm/plist';
 import {
 	CPU_ARCHITECTURES,
 	fixtureMachos,
@@ -267,7 +268,7 @@ Deno.test('EntitlementBlob: empty (invalid?)', () => {
 	);
 });
 
-Deno.test('EntitlementBlob: data', () => {
+Deno.test('EntitlementBlob: entitlements', () => {
 	const plist = [
 		'<?xml version="1.0" encoding="UTF-8"?>',
 		'<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">',
@@ -298,6 +299,14 @@ Deno.test('EntitlementBlob: data', () => {
 		),
 		data,
 	);
+
+	const entitlements = EntitlementBlob.entitlements(eb);
+	assertInstanceOf(entitlements, PLDictionary);
+	const value = entitlements.toValueMap().get(
+		'com.apple.security.cs.disable-library-validation',
+	);
+	assertInstanceOf(value, PLBoolean);
+	assertEquals(value.value, true);
 });
 
 Deno.test('EntitlementDERBlob: BYTE_LENGTH', () => {

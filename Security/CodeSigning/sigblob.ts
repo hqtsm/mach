@@ -1,8 +1,10 @@
 import { constant, toStringTag } from '@hqtsm/class';
+import type { PLDictionary } from '@hqtsm/plist';
 import { array, member, type Ptr, Uint8Ptr } from '@hqtsm/struct';
 import type { size_t } from '../../libc/stddef.ts';
 import type { uint8_t } from '../../libc/stdint.ts';
 import { Blob, BlobCore } from '../blob.ts';
+import { makeCFDictionaryFrom } from '../cfutilities.ts';
 import {
 	kSecCodeMagicDetachedSignature,
 	kSecCodeMagicEmbeddedSignature,
@@ -119,6 +121,25 @@ export class EntitlementBlob<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
 > extends Blob<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicEntitlement;
+
+	/**
+	 * Decode entitlements dictionary.
+	 *
+	 * @param _this This.
+	 * @returns Entitlements dictionary or null.
+	 */
+	public static entitlements(_this: EntitlementBlob): PLDictionary | null {
+		const { BYTE_LENGTH } = EntitlementBlob;
+		return makeCFDictionaryFrom(
+			EntitlementBlob.at(
+				_this,
+				Uint8Ptr,
+				BYTE_LENGTH,
+				_this.littleEndian,
+			),
+			EntitlementBlob.size(_this) - BYTE_LENGTH,
+		);
+	}
 
 	static {
 		toStringTag(this, 'EntitlementBlob');
