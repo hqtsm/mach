@@ -1,7 +1,27 @@
 import { assertEquals, assertInstanceOf } from '@std/assert';
 import { encodeBinary, encodeXml, PLArray, PLDictionary } from '@hqtsm/plist';
 import { assertThrowsCFError } from '../spec/assert.ts';
-import { makeCFDictionaryFrom } from './cfutilities.ts';
+import { makeCFData, makeCFDictionaryFrom } from './cfutilities.ts';
+import { BlobCore } from './blob.ts';
+
+Deno.test('makeCFData: pointer', () => {
+	const source = new Uint8Array(32);
+	for (let i = source.length; i--;) {
+		source[i] = i;
+	}
+	const data = makeCFData(source, source.byteLength);
+	assertEquals(data.byteLength, source.byteLength);
+	assertEquals(new Uint8Array(data.buffer), source);
+});
+
+Deno.test('makeCFData: generic', () => {
+	const buffer = new ArrayBuffer(32);
+	const source = new BlobCore(buffer);
+	BlobCore.initialize(source, 0x12345678, buffer.byteLength);
+	const data = makeCFData(BlobCore, source);
+	assertEquals(data.byteLength, buffer.byteLength);
+	assertEquals(new Uint8Array(data.buffer), new Uint8Array(buffer));
+});
 
 Deno.test('makeCFDictionaryFrom: view', () => {
 	const data = encodeXml(new PLDictionary());
