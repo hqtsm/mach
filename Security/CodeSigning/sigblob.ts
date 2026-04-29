@@ -3,6 +3,7 @@ import type { PLDictionary } from '@hqtsm/plist';
 import { array, member, type Ptr, Uint8Ptr } from '@hqtsm/struct';
 import type { size_t } from '../../libc/stddef.ts';
 import type { uint8_t } from '../../libc/stdint.ts';
+import { malloc } from '../../libc/stdlib.ts';
 import { Blob, BlobCore } from '../blob.ts';
 import { makeCFDictionaryFrom } from '../cfutilities.ts';
 import {
@@ -158,6 +159,26 @@ export class EntitlementDERBlob<
 	public static override readonly typeMagic = kSecCodeMagicEntitlementDER;
 
 	/**
+	 * Create entitlement DER blob.
+	 *
+	 * @param length Body length.
+	 * @returns Entitlement DER blob or null.
+	 */
+	public static alloc(
+		length: size_t,
+	): EntitlementDERBlob<ArrayBuffer> | null {
+		const blobLength = length + BlobCore.BYTE_LENGTH;
+		const d = malloc(blobLength);
+		if (!d) {
+			return null;
+		}
+
+		const b = new EntitlementDERBlob(d);
+		BlobCore.initialize(b, kSecCodeMagicEntitlementDER, blobLength);
+		return b;
+	}
+
+	/**
 	 * DER data.
 	 *
 	 * @param _this This.
@@ -200,6 +221,26 @@ export class LaunchConstraintBlob<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
 > extends Blob<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicLaunchConstraint;
+
+	/**
+	 * Create launch constraint blob.
+	 *
+	 * @param length Body length.
+	 * @returns Launch constraint blob or null.
+	 */
+	public static alloc(
+		length: size_t,
+	): LaunchConstraintBlob<ArrayBuffer> | null {
+		const blobLength = length + BlobCore.BYTE_LENGTH;
+		const d = malloc(blobLength);
+		if (!d) {
+			return null;
+		}
+
+		const b = new LaunchConstraintBlob(d);
+		BlobCore.initialize(b, kSecCodeMagicLaunchConstraint, blobLength);
+		return b;
+	}
 
 	/**
 	 * DER data.

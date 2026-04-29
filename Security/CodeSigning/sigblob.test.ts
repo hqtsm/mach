@@ -8,6 +8,7 @@ import {
 } from '../../spec/fixture.ts';
 import { unhex } from '../../spec/hex.ts';
 import { thin } from '../../spec/macho.ts';
+import { testOOM } from '../../spec/memory.ts';
 import { BlobWrapper } from '../blob.ts';
 import {
 	kSecCodeSignatureHashSHA1,
@@ -313,6 +314,26 @@ Deno.test('EntitlementDERBlob: BYTE_LENGTH', () => {
 	assertEquals(EntitlementDERBlob.BYTE_LENGTH, 8);
 });
 
+Deno.test('EntitlementDERBlob: alloc', () => {
+	const size = 42;
+	const sized = size + EntitlementDERBlob.BYTE_LENGTH;
+	const alloc = EntitlementDERBlob.alloc(size);
+	assertInstanceOf(alloc, EntitlementDERBlob);
+	assertEquals(EntitlementDERBlob.size(alloc), sized);
+	assertEquals(
+		EntitlementDERBlob.magic(alloc),
+		EntitlementDERBlob.typeMagic,
+	);
+	assertEquals(
+		EntitlementDERBlob.size(alloc),
+		sized,
+	);
+
+	testOOM([sized], () => {
+		assertEquals(EntitlementDERBlob.alloc(size), null);
+	});
+});
+
 Deno.test('EntitlementDERBlob: empty (invalid?)', () => {
 	const { BYTE_LENGTH } = EntitlementDERBlob;
 	const buffer = new ArrayBuffer(BYTE_LENGTH);
@@ -347,6 +368,26 @@ Deno.test('EntitlementDERBlob: data', () => {
 
 Deno.test('LaunchConstraintBlob: BYTE_LENGTH', () => {
 	assertEquals(LaunchConstraintBlob.BYTE_LENGTH, 8);
+});
+
+Deno.test('LaunchConstraintBlob: alloc', () => {
+	const size = 42;
+	const sized = size + LaunchConstraintBlob.BYTE_LENGTH;
+	const alloc = LaunchConstraintBlob.alloc(size);
+	assertInstanceOf(alloc, LaunchConstraintBlob);
+	assertEquals(LaunchConstraintBlob.size(alloc), sized);
+	assertEquals(
+		LaunchConstraintBlob.magic(alloc),
+		LaunchConstraintBlob.typeMagic,
+	);
+	assertEquals(
+		LaunchConstraintBlob.size(alloc),
+		sized,
+	);
+
+	testOOM([sized], () => {
+		assertEquals(LaunchConstraintBlob.alloc(size), null);
+	});
 });
 
 Deno.test('LaunchConstraintBlob: empty (invalid?)', () => {
