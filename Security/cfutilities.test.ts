@@ -1,8 +1,8 @@
 import { assertEquals, assertInstanceOf } from '@std/assert';
 import { encodeBinary, encodeXml, PLArray, PLDictionary } from '@hqtsm/plist';
 import { assertThrowsCFError } from '../spec/assert.ts';
-import { makeCFData, makeCFDictionaryFrom } from './cfutilities.ts';
 import { BlobCore } from './blob.ts';
+import { makeCFData, makeCFDictionaryFrom } from './cfutilities.ts';
 
 Deno.test('makeCFData: pointer', () => {
 	const source = new Uint8Array(32);
