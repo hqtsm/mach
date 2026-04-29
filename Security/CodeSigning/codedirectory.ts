@@ -256,22 +256,22 @@ export const maxPlatform = 255;
 /**
  * Hash algorithm.
  */
-export type CodeDirectoryHashAlgorithm = uint32_t;
+export type CodeDirectory_HashAlgorithm = uint32_t;
 
 /**
  * Set of hash algorithms.
  */
-export type CodeDirectoryHashAlgorithms = Set<CodeDirectoryHashAlgorithm>;
+export type CodeDirectory_HashAlgorithms = Set<CodeDirectory_HashAlgorithm>;
 
 /**
  * Slot index.
  */
-export type CodeDirectorySlot = int;
+export type CodeDirectory_Slot = int;
 
 /**
  * Special slot.
  */
-export type CodeDirectorySpecialSlot = uint;
+export type CodeDirectory_SpecialSlot = uint;
 
 /**
  * CodeDirectory scatter vector element.
@@ -515,7 +515,7 @@ export class CodeDirectory<
 	 */
 	public static maxSpecialSlot(
 		_this: CodeDirectory,
-	): CodeDirectorySpecialSlot {
+	): CodeDirectory_SpecialSlot {
 		const slot = _this.nSpecialSlots;
 		return slot > cdSlotMax ? cdSlotMax : slot;
 	}
@@ -531,7 +531,7 @@ export class CodeDirectory<
 	 */
 	public static getSlotMutable<T extends CodeDirectory>(
 		_this: T,
-		slot: CodeDirectorySlot,
+		slot: CodeDirectory_Slot,
 		preEncrypt: bool,
 	): Ptr<uchar, ArrayBufferType<T>> | null {
 		let offset;
@@ -563,7 +563,7 @@ export class CodeDirectory<
 	 */
 	public static getSlot<T extends CodeDirectory>(
 		_this: T,
-		slot: CodeDirectorySlot,
+		slot: CodeDirectory_Slot,
 		preEncrypt: bool,
 	): _const<Ptr<uchar, ArrayBufferType<T>>> | null {
 		return CodeDirectory.getSlotMutable(_this, slot, preEncrypt);
@@ -691,7 +691,7 @@ export class CodeDirectory<
 		_this: CodeDirectory,
 		source: ArrayBufferLike | ArrayBufferPointer | Reader,
 		size: size_t,
-		slot: CodeDirectorySlot,
+		slot: CodeDirectory_Slot,
 		preEncrypted: bool,
 		subtle: SubtleCryptoDigest | null = null,
 	): Promise<bool> {
@@ -729,7 +729,7 @@ export class CodeDirectory<
 	 */
 	public static slotIsPresent(
 		_this: CodeDirectory,
-		slot: CodeDirectorySlot,
+		slot: CodeDirectory_Slot,
 	): bool {
 		if (slot >= -_this.nSpecialSlots && slot < _this.nCodeSlots) {
 			const digest = CodeDirectory.getSlot(_this, slot, false);
@@ -750,7 +750,7 @@ export class CodeDirectory<
 	 * @param hashType Hash type.
 	 * @returns Hasher instance.
 	 */
-	public static hashFor(hashType: CodeDirectoryHashAlgorithm): DynamicHash {
+	public static hashFor(hashType: CodeDirectory_HashAlgorithm): DynamicHash {
 		switch (hashType) {
 			case kSecCodeSignatureHashSHA1: {
 				return new CCHashInstance(kCCDigestSHA1);
@@ -820,15 +820,15 @@ export class CodeDirectory<
 	public static async multipleHashFileData(
 		reader: Reader,
 		limit: size_t,
-		types: CodeDirectoryHashAlgorithms,
+		types: CodeDirectory_HashAlgorithms,
 		action: (
-			type: CodeDirectoryHashAlgorithm,
+			type: CodeDirectory_HashAlgorithm,
 			hasher: DynamicHash,
 		) => Promise<void>,
 		subtle: SubtleCryptoDigest | null = null,
 	): Promise<void> {
 		const total = limit ? Math.min(limit, reader.size) : reader.size;
-		const hashes: [CodeDirectoryHashAlgorithm, DynamicHash][] = [];
+		const hashes: [CodeDirectory_HashAlgorithm, DynamicHash][] = [];
 		for (const type of types) {
 			const hash = CodeDirectory.hashFor(type);
 			hash.subtle = subtle;
@@ -865,7 +865,7 @@ export class CodeDirectory<
 	 * @param type Hash type.
 	 * @returns True if viable.
 	 */
-	public static viableHash(type: CodeDirectoryHashAlgorithm): bool {
+	public static viableHash(type: CodeDirectory_HashAlgorithm): bool {
 		for (
 			let i = 0, t;
 			(t = hashPriorities[i]) !== kSecCodeSignatureNoHash;
@@ -885,8 +885,8 @@ export class CodeDirectory<
 	 * @returns Hash type.
 	 */
 	public static bestHashOf(
-		types: CodeDirectoryHashAlgorithms,
-	): CodeDirectoryHashAlgorithm {
+		types: CodeDirectory_HashAlgorithms,
+	): CodeDirectory_HashAlgorithm {
 		for (
 			let i = 0, type;
 			(type = hashPriorities[i]) !== kSecCodeSignatureNoHash;
@@ -992,7 +992,7 @@ export class CodeDirectory<
 	 * @returns Slot name, or null.
 	 */
 	public static canonicalSlotName(
-		slot: CodeDirectorySpecialSlot,
+		slot: CodeDirectory_SpecialSlot,
 	): string | null {
 		switch (slot) {
 			case cdRequirementsSlot:
@@ -1039,7 +1039,7 @@ export class CodeDirectory<
 	 * @param slot Slot index.
 	 * @returns Slot attributes.
 	 */
-	public static slotAttributes(slot: CodeDirectorySpecialSlot): uint {
+	public static slotAttributes(slot: CodeDirectory_SpecialSlot): uint {
 		switch (slot) {
 			case cdRequirementsSlot:
 				return cdComponentIsBlob;

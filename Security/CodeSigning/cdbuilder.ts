@@ -18,9 +18,9 @@ import { MacOSError, UnixError } from '../errors.ts';
 import type { DynamicHash } from '../hashing.ts';
 import {
 	CodeDirectory,
+	type CodeDirectory_HashAlgorithm,
 	CodeDirectory_Scatter,
-	type CodeDirectoryHashAlgorithm,
-	type CodeDirectorySpecialSlot,
+	type CodeDirectory_SpecialSlot,
 } from './codedirectory.ts';
 
 /**
@@ -32,7 +32,7 @@ export class CodeDirectory_Builder {
 	 *
 	 * @param digestAlgorithm Hash algorithm (kSecCodeSignatureHash* constants).
 	 */
-	constructor(digestAlgorithm: CodeDirectoryHashAlgorithm) {
+	constructor(digestAlgorithm: CodeDirectory_HashAlgorithm) {
 		this.mHashType = digestAlgorithm;
 		this.mDigestLength = CodeDirectory_Builder.getHash(this).digestLength();
 	}
@@ -97,7 +97,7 @@ export class CodeDirectory_Builder {
 	 */
 	public static async specialSlot(
 		_this: CodeDirectory_Builder,
-		slot: CodeDirectorySpecialSlot,
+		slot: CodeDirectory_SpecialSlot,
 		data: ArrayBufferLikeData,
 	): Promise<void> {
 		const hash = CodeDirectory_Builder.getHash(_this);
@@ -523,7 +523,7 @@ export class CodeDirectory_Builder {
 	 */
 	private static getSpecialSlot(
 		_this: CodeDirectory_Builder,
-		slot: CodeDirectorySpecialSlot,
+		slot: CodeDirectory_SpecialSlot,
 	): ArrayBuffer | null {
 		return _this.mSpecial.get(slot) || null;
 	}
@@ -532,7 +532,7 @@ export class CodeDirectory_Builder {
 	 * Special slots.
 	 */
 	private readonly mSpecial = new Map<
-		CodeDirectorySpecialSlot,
+		CodeDirectory_SpecialSlot,
 		ArrayBuffer
 	>();
 
