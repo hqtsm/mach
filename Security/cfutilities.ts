@@ -28,7 +28,20 @@ export function makeCFData(data: ArrayBufferPointer, size: size_t): PLData;
  */
 export function makeCFData<T>(
 	Type: {
+		/**
+		 * Get buffer pointer.
+		 *
+		 * @param value Generic value.
+		 * @returns Buffer pointer.
+		 */
 		data(value: T): ArrayBufferPointer;
+
+		/**
+		 * Get buffer size.
+		 *
+		 * @param value Generic value.
+		 * @returns Buffer size.
+		 */
 		size(value: T): size_t;
 	},
 	source: T,
