@@ -1,5 +1,6 @@
 import { assertEquals, assertInstanceOf } from '@std/assert';
 import { PLBoolean, PLDictionary } from '@hqtsm/plist';
+import { assertThrowsMacOSError } from '../../spec/assert.ts';
 import {
 	CPU_ARCHITECTURES,
 	fixtureMachos,
@@ -9,8 +10,9 @@ import {
 import { unhex } from '../../spec/hex.ts';
 import { thin } from '../../spec/macho.ts';
 import { testOOM } from '../../spec/memory.ts';
-import { BlobWrapper } from '../blob.ts';
+import { BlobCore, BlobWrapper } from '../blob.ts';
 import {
+	errSecCSSignatureInvalid,
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureLinkerSigned,
 } from '../CSCommon.ts';
@@ -136,6 +138,37 @@ async function tests<T>(
 
 Deno.test('EmbeddedSignatureBlob: BYTE_LENGTH', () => {
 	assertEquals(EmbeddedSignatureBlob.BYTE_LENGTH, 12);
+});
+
+Deno.test('EmbeddedSignatureBlob: blobData', () => {
+	const filler = new ArrayBuffer(16);
+	for (let a = new Uint8Array(filler), i = filler.byteLength; i--;) {
+		a[i] = i;
+	}
+
+	const blob = new BlobCore(filler.slice());
+	BlobCore.initialize(blob, 0x12345678, filler.byteLength);
+	{
+		const data = EmbeddedSignatureBlob.blobData(cdRequirementsSlot, blob);
+		assertEquals(
+			new Uint8Array(data.buffer),
+			new Uint8Array(blob.buffer),
+		);
+	}
+
+	const wrap = new BlobWrapper(filler.slice());
+	BlobWrapper.initializeSize(wrap, filler.byteLength);
+	{
+		const data = EmbeddedSignatureBlob.blobData(cdSignatureSlot, wrap);
+		assertEquals(
+			new Uint8Array(data.buffer),
+			new Uint8Array(wrap.buffer.slice(BlobWrapper.BYTE_LENGTH)),
+		);
+	}
+
+	assertThrowsMacOSError(() => {
+		EmbeddedSignatureBlob.blobData(cdSignatureSlot, blob);
+	}, errSecCSSignatureInvalid);
 });
 
 Deno.test('EmbeddedSignatureBlob: fixtures', async () => {

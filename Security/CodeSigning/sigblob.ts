@@ -1,11 +1,12 @@
 import { constant, toStringTag } from '@hqtsm/class';
-import type { PLDictionary } from '@hqtsm/plist';
+import type { PLData, PLDictionary } from '@hqtsm/plist';
 import { array, member, type Ptr, Uint8Ptr } from '@hqtsm/struct';
 import type { size_t } from '../../libc/stddef.ts';
 import type { uint8_t } from '../../libc/stdint.ts';
 import { malloc } from '../../libc/stdlib.ts';
-import { Blob, BlobCore } from '../blob.ts';
-import { makeCFDictionaryFrom } from '../cfutilities.ts';
+import { Blob, BlobCore, BlobWrapper } from '../blob.ts';
+import { makeCFData, makeCFDictionaryFrom } from '../cfutilities.ts';
+import { errSecCSSignatureInvalid } from '../CSCommon.ts';
 import {
 	kSecCodeMagicDetachedSignature,
 	kSecCodeMagicEmbeddedSignature,
@@ -13,12 +14,18 @@ import {
 	kSecCodeMagicEntitlementDER,
 	kSecCodeMagicLaunchConstraint,
 } from '../CSCommonPriv.ts';
+import { MacOSError } from '../errors.ts';
 import {
 	SuperBlob,
 	SuperBlob_Maker,
 	SuperBlobCore,
 	SuperBlobCore_Maker,
 } from '../superblob.ts';
+import {
+	cdComponentIsBlob,
+	CodeDirectory,
+	type CodeDirectory_SpecialSlot,
+} from './codedirectory.ts';
 
 /**
  * An EmbeddedSignatureBlob is a SuperBlob indexed by component slot number.
@@ -30,6 +37,27 @@ export class EmbeddedSignatureBlob<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
 > extends SuperBlobCore<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicEmbeddedSignature;
+
+	/**
+	 * Get blob data for slot.
+	 *
+	 * @param slot Slot.
+	 * @param blob Blob.
+	 * @returns Blob data.
+	 */
+	public static blobData(
+		slot: CodeDirectory_SpecialSlot,
+		blob: BlobCore,
+	): PLData {
+		if (CodeDirectory.slotAttributes(slot) & cdComponentIsBlob) {
+			return makeCFData(BlobCore, blob);
+		}
+		const wrap = BlobWrapper.specific(blob);
+		if (wrap) {
+			return makeCFData(BlobWrapper, wrap);
+		}
+		MacOSError.throwMe(errSecCSSignatureInvalid);
+	}
 
 	static {
 		toStringTag(this, 'EmbeddedSignatureBlob');
