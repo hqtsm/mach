@@ -5,6 +5,7 @@
 	"exports": {
 		".": "./mod.ts",
 		"./CommonCrypto": "./CommonCrypto/mod.ts",
+		"./CoreFoundation": "./CoreFoundation/mod.ts",
 		"./kern": "./kern/mod.ts",
 		"./libc": "./libc/mod.ts",
 		"./mach": "./mach/mod.ts",
