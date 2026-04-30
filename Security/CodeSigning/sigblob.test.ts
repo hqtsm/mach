@@ -51,6 +51,13 @@ const emptyRequirementsData = new Uint8Array(
 	Requirements.size(emptyRequirements),
 );
 
+const filled = (buffer: ArrayBuffer) => {
+	const a = new Uint8Array(buffer);
+	for (let i = 0; i < a.length; i++) {
+		a[i] = i;
+	}
+};
+
 export async function* createCodeDirectories(
 	info: Readonly<FixtureMachoSignatureInfo>,
 	thin: Readonly<Uint8Array>,
@@ -141,66 +148,81 @@ Deno.test('EmbeddedSignatureBlob: BYTE_LENGTH', () => {
 });
 
 Deno.test('EmbeddedSignatureBlob: blobData', () => {
-	const filler = new ArrayBuffer(16);
-	for (let a = new Uint8Array(filler), i = filler.byteLength; i--;) {
-		a[i] = i;
-	}
+	const source = new ArrayBuffer(16);
+	filled(source);
 
-	const blob = new BlobCore(filler.slice());
-	BlobCore.initialize(blob, 0x12345678, filler.byteLength);
-	{
-		const data = EmbeddedSignatureBlob.blobData(cdRequirementsSlot, blob);
-		assertEquals(
-			new Uint8Array(data.buffer),
-			new Uint8Array(blob.buffer),
-		);
-	}
+	const blob = new BlobCore(source.slice());
+	BlobCore.initialize(blob, 0x12345678, source.byteLength);
+	const req = EmbeddedSignatureBlob.blobData(cdRequirementsSlot, blob);
+	assertEquals(
+		new Uint8Array(req.buffer),
+		new Uint8Array(blob.buffer),
+	);
 
-	const wrap = new BlobWrapper(filler.slice());
-	BlobWrapper.initializeSize(wrap, filler.byteLength);
-	{
-		const data = EmbeddedSignatureBlob.blobData(cdSignatureSlot, wrap);
-		assertEquals(
-			new Uint8Array(data.buffer),
-			new Uint8Array(wrap.buffer.slice(BlobWrapper.BYTE_LENGTH)),
-		);
-	}
+	const wrap = new BlobWrapper(source.slice());
+	BlobWrapper.initializeSize(wrap, source.byteLength);
+	const sig = EmbeddedSignatureBlob.blobData(cdSignatureSlot, wrap);
+	assertEquals(
+		new Uint8Array(sig.buffer),
+		new Uint8Array(wrap.buffer.slice(BlobWrapper.BYTE_LENGTH)),
+	);
 
 	assertThrowsMacOSError(() => {
 		EmbeddedSignatureBlob.blobData(cdSignatureSlot, blob);
 	}, errSecCSSignatureInvalid);
 });
 
-Deno.test('EmbeddedSignatureBlob: component', () => {
-	{
-		const maker = new EmbeddedSignatureBlob_Maker();
-		const made = EmbeddedSignatureBlob_Maker.make(maker);
-		const component = EmbeddedSignatureBlob.component(
-			made,
-			cdSignatureSlot,
-		);
-		assertEquals(component, null);
-	}
-	{
-		const maker = new EmbeddedSignatureBlob_Maker();
-		const filler = new ArrayBuffer(16);
-		for (let a = new Uint8Array(filler), i = filler.byteLength; i--;) {
-			a[i] = i;
-		}
-		const blob = new BlobCore(filler);
-		BlobCore.initialize(blob, cdRequirementsSlot, filler.byteLength);
-		EmbeddedSignatureBlob_Maker.add(maker, cdRequirementsSlot, blob);
-		const made = EmbeddedSignatureBlob_Maker.make(maker);
-		const component = EmbeddedSignatureBlob.component(
-			made,
-			cdRequirementsSlot,
-		);
-		assertInstanceOf(component, PLData);
-		assertEquals(
-			new Uint8Array(component.buffer),
-			new Uint8Array(filler),
-		);
-	}
+Deno.test('EmbeddedSignatureBlob: component: null', () => {
+	const maker = new EmbeddedSignatureBlob_Maker();
+	const made = EmbeddedSignatureBlob_Maker.make(maker);
+	const component = EmbeddedSignatureBlob.component(made, cdSignatureSlot);
+	assertEquals(component, null);
+});
+
+Deno.test('EmbeddedSignatureBlob: component: data', () => {
+	const source = new ArrayBuffer(16);
+	filled(source);
+
+	const maker = new EmbeddedSignatureBlob_Maker();
+	const blob = new BlobCore(source);
+	BlobCore.initialize(blob, cdRequirementsSlot, source.byteLength);
+	EmbeddedSignatureBlob_Maker.add(maker, cdRequirementsSlot, blob);
+	const made = EmbeddedSignatureBlob_Maker.make(maker);
+	const component = EmbeddedSignatureBlob.component(made, cdRequirementsSlot);
+	assertInstanceOf(component, PLData);
+	assertEquals(new Uint8Array(component.buffer), new Uint8Array(source));
+});
+
+Deno.test('EmbeddedSignatureBlob_Maker: BlobCore', () => {
+	const source = new PLData(16);
+	filled(source.buffer);
+
+	const maker = new EmbeddedSignatureBlob_Maker();
+	const blob = new BlobCore(source.buffer);
+	BlobCore.initialize(blob, cdRequirementsSlot, source.byteLength);
+	EmbeddedSignatureBlob_Maker.component(maker, cdRequirementsSlot, source);
+	const made = EmbeddedSignatureBlob_Maker.make(maker);
+	const component = EmbeddedSignatureBlob.component(made, cdRequirementsSlot);
+	assertInstanceOf(component, PLData);
+	assertEquals(
+		new Uint8Array(component.buffer),
+		new Uint8Array(source.buffer),
+	);
+});
+
+Deno.test('EmbeddedSignatureBlob_Maker: BlobWrapper', () => {
+	const source = new PLData(16);
+	filled(source.buffer);
+
+	const maker = new EmbeddedSignatureBlob_Maker();
+	EmbeddedSignatureBlob_Maker.component(maker, cdSignatureSlot, source);
+	const made = EmbeddedSignatureBlob_Maker.make(maker);
+	const component = EmbeddedSignatureBlob.component(made, cdSignatureSlot);
+	assertInstanceOf(component, PLData);
+	assertEquals(
+		new Uint8Array(component.buffer),
+		new Uint8Array(source.buffer),
+	);
 });
 
 Deno.test('EmbeddedSignatureBlob: fixtures', async () => {

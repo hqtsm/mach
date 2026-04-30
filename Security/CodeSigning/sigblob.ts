@@ -91,6 +91,33 @@ export class EmbeddedSignatureBlob_Maker extends SuperBlobCore_Maker {
 		ArrayBuffer
 	> = EmbeddedSignatureBlob;
 
+	/**
+	 * Add component to super blob.
+	 *
+	 * @param _this This.
+	 * @param slot Slot.
+	 * @param data Blob data.
+	 */
+	public static component(
+		_this: EmbeddedSignatureBlob_Maker,
+		slot: CodeDirectory_SpecialSlot,
+		data: PLData,
+	): void {
+		if (CodeDirectory.slotAttributes(slot) & cdComponentIsBlob) {
+			EmbeddedSignatureBlob_Maker.add(
+				_this,
+				slot,
+				BlobCore.clone(new BlobCore(data.buffer))!,
+			);
+		} else {
+			EmbeddedSignatureBlob_Maker.add(
+				_this,
+				slot,
+				BlobWrapper.alloc(data.buffer, data.byteLength),
+			);
+		}
+	}
+
 	static {
 		toStringTag(this, 'EmbeddedSignatureBlob_Maker');
 		constant(this, 'SuperBlob');
