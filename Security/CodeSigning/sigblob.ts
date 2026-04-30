@@ -59,6 +59,24 @@ export class EmbeddedSignatureBlob<
 		MacOSError.throwMe(errSecCSSignatureInvalid);
 	}
 
+	/**
+	 * Find blob data for slot.
+	 *
+	 * @param _this This.
+	 * @param slot Slot.
+	 * @returns Blob data or null.
+	 */
+	public static component(
+		_this: EmbeddedSignatureBlob,
+		slot: CodeDirectory_SpecialSlot,
+	): PLData | null {
+		const blob = EmbeddedSignatureBlob.find(_this, slot);
+		if (blob) {
+			return EmbeddedSignatureBlob.blobData(slot, blob);
+		}
+		return null;
+	}
+
 	static {
 		toStringTag(this, 'EmbeddedSignatureBlob');
 		constant(this, 'typeMagic');

@@ -1,5 +1,5 @@
 import { assertEquals, assertInstanceOf } from '@std/assert';
-import { PLBoolean, PLDictionary } from '@hqtsm/plist';
+import { PLBoolean, PLData, PLDictionary } from '@hqtsm/plist';
 import { assertThrowsMacOSError } from '../../spec/assert.ts';
 import {
 	CPU_ARCHITECTURES,
@@ -169,6 +169,38 @@ Deno.test('EmbeddedSignatureBlob: blobData', () => {
 	assertThrowsMacOSError(() => {
 		EmbeddedSignatureBlob.blobData(cdSignatureSlot, blob);
 	}, errSecCSSignatureInvalid);
+});
+
+Deno.test('EmbeddedSignatureBlob: component', () => {
+	{
+		const maker = new EmbeddedSignatureBlob_Maker();
+		const made = EmbeddedSignatureBlob_Maker.make(maker);
+		const component = EmbeddedSignatureBlob.component(
+			made,
+			cdSignatureSlot,
+		);
+		assertEquals(component, null);
+	}
+	{
+		const maker = new EmbeddedSignatureBlob_Maker();
+		const filler = new ArrayBuffer(16);
+		for (let a = new Uint8Array(filler), i = filler.byteLength; i--;) {
+			a[i] = i;
+		}
+		const blob = new BlobCore(filler);
+		BlobCore.initialize(blob, cdRequirementsSlot, filler.byteLength);
+		EmbeddedSignatureBlob_Maker.add(maker, cdRequirementsSlot, blob);
+		const made = EmbeddedSignatureBlob_Maker.make(maker);
+		const component = EmbeddedSignatureBlob.component(
+			made,
+			cdRequirementsSlot,
+		);
+		assertInstanceOf(component, PLData);
+		assertEquals(
+			new Uint8Array(component.buffer),
+			new Uint8Array(filler),
+		);
+	}
 });
 
 Deno.test('EmbeddedSignatureBlob: fixtures', async () => {
