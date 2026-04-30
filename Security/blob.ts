@@ -1,4 +1,5 @@
 import { type Concrete, constant, toStringTag } from '@hqtsm/class';
+import { PLData } from '@hqtsm/plist';
 import {
 	type Arr,
 	array,
@@ -484,20 +485,27 @@ export abstract class Blob<
 	 * @param content Data to wrap.
 	 * @returns Blob data.
 	 */
-	public static blobify(content: ArrayBufferLikeData): ArrayBuffer {
+	public static blobify(content: ArrayBufferLikeData): PLData {
 		const { typeMagic } = this;
 		const { BYTE_LENGTH } = BlobCore;
 		const view = viewBytes(content);
 		const size = BYTE_LENGTH + view.byteLength;
-		const data = malloc(size);
+		let data;
+		try {
+			data = new PLData(size);
+		} catch (err) {
+			if (!(err instanceof RangeError)) {
+				throw err;
+			}
+		}
 		if (!data) {
 			MacOSError.throwMe(errSecAllocate);
 		}
 		class B extends Blob {
 			public static override readonly typeMagic = typeMagic;
 		}
-		B.initializeSize(new B(data), size);
-		new Uint8Array(data, BYTE_LENGTH).set(view);
+		B.initializeSize(new B(data.buffer), size);
+		new Uint8Array(data.buffer, BYTE_LENGTH).set(view);
 		return data;
 	}
 

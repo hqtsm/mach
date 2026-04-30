@@ -1,4 +1,9 @@
-import { assertEquals, assertInstanceOf, assertNotEquals } from '@std/assert';
+import {
+	assertEquals,
+	assertInstanceOf,
+	assertNotEquals,
+	assertThrows,
+} from '@std/assert';
 import { constant } from '@hqtsm/class';
 import { uint32BE } from '@hqtsm/struct';
 import { CSMAGIC_BLOBWRAPPER } from '../kern/cs_blobs.ts';
@@ -327,7 +332,7 @@ Deno.test('Blob: clone', () => {
 Deno.test('Blob: blobify buffer', () => {
 	const blobB = Blob.blobify(new Uint8Array([1, 2, 3, 4]).buffer);
 	assertEquals(
-		new Uint8Array(blobB),
+		new Uint8Array(blobB.buffer),
 		new Uint8Array([0, 0, 0, 0, 0, 0, 0, 12, 1, 2, 3, 4]),
 	);
 });
@@ -337,12 +342,12 @@ Deno.test('Blob: blobify view', () => {
 		new Uint8Array([1, 2, 3, 4, 5, 6]).subarray(1, -1),
 	);
 	assertEquals(
-		new Uint8Array(blobV),
+		new Uint8Array(blobV.buffer),
 		new Uint8Array([0, 0, 0, 0, 0, 0, 0, 12, 2, 3, 4, 5]),
 	);
 });
 
-Deno.test('Blob: blobify error', () => {
+Deno.test('Blob: blobify OOM', () => {
 	const content = new ArrayBuffer(0xDEAD);
 	testOOM([BlobCore.BYTE_LENGTH + 0xDEAD], () => {
 		const err = assertThrowsMacOSError(
@@ -351,6 +356,16 @@ Deno.test('Blob: blobify error', () => {
 		);
 		assertEquals(err.error, errSecAllocate);
 	});
+});
+
+Deno.test('Blob: blobify exception', () => {
+	const content = new ArrayBuffer(0xDEAD);
+	testOOM([BlobCore.BYTE_LENGTH + 0xDEAD], () => {
+		assertThrows(
+			() => Blob.blobify(content),
+			Error,
+		);
+	}, Error);
 });
 
 Deno.test('Blob: readBlob regular', async () => {

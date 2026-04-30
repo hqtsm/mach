@@ -369,7 +369,7 @@ Deno.test('EntitlementBlob: entitlements', () => {
 		'',
 	].join('\n');
 	const data = new TextEncoder().encode(plist);
-	const eb = new EntitlementBlob(EntitlementBlob.blobify(data));
+	const eb = new EntitlementBlob(EntitlementBlob.blobify(data).buffer);
 	new Uint8Array(eb.buffer, eb.byteOffset + eb.byteLength)
 		.set(data);
 	const dv = new DataView(
@@ -434,7 +434,7 @@ Deno.test('EntitlementDERBlob: empty (invalid?)', () => {
 
 Deno.test('EntitlementDERBlob: data', () => {
 	const data = unhex('01 02 03 04 05 06 07 08 F0 F1 F2 F3 F4 F5 F6 F7');
-	const edb = new EntitlementDERBlob(EntitlementDERBlob.blobify(data));
+	const edb = new EntitlementDERBlob(EntitlementDERBlob.blobify(data).buffer);
 	const dv = new DataView(
 		edb.buffer,
 		edb.byteOffset,
@@ -516,7 +516,7 @@ Deno.test('LaunchConstraintBlob: data', () => {
 	);
 
 	const edb = new LaunchConstraintBlob(
-		LaunchConstraintBlob.blobify(der),
+		LaunchConstraintBlob.blobify(der).buffer,
 	);
 	const dv = new DataView(
 		edb.buffer,
