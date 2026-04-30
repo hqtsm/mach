@@ -11,6 +11,7 @@ import {
 	uint32BE,
 	Uint8Ptr,
 } from '@hqtsm/struct';
+import type { CFDataRef } from '../CoreFoundation/CFData.ts';
 import { CSMAGIC_BLOBWRAPPER } from '../kern/cs_blobs.ts';
 import { EINVAL, ENOMEM } from '../libc/errno.ts';
 import type { _const, bool, int, uchar } from '../libc/c.ts';
@@ -485,7 +486,7 @@ export abstract class Blob<
 	 * @param content Data to wrap.
 	 * @returns Blob data.
 	 */
-	public static blobify(content: ArrayBufferLikeData): PLData {
+	public static blobify(content: ArrayBufferLikeData): CFDataRef {
 		const { typeMagic } = this;
 		const { BYTE_LENGTH } = BlobCore;
 		const view = viewBytes(content);

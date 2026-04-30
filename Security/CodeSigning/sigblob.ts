@@ -1,6 +1,7 @@
 import { constant, toStringTag } from '@hqtsm/class';
-import type { PLData, PLDictionary } from '@hqtsm/plist';
 import { array, member, type Ptr, Uint8Ptr } from '@hqtsm/struct';
+import type { CFDataRef } from '../../CoreFoundation/CFData.ts';
+import type { CFDictionaryRef } from '../../CoreFoundation/CFDictionary.ts';
 import type { size_t } from '../../libc/stddef.ts';
 import type { uint8_t } from '../../libc/stdint.ts';
 import { malloc } from '../../libc/stdlib.ts';
@@ -48,7 +49,7 @@ export class EmbeddedSignatureBlob<
 	public static blobData(
 		slot: CodeDirectory_SpecialSlot,
 		blob: BlobCore,
-	): PLData {
+	): CFDataRef {
 		if (CodeDirectory.slotAttributes(slot) & cdComponentIsBlob) {
 			return makeCFData(BlobCore, blob);
 		}
@@ -69,7 +70,7 @@ export class EmbeddedSignatureBlob<
 	public static component(
 		_this: EmbeddedSignatureBlob,
 		slot: CodeDirectory_SpecialSlot,
-	): PLData | null {
+	): CFDataRef | null {
 		const blob = EmbeddedSignatureBlob.find(_this, slot);
 		if (blob) {
 			return EmbeddedSignatureBlob.blobData(slot, blob);
@@ -101,7 +102,7 @@ export class EmbeddedSignatureBlob_Maker extends SuperBlobCore_Maker {
 	public static component(
 		_this: EmbeddedSignatureBlob_Maker,
 		slot: CodeDirectory_SpecialSlot,
-		data: PLData,
+		data: CFDataRef,
 	): void {
 		if (CodeDirectory.slotAttributes(slot) & cdComponentIsBlob) {
 			EmbeddedSignatureBlob_Maker.add(
@@ -202,7 +203,7 @@ export class EntitlementBlob<
 	 * @param _this This.
 	 * @returns Entitlements dictionary or null.
 	 */
-	public static entitlements(_this: EntitlementBlob): PLDictionary | null {
+	public static entitlements(_this: EntitlementBlob): CFDictionaryRef | null {
 		const { BYTE_LENGTH } = EntitlementBlob;
 		return makeCFDictionaryFrom(
 			EntitlementBlob.at(

@@ -5,6 +5,8 @@ import {
 	PLData,
 	PLDictionary,
 } from '@hqtsm/plist';
+import type { CFDictionaryRef } from '../CoreFoundation/CFDictionary.ts';
+import type { CFDataRef } from '../CoreFoundation/CFData.ts';
 import type { size_t } from '../libc/stddef.ts';
 import { pointerBytes, viewBytes } from '../util/memory.ts';
 import { CFError } from './errors.ts';
@@ -16,7 +18,7 @@ import { CFError } from './errors.ts';
  * @param size Size in bytes.
  * @returns CFData copy of data.
  */
-export function makeCFData(data: ArrayBufferPointer, size: size_t): PLData;
+export function makeCFData(data: ArrayBufferPointer, size: size_t): CFDataRef;
 
 /**
  * Make CFData from a generic type.
@@ -45,7 +47,7 @@ export function makeCFData<T>(
 		size(value: T): size_t;
 	},
 	source: T,
-): PLData;
+): CFDataRef;
 
 /**
  * Make CFData from a buffer pointer and size or generic type.
@@ -61,7 +63,7 @@ export function makeCFData<T>(
 		size(value: T): size_t;
 	},
 	size: T | size_t,
-): PLData {
+): CFDataRef {
 	let d;
 	let s;
 	if (typeof size === 'number') {
@@ -86,7 +88,7 @@ export function makeCFData<T>(
 export function makeCFDictionaryFrom(
 	data: ArrayBufferLike | ArrayBufferView | null,
 	decoder?: DecodeXmlDecoder,
-): PLDictionary | null;
+): CFDictionaryRef | null;
 
 /**
  * Decode plist dictionary from pointer.
@@ -100,7 +102,7 @@ export function makeCFDictionaryFrom(
 	data: ArrayBufferPointer | null,
 	length: size_t,
 	decoder?: DecodeXmlDecoder,
-): PLDictionary | null;
+): CFDictionaryRef | null;
 
 /**
  * Decode plist dictionary from buffer or pointer.
@@ -114,7 +116,7 @@ export function makeCFDictionaryFrom(
 	data: ArrayBufferLike | ArrayBufferView | ArrayBufferPointer | null,
 	length?: size_t | DecodeXmlDecoder,
 	decoder?: DecodeXmlDecoder,
-): PLDictionary | null {
+): CFDictionaryRef | null {
 	if (data) {
 		let d;
 		if (typeof length === 'number') {
