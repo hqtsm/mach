@@ -8,7 +8,11 @@ import {
 import type { CFDictionaryRef } from '../CoreFoundation/CFDictionary.ts';
 import type { CFDataRef } from '../CoreFoundation/CFData.ts';
 import type { size_t } from '../libc/stddef.ts';
-import { pointerBytes, viewBytes } from '../util/memory.ts';
+import {
+	type ArrayBufferLikeData,
+	pointerBytes,
+	viewBytes,
+} from '../util/memory.ts';
 import { CFError } from './errors.ts';
 
 /**
@@ -86,7 +90,7 @@ export function makeCFData<T>(
  * @returns Dictionary or null.
  */
 export function makeCFDictionaryFrom(
-	data: ArrayBufferLike | ArrayBufferView | null,
+	data: ArrayBufferLikeData | null,
 	decoder?: DecodeXmlDecoder,
 ): CFDictionaryRef | null;
 
@@ -113,7 +117,7 @@ export function makeCFDictionaryFrom(
  * @returns Dictionary or null.
  */
 export function makeCFDictionaryFrom(
-	data: ArrayBufferLike | ArrayBufferView | ArrayBufferPointer | null,
+	data: ArrayBufferLikeData | ArrayBufferPointer | null,
 	length?: size_t | DecodeXmlDecoder,
 	decoder?: DecodeXmlDecoder,
 ): CFDictionaryRef | null {
@@ -123,7 +127,7 @@ export function makeCFDictionaryFrom(
 			d = pointerBytes(data, length);
 		} else {
 			decoder = length;
-			d = viewBytes(data as ArrayBufferLike | ArrayBufferView);
+			d = viewBytes(data as ArrayBufferLikeData);
 		}
 		let plist = null;
 		try {

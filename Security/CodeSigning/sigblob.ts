@@ -5,6 +5,7 @@ import type { CFDictionaryRef } from '../../CoreFoundation/CFDictionary.ts';
 import type { size_t } from '../../libc/stddef.ts';
 import type { uint8_t } from '../../libc/stdint.ts';
 import { malloc } from '../../libc/stdlib.ts';
+import { type ArrayBufferLikeData, viewBytes } from '../../util/memory.ts';
 import { Blob, BlobCore, BlobWrapper } from '../blob.ts';
 import { makeCFData, makeCFDictionaryFrom } from '../cfutilities.ts';
 import { errSecCSSignatureInvalid } from '../CSCommon.ts';
@@ -102,19 +103,20 @@ export class EmbeddedSignatureBlob_Maker extends SuperBlobCore_Maker {
 	public static component(
 		_this: EmbeddedSignatureBlob_Maker,
 		slot: CodeDirectory_SpecialSlot,
-		data: CFDataRef,
+		data: ArrayBufferLikeData,
 	): void {
+		data = viewBytes(data);
 		if (CodeDirectory.slotAttributes(slot) & cdComponentIsBlob) {
 			EmbeddedSignatureBlob_Maker.add(
 				_this,
 				slot,
-				BlobCore.clone(new BlobCore(data.buffer))!,
+				BlobCore.clone(new BlobCore(data.buffer, data.byteOffset))!,
 			);
 		} else {
 			EmbeddedSignatureBlob_Maker.add(
 				_this,
 				slot,
-				BlobWrapper.alloc(data.buffer, data.byteLength),
+				BlobWrapper.alloc(data, data.byteLength),
 			);
 		}
 	}
