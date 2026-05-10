@@ -123,10 +123,8 @@ Deno.test('CodeDirectory: signingLimit', async () => {
 	assertEquals(CodeDirectory.signingLimit(cd), 1n);
 
 	// Test a big directory without big code blob.
-	const cd2 = await CodeDirectory_Builder.build(
-		builder,
-		CodeDirectory.supportsCodeLimit64,
-	);
+	builder.minVersion = CodeDirectory.supportsCodeLimit64;
+	const cd2 = await CodeDirectory_Builder.build(builder);
 	cd2.codeLimit64 = BigInt(cd2.codeLimit);
 	cd2.codeLimit = 0;
 	assertEquals(CodeDirectory.signingLimit(cd2), 1n);
@@ -310,10 +308,7 @@ Deno.test('CodeDirectory: slotIsPresent', async () => {
 Deno.test('CodeDirectory: getSlot', async () => {
 	const builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA1);
 	CodeDirectory_Builder.executable(builder, new Blob([]), 0, 0, 0);
-	const cd = await CodeDirectory_Builder.build(
-		builder,
-		CodeDirectory.supportsPreEncrypt,
-	);
+	const cd = await CodeDirectory_Builder.build(builder);
 	assertEquals(CodeDirectory.getSlot(cd, 0, true), null);
 	assertEquals(CodeDirectory.preEncryptHashes(cd), null);
 });

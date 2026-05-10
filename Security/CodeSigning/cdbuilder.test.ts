@@ -207,49 +207,106 @@ Deno.test('CodeDirectoryBuilder: version and size', () => {
 
 	assertEquals(
 		CodeDirectory_Builder.minVersion(builder),
+		CodeDirectory.supportsScatter,
+	);
+
+	builder.minVersion = CodeDirectory.earliestVersion;
+	assertEquals(
+		CodeDirectory_Builder.minVersion(builder),
 		CodeDirectory.earliestVersion,
 	);
-	assertGreater(CodeDirectory_Builder.size(builder), size);
-	size = CodeDirectory_Builder.size(builder);
+	assertGreater(
+		CodeDirectory_Builder.size(
+			builder,
+			CodeDirectory_Builder.minVersion(builder),
+		),
+		size,
+	);
+	size = CodeDirectory_Builder.size(
+		builder,
+		CodeDirectory_Builder.minVersion(builder),
+	);
 
 	CodeDirectory_Builder.scatter(builder, 1);
 	assertEquals(
 		CodeDirectory_Builder.minVersion(builder),
 		CodeDirectory.supportsScatter,
 	);
-	assertGreater(CodeDirectory_Builder.size(builder), size);
-	size = CodeDirectory_Builder.size(builder);
+	assertGreater(
+		CodeDirectory_Builder.size(
+			builder,
+			CodeDirectory_Builder.minVersion(builder),
+		),
+		size,
+	);
+	size = CodeDirectory_Builder.size(
+		builder,
+		CodeDirectory_Builder.minVersion(builder),
+	);
 
 	CodeDirectory_Builder.teamID(builder, new TextEncoder().encode('TEAM'));
 	assertEquals(
 		CodeDirectory_Builder.minVersion(builder),
 		CodeDirectory.supportsTeamID,
 	);
-	assertGreater(CodeDirectory_Builder.size(builder), size);
-	size = CodeDirectory_Builder.size(builder);
+	assertGreater(
+		CodeDirectory_Builder.size(
+			builder,
+			CodeDirectory_Builder.minVersion(builder),
+		),
+		size,
+	);
+	size = CodeDirectory_Builder.size(
+		builder,
+		CodeDirectory_Builder.minVersion(builder),
+	);
 
 	CodeDirectory_Builder.reopen(builder, new Blob([]), 0, UINT32_MAX + 1);
 	assertEquals(
 		CodeDirectory_Builder.minVersion(builder),
 		CodeDirectory.supportsCodeLimit64,
 	);
-	assertGreater(CodeDirectory_Builder.size(builder), size);
-	size = CodeDirectory_Builder.size(builder);
+	assertGreater(
+		CodeDirectory_Builder.size(
+			builder,
+			CodeDirectory_Builder.minVersion(builder),
+		),
+		size,
+	);
+	size = CodeDirectory_Builder.size(
+		builder,
+		CodeDirectory_Builder.minVersion(builder),
+	);
 
 	CodeDirectory_Builder.execSeg(builder, 0n, 1n, 0n);
 	assertEquals(
 		CodeDirectory_Builder.minVersion(builder),
 		CodeDirectory.supportsExecSegment,
 	);
-	assertGreater(CodeDirectory_Builder.size(builder), size);
-	size = CodeDirectory_Builder.size(builder);
+	assertGreater(
+		CodeDirectory_Builder.size(
+			builder,
+			CodeDirectory_Builder.minVersion(builder),
+		),
+		size,
+	);
+	size = CodeDirectory_Builder.size(
+		builder,
+		CodeDirectory_Builder.minVersion(builder),
+	);
 
 	CodeDirectory_Builder.generatePreEncryptHashes(builder, true);
 	assertEquals(
 		CodeDirectory_Builder.minVersion(builder),
 		CodeDirectory.supportsPreEncrypt,
 	);
-	assertGreater(CodeDirectory_Builder.size(builder), size);
+	assertGreater(
+		CodeDirectory_Builder.size(
+			builder,
+			CodeDirectory_Builder.minVersion(builder),
+		),
+		size,
+	);
 
 	CodeDirectory_Builder.generatePreEncryptHashes(builder, false);
 	CodeDirectory_Builder.runTimeVersion(builder, 1);
@@ -257,7 +314,13 @@ Deno.test('CodeDirectoryBuilder: version and size', () => {
 		CodeDirectory_Builder.minVersion(builder),
 		CodeDirectory.supportsPreEncrypt,
 	);
-	assertGreater(CodeDirectory_Builder.size(builder), size);
+	assertGreater(
+		CodeDirectory_Builder.size(
+			builder,
+			CodeDirectory_Builder.minVersion(builder),
+		),
+		size,
+	);
 
 	CodeDirectory_Builder.scatter(builder, 0);
 	testOOM([CodeDirectory_Scatter.BYTE_LENGTH * 2], () => {
@@ -279,7 +342,6 @@ Deno.test('CodeDirectoryBuilder: platform', async () => {
 });
 
 Deno.test('CodeDirectoryBuilder: generatePreEncryptHashes', async () => {
-	const version = CodeDirectory.supportsPreEncrypt;
 	const builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA1);
 	CodeDirectory_Builder.executable(
 		builder,
@@ -288,13 +350,15 @@ Deno.test('CodeDirectoryBuilder: generatePreEncryptHashes', async () => {
 		0,
 		1,
 	);
+
+	builder.minVersion = CodeDirectory.supportsPreEncrypt;
 	const zero = CodeDirectory.size(
-		await CodeDirectory_Builder.build(builder, version),
+		await CodeDirectory_Builder.build(builder),
 	);
 
 	CodeDirectory_Builder.generatePreEncryptHashes(builder, true);
 	assertEquals(
-		CodeDirectory.size(await CodeDirectory_Builder.build(builder, version)),
+		CodeDirectory.size(await CodeDirectory_Builder.build(builder)),
 		zero + CS_SHA1_LEN * 1,
 	);
 });
@@ -333,7 +397,10 @@ Deno.test('CodeDirectoryBuilder: codeslots limit', async () => {
 
 Deno.test('CodeDirectoryBuilder: build', async () => {
 	const builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA1);
-	const size = CodeDirectory_Builder.size(builder);
+	const size = CodeDirectory_Builder.size(
+		builder,
+		CodeDirectory_Builder.minVersion(builder),
+	);
 	await testOOM([size], async () => {
 		await assertRejectsUnixError(
 			() => CodeDirectory_Builder.build(builder),

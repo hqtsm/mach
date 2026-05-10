@@ -287,14 +287,13 @@ export class CodeDirectory_Builder {
 	 * Caculate size for CodeDirectory currently described.
 	 *
 	 * @param _this This.
-	 * @param version Compatibility version or null for minimum.
+	 * @param version Compatibility version.
 	 * @returns Byte size.
 	 */
 	public static size(
 		_this: CodeDirectory_Builder,
-		version: uint32_t | null = null,
+		version: uint32_t,
 	): size_t {
-		version ??= CodeDirectory_Builder.minVersion(_this);
 		const {
 			mIdentifier,
 			mTeamID,
@@ -325,14 +324,12 @@ export class CodeDirectory_Builder {
 	 * Build CodeDirectory.
 	 *
 	 * @param _this This.
-	 * @param version Compatibility version or null for minimum.
 	 * @returns CodeDirectory instance.
 	 */
 	public static async build(
 		_this: CodeDirectory_Builder,
-		version: uint32_t | null = null,
 	): Promise<CodeDirectory<ArrayBuffer>> {
-		version ??= CodeDirectory_Builder.minVersion(_this);
+		const version = CodeDirectory_Builder.minVersion(_this);
 		const {
 			mExec,
 			mExecOffset,
@@ -649,6 +646,11 @@ export class CodeDirectory_Builder {
 	public subtle: SubtleCryptoDigest | null = null;
 
 	/**
+	 * Minimum compatibility version.
+	 */
+	public minVersion: uint32_t = CodeDirectory.supportsScatter;
+
+	/**
 	 * Minimum compatibility version of described CodeDirectory.
 	 *
 	 * @param _this This.
@@ -670,7 +672,7 @@ export class CodeDirectory_Builder {
 		if (_this.mScatterSize) {
 			return CodeDirectory.supportsScatter;
 		}
-		return CodeDirectory.earliestVersion;
+		return _this.minVersion;
 	}
 
 	static {
