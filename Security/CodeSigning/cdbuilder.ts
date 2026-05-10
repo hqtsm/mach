@@ -657,22 +657,22 @@ export class CodeDirectory_Builder {
 	 * @returns Minimum version.
 	 */
 	public static minVersion(_this: CodeDirectory_Builder): uint32_t {
+		let version;
+		const { minVersion } = _this;
 		if (_this.mGeneratePreEncryptHashes || _this.mRuntimeVersion) {
-			return CodeDirectory.supportsPreEncrypt;
+			version = CodeDirectory.supportsPreEncrypt;
+		} else if (_this.mExecSegLimit > 0) {
+			version = CodeDirectory.supportsExecSegment;
+		} else if (_this.mExecLength > UINT32_MAX) {
+			version = CodeDirectory.supportsCodeLimit64;
+		} else if (_this.mTeamID.byteLength) {
+			version = CodeDirectory.supportsTeamID;
+		} else if (_this.mScatterSize) {
+			version = CodeDirectory.supportsScatter;
+		} else {
+			version = CodeDirectory.earliestVersion;
 		}
-		if (_this.mExecSegLimit > 0) {
-			return CodeDirectory.supportsExecSegment;
-		}
-		if (_this.mExecLength > UINT32_MAX) {
-			return CodeDirectory.supportsCodeLimit64;
-		}
-		if (_this.mTeamID.byteLength) {
-			return CodeDirectory.supportsTeamID;
-		}
-		if (_this.mScatterSize) {
-			return CodeDirectory.supportsScatter;
-		}
-		return _this.minVersion;
+		return version > minVersion ? version : minVersion;
 	}
 
 	static {
