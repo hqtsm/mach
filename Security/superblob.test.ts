@@ -177,7 +177,7 @@ Deno.test('SuperBlob: count', () => {
 	assertEquals(Example.count(sb), 2);
 });
 
-Deno.test('SuperBlobMaker: add BlobCore', () => {
+Deno.test('SuperBlob_Maker: add BlobCore', () => {
 	const maker = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	const blob = BlobWrapper.alloc(data, data.byteLength);
@@ -186,7 +186,7 @@ Deno.test('SuperBlobMaker: add BlobCore', () => {
 	assertEquals(new Uint8Array(sb.buffer, 20), new Uint8Array(blob.buffer));
 });
 
-Deno.test('SuperBlobMaker: add SuperBlob', () => {
+Deno.test('SuperBlob_Maker: add SuperBlob', () => {
 	const maker1 = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	ExampleMaker.add(
@@ -225,7 +225,7 @@ Deno.test('SuperBlobMaker: add SuperBlob', () => {
 	);
 });
 
-Deno.test('SuperBlobMaker: add SuperBlobMaker', () => {
+Deno.test('SuperBlob_Maker: add SuperBlob_Maker', () => {
 	const maker1 = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	ExampleMaker.add(
@@ -264,7 +264,7 @@ Deno.test('SuperBlobMaker: add SuperBlobMaker', () => {
 	);
 });
 
-Deno.test('SuperBlobMaker: contains', () => {
+Deno.test('SuperBlob_Maker: contains', () => {
 	const maker = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	const blob = BlobWrapper.alloc(data, data.byteLength);
@@ -273,7 +273,7 @@ Deno.test('SuperBlobMaker: contains', () => {
 	assertEquals(ExampleMaker.contains(maker, 0x01020304), true);
 });
 
-Deno.test('SuperBlobMaker: get', () => {
+Deno.test('SuperBlob_Maker: get', () => {
 	const maker = new ExampleMaker();
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	const blob = BlobWrapper.alloc(data, data.byteLength);
@@ -282,7 +282,7 @@ Deno.test('SuperBlobMaker: get', () => {
 	assert(ExampleMaker.get(maker, 0x01020304));
 });
 
-Deno.test('SuperBlobMaker: size', () => {
+Deno.test('SuperBlob_Maker: size', () => {
 	const maker = new ExampleMaker();
 	assertEquals(ExampleMaker.size(maker, []), 12);
 	assertEquals(
@@ -321,7 +321,7 @@ Deno.test('SuperBlobMaker: size', () => {
 	);
 });
 
-Deno.test('SuperBlobMaker: make', () => {
+Deno.test('SuperBlob_Maker: make', () => {
 	const maker = new ExampleMaker();
 	const size = ExampleMaker.size(maker, []);
 	testOOM([size], () => {

@@ -22,7 +22,7 @@ function fibinacci(n: number): number[] {
 	return fib;
 }
 
-Deno.test('RequirementMaker: alloc', () => {
+Deno.test('Requirement_Maker: alloc', () => {
 	// identifier "com.apple.simple"
 	const data = unhex(
 		'00 00 00 02',
@@ -43,7 +43,7 @@ Deno.test('RequirementMaker: alloc', () => {
 	);
 });
 
-Deno.test('RequirementMaker: alloc grow fibonacci', () => {
+Deno.test('Requirement_Maker: alloc grow fibonacci', () => {
 	const maker = new Requirement_Maker(Requirement.lwcrForm);
 	for (const size of fibinacci(25)) {
 		const d = new Uint8Array(size);
@@ -57,7 +57,7 @@ Deno.test('RequirementMaker: alloc grow fibonacci', () => {
 	assertEquals(dv.getUint32(8), Requirement.lwcrForm);
 });
 
-Deno.test('RequirementMaker: alloc grow fast', () => {
+Deno.test('Requirement_Maker: alloc grow fast', () => {
 	const maker = new Requirement_Maker(Requirement.lwcrForm);
 	for (const size of [0xff, 0xfff, 0xffff, 0xfffff, 0xffffff]) {
 		const d = new Uint8Array(size);
@@ -71,7 +71,7 @@ Deno.test('RequirementMaker: alloc grow fast', () => {
 	assertEquals(dv.getUint32(8), Requirement.lwcrForm);
 });
 
-Deno.test('RequirementMaker: alloc error', () => {
+Deno.test('Requirement_Maker: alloc error', () => {
 	const maker = new Requirement_Maker(Requirement.lwcrForm);
 	testOOM([0xD1E0 + 12], () => {
 		assertThrowsUnixError(
@@ -81,7 +81,7 @@ Deno.test('RequirementMaker: alloc error', () => {
 	});
 });
 
-Deno.test('RequirementMaker: identifier "com.apple.simple"', () => {
+Deno.test('Requirement_Maker: identifier "com.apple.simple"', () => {
 	const data = unhex(
 		'FA DE 0C 00 00 00 00 24 00 00 00 01',
 		'00 00 00 02',
@@ -100,7 +100,7 @@ Deno.test('RequirementMaker: identifier "com.apple.simple"', () => {
 	);
 });
 
-Deno.test('RequirementMaker: anchor apple and identifier "com.apple.simple"', () => {
+Deno.test('Requirement_Maker: anchor apple and identifier "com.apple.simple"', () => {
 	const data = unhex(
 		'FA DE 0C 00 00 00 00 2C 00 00 00 01',
 		'00 00 00 06',
@@ -130,7 +130,7 @@ Deno.test('RequirementMaker: anchor apple and identifier "com.apple.simple"', ()
 	);
 });
 
-Deno.test('RequirementMaker: identifier "com.apple.simple" or anchor apple generic', () => {
+Deno.test('Requirement_Maker: identifier "com.apple.simple" or anchor apple generic', () => {
 	const data = unhex(
 		'FA DE 0C 00 00 00 00 2C 00 00 00 01',
 		'00 00 00 07',
@@ -160,7 +160,7 @@ Deno.test('RequirementMaker: identifier "com.apple.simple" or anchor apple gener
 	);
 });
 
-Deno.test('RequirementMaker: (a and b) or (c and d)', () => {
+Deno.test('Requirement_Maker: (a and b) or (c and d)', () => {
 	// identifier "com.apple.app" and anchor apple or
 	// identifier "com.apple.gen" and anchor apple generic
 	const data = unhex(
@@ -205,7 +205,7 @@ Deno.test('RequirementMaker: (a and b) or (c and d)', () => {
 	);
 });
 
-Deno.test('RequirementMaker: (a or b) and (c or d)', () => {
+Deno.test('Requirement_Maker: (a or b) and (c or d)', () => {
 	// (identifier "com.apple.app" or anchor apple) and
 	// (identifier "com.apple.gen" or anchor apple generic)
 	const data = unhex(
@@ -253,7 +253,7 @@ Deno.test('RequirementMaker: (a or b) and (c or d)', () => {
 	);
 });
 
-Deno.test('RequirementMaker: anchor digested', () => {
+Deno.test('Requirement_Maker: anchor digested', () => {
 	const hash = new Uint8Array(
 		[1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4],
 	);
@@ -262,7 +262,7 @@ Deno.test('RequirementMaker: anchor digested', () => {
 	Requirement_Maker.make(maker);
 });
 
-Deno.test('RequirementMaker: anchor digest', async () => {
+Deno.test('Requirement_Maker: anchor digest', async () => {
 	const cert = new Uint8Array(
 		[1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4],
 	);
@@ -271,14 +271,14 @@ Deno.test('RequirementMaker: anchor digest', async () => {
 	Requirement_Maker.make(maker);
 });
 
-Deno.test('RequirementMaker: trustedAnchor', () => {
+Deno.test('Requirement_Maker: trustedAnchor', () => {
 	const maker = new Requirement_Maker(Requirement.exprForm);
 	Requirement_Maker.trustedAnchor(maker);
 	Requirement_Maker.trustedAnchor(maker, 1);
 	Requirement_Maker.make(maker);
 });
 
-Deno.test('RequirementMaker: infoKey', () => {
+Deno.test('Requirement_Maker: infoKey', () => {
 	const maker = new Requirement_Maker(Requirement.exprForm);
 	Requirement_Maker.infoKey(
 		maker,
@@ -288,19 +288,19 @@ Deno.test('RequirementMaker: infoKey', () => {
 	Requirement_Maker.make(maker);
 });
 
-Deno.test('RequirementMaker: cdhash', () => {
+Deno.test('Requirement_Maker: cdhash', () => {
 	const maker = new Requirement_Maker(Requirement.exprForm);
 	Requirement_Maker.cdhash(maker, new Uint8Array([1, 2, 3, 4]));
 	Requirement_Maker.make(maker);
 });
 
-Deno.test('RequirementMaker: platform', () => {
+Deno.test('Requirement_Maker: platform', () => {
 	const maker = new Requirement_Maker(Requirement.exprForm);
 	Requirement_Maker.platform(maker, PLATFORM_MACOS);
 	Requirement_Maker.make(maker);
 });
 
-Deno.test('RequirementMaker: copy Pointer', () => {
+Deno.test('Requirement_Maker: copy Pointer', () => {
 	const maker = new Requirement_Maker(Requirement.exprForm);
 	Requirement_Maker.copy(maker, new Uint8Array([1, 2, 3, 4]), 4);
 	const ptr = new Uint8Ptr(new Uint8Array([1, 2, 3, 4]).buffer);
@@ -308,7 +308,7 @@ Deno.test('RequirementMaker: copy Pointer', () => {
 	Requirement_Maker.make(maker);
 });
 
-Deno.test('RequirementMaker: copy Requirement', () => {
+Deno.test('Requirement_Maker: copy Requirement', () => {
 	const a = new Requirement_Maker(Requirement.exprForm);
 	const b = new Requirement_Maker(Requirement.exprForm);
 	Requirement_Maker.copy(a, Requirement_Maker.make(b));
@@ -323,13 +323,13 @@ Deno.test('RequirementMaker: copy Requirement', () => {
 	);
 });
 
-Deno.test('RequirementMaker: put', () => {
+Deno.test('Requirement_Maker: put', () => {
 	const maker = new Requirement_Maker(Requirement.exprForm);
 	Requirement_Maker.put(maker, new Uint8Array([1, 2, 3, 4]).buffer);
 	Requirement_Maker.make(maker);
 });
 
-Deno.test('RequirementMaker: kind', () => {
+Deno.test('Requirement_Maker: kind', () => {
 	const maker = new Requirement_Maker(Requirement.exprForm);
 	Requirement_Maker.kind(maker, Requirement.lwcrForm);
 	assertEquals(

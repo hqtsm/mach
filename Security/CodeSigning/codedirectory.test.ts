@@ -85,7 +85,7 @@ class ErrorReader implements Reader {
 	}
 }
 
-Deno.test('CodeDirectoryScatter: BYTE_LENGTH', () => {
+Deno.test('CodeDirectory_Scatter: BYTE_LENGTH', () => {
 	assertEquals(CodeDirectory_Scatter.BYTE_LENGTH, 24);
 });
 

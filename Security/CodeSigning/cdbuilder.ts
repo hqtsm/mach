@@ -28,7 +28,7 @@ import {
  */
 export class CodeDirectory_Builder {
 	/**
-	 * CodeDirectoryBuilder constructor.
+	 * Constructor.
 	 *
 	 * @param digestAlgorithm Hash algorithm (kSecCodeSignatureHash* constants).
 	 */

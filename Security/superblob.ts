@@ -161,7 +161,7 @@ export abstract class SuperBlobCore<
 export type SuperBlobCore_Maker_BlobMap = Map<SuperBlobCore_Type, BlobCore>;
 
 /**
- * SuperBlobCoreMaker template.
+ * SuperBlobCore_Maker template.
  */
 export type Template_SuperBlobCore_Maker =
 	& {
@@ -322,17 +322,17 @@ export abstract class SuperBlobCore_Maker {
 	/**
 	 * Create the super blob.
 	 *
-	 * @template TSuperBlobCoreMaker Maker type.
+	 * @template TSuperBlobCore_Maker Maker type.
 	 * @param this Maker instance.
 	 * @param _this This.
 	 * @returns SuperBlob.
 	 */
 	public static make<
-		TSuperBlobCoreMaker extends Template_SuperBlobCore_Maker,
+		TSuperBlobCore_Maker extends Template_SuperBlobCore_Maker,
 	>(
-		this: TSuperBlobCoreMaker,
-		_this: InstanceType<TSuperBlobCoreMaker>,
-	): InstanceType<TSuperBlobCoreMaker['SuperBlob']> {
+		this: TSuperBlobCore_Maker,
+		_this: InstanceType<TSuperBlobCore_Maker>,
+	): InstanceType<TSuperBlobCore_Maker['SuperBlob']> {
 		const { mPieces } = _this;
 		const count = mPieces.size;
 		const total = SuperBlobCore_Maker.size(_this, []);
@@ -357,7 +357,7 @@ export abstract class SuperBlobCore_Maker {
 			pc += l;
 			n++;
 		}
-		return result as InstanceType<TSuperBlobCoreMaker['SuperBlob']>;
+		return result as InstanceType<TSuperBlobCore_Maker['SuperBlob']>;
 	}
 
 	/**

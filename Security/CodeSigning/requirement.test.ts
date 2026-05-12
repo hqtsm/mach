@@ -75,7 +75,7 @@ Deno.test('Requirements: empty', () => {
 	);
 });
 
-Deno.test('RequirementsMaker: empty', () => {
+Deno.test('Requirements_Maker: empty', () => {
 	const rs = Requirements_Maker.make(new Requirements_Maker());
 	assertEquals(
 		new Uint8Array(rs.buffer, rs.byteOffset, Requirements.size(rs)),
@@ -83,7 +83,7 @@ Deno.test('RequirementsMaker: empty', () => {
 	);
 });
 
-Deno.test('RequirementsMaker: host + designated', () => {
+Deno.test('Requirements_Maker: host + designated', () => {
 	// host => anchor apple and identifier com.apple.host
 	const host = unhex(
 		'00 00 00 01 00 00 00 02 00 00 00 0E',

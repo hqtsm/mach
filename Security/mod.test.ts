@@ -20,7 +20,7 @@ Deno.test('Blob typeMagic', () => {
 	}
 });
 
-Deno.test('SuperBlobMaker SuperBlob', () => {
+Deno.test('SuperBlob_Maker SuperBlob', () => {
 	for (const [name, value] of Object.entries(mod)) {
 		if (isSubclass(SuperBlob_Maker, value)) {
 			assert(Object.hasOwn(value, 'SuperBlob'), name);
