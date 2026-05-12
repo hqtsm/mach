@@ -1,3 +1,10 @@
+import type { __SecCertificate } from '../sec/SecCertificate.ts';
+
+/**
+ * X.509 certificate.
+ */
+export type SecCertificateRef = __SecCertificate;
+
 // Security Error Codes:
 // CF_ENUM(OSStatus) {
 
