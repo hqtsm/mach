@@ -1,11 +1,22 @@
-import { assertEquals } from '@std/assert';
+import { assertEquals, assertStrictEquals } from '@std/assert';
+import { PLData, PLDate, PLDictionary } from '@hqtsm/plist';
+import {
+	CS_SHA256_LEN,
+	CS_VALIDATION_CATEGORY_INVALID,
+	CS_VALIDATION_CATEGORY_PLATFORM,
+} from '../../kern/cs_blobs.ts';
+import { PLATFORM_MACOS } from '../../mach-o/loader.ts';
+import { __SecCertificate } from '../../sec/SecCertificate.ts';
 import { unhex } from '../../spec/hex.ts';
 import {
+	kSecCodeSignatureHashSHA256,
 	kSecDesignatedRequirementType,
 	kSecHostRequirementType,
 } from '../CSCommon.ts';
+import { CodeDirectory } from './codedirectory.ts';
 import {
 	Requirement,
+	Requirement_Context,
 	Requirements,
 	Requirements_Maker,
 } from './requirement.ts';
@@ -111,4 +122,98 @@ Deno.test('RequirementsMaker: host + designated', () => {
 		new Uint8Array(rs.buffer, rs.byteOffset, Requirements.size(rs)),
 		data,
 	);
+});
+
+Deno.test('Requirement_Context', () => {
+	const certs = [
+		new __SecCertificate(),
+		new __SecCertificate(),
+		new __SecCertificate(),
+	];
+	const infoDict = new PLDictionary();
+	const entitlementDict = new PLDictionary();
+	const ident = new TextEncoder().encode('Identifier');
+	const dir = new CodeDirectory(new ArrayBuffer(CodeDirectory.BYTE_LENGTH));
+	const packageChecksum = new PLData(CS_SHA256_LEN);
+	const secureTimestamp = new PLDate();
+	const teamID = new TextEncoder().encode('TeamID');
+
+	const ctxNone = new Requirement_Context();
+	assertEquals(ctxNone.certs, null);
+	assertEquals(ctxNone.info, null);
+	assertEquals(ctxNone.entitlements, null);
+	assertEquals(ctxNone.identifier.byteLength, 0);
+	assertEquals(ctxNone.directory, null);
+	assertEquals(ctxNone.packageChecksum, null);
+	assertEquals(ctxNone.packageAlgorithm, 0);
+	assertEquals(ctxNone.forcePlatform, false);
+	assertEquals(ctxNone.secureTimestamp, null);
+	assertEquals(ctxNone.teamIdentifier, null);
+	assertEquals(ctxNone.platformType, 0);
+	assertEquals(ctxNone.isSIPProtected, false);
+	assertEquals(ctxNone.onAuthorizedAuthAPFSVolume, false);
+	assertEquals(ctxNone.onSystemVolume, false);
+	assertEquals(ctxNone.validationCategory, 0);
+	assertEquals(Requirement_Context.certCount(ctxNone), 0);
+	assertEquals(Requirement_Context.cert(ctxNone, 0), null);
+
+	const ctxPart = new Requirement_Context(
+		certs,
+		infoDict,
+		entitlementDict,
+		ident,
+		dir,
+		packageChecksum,
+		kSecCodeSignatureHashSHA256,
+		true,
+		secureTimestamp,
+		teamID,
+	);
+	assertStrictEquals(ctxPart.certs, certs);
+	assertStrictEquals(ctxPart.info, infoDict);
+	assertStrictEquals(ctxPart.entitlements, entitlementDict);
+	assertStrictEquals(ctxPart.identifier, ident);
+	assertStrictEquals(ctxPart.directory, dir);
+	assertStrictEquals(ctxPart.packageChecksum, packageChecksum);
+	assertEquals(ctxPart.packageAlgorithm, kSecCodeSignatureHashSHA256);
+	assertEquals(ctxPart.forcePlatform, true);
+	assertStrictEquals(ctxPart.secureTimestamp, secureTimestamp);
+	assertStrictEquals(ctxPart.teamIdentifier, teamID);
+	assertEquals(ctxPart.platformType, 0);
+	assertEquals(ctxPart.isSIPProtected, false);
+	assertEquals(ctxPart.onAuthorizedAuthAPFSVolume, false);
+	assertEquals(ctxPart.onSystemVolume, false);
+	assertEquals(ctxPart.validationCategory, CS_VALIDATION_CATEGORY_INVALID);
+	assertEquals(Requirement_Context.certCount(ctxPart), 3);
+	assertEquals(Requirement_Context.cert(ctxPart, 0), certs[0]);
+	assertEquals(Requirement_Context.cert(ctxPart, 1), certs[1]);
+	assertEquals(Requirement_Context.cert(ctxPart, 2), certs[2]);
+	assertEquals(Requirement_Context.cert(ctxPart, 3), null);
+	assertEquals(Requirement_Context.cert(ctxPart, -1), certs[2]);
+	assertEquals(Requirement_Context.cert(ctxPart, -2), certs[1]);
+	assertEquals(Requirement_Context.cert(ctxPart, -3), certs[0]);
+	assertEquals(Requirement_Context.cert(ctxPart, -4), null);
+
+	const ctxFull = new Requirement_Context(
+		certs,
+		infoDict,
+		entitlementDict,
+		ident,
+		dir,
+		packageChecksum,
+		kSecCodeSignatureHashSHA256,
+		true,
+		secureTimestamp,
+		teamID,
+		PLATFORM_MACOS,
+		true,
+		true,
+		true,
+		CS_VALIDATION_CATEGORY_PLATFORM,
+	);
+	assertEquals(ctxFull.platformType, PLATFORM_MACOS);
+	assertEquals(ctxFull.isSIPProtected, true);
+	assertEquals(ctxFull.onAuthorizedAuthAPFSVolume, true);
+	assertEquals(ctxFull.onSystemVolume, true);
+	assertEquals(ctxFull.validationCategory, CS_VALIDATION_CATEGORY_PLATFORM);
 });

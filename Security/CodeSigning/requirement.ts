@@ -1,13 +1,25 @@
 import { constant, toStringTag } from '@hqtsm/class';
-import { uint32BE } from '@hqtsm/struct';
-import type { uint32_t } from '../../libc/stdint.ts';
+import { type ArrayBufferPointer, uint32BE } from '@hqtsm/struct';
+import type { CFDataRef } from '../../CoreFoundation/CFData.ts';
+import type { CFDateRef } from '../../CoreFoundation/CFDate.ts';
+import type { CFDictionaryRef } from '../../CoreFoundation/CFDictionary.ts';
+import { CS_VALIDATION_CATEGORY_INVALID } from '../../kern/cs_blobs.ts';
+import type { _const, bool, int, uint } from '../../libc/c.ts';
+import type { uint32_t, uint8_t } from '../../libc/stdint.ts';
 import { Blob } from '../blob.ts';
+import {
+	kSecCodeSignatureNoHash,
+	type SecCSDigestAlgorithm,
+} from '../CSCommon.ts';
 import {
 	kSecCodeMagicRequirement,
 	kSecCodeMagicRequirementSet,
 } from '../CSCommonPriv.ts';
 import type { Endian } from '../endian.ts';
+import type { SecCertificateRef } from '../SecBase.ts';
 import { SuperBlob, SuperBlob_Maker } from '../superblob.ts';
+import type { CodeDirectory } from './codedirectory.ts';
+import type { ArrayBufferLikeData } from '../../util/memory.ts';
 
 /**
  * Requirement kind.
@@ -99,6 +111,231 @@ export class Requirement<
 		constant(this, 'leafCert');
 		constant(this, 'anchorCert');
 		constant(this, 'baseAlignment');
+	}
+}
+
+/**
+ * Interpretation context.
+ */
+export class Requirement_Context {
+	/**
+	 * Constructor.
+	 */
+	constructor();
+
+	/**
+	 * Constructor.
+	 *
+	 * @param certChain Certificate chain.
+	 * @param infoDict Info dictionary.
+	 * @param entitlementDict Entitlement dictionary.
+	 * @param ident Identifier.
+	 * @param dir Code directory.
+	 * @param packageChecksum Package checksum.
+	 * @param packageAlgorithm Package algorithm.
+	 * @param force_platform Force platform.
+	 * @param secure_timestamp Secure timestamp.
+	 * @param teamID Team ID.
+	 * @param platformType Platform type.
+	 * @param isSIPProtected Is SIP protected.
+	 * @param onAuthorizedAuthAPFSVolume On authorized auth APFS volume.
+	 * @param onSystemVolume On system volume.
+	 * @param validationCategory Validation category.
+	 */
+	constructor(
+		certChain: SecCertificateRef[] | null,
+		infoDict: CFDictionaryRef | null,
+		entitlementDict: CFDictionaryRef | null,
+		ident: ArrayBufferLikeData,
+		dir: _const<CodeDirectory | null>,
+		packageChecksum: CFDataRef | null,
+		packageAlgorithm: SecCSDigestAlgorithm,
+		force_platform: bool,
+		secure_timestamp: CFDateRef | null,
+		teamID: ArrayBufferPointer | null,
+		platformType?: uint8_t,
+		isSIPProtected?: bool,
+		onAuthorizedAuthAPFSVolume?: bool,
+		onSystemVolume?: bool,
+		validationCategory?: uint,
+	);
+
+	/**
+	 * Constructor.
+	 *
+	 * @param certChain Certificate chain.
+	 * @param infoDict Info dictionary.
+	 * @param entitlementDict Entitlement dictionary.
+	 * @param ident Identifier.
+	 * @param dir Code directory.
+	 * @param packageChecksum Package checksum.
+	 * @param packageAlgorithm Package algorithm.
+	 * @param force_platform Force platform.
+	 * @param secure_timestamp Secure timestamp.
+	 * @param teamID Team ID.
+	 * @param platformType Platform type.
+	 * @param isSIPProtected Is SIP protected.
+	 * @param onAuthorizedAuthAPFSVolume On authorized auth APFS volume.
+	 * @param onSystemVolume On system volume.
+	 * @param validationCategory Validation category.
+	 */
+	constructor(
+		certChain?: SecCertificateRef[] | null,
+		infoDict?: CFDictionaryRef | null,
+		entitlementDict?: CFDictionaryRef | null,
+		ident?: ArrayBufferLikeData,
+		dir?: _const<CodeDirectory | null>,
+		packageChecksum?: CFDataRef | null,
+		packageAlgorithm?: SecCSDigestAlgorithm,
+		force_platform?: bool,
+		secure_timestamp?: CFDateRef | null,
+		teamID?: ArrayBufferPointer | null,
+		platformType?: uint8_t,
+		isSIPProtected?: bool,
+		onAuthorizedAuthAPFSVolume?: bool,
+		onSystemVolume?: bool,
+		validationCategory?: uint,
+	) {
+		if (certChain === undefined) {
+			this.certs = null;
+			this.info = null;
+			this.entitlements = null;
+			this.identifier = new ArrayBuffer(0);
+			this.directory = null;
+			this.packageChecksum = null;
+			this.packageAlgorithm = kSecCodeSignatureNoHash;
+			this.forcePlatform = false;
+			this.secureTimestamp = null;
+			this.teamIdentifier = null;
+			this.platformType = 0;
+			this.isSIPProtected = false;
+			this.onAuthorizedAuthAPFSVolume = false;
+			this.onSystemVolume = false;
+			this.validationCategory = CS_VALIDATION_CATEGORY_INVALID;
+		} else {
+			this.certs = certChain;
+			this.info = infoDict!;
+			this.entitlements = entitlementDict!;
+			this.identifier = ident!;
+			this.directory = dir!;
+			this.packageChecksum = packageChecksum!;
+			this.packageAlgorithm = packageAlgorithm!;
+			this.forcePlatform = force_platform!;
+			this.secureTimestamp = secure_timestamp!;
+			this.teamIdentifier = teamID!;
+			this.platformType = platformType ?? 0;
+			this.isSIPProtected = isSIPProtected ?? false;
+			this.onAuthorizedAuthAPFSVolume = onAuthorizedAuthAPFSVolume ??
+				false;
+			this.onSystemVolume = onSystemVolume ?? false;
+			this.validationCategory = validationCategory ??
+				CS_VALIDATION_CATEGORY_INVALID;
+		}
+	}
+
+	/**
+	 * Certificate chain.
+	 */
+	public certs: SecCertificateRef[] | null;
+
+	/**
+	 * Info dictionary.
+	 */
+	public info: CFDictionaryRef | null;
+
+	/**
+	 * Entitlements dictionary.
+	 */
+	public entitlements: CFDictionaryRef | null;
+
+	/**
+	 * Identifier.
+	 */
+	public identifier: ArrayBufferLikeData;
+
+	/**
+	 * Code directory.
+	 */
+	public directory: _const<CodeDirectory> | null;
+
+	/**
+	 * Package checksum.
+	 */
+	public packageChecksum: CFDataRef | null;
+
+	/**
+	 * Package algorithm.
+	 */
+	public packageAlgorithm: SecCSDigestAlgorithm;
+
+	/**
+	 * Force platform.
+	 */
+	public forcePlatform: bool;
+
+	/**
+	 * Secure timestamp.
+	 */
+	public secureTimestamp: CFDateRef | null;
+
+	/**
+	 * Team ID.
+	 */
+	public teamIdentifier: ArrayBufferPointer | null;
+
+	/**
+	 * Platform type.
+	 */
+	public platformType: uint8_t;
+
+	/**
+	 * Is SIP protected.
+	 */
+	public isSIPProtected: bool;
+
+	/**
+	 * On authorized auth APFS volume.
+	 */
+	public onAuthorizedAuthAPFSVolume: bool;
+
+	/**
+	 * On system volume.
+	 */
+	public onSystemVolume: bool;
+
+	/**
+	 * Validation category.
+	 */
+	public validationCategory: uint;
+
+	/**
+	 * Get cert from chain.
+	 *
+	 * @param _this This.
+	 * @param ix Index.
+	 * @returns Cert or null.
+	 */
+	public static cert(
+		_this: Requirement_Context,
+		ix: int,
+	): SecCertificateRef | null {
+		const { certs } = _this;
+		return certs ? certs.at(ix) ?? null : null;
+	}
+
+	/**
+	 * Length of cert chain.
+	 *
+	 * @param _this This.
+	 * @returns Cert count, including root.
+	 */
+	public static certCount(_this: Requirement_Context): uint {
+		const { certs } = _this;
+		return certs ? certs.length : 0;
+	}
+
+	static {
+		toStringTag(this, 'Requirement_Context');
 	}
 }
 
