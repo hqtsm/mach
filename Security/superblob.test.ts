@@ -9,7 +9,7 @@ import {
 	SuperBlob,
 	SuperBlob_Maker,
 	SuperBlobCore,
-	SuperBlobCoreIndex,
+	SuperBlobCore_Index,
 } from './superblob.ts';
 
 const MAGIC = 0x12345678;
@@ -44,7 +44,7 @@ class ExampleMaker extends SuperBlob_Maker {
 }
 
 Deno.test('SuperBlobCoreIndex: BYTE_LENGTH', () => {
-	assertEquals(SuperBlobCoreIndex.BYTE_LENGTH, 8);
+	assertEquals(SuperBlobCore_Index.BYTE_LENGTH, 8);
 });
 
 Deno.test('SuperBlobCore: count', () => {

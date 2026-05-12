@@ -31,7 +31,7 @@ export type SuperBlobCore_Offset = BlobCore_Offset;
  *
  * @template TArrayBuffer Buffer type.
  */
-export class SuperBlobCoreIndex<
+export class SuperBlobCore_Index<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
 > extends Struct<TArrayBuffer> {
 	/**
@@ -45,7 +45,7 @@ export class SuperBlobCoreIndex<
 	declare public offset: Endian<SuperBlobCore_Offset>;
 
 	static {
-		toStringTag(this, 'SuperBlobCoreIndex');
+		toStringTag(this, 'SuperBlobCore_Index');
 		uint32BE(this, 'type');
 		uint32BE(this, 'offset');
 		constant(this, 'BYTE_LENGTH');
@@ -145,12 +145,12 @@ export abstract class SuperBlobCore<
 	/**
 	 * Data of payload (only).
 	 */
-	declare private readonly mIndex: Arr<SuperBlobCoreIndex<TArrayBuffer>>;
+	declare private readonly mIndex: Arr<SuperBlobCore_Index<TArrayBuffer>>;
 
 	static {
 		toStringTag(this, 'SuperBlobCore');
 		uint32BE(this, 'mCount' as never);
-		member(array(SuperBlobCoreIndex, 0), this, 'mIndex' as never);
+		member(array(SuperBlobCore_Index, 0), this, 'mIndex' as never);
 		constant(this, 'BYTE_LENGTH');
 	}
 }
@@ -315,7 +315,7 @@ export abstract class SuperBlobCore_Maker {
 			total += s;
 		}
 		return SuperBlobCore.BYTE_LENGTH +
-			count * SuperBlobCoreIndex.BYTE_LENGTH +
+			count * SuperBlobCore_Index.BYTE_LENGTH +
 			total;
 	}
 
@@ -345,7 +345,7 @@ export abstract class SuperBlobCore_Maker {
 		const mIndex = result['mIndex'];
 		this.SuperBlob.setup(result, total, count);
 		let pc = SuperBlobCore.BYTE_LENGTH +
-			count * SuperBlobCoreIndex.BYTE_LENGTH;
+			count * SuperBlobCore_Index.BYTE_LENGTH;
 		let n = 0;
 		for (const type of [...mPieces.keys()].sort((a, b) => a - b)) {
 			const index = mIndex[n];
