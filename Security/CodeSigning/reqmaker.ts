@@ -123,7 +123,7 @@ export class Requirement_Maker {
 	 *
 	 * @param k Kind.
 	 */
-	constructor(k: RequirementKind) {
+	constructor(k: RequirementKind = Requirement.exprForm) {
 		const buffer = new ArrayBuffer(1024);
 		const r = new Requirement(buffer);
 		Requirement.initializeSize(r);
