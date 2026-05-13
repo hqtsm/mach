@@ -132,7 +132,7 @@ Deno.test('Requirement_Context', () => {
 	];
 	const infoDict = new PLDictionary();
 	const entitlementDict = new PLDictionary();
-	const ident = new TextEncoder().encode('Identifier');
+	const ident = new TextEncoder().encode('Identifier').buffer;
 	const dir = new CodeDirectory(new ArrayBuffer(CodeDirectory.BYTE_LENGTH));
 	const packageChecksum = new PLData(CS_SHA256_LEN);
 	const secureTimestamp = new PLDate();
@@ -172,7 +172,7 @@ Deno.test('Requirement_Context', () => {
 	assertStrictEquals(ctxPart.certs, certs);
 	assertStrictEquals(ctxPart.info, infoDict);
 	assertStrictEquals(ctxPart.entitlements, entitlementDict);
-	assertStrictEquals(ctxPart.identifier, ident);
+	assertStrictEquals(ctxPart.identifier.byteLength, ident.byteLength);
 	assertStrictEquals(ctxPart.directory, dir);
 	assertStrictEquals(ctxPart.packageChecksum, packageChecksum);
 	assertEquals(ctxPart.packageAlgorithm, kSecCodeSignatureHashSHA256);

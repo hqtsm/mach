@@ -19,7 +19,7 @@ import type { Endian } from '../endian.ts';
 import type { SecCertificateRef } from '../SecBase.ts';
 import { SuperBlob, SuperBlob_Maker } from '../superblob.ts';
 import type { CodeDirectory } from './codedirectory.ts';
-import type { ArrayBufferLikeData } from '../../util/memory.ts';
+import { type ArrayBufferLikeData, viewBytes } from '../../util/memory.ts';
 
 /**
  * Requirement kind.
@@ -216,7 +216,7 @@ export class Requirement_Context {
 			this.certs = certChain;
 			this.info = infoDict!;
 			this.entitlements = entitlementDict!;
-			this.identifier = ident!;
+			this.identifier = viewBytes(ident!).slice(0).buffer;
 			this.directory = dir!;
 			this.packageChecksum = packageChecksum!;
 			this.packageAlgorithm = packageAlgorithm!;
@@ -251,7 +251,7 @@ export class Requirement_Context {
 	/**
 	 * Identifier.
 	 */
-	public identifier: ArrayBufferLikeData;
+	public identifier: ArrayBufferLike;
 
 	/**
 	 * Code directory.
@@ -281,7 +281,7 @@ export class Requirement_Context {
 	/**
 	 * Team ID.
 	 */
-	public teamIdentifier: ArrayBufferPointer | null;
+	public teamIdentifier: _const<ArrayBufferPointer | null>;
 
 	/**
 	 * Platform type.
