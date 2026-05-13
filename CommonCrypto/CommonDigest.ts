@@ -2,6 +2,7 @@ import { toStringTag } from '@hqtsm/class';
 import type { ArrayBufferPointer } from '@hqtsm/struct';
 import type { int } from '../libc/c.ts';
 import type { size_t } from '../libc/stddef.ts';
+import type { uint32_t, uint64_t } from '../libc/stdint.ts';
 import type {
 	SubtleCryptoDigest,
 	SubtleCryptoDigestAlgorithm,
@@ -29,6 +30,63 @@ import {
 	kCCDigestSHA384,
 	kCCDigestSHA512,
 } from './Private/CommonDigestSPI.ts';
+
+/**
+ * 32-bit insigned integer.
+ */
+export type CC_LONG = uint32_t;
+
+/**
+ * 64-bit insigned integer.
+ */
+export type CC_LONG64 = uint64_t;
+
+/**
+ * SHA-1 digest length in bytes.
+ */
+export const CC_SHA1_DIGEST_LENGTH = 20;
+
+/**
+ * SHA-1 block size in bytes.
+ */
+export const CC_SHA1_BLOCK_BYTES = 64;
+
+/**
+ * SHA-1 block size in longs.
+ *
+ * `CC_SHA1_BLOCK_BYTES / sizeof(CC_LONG)`
+ */
+export const CC_SHA1_BLOCK_LONG = 16;
+
+/**
+ * SHA-256 digest length in bytes.
+ */
+export const CC_SHA256_DIGEST_LENGTH = 32;
+
+/**
+ * SHA-256 block size in bytes.
+ */
+export const CC_SHA256_BLOCK_BYTES = 64;
+
+/**
+ * SHA-384 digest length in bytes.
+ */
+export const CC_SHA384_DIGEST_LENGTH = 48;
+
+/**
+ * SHA-384 block size in bytes.
+ */
+export const CC_SHA384_BLOCK_BYTES = 128;
+
+/**
+ * SHA-512 digest length in bytes.
+ */
+export const CC_SHA512_DIGEST_LENGTH = 64;
+
+/**
+ * SHA-512 block size in bytes.
+ */
+export const CC_SHA512_BLOCK_BYTES = 128;
 
 /**
  * Algorithm specification.
