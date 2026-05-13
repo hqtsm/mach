@@ -8,14 +8,14 @@ export const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
 Deno.test('SecSHA1DigestCreate', async () => {
 	assertEquals(
 		await SecSHA1DigestCreate(
-			{ buffer: new ArrayBuffer(0), byteOffset: 0 },
+			{ buffer: new ArrayBuffer(), byteOffset: 0 },
 			-1,
 		),
 		null,
 	);
 	assertEquals(
 		await SecSHA1DigestCreate(
-			{ buffer: new ArrayBuffer(0), byteOffset: 0 },
+			{ buffer: new ArrayBuffer(), byteOffset: 0 },
 			INT32_MAX + 1,
 		),
 		null,
@@ -31,14 +31,14 @@ Deno.test('SecSHA1DigestCreate', async () => {
 Deno.test('SecSHA256DigestCreate', async () => {
 	assertEquals(
 		await SecSHA1DigestCreate(
-			{ buffer: new ArrayBuffer(0), byteOffset: 0 },
+			{ buffer: new ArrayBuffer(), byteOffset: 0 },
 			-1,
 		),
 		null,
 	);
 	assertEquals(
 		await SecSHA256DigestCreate(
-			{ buffer: new ArrayBuffer(0), byteOffset: 0 },
+			{ buffer: new ArrayBuffer(), byteOffset: 0 },
 			INT32_MAX + 1,
 		),
 		null,

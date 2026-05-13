@@ -11,10 +11,10 @@ import {
 } from './memory.ts';
 
 Deno.test('isArrayBuffer', () => {
-	assertEquals(isArrayBuffer(new ArrayBuffer(0)), true);
-	assertEquals(isArrayBuffer(new SharedArrayBuffer(0)), false);
-	assertEquals(isArrayBuffer(new ArrayBuffer(0)), true);
-	assertEquals(isArrayBuffer(new SharedArrayBuffer(0)), false);
+	assertEquals(isArrayBuffer(new ArrayBuffer()), true);
+	assertEquals(isArrayBuffer(new SharedArrayBuffer()), false);
+	assertEquals(isArrayBuffer(new ArrayBuffer()), true);
+	assertEquals(isArrayBuffer(new SharedArrayBuffer()), false);
 });
 
 Deno.test('pointerBytes', () => {

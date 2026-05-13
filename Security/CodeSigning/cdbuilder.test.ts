@@ -172,7 +172,7 @@ Deno.test('CodeDirectory_Builder: specialSlot', async () => {
 		zero + CS_SHA1_LEN * 0,
 	);
 
-	await CodeDirectory_Builder.specialSlot(builder, 1, new ArrayBuffer(0));
+	await CodeDirectory_Builder.specialSlot(builder, 1, new ArrayBuffer());
 	assertEquals(
 		CodeDirectory.size(await CodeDirectory_Builder.build(builder)),
 		zero + CS_SHA1_LEN * 1,

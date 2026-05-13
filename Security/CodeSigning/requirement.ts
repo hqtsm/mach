@@ -200,7 +200,7 @@ export class Requirement_Context {
 			this.certs = null;
 			this.info = null;
 			this.entitlements = null;
-			this.identifier = new ArrayBuffer(0);
+			this.identifier = new ArrayBuffer();
 			this.directory = null;
 			this.packageChecksum = null;
 			this.packageAlgorithm = kSecCodeSignatureNoHash;
@@ -216,7 +216,7 @@ export class Requirement_Context {
 			this.certs = certChain;
 			this.info = infoDict!;
 			this.entitlements = entitlementDict!;
-			this.identifier = viewBytes(ident!).slice(0).buffer;
+			this.identifier = viewBytes(ident!).slice().buffer;
 			this.directory = dir!;
 			this.packageChecksum = packageChecksum!;
 			this.packageAlgorithm = packageAlgorithm!;

@@ -82,7 +82,7 @@ Deno.test('CCDigestInit', () => {
 
 Deno.test('CCDigestUpdate', async () => {
 	const ctx = new CCDigestRef();
-	assertEquals(await CCDigestUpdate(null, new ArrayBuffer(0)), kCCParamError);
+	assertEquals(await CCDigestUpdate(null, new ArrayBuffer()), kCCParamError);
 	assertEquals(await CCDigestUpdate(ctx, null, 1), kCCParamError);
 	assertEquals(
 		await CCDigestUpdate(ctx, new ArrayBuffer(1)),
@@ -91,11 +91,11 @@ Deno.test('CCDigestUpdate', async () => {
 	assertEquals(await CCDigestUpdate(ctx, null, 0), kCCSuccess);
 
 	assertEquals(
-		await CCDigestUpdate(ctx, new ArrayBuffer(0)),
+		await CCDigestUpdate(ctx, new ArrayBuffer()),
 		kCCCallSequenceError,
 	);
 	assertEquals(
-		await CCDigestFinal(ctx, new ArrayBuffer(0)),
+		await CCDigestFinal(ctx, new ArrayBuffer()),
 		kCCUnimplemented,
 	);
 });

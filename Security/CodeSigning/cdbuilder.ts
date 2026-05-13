@@ -576,12 +576,12 @@ export class CodeDirectory_Builder {
 	/**
 	 * Identifier.
 	 */
-	private mIdentifier: ArrayBufferLike = new ArrayBuffer(0);
+	private mIdentifier: ArrayBufferLike = new ArrayBuffer();
 
 	/**
 	 * Team ID.
 	 */
-	private mTeamID: ArrayBufferLike = new ArrayBuffer(0);
+	private mTeamID: ArrayBufferLike = new ArrayBuffer();
 
 	/**
 	 * Highest special slot index.

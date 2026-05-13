@@ -480,7 +480,7 @@ export async function CCDigestFinal(
 	c['d'] = null;
 
 	const digest = (await d) || (
-		await (c.subtle || crypto.subtle).digest(a, new ArrayBuffer(0))
+		await (c.subtle || crypto.subtle).digest(a, new ArrayBuffer())
 	);
 	pointerBytes(out, l).set(new Uint8Array(digest, 0, l));
 
@@ -592,7 +592,7 @@ export async function CCDigest(
 		if (iter) {
 			await iter.return?.();
 		}
-		d = await s.digest(a, new ArrayBuffer(0));
+		d = await s.digest(a, new ArrayBuffer());
 	} else if (read) {
 		d = await digestReader(read, size, a, s);
 	} else if (iter) {

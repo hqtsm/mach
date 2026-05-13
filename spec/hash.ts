@@ -79,11 +79,9 @@ export function toIterator(
 ): SizeIterator<ArrayBufferData> {
 	const r = (function* (): SizeIterator<ArrayBufferData> {
 		const size = data.byteLength;
-		let ask = page ? page : (
-			yield (transform
-				? transform(new ArrayBuffer(0))
-				: new ArrayBuffer(0))
-		);
+		let ask = page || (yield (
+			transform ? transform(new ArrayBuffer()) : new ArrayBuffer()
+		));
 		for (let i = 0; i < size;) {
 			const ps = page || ask || PAGE_SIZE;
 			const d = data.slice(i, i + ps);
@@ -109,11 +107,9 @@ export function toAsyncIterator(
 ): SizeAsyncIterator<ArrayBufferData> {
 	const r = (async function* (): SizeAsyncIterator<ArrayBufferData> {
 		const size = data.byteLength;
-		let ask = page ? page : (
-			yield (transform
-				? transform(new ArrayBuffer(0))
-				: new ArrayBuffer(0))
-		);
+		let ask = page || (yield (
+			transform ? transform(new ArrayBuffer()) : new ArrayBuffer()
+		));
 		for (let i = 0; i < size;) {
 			const ps = page || ask || PAGE_SIZE;
 			const d = data.slice(i, i + ps);
@@ -144,7 +140,7 @@ export function hashed(algo: string, data: Uint8Array): string {
 	return createHash(algo).update(data).digest('hex');
 }
 
-export const EMPTY = new Uint8Array(0);
+export const EMPTY = new Uint8Array();
 export const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
 export const PAGED = new Uint8Array(
 	new ArrayBuffer(Math.floor(PAGE_SIZE * 1.5)),
