@@ -1,0 +1,72 @@
+import { assertEquals, assertInstanceOf } from '@std/assert';
+import { INT32_MAX } from '../libc/stdint.ts';
+import { digest } from '../spec/hash.ts';
+import {
+	__SecCertificate,
+	SecCertificateCopyIssuerSHA256Digest,
+	SecCertificateCopySHA1Digest,
+} from './SecCertificate.ts';
+
+export const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
+
+const hugeBuffer = new Proxy(new ArrayBuffer(0), {
+	/**
+	 * Pretend to be huge.
+	 *
+	 * @param target Target.
+	 * @param prop Property.
+	 * @returns Value.
+	 */
+	get(target, prop): unknown {
+		if (prop === 'byteLength') {
+			return INT32_MAX + 1;
+		}
+		return Reflect.get(target, prop);
+	},
+});
+
+Deno.test('SecCertificateCopySHA1Digest', async () => {
+	assertEquals(
+		await SecCertificateCopySHA1Digest(null),
+		null,
+	);
+	assertEquals(
+		await SecCertificateCopySHA1Digest(new __SecCertificate()),
+		null,
+	);
+	assertEquals(
+		await SecCertificateCopySHA1Digest(
+			Object.assign(new __SecCertificate(), { _der: hugeBuffer }),
+		),
+		null,
+	);
+
+	const digested = await SecCertificateCopySHA1Digest(
+		Object.assign(new __SecCertificate(), { _der: ABCD }),
+	);
+	assertInstanceOf(digested, ArrayBuffer);
+	assertEquals(new Uint8Array(digested), digest('sha1', ABCD));
+});
+
+Deno.test('SecCertificateCopyIssuerSHA256Digest', async () => {
+	assertEquals(
+		await SecCertificateCopyIssuerSHA256Digest(null),
+		null,
+	);
+	assertEquals(
+		await SecCertificateCopyIssuerSHA256Digest(new __SecCertificate()),
+		null,
+	);
+	assertEquals(
+		await SecCertificateCopyIssuerSHA256Digest(
+			Object.assign(new __SecCertificate(), { _der: hugeBuffer }),
+		),
+		null,
+	);
+
+	const digested = await SecCertificateCopyIssuerSHA256Digest(
+		Object.assign(new __SecCertificate(), { _der: ABCD }),
+	);
+	assertInstanceOf(digested, ArrayBuffer);
+	assertEquals(new Uint8Array(digested), digest('sha256', ABCD));
+});

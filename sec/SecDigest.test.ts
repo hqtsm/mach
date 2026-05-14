@@ -1,7 +1,7 @@
 import { assertEquals, assertInstanceOf } from '@std/assert';
-import { SecSHA1DigestCreate, SecSHA256DigestCreate } from './SecDigest.ts';
 import { INT32_MAX } from '../libc/stdint.ts';
 import { digest } from '../spec/hash.ts';
+import { SecSHA1DigestCreate, SecSHA256DigestCreate } from './SecDigest.ts';
 
 export const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
 
