@@ -1,17 +1,17 @@
 import { toStringTag } from '@hqtsm/class';
 import { type ArrayBufferPointer, dataView, Ptr } from '@hqtsm/struct';
-import type { bool, int, uint } from '../../libc/c.ts';
-import { ENOMEM } from '../../libc/errno.ts';
-import type { size_t } from '../../libc/stddef.ts';
-import type { uint32_t } from '../../libc/stdint.ts';
-import { realloc } from '../../libc/stdlib.ts';
-import type { SubtleCryptoDigest } from '../../util/crypto.ts';
+import type { SubtleCryptoDigest } from '../../helpers/crypto.ts';
 import {
 	type ArrayBufferLikeData,
 	bufferBytes,
 	pointerBytes,
 	viewBytes,
-} from '../../util/memory.ts';
+} from '../../helpers/memory.ts';
+import type { bool, int, uint } from '../../libc/c.ts';
+import { ENOMEM } from '../../libc/errno.ts';
+import type { size_t } from '../../libc/stddef.ts';
+import type { uint32_t } from '../../libc/stdint.ts';
+import { realloc } from '../../libc/stdlib.ts';
 import type { BlobCore_Offset } from '../blob.ts';
 import { errSecCSReqUnsupported } from '../CSCommon.ts';
 import { MacOSError, UnixError } from '../errors.ts';

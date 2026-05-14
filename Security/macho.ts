@@ -8,6 +8,7 @@ import {
 	type Ptr,
 	Uint32Ptr,
 } from '@hqtsm/struct';
+import type { Reader } from '../helpers/reader.ts';
 import type { _const, bool, char, uint } from '../libc/c.ts';
 import { EIO, ENOEXEC } from '../libc/errno.ts';
 import type { size_t } from '../libc/stddef.ts';
@@ -62,7 +63,6 @@ import {
 	symtab_command,
 	version_min_command,
 } from '../mach-o/loader.ts';
-import type { Reader } from '../util/reader.ts';
 import { MacOSError, UnixError } from './errors.ts';
 import { errSecInternalError } from './SecBase.ts';
 

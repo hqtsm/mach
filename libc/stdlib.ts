@@ -1,5 +1,5 @@
 import type { ArrayBufferPointer } from '@hqtsm/struct';
-import { pointerBytes } from '../util/mod.ts';
+import { pointerBytes } from '../helpers/mod.ts';
 import type { int } from './c.ts';
 import { ENOMEM } from './errno.ts';
 import type { size_t } from './stddef.ts';

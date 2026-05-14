@@ -5,8 +5,8 @@ import {
 	type SubtleCryptoDigestAlgorithm,
 	subtleCryptoFromNodeCrypto,
 	subtleCryptoFromStreaming,
-} from '../util/crypto.ts';
-import type { ArrayBufferData } from '../util/memory.ts';
+} from '../helpers/crypto.ts';
+import type { ArrayBufferData } from '../helpers/memory.ts';
 
 const nodeHash: Record<
 	SubtleCryptoDigestAlgorithm,

@@ -9,8 +9,8 @@ import {
 	kCCDigestSHA1,
 	kCCDigestSHA256,
 } from '../CommonCrypto/Private/CommonDigestSPI.ts';
+import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
 import { INT32_MAX } from '../libc/stdint.ts';
-import type { SubtleCryptoDigest } from '../util/crypto.ts';
 
 /**
  * SHA-1 digest.

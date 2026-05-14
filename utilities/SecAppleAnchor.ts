@@ -1,5 +1,5 @@
+import { type ArrayBufferLikeData, viewBytes } from '../helpers/memory.ts';
 import type { bool } from '../libc/c.ts';
-import { type ArrayBufferLikeData, viewBytes } from '../util/memory.ts';
 import type { SecAppleTrustAnchorFlags } from './SecAppleAnchorPriv.ts';
 
 /**

@@ -1,5 +1,8 @@
 import { toStringTag } from '@hqtsm/class';
 import { pointer, type Ptr } from '@hqtsm/struct';
+import type { SubtleCryptoDigest } from '../../helpers/crypto.ts';
+import { type ArrayBufferLikeData, bufferBytes } from '../../helpers/memory.ts';
+import type { Reader } from '../../helpers/reader.ts';
 import type { bool, uint } from '../../libc/c.ts';
 import { ENOMEM } from '../../libc/errno.ts';
 import type { size_t } from '../../libc/stddef.ts';
@@ -10,9 +13,6 @@ import {
 	type uint8_t,
 } from '../../libc/stdint.ts';
 import { calloc, memset, realloc } from '../../libc/stdlib.ts';
-import type { SubtleCryptoDigest } from '../../util/crypto.ts';
-import { type ArrayBufferLikeData, bufferBytes } from '../../util/memory.ts';
-import type { Reader } from '../../util/reader.ts';
 import { errSecCSTooBig } from '../CSCommon.ts';
 import { MacOSError, UnixError } from '../errors.ts';
 import type { DynamicHash } from '../hashing.ts';

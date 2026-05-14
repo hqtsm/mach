@@ -1,4 +1,5 @@
 import { assertEquals, assertGreater, assertRejects } from '@std/assert';
+import type { Reader } from '../../helpers/reader.ts';
 import { CS_SHA1_LEN } from '../../kern/cs_blobs.ts';
 import { ENOMEM } from '../../libc/errno.ts';
 import { UINT32_MAX } from '../../libc/stdint.ts';
@@ -9,7 +10,6 @@ import {
 	assertThrowsUnixError,
 } from '../../spec/assert.ts';
 import { testOOM } from '../../spec/memory.ts';
-import type { Reader } from '../../util/reader.ts';
 import {
 	errSecCSTooBig,
 	kSecCodeSignatureHashSHA1,

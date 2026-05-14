@@ -3,6 +3,7 @@ import { type ArrayBufferPointer, uint32BE } from '@hqtsm/struct';
 import type { CFDataRef } from '../../CoreFoundation/CFData.ts';
 import type { CFDateRef } from '../../CoreFoundation/CFDate.ts';
 import type { CFDictionaryRef } from '../../CoreFoundation/CFDictionary.ts';
+import { type ArrayBufferLikeData, viewBytes } from '../../helpers/memory.ts';
 import { CS_VALIDATION_CATEGORY_INVALID } from '../../kern/cs_blobs.ts';
 import type { _const, bool, int, uint } from '../../libc/c.ts';
 import type { uint32_t, uint8_t } from '../../libc/stdint.ts';
@@ -19,7 +20,6 @@ import type { Endian } from '../endian.ts';
 import type { SecCertificateRef } from '../SecBase.ts';
 import { SuperBlob, SuperBlob_Maker } from '../superblob.ts';
 import type { CodeDirectory } from './codedirectory.ts';
-import { type ArrayBufferLikeData, viewBytes } from '../../util/memory.ts';
 
 /**
  * Requirement kind.

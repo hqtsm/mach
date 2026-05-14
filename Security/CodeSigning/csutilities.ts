@@ -1,6 +1,6 @@
+import type { Reader } from '../../helpers/reader.ts';
 import type { size_t } from '../../libc/stddef.ts';
 import type { DynamicHash } from '../../Security/hashing.ts';
-import type { Reader } from '../../util/reader.ts';
 
 /**
  * Hash file data.

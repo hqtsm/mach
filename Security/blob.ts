@@ -12,18 +12,18 @@ import {
 	Uint8Ptr,
 } from '@hqtsm/struct';
 import type { CFDataRef } from '../CoreFoundation/CFData.ts';
+import {
+	type ArrayBufferLikeData,
+	pointerBytes,
+	viewBytes,
+} from '../helpers/memory.ts';
+import type { Reader } from '../helpers/reader.ts';
 import { CSMAGIC_BLOBWRAPPER } from '../kern/cs_blobs.ts';
 import { EINVAL, ENOMEM } from '../libc/errno.ts';
 import type { _const, bool, int, uchar } from '../libc/c.ts';
 import type { size_t } from '../libc/stddef.ts';
 import type { uint32_t, uint8_t } from '../libc/stdint.ts';
 import { malloc } from '../libc/stdlib.ts';
-import {
-	type ArrayBufferLikeData,
-	pointerBytes,
-	viewBytes,
-} from '../util/memory.ts';
-import type { Reader } from '../util/reader.ts';
 import type { Endian } from './endian.ts';
 import { MacOSError, UnixError } from './errors.ts';
 import { errSecAllocate } from './SecBase.ts';

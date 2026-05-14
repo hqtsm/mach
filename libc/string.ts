@@ -1,5 +1,5 @@
 import type { ArrayBufferPointer } from '@hqtsm/struct';
-import { pointerBytes } from '../util/memory.ts';
+import { pointerBytes } from '../helpers/memory.ts';
 import type { int } from './c.ts';
 import type { size_t } from './stddef.ts';
 

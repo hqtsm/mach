@@ -17,7 +17,7 @@
 		"./Security/CodeSigning": "./Security/CodeSigning/mod.ts",
 		"./Security/LowLevelMemoryUtilities": "./Security/LowLevelMemoryUtilities/mod.ts",
 		"./struct": "./struct/mod.ts",
-		"./util": "./util/mod.ts",
+		"./helpers": "./helpers/mod.ts",
 		"./utilities": "./utilities/mod.ts"
 	},
 	"imports": {

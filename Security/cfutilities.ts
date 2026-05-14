@@ -7,12 +7,12 @@ import {
 } from '@hqtsm/plist';
 import type { CFDictionaryRef } from '../CoreFoundation/CFDictionary.ts';
 import type { CFDataRef } from '../CoreFoundation/CFData.ts';
-import type { size_t } from '../libc/stddef.ts';
 import {
 	type ArrayBufferLikeData,
 	pointerBytes,
 	viewBytes,
-} from '../util/memory.ts';
+} from '../helpers/memory.ts';
+import type { size_t } from '../libc/stddef.ts';
 import { CFError } from './errors.ts';
 
 /**

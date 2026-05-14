@@ -7,15 +7,18 @@ import {
 	kCCDigestSHA384,
 	kCCDigestSHA512,
 } from '../CommonCrypto/Private/CommonDigestSPI.ts';
-import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../mach/vm_param.ts';
 import type {
 	SubtleCrypto,
 	SubtleCryptoDigestAlgorithm,
 	SubtleCryptoExtended,
-} from '../util/crypto.ts';
-import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
-import type { ArrayBufferData, ArrayBufferLikeData } from '../util/memory.ts';
-import type { Reader } from '../util/reader.ts';
+} from '../helpers/crypto.ts';
+import type { SizeAsyncIterator, SizeIterator } from '../helpers/iterator.ts';
+import type {
+	ArrayBufferData,
+	ArrayBufferLikeData,
+} from '../helpers/memory.ts';
+import type { Reader } from '../helpers/reader.ts';
+import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../mach/vm_param.ts';
 import { subtleNode, subtleStreaming } from './crypto.ts';
 
 type HashCrypto = SubtleCrypto | SubtleCryptoExtended;

@@ -8,13 +8,13 @@ import {
 	CCDigestUpdate,
 } from '../CommonCrypto/CommonDigest.ts';
 import type { CCDigestAlg } from '../CommonCrypto/Private/CommonDigestSPI.ts';
+import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
+import type { SizeAsyncIterator, SizeIterator } from '../helpers/iterator.ts';
+import { type ArrayBufferData, pointerBytes } from '../helpers/memory.ts';
+import type { Reader } from '../helpers/reader.ts';
 import type { bool, uchar } from '../libc/c.ts';
 import type { size_t } from '../libc/stddef.ts';
 import { ENOMEM } from '../libc/errno.ts';
-import type { SubtleCryptoDigest } from '../util/crypto.ts';
-import type { SizeAsyncIterator, SizeIterator } from '../util/iterator.ts';
-import { type ArrayBufferData, pointerBytes } from '../util/memory.ts';
-import type { Reader } from '../util/reader.ts';
 import { UnixError } from './errors.ts';
 
 /**
