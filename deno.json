@@ -17,7 +17,8 @@
 		"./Security/CodeSigning": "./Security/CodeSigning/mod.ts",
 		"./Security/LowLevelMemoryUtilities": "./Security/LowLevelMemoryUtilities/mod.ts",
 		"./struct": "./struct/mod.ts",
-		"./util": "./util/mod.ts"
+		"./util": "./util/mod.ts",
+		"./utilities": "./utilities/mod.ts"
 	},
 	"imports": {
 		"@deno/dnt": "jsr:@deno/dnt@^0.42.3",
