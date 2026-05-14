@@ -1,11 +1,14 @@
+import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
 import { type ArrayBufferLikeData, viewBytes } from '../helpers/memory.ts';
 import type { bool } from '../libc/c.ts';
+import { SecCertificateCopyIssuerSHA256Digest } from '../sec/SecCertificate.ts';
+import type { SecCertificateRef } from '../Security/SecBase.ts';
 import type { SecAppleTrustAnchorFlags } from './SecAppleAnchorPriv.ts';
 
 /**
- * Check if certificate is an Apple trust anchor.
+ * Check if certificate is an Apple trust anchor, by hash.
  *
- * @param cert Certificate.
+ * @param cert Certificate hash.
  * @param flags Flags (unused).
  * @returns True if certificate is an Apple trust anchor, else false.
  */
@@ -25,6 +28,23 @@ export function SecIsAppleTrustAnchorData(
 		hash += d[i++].toString(16).padStart(2, '0');
 	}
 	return anchors[hash] ?? false;
+}
+
+/**
+ * Check if certificate is an Apple trust anchor.
+ *
+ * @param cert Certificate.
+ * @param flags Flags (unused).
+ * @param subtle Hash crypto.
+ * @returns True if certificate is an Apple trust anchor, else false.
+ */
+export async function SecIsAppleTrustAnchor(
+	cert: SecCertificateRef,
+	flags: SecAppleTrustAnchorFlags,
+	subtle?: SubtleCryptoDigest | null,
+): Promise<bool> {
+	const data = await SecCertificateCopyIssuerSHA256Digest(cert, subtle);
+	return data ? SecIsAppleTrustAnchorData(data, flags) : false;
 }
 
 /*
