@@ -1,4 +1,4 @@
-import { assertEquals } from '@std/assert';
+import { assertEquals, assertInstanceOf } from '@std/assert';
 import { SecSHA1DigestCreate, SecSHA256DigestCreate } from './SecDigest.ts';
 import { INT32_MAX } from '../libc/stdint.ts';
 import { digest } from '../spec/hash.ts';
@@ -22,10 +22,9 @@ Deno.test('SecSHA1DigestCreate', async () => {
 	);
 	assertEquals(await SecSHA1DigestCreate(null, 0), null);
 
-	assertEquals(
-		await SecSHA1DigestCreate(ABCD, ABCD.byteLength),
-		digest('sha1', ABCD),
-	);
+	const digested = await SecSHA1DigestCreate(ABCD, ABCD.byteLength);
+	assertInstanceOf(digested, ArrayBuffer);
+	assertEquals(new Uint8Array(digested), digest('sha1', ABCD));
 });
 
 Deno.test('SecSHA256DigestCreate', async () => {
@@ -45,8 +44,7 @@ Deno.test('SecSHA256DigestCreate', async () => {
 	);
 	assertEquals(await SecSHA256DigestCreate(null, 0), null);
 
-	assertEquals(
-		await SecSHA256DigestCreate(ABCD, ABCD.byteLength),
-		digest('sha256', ABCD),
-	);
+	const digested = await SecSHA256DigestCreate(ABCD, ABCD.byteLength);
+	assertInstanceOf(digested, ArrayBuffer);
+	assertEquals(new Uint8Array(digested), digest('sha256', ABCD));
 });

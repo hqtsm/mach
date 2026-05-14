@@ -24,11 +24,11 @@ export async function SecSHA1DigestCreate(
 	data: ArrayBufferPointer<ArrayBuffer> | null,
 	length: CFIndex,
 	subtle?: SubtleCryptoDigest | null,
-): Promise<Uint8Array<ArrayBuffer> | null> {
+): Promise<ArrayBuffer | null> {
 	if (length < 0 || length > INT32_MAX || !data) {
 		return null;
 	}
-	const digest = new Uint8Array(CC_SHA1_DIGEST_LENGTH);
+	const digest = new ArrayBuffer(CC_SHA1_DIGEST_LENGTH);
 	await CCDigest(kCCDigestSHA1, data, length, digest, subtle);
 	return digest;
 }
@@ -45,11 +45,11 @@ export async function SecSHA256DigestCreate(
 	data: ArrayBufferPointer<ArrayBuffer> | null,
 	length: CFIndex,
 	subtle?: SubtleCryptoDigest | null,
-): Promise<Uint8Array<ArrayBuffer> | null> {
+): Promise<ArrayBuffer | null> {
 	if (length < 0 || length > INT32_MAX || !data) {
 		return null;
 	}
-	const digest = new Uint8Array(CC_SHA256_DIGEST_LENGTH);
+	const digest = new ArrayBuffer(CC_SHA256_DIGEST_LENGTH);
 	await CCDigest(kCCDigestSHA256, data, length, digest, subtle);
 	return digest;
 }
