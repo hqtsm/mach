@@ -8,6 +8,7 @@
 		"./CoreFoundation": "./CoreFoundation/mod.ts",
 		"./kern": "./kern/mod.ts",
 		"./libc": "./libc/mod.ts",
+		"./libDER": "./libDER/mod.ts",
 		"./mach": "./mach/mod.ts",
 		"./mach-o": "./mach-o/mod.ts",
 		"./MacOSX": "./MacOSX/mod.ts",

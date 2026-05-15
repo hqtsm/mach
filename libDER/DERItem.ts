@@ -1,3 +1,4 @@
+import { toStringTag } from '@hqtsm/class';
 import type { Ptr } from '@hqtsm/struct';
 import type { DERByte, DERSize } from './libDER_config.ts';
 
@@ -14,4 +15,8 @@ export class DERItem {
 	 * DER length.
 	 */
 	public length: DERSize = 0;
+
+	static {
+		toStringTag(this, 'DERItem');
+	}
 }
