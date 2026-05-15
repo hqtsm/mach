@@ -2,10 +2,11 @@ import { toStringTag } from '@hqtsm/class';
 import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
 import { bufferBytes } from '../helpers/memory.ts';
 import type { bool } from '../libc/c.ts';
-import { INT32_MAX } from '../libc/stdint.ts';
+import { INT32_MAX, type int32_t } from '../libc/stdint.ts';
 import type { DERItem } from '../libDER/DERItem.ts';
 import type { SecCertificateRef } from '../Security/SecBase.ts';
 import { SecSHA1DigestCreate, SecSHA256DigestCreate } from './SecDigest.ts';
+import type { Ptr } from '@hqtsm/struct';
 
 /**
  * X.509 certificate.
@@ -71,6 +72,24 @@ export async function SecCertificateCopyIssuerSHA256Digest(
 		der.byteLength,
 		subtle,
 	);
+}
+
+/**
+ * Get decimal value of string.
+ *
+ * @param string String.
+ * @param value Value.
+ * @returns True if valid, else false.
+ */
+export function GetDecimalValueOfString(
+	string: string,
+	value: Ptr<int32_t>,
+): bool {
+	if (string && /^[0-9]+$/.test(string)) {
+		value[0] = +string | 0;
+		return true;
+	}
+	return false;
 }
 
 /**

@@ -1,12 +1,14 @@
 import { assertEquals, assertInstanceOf } from '@std/assert';
-import { INT32_MAX } from '../libc/stdint.ts';
+import { INT32_MAX, INT32_MIN, UINT32_MAX } from '../libc/stdint.ts';
 import { digest } from '../spec/hash.ts';
 import {
 	__SecCertificate,
+	GetDecimalValueOfString,
 	SecCertificateCopyIssuerSHA256Digest,
 	SecCertificateCopySHA1Digest,
 	SecCertificateIsOidString,
 } from './SecCertificate.ts';
+import { Int32Ptr } from '@hqtsm/struct';
 
 export const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
 
@@ -70,6 +72,23 @@ Deno.test('SecCertificateCopyIssuerSHA256Digest', async () => {
 	);
 	assertInstanceOf(digested, ArrayBuffer);
 	assertEquals(new Uint8Array(digested), digest('sha256', ABCD));
+});
+
+Deno.test('GetDecimalValueOfString', () => {
+	const value = new Int32Ptr(new ArrayBuffer(4));
+	value[0] = 42;
+	assertEquals(GetDecimalValueOfString('', value), false);
+	assertEquals(value[0], 42);
+	assertEquals(GetDecimalValueOfString('.', value), false);
+	assertEquals(value[0], 42);
+	assertEquals(GetDecimalValueOfString('1234', value), true);
+	assertEquals(value[0], 1234);
+	assertEquals(GetDecimalValueOfString(String(UINT32_MAX), value), true);
+	assertEquals(value[0], -1);
+	assertEquals(GetDecimalValueOfString(String(INT32_MAX), value), true);
+	assertEquals(value[0], INT32_MAX);
+	assertEquals(GetDecimalValueOfString(String(INT32_MAX + 1), value), true);
+	assertEquals(value[0], INT32_MIN);
 });
 
 Deno.test('SecCertificateIsOidString', () => {
