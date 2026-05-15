@@ -1,6 +1,7 @@
 import { toStringTag } from '@hqtsm/class';
 import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
 import { bufferBytes } from '../helpers/memory.ts';
+import type { bool } from '../libc/c.ts';
 import { INT32_MAX } from '../libc/stdint.ts';
 import type { DERItem } from '../libDER/DERItem.ts';
 import type { SecCertificateRef } from '../Security/SecBase.ts';
@@ -70,4 +71,18 @@ export async function SecCertificateCopyIssuerSHA256Digest(
 		der.byteLength,
 		subtle,
 	);
+}
+
+/**
+ * Check if OID string is valid.
+ *
+ * @param oid OID string.
+ * @returns True if valid, else false.
+ */
+export function SecCertificateIsOidString(oid: string | null): bool {
+	if (!oid || oid.length < 3 || /[^\d.]/.test(oid)) {
+		return false;
+	}
+	const [a, b] = oid;
+	return !(b !== '.' || (a !== '0' && a !== '1' && a !== '2'));
 }

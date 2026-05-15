@@ -5,6 +5,7 @@ import {
 	__SecCertificate,
 	SecCertificateCopyIssuerSHA256Digest,
 	SecCertificateCopySHA1Digest,
+	SecCertificateIsOidString,
 } from './SecCertificate.ts';
 
 export const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
@@ -69,4 +70,22 @@ Deno.test('SecCertificateCopyIssuerSHA256Digest', async () => {
 	);
 	assertInstanceOf(digested, ArrayBuffer);
 	assertEquals(new Uint8Array(digested), digest('sha256', ABCD));
+});
+
+Deno.test('SecCertificateIsOidString', () => {
+	assertEquals(SecCertificateIsOidString(null), false);
+	assertEquals(SecCertificateIsOidString(''), false);
+	assertEquals(SecCertificateIsOidString('.'), false);
+	assertEquals(SecCertificateIsOidString('0.'), false);
+	assertEquals(SecCertificateIsOidString('1.'), false);
+	assertEquals(SecCertificateIsOidString('2.'), false);
+	assertEquals(SecCertificateIsOidString('3.'), false);
+
+	assertEquals(SecCertificateIsOidString('1.2'), true);
+	assertEquals(SecCertificateIsOidString('1.2.'), true);
+	assertEquals(SecCertificateIsOidString('1.2.3'), true);
+
+	assertEquals(SecCertificateIsOidString('2.0'), true);
+
+	assertEquals(SecCertificateIsOidString('3.0'), false);
 });
