@@ -1,9 +1,24 @@
 import { assertEquals } from '@std/assert';
-import { strlen, strncmp } from './string.ts';
+import { memcmp, strlen, strncmp } from './string.ts';
 
 function cstr(s: string): Uint8Array {
 	return new TextEncoder().encode(`${s}\0`);
 }
+
+Deno.test('memcmp', () => {
+	assertEquals(memcmp(cstr('a'), cstr('a').buffer, 1), 0);
+	assertEquals(memcmp(cstr('A').buffer, cstr('A'), 2), 0);
+	assertEquals(memcmp(cstr('a'), cstr('b'), 1), -1);
+	assertEquals(memcmp(cstr('b'), cstr('a'), 1), 1);
+	assertEquals(memcmp(cstr('a'), cstr('c'), 1), -2);
+	assertEquals(memcmp(cstr('c'), cstr('a'), 1), 2);
+	assertEquals(memcmp(cstr('AB'), cstr('AC'), 1), 0);
+	assertEquals(memcmp(cstr(''), cstr(''), 0), 0);
+	assertEquals(memcmp(cstr(''), cstr(''), 1), 0);
+	assertEquals(memcmp(cstr(''), cstr(''), 2), 0);
+	assertEquals(memcmp(cstr('A'), cstr('B'), 0), 0);
+	assertEquals(memcmp(cstr('A'), cstr('B'), -1), 0);
+});
 
 Deno.test('strlen', () => {
 	assertEquals(strlen(cstr('')), 0);
@@ -26,4 +41,5 @@ Deno.test('strncmp', () => {
 	assertEquals(strncmp(cstr(''), cstr(''), 2), 0);
 	assertEquals(strncmp(cstr('A'), cstr('B'), 0), 0);
 	assertEquals(strncmp(cstr('A'), cstr('B'), -1), 0);
+	assertEquals(strncmp(cstr('\0'), cstr('\0'), 0), 0);
 });

@@ -4,6 +4,31 @@ import type { int } from './c.ts';
 import type { size_t } from './stddef.ts';
 
 /**
+ * Compare bytes of two buffers.
+ *
+ * @param ptr1 Byte pointer.
+ * @param ptr2 Byte pointer.
+ * @param num Number of bytes to compare.
+ * @returns Difference of first non-matching byte, 0 if equal.
+ */
+export function memcmp(
+	ptr1: ArrayBufferLike | ArrayBufferPointer,
+	ptr2: ArrayBufferLike | ArrayBufferPointer,
+	num: size_t,
+): int {
+	const s1 = pointerBytes(ptr1);
+	const s2 = pointerBytes(ptr2);
+	for (let i = 0, c1, c2; num-- > 0; i++) {
+		c1 = s1[i];
+		c2 = s2[i];
+		if (c1 !== c2) {
+			return c1 - c2;
+		}
+	}
+	return 0;
+}
+
+/**
  * Get length of string.
  *
  * @param str Character pointer, null terminated.
