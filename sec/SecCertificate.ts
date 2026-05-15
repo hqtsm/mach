@@ -13,10 +13,19 @@ import { SecSHA1DigestCreate, SecSHA256DigestCreate } from './SecDigest.ts';
  * X.509 certificate extension.
  */
 export class SecCertificateExtension {
+	/**
+	 * Extension ID.
+	 */
 	public extnID: DERItem | null = null;
 
+	/**
+	 * Critical flag.
+	 */
 	public critical: bool = false;
 
+	/**
+	 * Extension value.
+	 */
 	public extnValue: DERItem | null = null;
 
 	static {
