@@ -1,4 +1,5 @@
 import { toStringTag } from '@hqtsm/class';
+import { Int32Ptr, type Ptr } from '@hqtsm/struct';
 import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
 import { bufferBytes } from '../helpers/memory.ts';
 import type { bool } from '../libc/c.ts';
@@ -6,7 +7,6 @@ import { INT32_MAX, type int32_t } from '../libc/stdint.ts';
 import type { DERItem } from '../libDER/DERItem.ts';
 import type { SecCertificateRef } from '../Security/SecBase.ts';
 import { SecSHA1DigestCreate, SecSHA256DigestCreate } from './SecDigest.ts';
-import type { Ptr } from '@hqtsm/struct';
 
 /**
  * X.509 certificate.
@@ -104,4 +104,44 @@ export function SecCertificateIsOidString(oid: string | null): bool {
 	}
 	const [a, b] = oid;
 	return !(b !== '.' || (a !== '0' && a !== '1' && a !== '2'));
+}
+
+/**
+ * Encode OID from string.
+ *
+ * @param string OID string.
+ * @returns OID encoded bytes.
+ */
+export function SecCertificateCreateOidDataFromString(
+	string: string,
+): Uint8Array<ArrayBuffer> | null {
+	if (!string || !SecCertificateIsOidString(string)) {
+		return null;
+	}
+
+	const parts = string.split('.');
+	const count = parts.length;
+	const x = new Int32Ptr(new ArrayBuffer(4));
+
+	GetDecimalValueOfString(parts[0], x);
+	let v = x[0] * 40;
+	if (!GetDecimalValueOfString(parts[1], x) || x[0] > 39) {
+		return null;
+	}
+
+	const bytes = [v + x[0]];
+	const b = new Uint8Array(5);
+	for (let i = 2; i < count && GetDecimalValueOfString(parts[i], x); i++) {
+		v = x[0];
+		b[4] = v & 0x7F;
+		b[3] = 0x80 | ((v >> 7) & 0x7F);
+		b[2] = 0x80 | ((v >> 14) & 0x7F);
+		b[1] = 0x80 | ((v >> 21) & 0x7F);
+		b[0] = 0x80 | ((v >> 28) & 0x7F);
+
+		for (v = 0; b[v] === 0x80; v++);
+		bytes.push(...b.slice(v));
+	}
+
+	return new Uint8Array(bytes);
 }

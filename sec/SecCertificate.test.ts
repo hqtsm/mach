@@ -6,6 +6,7 @@ import {
 	GetDecimalValueOfString,
 	SecCertificateCopyIssuerSHA256Digest,
 	SecCertificateCopySHA1Digest,
+	SecCertificateCreateOidDataFromString,
 	SecCertificateIsOidString,
 } from './SecCertificate.ts';
 import { Int32Ptr } from '@hqtsm/struct';
@@ -107,4 +108,66 @@ Deno.test('SecCertificateIsOidString', () => {
 	assertEquals(SecCertificateIsOidString('2.0'), true);
 
 	assertEquals(SecCertificateIsOidString('3.0'), false);
+});
+
+Deno.test('SecCertificateCreateOidDataFromString', () => {
+	assertEquals(SecCertificateCreateOidDataFromString(''), null);
+	assertEquals(SecCertificateCreateOidDataFromString('1.'), null);
+	assertEquals(SecCertificateCreateOidDataFromString('1.40'), null);
+	assertEquals(SecCertificateCreateOidDataFromString('3.0'), null);
+
+	assertEquals(
+		SecCertificateCreateOidDataFromString('0.39'),
+		new Uint8Array([39]),
+	);
+
+	assertEquals(
+		SecCertificateCreateOidDataFromString('1.0'),
+		new Uint8Array([40]),
+	);
+
+	assertEquals(
+		SecCertificateCreateOidDataFromString('1.39'),
+		new Uint8Array([40 + 39]),
+	);
+
+	assertEquals(
+		SecCertificateCreateOidDataFromString('2.39'),
+		new Uint8Array([80 + 39]),
+	);
+
+	assertEquals(
+		SecCertificateCreateOidDataFromString('1.39.'),
+		new Uint8Array([40 + 39]),
+	);
+
+	assertEquals(
+		SecCertificateCreateOidDataFromString('1.39..123'),
+		new Uint8Array([40 + 39]),
+	);
+
+	assertEquals(
+		SecCertificateCreateOidDataFromString('1.39.127'),
+		new Uint8Array([40 + 39, 127]),
+	);
+
+	assertEquals(
+		SecCertificateCreateOidDataFromString('1.39.128'),
+		new Uint8Array([40 + 39, 0x81, 0x00]),
+	);
+
+	assertEquals(
+		SecCertificateCreateOidDataFromString('1.39.129'),
+		new Uint8Array([40 + 39, 0x81, 0x01]),
+	);
+
+	assertEquals(
+		SecCertificateCreateOidDataFromString(`1.39.${0x76543210}`),
+		new Uint8Array([40 + 39, 0x87, 0xB2, 0xD0, 0xE4, 0x10]),
+	);
+
+	assertEquals(
+		SecCertificateCreateOidDataFromString(`1.39.${0x7FFFFFFF}`),
+		new Uint8Array([40 + 39, 0x87, 0xFF, 0xFF, 0xFF, 0x7F]),
+	);
 });
