@@ -103,7 +103,7 @@ export function SecCertificateIsOidString(oid: string | null): bool {
 		return false;
 	}
 	const [a, b] = oid;
-	return !(b !== '.' || (a !== '0' && a !== '1' && a !== '2'));
+	return b === '.' && (a === '0' || a === '1' || a === '2');
 }
 
 /**
