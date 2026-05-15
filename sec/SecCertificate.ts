@@ -1,5 +1,6 @@
 import { toStringTag } from '@hqtsm/class';
 import { Int32Ptr, type Ptr } from '@hqtsm/struct';
+import type { CFIndex } from '../CoreFoundation/CFBase.ts';
 import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
 import { bufferBytes } from '../helpers/memory.ts';
 import type { bool } from '../libc/c.ts';
@@ -9,6 +10,40 @@ import type { SecCertificateRef } from '../Security/SecBase.ts';
 import { SecSHA1DigestCreate, SecSHA256DigestCreate } from './SecDigest.ts';
 
 /**
+ * X.509 certificate extension.
+ */
+export class SecCertificateExtension {
+	public extnID: DERItem | null = null;
+
+	public critical: bool = false;
+
+	public extnValue: DERItem | null = null;
+
+	static {
+		toStringTag(this, 'SecCertificateExtension');
+	}
+}
+
+// enum {
+
+/**
+ * Self-signed: unknown.
+ */
+export const kSecSelfSignedUnknown = 0;
+
+/**
+ * Self-signed: false.
+ */
+export const kSecSelfSignedFalse = 1;
+
+/**
+ * Self-signed: true.
+ */
+export const kSecSelfSignedTrue = 2;
+
+// }
+
+/**
  * X.509 certificate.
  */
 export class __SecCertificate {
@@ -16,6 +51,16 @@ export class __SecCertificate {
 	 * Entire certificate, DER format.
 	 */
 	public _der: DERItem | null = null;
+
+	/**
+	 * Number of certificate extensions.
+	 */
+	public _extensionCount: CFIndex = 0;
+
+	/**
+	 * Certificate extensions.
+	 */
+	public _extensions: SecCertificateExtension[] | null = null;
 
 	static {
 		toStringTag(this, '__SecCertificate');
