@@ -124,23 +124,25 @@ export function SecCertificateCreateOidDataFromString(
 	const x = new Int32Ptr(new ArrayBuffer(4));
 
 	GetDecimalValueOfString(parts[0], x);
-	let v = x[0] * 40;
-	if (!GetDecimalValueOfString(parts[1], x) || x[0] > 39) {
+	let y = x[0] * 40;
+
+	let z;
+	if (!GetDecimalValueOfString(parts[1], x) || (z = x[0]) > 39) {
 		return null;
 	}
 
-	const bytes = [v + x[0]];
+	const bytes = [y + z];
 	const b = new Uint8Array(5);
 	for (let i = 2; i < count && GetDecimalValueOfString(parts[i], x); i++) {
-		v = x[0];
-		b[4] = v & 0x7F;
-		b[3] = 0x80 | ((v >> 7) & 0x7F);
-		b[2] = 0x80 | ((v >> 14) & 0x7F);
-		b[1] = 0x80 | ((v >> 21) & 0x7F);
-		b[0] = 0x80 | ((v >> 28) & 0x7F);
+		y = x[0];
+		b[4] = y & 0x7F;
+		b[3] = 0x80 | ((y >> 7) & 0x7F);
+		b[2] = 0x80 | ((y >> 14) & 0x7F);
+		b[1] = 0x80 | ((y >> 21) & 0x7F);
+		b[0] = 0x80 | ((y >> 28) & 0x7F);
 
-		for (v = 0; b[v] === 0x80; v++);
-		bytes.push(...b.slice(v));
+		for (y = 0; b[y] === 0x80; y++);
+		bytes.push(...b.slice(y));
 	}
 
 	return new Uint8Array(bytes);
