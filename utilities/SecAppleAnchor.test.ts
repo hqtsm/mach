@@ -1,4 +1,5 @@
 import { assertEquals } from '@std/assert';
+import { Uint8Ptr } from '@hqtsm/struct';
 import { unhex } from '../spec/hex.ts';
 import {
 	SecIsAppleTrustAnchor,
@@ -10,24 +11,22 @@ const AppleRootCAHash =
 	'b0b1730ecbc7ff4505142c49f1295e6eda6bcaed7e2c68c5be91b5a11001f024';
 
 Deno.test('SecIsAppleTrustAnchor', async () => {
-	assertEquals(await SecIsAppleTrustAnchor(new __SecCertificate(), 0), false);
+	const sc = new __SecCertificate();
+	assertEquals(await SecIsAppleTrustAnchor(sc, 0), false);
+
+	sc._der.data = new Uint8Ptr(new ArrayBuffer(100));
+	sc._der.length = 100;
 	assertEquals(
-		await SecIsAppleTrustAnchor(
-			Object.assign(new __SecCertificate(), {
-				_der: new Uint8Array(100),
-			}),
-			0,
-			{
-				/**
-				 * Return specific hash.
-				 *
-				 * @returns Promise.
-				 */
-				digest(): Promise<ArrayBuffer> {
-					return Promise.resolve(unhex(AppleRootCAHash).buffer);
-				},
+		await SecIsAppleTrustAnchor(sc, 0, {
+			/**
+			 * Return specific hash.
+			 *
+			 * @returns Promise.
+			 */
+			digest(): Promise<ArrayBuffer> {
+				return Promise.resolve(unhex(AppleRootCAHash).buffer);
 			},
-		),
+		}),
 		true,
 	);
 });

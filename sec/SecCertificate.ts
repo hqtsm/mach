@@ -5,7 +5,7 @@ import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
 import { bufferBytes } from '../helpers/memory.ts';
 import type { bool } from '../libc/c.ts';
 import { INT32_MAX, type int32_t } from '../libc/stdint.ts';
-import type { DERItem } from '../libDER/DERItem.ts';
+import { DERItem } from '../libDER/DERItem.ts';
 import type { SecCertificateRef } from '../Security/SecBase.ts';
 import { SecSHA1DigestCreate, SecSHA256DigestCreate } from './SecDigest.ts';
 
@@ -16,7 +16,7 @@ export class SecCertificateExtension {
 	/**
 	 * Extension ID.
 	 */
-	public extnID: DERItem | null = null;
+	public extnID: DERItem = new DERItem();
 
 	/**
 	 * Critical flag.
@@ -26,7 +26,7 @@ export class SecCertificateExtension {
 	/**
 	 * Extension value.
 	 */
-	public extnValue: DERItem | null = null;
+	public extnValue: DERItem = new DERItem();
 
 	static {
 		toStringTag(this, 'SecCertificateExtension');
@@ -59,7 +59,7 @@ export class __SecCertificate {
 	/**
 	 * Entire certificate, DER format.
 	 */
-	public _der: DERItem | null = null;
+	public _der: DERItem = new DERItem();
 
 	/**
 	 * Number of certificate extensions.
@@ -87,17 +87,16 @@ export async function SecCertificateCopySHA1Digest(
 	certificate: SecCertificateRef | null,
 	subtle?: SubtleCryptoDigest | null,
 ): Promise<null | ArrayBuffer> {
-	let der;
-	if (
-		!certificate ||
-		!(der = certificate._der) ||
-		der.byteLength > INT32_MAX
-	) {
+	if (!certificate) {
+		return null;
+	}
+	const { data, length } = certificate._der;
+	if (!data || length > INT32_MAX) {
 		return null;
 	}
 	return await SecSHA1DigestCreate(
-		bufferBytes(der.buffer, der.byteOffset, der.byteLength),
-		der.byteLength,
+		bufferBytes(data.buffer, data.byteOffset, length),
+		length,
 		subtle,
 	);
 }
@@ -113,17 +112,16 @@ export async function SecCertificateCopyIssuerSHA256Digest(
 	certificate: SecCertificateRef | null,
 	subtle?: SubtleCryptoDigest | null,
 ): Promise<null | ArrayBuffer> {
-	let der;
-	if (
-		!certificate ||
-		!(der = certificate._der) ||
-		der.byteLength > INT32_MAX
-	) {
+	if (!certificate) {
+		return null;
+	}
+	const { data, length } = certificate._der;
+	if (!data || length > INT32_MAX) {
 		return null;
 	}
 	return await SecSHA256DigestCreate(
-		bufferBytes(der.buffer, der.byteOffset, der.byteLength),
-		der.byteLength,
+		bufferBytes(data.buffer, data.byteOffset, length),
+		length,
 		subtle,
 	);
 }

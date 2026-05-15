@@ -1,3 +1,4 @@
+import { Uint8Ptr } from '@hqtsm/struct';
 import { assertEquals } from '@std/assert';
 import { kCCDigestSHA1 } from '../../CommonCrypto/Private/CommonDigestSPI.ts';
 import { __SecCertificate } from '../../sec/SecCertificate.ts';
@@ -9,23 +10,21 @@ const AppleRootCAHash =
 	'b0b1730ecbc7ff4505142c49f1295e6eda6bcaed7e2c68c5be91b5a11001f024';
 
 Deno.test('isAppleCA', async () => {
-	assertEquals(await isAppleCA(new __SecCertificate()), false);
+	const sc = new __SecCertificate();
+	assertEquals(await isAppleCA(sc), false);
+	sc._der.data = new Uint8Ptr(new ArrayBuffer(100));
+	sc._der.length = 100;
 	assertEquals(
-		await isAppleCA(
-			Object.assign(new __SecCertificate(), {
-				_der: new Uint8Array(100),
-			}),
-			{
-				/**
-				 * Return specific hash.
-				 *
-				 * @returns Promise.
-				 */
-				digest(): Promise<ArrayBuffer> {
-					return Promise.resolve(unhex(AppleRootCAHash).buffer);
-				},
+		await isAppleCA(sc, {
+			/**
+			 * Return specific hash.
+			 *
+			 * @returns Promise.
+			 */
+			digest(): Promise<ArrayBuffer> {
+				return Promise.resolve(unhex(AppleRootCAHash).buffer);
 			},
-		),
+		}),
 		true,
 	);
 });

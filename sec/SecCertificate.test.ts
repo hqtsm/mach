@@ -9,68 +9,38 @@ import {
 	SecCertificateCreateOidDataFromString,
 	SecCertificateIsOidString,
 } from './SecCertificate.ts';
-import { Int32Ptr } from '@hqtsm/struct';
+import { Int32Ptr, Uint8Ptr } from '@hqtsm/struct';
 
 export const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
 
-const hugeBuffer = new Proxy(new Uint8Array(0), {
-	/**
-	 * Pretend to be huge.
-	 *
-	 * @param target Target.
-	 * @param prop Property.
-	 * @returns Value.
-	 */
-	get(target, prop): unknown {
-		if (prop === 'byteLength') {
-			return INT32_MAX + 1;
-		}
-		return Reflect.get(target, prop);
-	},
-});
-
 Deno.test('SecCertificateCopySHA1Digest', async () => {
-	assertEquals(
-		await SecCertificateCopySHA1Digest(null),
-		null,
-	);
-	assertEquals(
-		await SecCertificateCopySHA1Digest(new __SecCertificate()),
-		null,
-	);
-	assertEquals(
-		await SecCertificateCopySHA1Digest(
-			Object.assign(new __SecCertificate(), { _der: hugeBuffer }),
-		),
-		null,
-	);
+	const sc = new __SecCertificate();
+	assertEquals(await SecCertificateCopySHA1Digest(null), null);
+	assertEquals(await SecCertificateCopySHA1Digest(sc), null);
 
-	const digested = await SecCertificateCopySHA1Digest(
-		Object.assign(new __SecCertificate(), { _der: ABCD }),
-	);
+	sc._der.data = new Uint8Ptr(new ArrayBuffer(0));
+	sc._der.length = INT32_MAX + 1;
+	assertEquals(await SecCertificateCopySHA1Digest(sc), null);
+
+	sc._der.data = new Uint8Ptr(ABCD.buffer);
+	sc._der.length = ABCD.byteLength;
+	const digested = await SecCertificateCopySHA1Digest(sc);
 	assertInstanceOf(digested, ArrayBuffer);
 	assertEquals(new Uint8Array(digested), digest('sha1', ABCD));
 });
 
 Deno.test('SecCertificateCopyIssuerSHA256Digest', async () => {
-	assertEquals(
-		await SecCertificateCopyIssuerSHA256Digest(null),
-		null,
-	);
-	assertEquals(
-		await SecCertificateCopyIssuerSHA256Digest(new __SecCertificate()),
-		null,
-	);
-	assertEquals(
-		await SecCertificateCopyIssuerSHA256Digest(
-			Object.assign(new __SecCertificate(), { _der: hugeBuffer }),
-		),
-		null,
-	);
+	const sc = new __SecCertificate();
+	assertEquals(await SecCertificateCopyIssuerSHA256Digest(null), null);
+	assertEquals(await SecCertificateCopyIssuerSHA256Digest(sc), null);
 
-	const digested = await SecCertificateCopyIssuerSHA256Digest(
-		Object.assign(new __SecCertificate(), { _der: ABCD }),
-	);
+	sc._der.data = new Uint8Ptr(new ArrayBuffer(0));
+	sc._der.length = INT32_MAX + 1;
+	assertEquals(await SecCertificateCopyIssuerSHA256Digest(sc), null);
+
+	sc._der.data = new Uint8Ptr(ABCD.buffer);
+	sc._der.length = ABCD.byteLength;
+	const digested = await SecCertificateCopyIssuerSHA256Digest(sc);
 	assertInstanceOf(digested, ArrayBuffer);
 	assertEquals(new Uint8Array(digested), digest('sha256', ABCD));
 });
