@@ -9,7 +9,7 @@ import {
 
 export const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
 
-const hugeBuffer = new Proxy(new ArrayBuffer(0), {
+const hugeBuffer = new Proxy(new Uint8Array(0), {
 	/**
 	 * Pretend to be huge.
 	 *

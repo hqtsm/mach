@@ -14,7 +14,7 @@ Deno.test('SecIsAppleTrustAnchor', async () => {
 	assertEquals(
 		await SecIsAppleTrustAnchor(
 			Object.assign(new __SecCertificate(), {
-				_der: new ArrayBuffer(100),
+				_der: new Uint8Array(100),
 			}),
 			0,
 			{

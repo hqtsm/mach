@@ -13,7 +13,7 @@ Deno.test('isAppleCA', async () => {
 	assertEquals(
 		await isAppleCA(
 			Object.assign(new __SecCertificate(), {
-				_der: new ArrayBuffer(100),
+				_der: new Uint8Array(100),
 			}),
 			{
 				/**

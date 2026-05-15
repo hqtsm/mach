@@ -1,6 +1,8 @@
 import { toStringTag } from '@hqtsm/class';
 import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
+import { bufferBytes } from '../helpers/memory.ts';
 import { INT32_MAX } from '../libc/stdint.ts';
+import type { DERItem } from '../libDER/DERItem.ts';
 import type { SecCertificateRef } from '../Security/SecBase.ts';
 import { SecSHA1DigestCreate, SecSHA256DigestCreate } from './SecDigest.ts';
 
@@ -11,7 +13,7 @@ export class __SecCertificate {
 	/**
 	 * Entire certificate, DER format.
 	 */
-	public _der: ArrayBuffer | null = null;
+	public _der: DERItem | null = null;
 
 	static {
 		toStringTag(this, '__SecCertificate');
@@ -38,7 +40,7 @@ export async function SecCertificateCopySHA1Digest(
 		return null;
 	}
 	return await SecSHA1DigestCreate(
-		new Uint8Array(der),
+		bufferBytes(der.buffer, der.byteOffset, der.byteLength),
 		der.byteLength,
 		subtle,
 	);
@@ -64,7 +66,7 @@ export async function SecCertificateCopyIssuerSHA256Digest(
 		return null;
 	}
 	return await SecSHA256DigestCreate(
-		new Uint8Array(der),
+		bufferBytes(der.buffer, der.byteOffset, der.byteLength),
 		der.byteLength,
 		subtle,
 	);
