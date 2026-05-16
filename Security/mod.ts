@@ -7,4 +7,5 @@ export * from './errors.ts';
 export * from './hashing.ts';
 export * from './macho.ts';
 export * from './SecBase.ts';
+export * from './SecAsn1Types.ts';
 export * from './superblob.ts';
