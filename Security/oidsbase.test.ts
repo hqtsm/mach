@@ -1,4 +1,4 @@
-import { assertEquals } from '@std/assert';
+import { assertEquals, assertInstanceOf } from '@std/assert';
 import {
 	SecCertificateCreateOidDataFromString,
 } from '../sec/SecCertificate.ts';
@@ -113,15 +113,37 @@ const oids = {
 	APPLE_EXTENSION_ESCROW_SERVICE: '1.2.840.113635.100.6.23.1',
 	APPLE_EXTENSION_PROVISIONING_PROFILE_SIGNING: '1.2.840.113635.100.4.11',
 	APPLE_EXTENSION_APPLEID_SHARING: '1.2.840.113635.100.4.7',
+
+	NETSCAPE_BASE_OID: '2.16.840.1.113730',
+	NETSCAPE_CERT_EXTEN: '2.16.840.1.113730.1',
+	NETSCAPE_CERT_POLICY: '2.16.840.1.113730.4',
+
+	GOOGLE_BASE_OID: '1.3.6.1.4.1.11129',
+	GOOGLE_EMBEDDED_SCT_OID: '1.3.6.1.4.1.11129.2.4.2',
+	GOOGLE_OCSP_SCT_OID: '1.3.6.1.4.1.11129.2.4.5',
+
+	OID_ITU_RFCDATA_2342: '0.9.73.[86]',
+	OID_ITU_RFCDATA_2342_UCL: '0.9.73.841.31.18.[8C]',
+	OID_ITU_RFCDATA_2342_UCL_DIRECTORYPILOT: '0.9.73.841.31.18.[8C][E4]',
+	OID_ITU_RFCDATA_2342_UCL_DIRECTORYPILOT_ATTRIBUTES:
+		'0.9.73.841.31.18.[8C][E4][81]',
+	OID_ITU_RFCDATA_2342_UCL_DIRECTORYPILOT_ATTRIBUTES_DOMAINCOMPONENT:
+		'0.9.73.841.31.18.[8C][E4][81][99]',
+	OID_ITU_RFCDATA_2342_UCL_DIRECTORYPILOT_ATTRIBUTES_USERID:
+		'0.9.73.841.31.18.[8C][E4][81][81]',
 } as const;
 
 Deno.test('OID constants', () => {
 	for (const [K, V] of entries(oids)) {
-		assertEquals(
-			SecCertificateCreateOidDataFromString(V),
-			new Uint8Array(C[K]),
-			K,
-		);
+		let v: string = V;
+		const e: number[] = [];
+		while (v.endsWith(']')) {
+			e.unshift(parseInt(v.slice(-3, -1), 16));
+			v = v.slice(0, -4);
+		}
+		const dec = SecCertificateCreateOidDataFromString(v);
+		assertInstanceOf(dec, Uint8Array);
+		assertEquals(new Uint8Array(C[K]), new Uint8Array([...dec, ...e]), K);
 	}
 
 	for (const [K, V] of entries(C)) {
