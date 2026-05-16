@@ -1,11 +1,16 @@
-import { assertEquals, assertInstanceOf } from '@std/assert';
+import { assertEquals } from '@std/assert';
 import {
 	SecCertificateCreateOidDataFromString,
 } from '../sec/SecCertificate.ts';
 import * as C from './oidsbase.ts';
 
+const entries = <T extends Record<string, unknown>>(obj: T) =>
+	Object.entries(obj) as [keyof T, T[keyof T]][];
+
+const lengthSuffixes = ['_LENGTH', '_LEN', '_MEMBER_LENGTH'] as const;
+
 Deno.test('OID constants', () => {
-	const consts = {
+	const oids = {
 		INTEL: '2.16.840.1.113741',
 		INTEL_CDSASECURITY: '2.16.840.1.113741.2',
 		INTEL_SEC_FORMATS: '2.16.840.1.113741.2.1',
@@ -13,6 +18,7 @@ Deno.test('OID constants', () => {
 		INTEL_SEC_OBJECT_BUNDLE: '2.16.840.1.113741.2.1.4',
 		INTEL_CERT_AND_PRIVATE_KEY_2_0: '2.16.840.1.113741.2.1.4.1',
 		OID_ISO_CCITT_DIR_SERVICE: '2.5',
+		OID_DS: '2.5',
 		OID_ATTR_TYPE: '2.5.4',
 		OID_EXTENSION: '2.5.29',
 		OID_ISO_STANDARD: '1.0',
@@ -78,12 +84,7 @@ Deno.test('OID constants', () => {
 		OID_CERTICOM_ELL_CURVE: '1.3.132.0',
 	} as const;
 
-	for (
-		const [K, V] of Object.entries(consts) as [
-			keyof typeof consts,
-			string,
-		][]
-	) {
+	for (const [K, V] of entries(oids)) {
 		assertEquals(
 			SecCertificateCreateOidDataFromString(V),
 			new Uint8Array(C[K]),
@@ -91,20 +92,24 @@ Deno.test('OID constants', () => {
 		);
 	}
 
-	for (const [K, V] of Object.entries(C)) {
-		let l = 0;
-		if (K === 'OID_ITU_RFCDATA_MEMBER_LENGTH') {
-			l = 14;
-		} else if (K.endsWith('_LENGTH')) {
-			l = 7;
-		} else if (K.endsWith('_LEN')) {
-			l = 4;
+	for (const [K, V] of entries(C)) {
+		let k: keyof typeof oids | undefined;
+		for (const suf of lengthSuffixes) {
+			if (K.endsWith(suf)) {
+				const pre = K.slice(0, -suf.length);
+				if (pre in oids) {
+					k = pre as keyof typeof oids;
+					break;
+				}
+			}
 		}
-		if (!l) {
-			continue;
+		if (k) {
+			assertEquals(V, C[k].length, K);
 		}
-		const A = (C as unknown as Record<string, number[]>)[K.slice(0, -l)];
-		assertInstanceOf(A, Array, K);
-		assertEquals(V as number, A.length, K);
 	}
+
+	assertEquals(
+		entries(C).filter(([k, v]) => Array.isArray(v) && !(k in oids)),
+		[],
+	);
 });
