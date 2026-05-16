@@ -134,18 +134,23 @@ const oids = {
 } as const;
 
 Deno.test('OID constants', () => {
+	// Check OIDs against their expected values.
 	for (const [K, V] of entries(oids)) {
 		let v: string = V;
+
+		// Extract any partial bytes.
 		const e: number[] = [];
 		while (v.endsWith(']')) {
 			e.unshift(parseInt(v.slice(-3, -1), 16));
 			v = v.slice(0, -4);
 		}
+
 		const dec = SecCertificateCreateOidDataFromString(v);
 		assertInstanceOf(dec, Uint8Array);
 		assertEquals(new Uint8Array(C[K]), new Uint8Array([...dec, ...e]), K);
 	}
 
+	// Check that length constants match their OID values.
 	for (const [K, V] of entries(C)) {
 		let k: keyof typeof oids | undefined;
 		for (const suf of lengthSuffixes) {
@@ -162,6 +167,7 @@ Deno.test('OID constants', () => {
 		}
 	}
 
+	// Make sure all OIDs are tested.
 	assertEquals(
 		entries(C).filter(([k, v]) => Array.isArray(v) && !(k in oids)),
 		[],
