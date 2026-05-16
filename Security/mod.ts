@@ -2,6 +2,7 @@ export * from './blob.ts';
 export * from './cfutilities.ts';
 export * from './CSCommon.ts';
 export * from './CSCommonPriv.ts';
+export * from './cssmtype.ts';
 export * from './endian.ts';
 export * from './errors.ts';
 export * from './hashing.ts';
