@@ -2,12 +2,18 @@ import { toStringTag } from '@hqtsm/class';
 import { Int32Ptr, type Ptr } from '@hqtsm/struct';
 import type { CFIndex } from '../CoreFoundation/CFBase.ts';
 import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
-import { bufferBytes } from '../helpers/memory.ts';
+import {
+	type ArrayBufferLikeData,
+	bufferBytes,
+	pointerBytes,
+	viewBytes,
+} from '../helpers/memory.ts';
 import type { bool } from '../libc/c.ts';
 import { INT32_MAX, type int32_t } from '../libc/stdint.ts';
 import { DERItem } from '../libDER/DERItem.ts';
 import type { SecCertificateRef } from '../Security/SecBase.ts';
 import { SecSHA1DigestCreate, SecSHA256DigestCreate } from './SecDigest.ts';
+import { memcmp } from '../libc/string.ts';
 
 /**
  * X.509 certificate extension.
@@ -198,4 +204,46 @@ export function SecCertificateCreateOidDataFromString(
 	}
 
 	return new Uint8Array(bytes);
+}
+
+/**
+ * Get extension value.
+ *
+ * @param certificate Certificate.
+ * @param extensionOID OID.
+ * @param isCritical Is critical.
+ * @returns Extension value.
+ */
+export function SecCertificateCopyExtensionValue(
+	certificate: SecCertificateRef | null,
+	extensionOID: string | ArrayBufferLikeData | null,
+	isCritical: Ptr<bool> | null,
+): Uint8Array<ArrayBuffer> | null {
+	if (!certificate || !extensionOID) {
+		return null;
+	}
+
+	const oidData = typeof extensionOID === 'string'
+		? SecCertificateCreateOidDataFromString(extensionOID)
+		: viewBytes(extensionOID);
+	if (!oidData) {
+		return null;
+	}
+
+	const oidLen = oidData.byteLength;
+	for (let ix = 0; ix < certificate._extensionCount; ++ix) {
+		const extn = certificate._extensions![ix];
+		if (
+			extn.extnID.length === oidLen &&
+			!memcmp(extn.extnID.data!, oidData, oidLen)
+		) {
+			if (isCritical) {
+				isCritical[0] = extn.critical;
+			}
+			return pointerBytes(extn.extnValue.data!, extn.extnValue.length)
+				.slice();
+		}
+	}
+
+	return null;
 }

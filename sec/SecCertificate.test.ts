@@ -1,15 +1,17 @@
+import { Bool8Ptr, Int32Ptr, Uint8Ptr } from '@hqtsm/struct';
 import { assertEquals, assertInstanceOf } from '@std/assert';
 import { INT32_MAX, INT32_MIN, UINT32_MAX } from '../libc/stdint.ts';
 import { digest } from '../spec/hash.ts';
 import {
 	__SecCertificate,
 	GetDecimalValueOfString,
+	SecCertificateCopyExtensionValue,
 	SecCertificateCopyIssuerSHA256Digest,
 	SecCertificateCopySHA1Digest,
 	SecCertificateCreateOidDataFromString,
+	SecCertificateExtension,
 	SecCertificateIsOidString,
 } from './SecCertificate.ts';
-import { Int32Ptr, Uint8Ptr } from '@hqtsm/struct';
 
 export const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
 
@@ -130,4 +132,36 @@ Deno.test('SecCertificateCreateOidDataFromString', () => {
 		SecCertificateCreateOidDataFromString(`1.39.${0x7FFFFFFF}`),
 		new Uint8Array([40 + 39, 0x87, 0xFF, 0xFF, 0xFF, 0x7F]),
 	);
+});
+
+Deno.test('SecCertificateCopyExtensionValue', () => {
+	const b = new Bool8Ptr(new ArrayBuffer(1));
+	const sce = new SecCertificateExtension();
+	const sc = new __SecCertificate();
+	const oid = '1.2.3';
+	const oidData = SecCertificateCreateOidDataFromString(oid)!;
+
+	sce.extnID.data = new Uint8Ptr(oidData.buffer);
+	sce.extnID.length = oidData.byteLength;
+	sce.critical = true;
+	sce.extnValue.data = new Uint8Ptr(ABCD.buffer.slice());
+	sce.extnValue.length = ABCD.byteLength;
+
+	sc._extensionCount = 1;
+	sc._extensions = [sce];
+
+	assertEquals(SecCertificateCopyExtensionValue(null, null, null), null);
+	assertEquals(SecCertificateCopyExtensionValue(sc, null, null), null);
+	assertEquals(SecCertificateCopyExtensionValue(sc, '', null), null);
+	assertEquals(SecCertificateCopyExtensionValue(sc, 'BAD', null), null);
+
+	assertEquals(SecCertificateCopyExtensionValue(sc, oid, b), ABCD);
+	assertEquals(b[0], true);
+
+	sce.critical = false;
+
+	assertEquals(SecCertificateCopyExtensionValue(sc, oidData, b), ABCD);
+	assertEquals(b[0], false);
+
+	assertEquals(SecCertificateCopyExtensionValue(sc, '1.1.1', b), null);
 });
