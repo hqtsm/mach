@@ -1,12 +1,15 @@
 import type { SubtleCryptoDigest } from '../../helpers/crypto.ts';
+import { pointerBytes } from '../../helpers/memory.ts';
 import type { Reader } from '../../helpers/reader.ts';
-import type { bool } from '../../libc/c.ts';
+import type { _const, bool } from '../../libc/c.ts';
 import type { size_t } from '../../libc/stddef.ts';
+import { SecCertificateCopyExtensionValue } from '../../sec/SecCertificate.ts';
 import type { DynamicHash } from '../../Security/hashing.ts';
 import { SecIsAppleTrustAnchor } from '../../utilities/SecAppleAnchor.ts';
 import type {
 	SecAppleTrustAnchorFlags,
 } from '../../utilities/SecAppleAnchorPriv.ts';
+import type { CSSM_OID } from '../cssmtype.ts';
 import type { SecCertificateRef } from '../SecBase.ts';
 
 /**
@@ -46,4 +49,22 @@ export async function hashFileData(
 ): Promise<size_t> {
 	await hasher.update(reader = limit ? reader.slice(0, limit) : reader);
 	return reader.size;
+}
+
+/**
+ * Check if certificate has a field, by OID.
+ *
+ * @param cert Certificate.
+ * @param oid OID.
+ * @returns True if certificate has field, else false.
+ */
+export function certificateHasField(
+	cert: SecCertificateRef | null,
+	oid: _const<CSSM_OID>,
+): bool {
+	return !!(cert && SecCertificateCopyExtensionValue(
+		cert,
+		pointerBytes(oid.Data!, oid.Length),
+		null,
+	));
 }

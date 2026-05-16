@@ -1,10 +1,17 @@
 import { Uint8Ptr } from '@hqtsm/struct';
 import { assertEquals } from '@std/assert';
 import { kCCDigestSHA1 } from '../../CommonCrypto/Private/CommonDigestSPI.ts';
-import { __SecCertificate } from '../../sec/SecCertificate.ts';
+import {
+	__SecCertificate,
+	SecCertificateCreateOidDataFromString,
+	SecCertificateExtension,
+} from '../../sec/SecCertificate.ts';
 import { CCHashInstance } from '../../Security/hashing.ts';
 import { unhex } from '../../spec/hex.ts';
-import { hashFileData, isAppleCA } from './csutilities.ts';
+import { cssm_data } from '../SecAsn1Types.ts';
+import { certificateHasField, hashFileData, isAppleCA } from './csutilities.ts';
+
+export const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
 
 const AppleRootCAHash =
 	'b0b1730ecbc7ff4505142c49f1295e6eda6bcaed7e2c68c5be91b5a11001f024';
@@ -57,4 +64,26 @@ Deno.test('hashFileData limit', async () => {
 	await hasher.finish(digest);
 
 	assertEquals(digest, expected);
+});
+
+Deno.test('certificateHasField', () => {
+	const sce = new SecCertificateExtension();
+	const sc = new __SecCertificate();
+	const oid = '1.2.3';
+	const oidData = SecCertificateCreateOidDataFromString(oid)!;
+
+	sce.extnID.data = new Uint8Ptr(oidData.buffer);
+	sce.extnID.length = oidData.byteLength;
+	sce.critical = true;
+	sce.extnValue.data = new Uint8Ptr(ABCD.buffer.slice());
+	sce.extnValue.length = ABCD.byteLength;
+
+	sc._extensionCount = 1;
+	sc._extensions = [sce];
+
+	const cssm = new cssm_data();
+	cssm.Data = new Uint8Ptr(oidData.buffer.slice());
+	cssm.Length = oidData.byteLength;
+	assertEquals(certificateHasField(null, cssm), false);
+	assertEquals(certificateHasField(sc, cssm), true);
 });
