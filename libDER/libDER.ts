@@ -67,6 +67,21 @@ export type DERReturn =
  */
 export class DERItemSpec {
 	/**
+	 * Offset.
+	 */
+	public offset: DERSize;
+
+	/**
+	 * Tag.
+	 */
+	public tag: DERTag;
+
+	/**
+	 * Length.
+	 */
+	public length: DERShort;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param offset Offset.
@@ -82,21 +97,6 @@ export class DERItemSpec {
 		this.tag = tag;
 		this.length = length;
 	}
-
-	/**
-	 * Offset.
-	 */
-	public offset: DERSize;
-
-	/**
-	 * Tag.
-	 */
-	public tag: DERTag;
-
-	/**
-	 * Length.
-	 */
-	public length: DERShort;
 
 	static {
 		toStringTag(this, 'DERItemSpec');
