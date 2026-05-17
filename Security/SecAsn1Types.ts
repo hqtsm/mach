@@ -10,12 +10,23 @@ export class cssm_data {
 	/**
 	 * Data length.
 	 */
-	public Length: size_t = 0;
+	public Length: size_t;
 
 	/**
 	 * Data pointer.
 	 */
-	public Data: Ptr<uint8_t> | null = null;
+	public Data: Ptr<uint8_t> | null;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param Length Data length.
+	 * @param Data Data pointer.
+	 */
+	constructor(Length: size_t = 0, Data: Ptr<uint8_t> | null = null) {
+		this.Length = Length;
+		this.Data = Data;
+	}
 
 	static {
 		toStringTag(this, 'cssm_data');

@@ -1,4 +1,9 @@
-import type { SecAsn1Oid } from './SecAsn1Types.ts';
+import type { SecAsn1Item, SecAsn1Oid } from './SecAsn1Types.ts';
+
+/**
+ * CSSM data.
+ */
+export type CSSM_DATA = SecAsn1Item;
 
 /**
  * CSSM OID.
