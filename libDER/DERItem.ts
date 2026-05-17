@@ -16,10 +16,6 @@ export class DERItem {
 	 */
 	public length: DERSize;
 
-	static {
-		toStringTag(this, 'DERItem');
-	}
-
 	/**
 	 * Constructor.
 	 *
@@ -32,5 +28,9 @@ export class DERItem {
 	) {
 		this.data = data;
 		this.length = length;
+	}
+
+	static {
+		toStringTag(this, 'DERItem');
 	}
 }
