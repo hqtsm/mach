@@ -4,8 +4,9 @@ import type { _const, bool } from '../../libc/c.ts';
 import type { CSSM_DATA } from '../cssmtype.ts';
 import { APPLE_EXTENSION_OID } from '../oidsbase.ts';
 import { cssm_data } from '../SecAsn1Types.ts';
+import { certificateHasField } from './csutilities.ts';
 import { Requirement_Maker } from './reqmaker.ts';
-import type { Requirement, Requirement_Context } from './requirement.ts';
+import { type Requirement, Requirement_Context } from './requirement.ts';
 
 const adcSdkMarker = new Uint8Array([...APPLE_EXTENSION_OID, 2, 1]);
 
@@ -90,7 +91,14 @@ export class DRMaker extends Requirement_Maker {
 	 * @param _this This.
 	 */
 	private static isIOSSignature(_this: DRMaker): bool {
-		throw new Error('TODO');
+		const { ctx } = _this;
+		return (
+			Requirement_Context.certCount(ctx) === 3 &&
+			certificateHasField(
+				Requirement_Context.cert(ctx, 1),
+				adcSdkMarkerOID,
+			)
+		);
 	}
 
 	/**
@@ -99,7 +107,14 @@ export class DRMaker extends Requirement_Maker {
 	 * @param _this This.
 	 */
 	private static isDeveloperIDSignature(_this: DRMaker): bool {
-		throw new Error('TODO');
+		const { ctx } = _this;
+		return (
+			Requirement_Context.certCount(ctx) === 3 &&
+			certificateHasField(
+				Requirement_Context.cert(ctx, 1),
+				devIdSdkMarkerOID,
+			)
+		);
 	}
 
 	static {
