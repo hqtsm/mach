@@ -48,3 +48,28 @@ export type DERSize = size_t;
  * DER boolean.
  */
 export type DERBool = bool;
+
+/**
+ * DER encode enable.
+ */
+export const DER_ENCODE_ENABLE = 1;
+
+/**
+ * DER decode enable.
+ */
+export const DER_DECODE_ENABLE = 1;
+
+/**
+ * DER multibyte tags enable.
+ */
+export const DER_MULTIBYTE_TAGS = 1;
+
+/**
+ * DER tag size.
+ */
+export const DER_TAG_SIZE = 8;
+
+/**
+ * DER tag.
+ */
+export type DERTag = DERLong;
