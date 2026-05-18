@@ -43,6 +43,20 @@ export class DERDecodedInfo {
 }
 
 /**
+ * Decode item from partial buffer.
+ *
+ * @param der DER item.
+ * @param decoded Decoded info.
+ * @returns Return code.
+ */
+export function DERDecodeItem(
+	der: _const<DERItem>,
+	decoded: DERDecodedInfo,
+): DERReturn {
+	return DERDecodeItemPartialBufferGetLength(der, decoded, null);
+}
+
+/**
  * Decode item from partial buffer and get length.
  *
  * @param der DER item.
