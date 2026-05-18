@@ -4,9 +4,27 @@ import {
 	assertInstanceOf,
 	assertStrictEquals,
 } from '@std/assert';
-import { DERDecodeSeqContentInit, DERSequence } from './DER_Decode.ts';
+import {
+	DERDecodedInfo,
+	DERDecodeSeqContentInit,
+	DERSequence,
+} from './DER_Decode.ts';
 import { DERItem } from './DERItem.ts';
 import { DR_Success } from './libDER.ts';
+
+Deno.test('DERDecodedInfo', () => {
+	{
+		const di = new DERDecodedInfo();
+		assertEquals(di.tag, 0n);
+		assertInstanceOf(di.content, DERItem);
+	}
+	{
+		const item = new DERItem();
+		const di = new DERDecodedInfo(42n, item);
+		assertEquals(di.tag, 42n);
+		assertStrictEquals(di.content, item);
+	}
+});
 
 Deno.test('DERSequence', () => {
 	{
