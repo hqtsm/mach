@@ -4,13 +4,15 @@ import {
 	assertInstanceOf,
 	assertStrictEquals,
 } from '@std/assert';
+import { unhex } from '../spec/hex.ts';
 import {
 	DERDecodedInfo,
+	DERDecodeItemPartialBufferGetLength,
 	DERDecodeSeqContentInit,
 	DERSequence,
 } from './DER_Decode.ts';
 import { DERItem } from './DERItem.ts';
-import { DR_Success } from './libDER.ts';
+import { DR_DecodeError, DR_Success } from './libDER.ts';
 
 Deno.test('DERDecodedInfo', () => {
 	{
@@ -24,6 +26,233 @@ Deno.test('DERDecodedInfo', () => {
 		assertEquals(di.tag, 42n);
 		assertStrictEquals(di.content, item);
 	}
+});
+
+Deno.test('DERDecodeItemPartialBufferGetLength: empty item', () => {
+	const dec = new DERDecodedInfo();
+	assertEquals(
+		DERDecodeItemPartialBufferGetLength(
+			new DERItem(),
+			dec,
+			null,
+		),
+		DR_DecodeError,
+	);
+	assertEquals(dec.content.length, 0);
+	assertEquals(dec.content.data, null);
+});
+
+Deno.test('DERDecodeItemPartialBufferGetLength: tag long bad', () => {
+	const data = new Uint8Array([0x1F, 0x1F - 1]);
+	const dec = new DERDecodedInfo();
+	assertEquals(
+		DERDecodeItemPartialBufferGetLength(
+			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
+			dec,
+			null,
+		),
+		DR_DecodeError,
+	);
+	assertEquals(dec.content.length, 0);
+	assertEquals(dec.content.data, null);
+});
+
+Deno.test('DERDecodeItemPartialBufferGetLength: tag long over', () => {
+	const data = unhex('1F FF FF FF FF FF FF FF FF FF 00');
+	const dec = new DERDecodedInfo();
+	assertEquals(
+		DERDecodeItemPartialBufferGetLength(
+			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
+			dec,
+			null,
+		),
+		DR_DecodeError,
+	);
+	assertEquals(dec.content.length, 0);
+	assertEquals(dec.content.data, null);
+});
+
+Deno.test('DERDecodeItemPartialBufferGetLength: tag long reserved', () => {
+	const data = unhex('FF FF FF FF FF FF FF FF FF 00 00');
+	const dec = new DERDecodedInfo();
+	assertEquals(
+		DERDecodeItemPartialBufferGetLength(
+			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
+			dec,
+			null,
+		),
+		DR_DecodeError,
+	);
+	assertEquals(dec.content.length, 0);
+	assertEquals(dec.content.data, null);
+});
+
+Deno.test('DERDecodeItemPartialBufferGetLength: tag before error', () => {
+	const data = unhex('EF 80 00');
+	const dec = new DERDecodedInfo();
+	assertEquals(
+		DERDecodeItemPartialBufferGetLength(
+			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
+			dec,
+			null,
+		),
+		DR_DecodeError,
+	);
+	assertEquals(dec.tag, 0xe00000000000000fn);
+	assertEquals(dec.content.length, 0);
+	assertEquals(dec.content.data, null);
+});
+
+Deno.test('DERDecodeItemPartialBufferGetLength: empty body', () => {
+	const data = unhex('0A 00');
+	const dec = new DERDecodedInfo();
+	const len = [] as number[];
+	assertEquals(
+		DERDecodeItemPartialBufferGetLength(
+			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
+			dec,
+			len,
+		),
+		DR_Success,
+	);
+	assertEquals(dec.tag, 0xAn);
+	assertEquals(len[0], 0);
+	assertEquals(dec.content.length, 0);
+	assertEquals(dec.content.data!.byteOffset, 2);
+});
+
+Deno.test('DERDecodeItemPartialBufferGetLength: short body', () => {
+	const data = unhex('0A 01 42');
+	const dec = new DERDecodedInfo();
+	const len = [] as number[];
+	assertEquals(
+		DERDecodeItemPartialBufferGetLength(
+			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
+			dec,
+			len,
+		),
+		DR_Success,
+	);
+	assertEquals(dec.tag, 0xAn);
+	assertEquals(len[0], 1);
+	assertEquals(dec.content.length, 1);
+	assertEquals(dec.content.data!.byteOffset, 2);
+});
+
+Deno.test('DERDecodeItemPartialBufferGetLength: short body overflow', () => {
+	const data = unhex('0A 02 42');
+	const dec = new DERDecodedInfo();
+	const len = [] as number[];
+	assertEquals(
+		DERDecodeItemPartialBufferGetLength(
+			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
+			dec,
+			null,
+		),
+		DR_DecodeError,
+	);
+	assertEquals(dec.tag, 0xAn);
+	assertEquals(dec.content.length, 0);
+	assertEquals(dec.content.data, null);
+
+	assertEquals(
+		DERDecodeItemPartialBufferGetLength(
+			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
+			dec,
+			len,
+		),
+		DR_Success,
+	);
+	assertEquals(dec.tag, 0xAn);
+	assertEquals(len[0], 2);
+	assertEquals(dec.content.length, 1);
+	assertEquals(dec.content.data!.byteOffset, 2);
+});
+
+Deno.test('DERDecodeItemPartialBufferGetLength: short body extra', () => {
+	const data = unhex('0A 00 EE');
+	const dec = new DERDecodedInfo();
+	const len = [] as number[];
+	assertEquals(
+		DERDecodeItemPartialBufferGetLength(
+			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
+			dec,
+			len,
+		),
+		DR_Success,
+	);
+	assertEquals(dec.tag, 0xAn);
+	assertEquals(len[0], 0);
+	assertEquals(dec.content.length, 0);
+	assertEquals(dec.content.data!.byteOffset, 2);
+});
+
+Deno.test('DERDecodeItemPartialBufferGetLength: long body bad size', () => {
+	const data = unhex('0A 81 00');
+	const dec = new DERDecodedInfo();
+	const len = [] as number[];
+	assertEquals(
+		DERDecodeItemPartialBufferGetLength(
+			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
+			dec,
+			len,
+		),
+		DR_DecodeError,
+	);
+	assertEquals(dec.tag, 0xAn);
+	assertEquals(dec.content.length, 0);
+	assertEquals(dec.content.data, null);
+});
+
+Deno.test('DERDecodeItemPartialBufferGetLength: long body overflow', () => {
+	const data = unhex('0A 81 FF 00 00');
+	const dec = new DERDecodedInfo();
+	const len = [] as number[];
+	assertEquals(
+		DERDecodeItemPartialBufferGetLength(
+			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
+			dec,
+			null,
+		),
+		DR_DecodeError,
+	);
+	assertEquals(dec.tag, 0xAn);
+	assertEquals(dec.content.length, 0);
+	assertEquals(dec.content.data, null);
+
+	assertEquals(
+		DERDecodeItemPartialBufferGetLength(
+			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
+			dec,
+			len,
+		),
+		DR_Success,
+	);
+	assertEquals(dec.tag, 0xAn);
+	assertEquals(len[0], 255);
+	assertEquals(dec.content.length, 2);
+	assertEquals(dec.content.data!.byteOffset, 3);
+});
+
+Deno.test('DERDecodeItemPartialBufferGetLength: long body extra', () => {
+	const data = new Uint8Array([
+		...unhex('0A 81 FF 00'),
+		...new Uint8Array(256),
+	]);
+	const dec = new DERDecodedInfo();
+	const len = [] as number[];
+	assertEquals(
+		DERDecodeItemPartialBufferGetLength(
+			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
+			dec,
+			len,
+		),
+		DR_Success,
+	);
+	assertEquals(dec.tag, 0xAn);
+	assertEquals(len[0], 255);
+	assertEquals(dec.content.length, 255);
+	assertEquals(dec.content.data!.byteOffset, 3);
 });
 
 Deno.test('DERSequence', () => {
