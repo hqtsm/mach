@@ -1,4 +1,4 @@
-import { Bool8Ptr, Int32Ptr, Uint8Ptr } from '@hqtsm/struct';
+import { Uint8Ptr } from '@hqtsm/struct';
 import { assertEquals, assertInstanceOf } from '@std/assert';
 import { INT32_MAX, INT32_MIN, UINT32_MAX } from '../libc/stdint.ts';
 import { digest } from '../spec/hash.ts';
@@ -48,8 +48,7 @@ Deno.test('SecCertificateCopyIssuerSHA256Digest', async () => {
 });
 
 Deno.test('GetDecimalValueOfString', () => {
-	const value = new Int32Ptr(new ArrayBuffer(4));
-	value[0] = 42;
+	const value = [42];
 	assertEquals(GetDecimalValueOfString('', value), false);
 	assertEquals(value[0], 42);
 	assertEquals(GetDecimalValueOfString('.', value), false);
@@ -135,7 +134,7 @@ Deno.test('SecCertificateCreateOidDataFromString', () => {
 });
 
 Deno.test('SecCertificateCopyExtensionValue', () => {
-	const b = new Bool8Ptr(new ArrayBuffer(1));
+	const b = [false];
 	const sce = new SecCertificateExtension();
 	const sc = new __SecCertificate();
 	const oid = '1.2.3';

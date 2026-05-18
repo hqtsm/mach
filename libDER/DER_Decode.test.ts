@@ -33,8 +33,12 @@ Deno.test('DERSequence', () => {
 		assertEquals(spec.end, null);
 	}
 	{
-		const nextItem = new Uint8Ptr(new ArrayBuffer(1));
-		const end = new Uint8Ptr(nextItem.buffer, nextItem.byteOffset + 1);
+		const ab = new ArrayBuffer(10);
+		const nextItem = new Uint8Ptr(ab);
+		const end = new Uint8Ptr(
+			nextItem.buffer,
+			nextItem.byteOffset + ab.byteLength,
+		);
 		const spec = new DERSequence(nextItem, end);
 		assertEquals(spec.nextItem, nextItem);
 		assertEquals(spec.end, end);

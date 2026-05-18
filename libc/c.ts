@@ -79,6 +79,13 @@ export type double = number;
 export type _const<T> = T;
 
 /**
+ * Pointer.
+ *
+ * @template T Pointer type.
+ */
+export type _ptr<T> = Record<number, T>;
+
+/**
  * Bitfield bits.
  *
  * @template T Integer type.

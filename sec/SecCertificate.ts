@@ -1,5 +1,4 @@
 import { toStringTag } from '@hqtsm/class';
-import { Int32Ptr, type Ptr } from '@hqtsm/struct';
 import type { CFIndex } from '../CoreFoundation/CFBase.ts';
 import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
 import {
@@ -8,7 +7,7 @@ import {
 	pointerBytes,
 	viewBytes,
 } from '../helpers/memory.ts';
-import type { bool } from '../libc/c.ts';
+import type { _ptr, bool } from '../libc/c.ts';
 import { INT32_MAX, type int32_t } from '../libc/stdint.ts';
 import { DERItem } from '../libDER/DERItem.ts';
 import type { SecCertificateRef } from '../Security/SecBase.ts';
@@ -141,7 +140,7 @@ export async function SecCertificateCopyIssuerSHA256Digest(
  */
 export function GetDecimalValueOfString(
 	string: string,
-	value: Ptr<int32_t>,
+	value: _ptr<int32_t>,
 ): bool {
 	if (string && /^[0-9]+$/.test(string)) {
 		value[0] = +string | 0;
@@ -179,7 +178,7 @@ export function SecCertificateCreateOidDataFromString(
 
 	const parts = string.split('.');
 	const count = parts.length;
-	const xp = new Int32Ptr(new ArrayBuffer(4));
+	const xp = [0];
 
 	GetDecimalValueOfString(parts[0], xp);
 	let x = xp[0] * 40;
@@ -217,7 +216,7 @@ export function SecCertificateCreateOidDataFromString(
 export function SecCertificateCopyExtensionValue(
 	certificate: SecCertificateRef | null,
 	extensionOID: string | ArrayBufferLikeData | null,
-	isCritical: Ptr<bool> | null,
+	isCritical: _ptr<bool> | null,
 ): Uint8Array<ArrayBuffer> | null {
 	if (!certificate || !extensionOID) {
 		return null;
