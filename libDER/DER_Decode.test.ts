@@ -1,6 +1,12 @@
 import { Uint8Ptr } from '@hqtsm/struct';
-import { assertEquals } from '@std/assert';
-import { DERSequence } from './DER_Decode.ts';
+import {
+	assertEquals,
+	assertInstanceOf,
+	assertStrictEquals,
+} from '@std/assert';
+import { DERDecodeSeqContentInit, DERSequence } from './DER_Decode.ts';
+import { DERItem } from './DERItem.ts';
+import { DR_Success } from './libDER.ts';
 
 Deno.test('DERSequence', () => {
 	{
@@ -15,4 +21,16 @@ Deno.test('DERSequence', () => {
 		assertEquals(spec.nextItem, nextItem);
 		assertEquals(spec.end, end);
 	}
+});
+
+Deno.test('DERDecodeSeqContentInit', () => {
+	const ab = new ArrayBuffer(10);
+	const ptr = new Uint8Ptr(ab);
+	const di = new DERItem(ptr, ab.byteLength);
+	const derSeq = new DERSequence();
+	assertEquals(DERDecodeSeqContentInit(di, derSeq), DR_Success);
+	assertStrictEquals(derSeq.nextItem, ptr);
+	assertInstanceOf(derSeq.end, Uint8Ptr);
+	assertStrictEquals(derSeq.end.buffer, ab);
+	assertStrictEquals(derSeq.end.byteOffset, ab.byteLength);
 });
