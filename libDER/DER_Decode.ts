@@ -136,12 +136,14 @@ export function DERDecodeItemPartialBuffer(
 			return DR_DecodeError;
 		}
 	}
+
 	decoded.content.data = new Uint8Ptr(
 		derPtr.buffer,
 		derPtr.byteOffset + derPtrI,
 		derPtr.littleEndian,
 	);
 	decoded.content.length = len1;
+
 	return DR_Success;
 }
 
@@ -231,6 +233,7 @@ export function DERDecodeItemPartialBufferGetLength(
 			derLen = len1;
 		}
 	}
+
 	decoded.content.data = new Uint8Ptr(
 		derPtr.buffer,
 		derPtr.byteOffset + derPtrI,
@@ -240,6 +243,7 @@ export function DERDecodeItemPartialBufferGetLength(
 	if (encodedLength) {
 		encodedLength[0] = len1;
 	}
+
 	return DR_Success;
 }
 
