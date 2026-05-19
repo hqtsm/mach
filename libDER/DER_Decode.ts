@@ -335,3 +335,28 @@ export function DERDecodeSeqNext(
 	);
 	return DR_Success;
 }
+
+/**
+ * DER decode option: no options.
+ */
+export const DER_DEC_NO_OPTS = 0x0000;
+
+/**
+ * DER decode option: optional.
+ */
+export const DER_DEC_OPTIONAL = 0x0001;
+
+/**
+ * DER decode option: any.
+ */
+export const DER_DEC_ASN_ANY = 0x0002;
+
+/**
+ * DER decode option: skip.
+ */
+export const DER_DEC_SKIP = 0x0004;
+
+/**
+ * DER decode option: save DER.
+ */
+export const DER_DEC_SAVE_DER = 0x0008;
