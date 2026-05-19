@@ -11,10 +11,11 @@ import {
 	DERDecodeItemPartialBuffer,
 	DERDecodeItemPartialBufferGetLength,
 	DERDecodeSeqContentInit,
+	DERDecodeSeqNext,
 	DERSequence,
 } from './DER_Decode.ts';
 import { DERItem } from './DERItem.ts';
-import { DR_DecodeError, DR_Success } from './libDER.ts';
+import { DR_DecodeError, DR_EndOfSequence, DR_Success } from './libDER.ts';
 import type { _const } from '../libc/c.ts';
 
 Deno.test('DERDecodedInfo', () => {
@@ -380,4 +381,35 @@ Deno.test('DERDecodeSeqContentInit', () => {
 	assertInstanceOf(derSeq.end, Uint8Ptr);
 	assertStrictEquals(derSeq.end.buffer, ab);
 	assertStrictEquals(derSeq.end.byteOffset, ab.byteLength);
+});
+
+Deno.test('DERDecodeSeqNext: sequence', () => {
+	const data = unhex('0A 01 AA 0B 01 BB');
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+	const derSeq = new DERSequence();
+	const di = new DERDecodedInfo();
+	assertEquals(DERDecodeSeqContentInit(item, derSeq), DR_Success);
+
+	assertEquals(DERDecodeSeqNext(derSeq, di), DR_Success);
+	assertEquals(di.tag, 0xAn);
+	assertEquals(di.content.length, 1);
+	assertEquals(di.content.data!.byteOffset, 2);
+
+	assertEquals(DERDecodeSeqNext(derSeq, di), DR_Success);
+	assertEquals(di.tag, 0xBn);
+	assertEquals(di.content.length, 1);
+	assertEquals(di.content.data!.byteOffset, 5);
+
+	assertEquals(DERDecodeSeqNext(derSeq, di), DR_EndOfSequence);
+	assertEquals(DERDecodeSeqNext(derSeq, di), DR_EndOfSequence);
+});
+
+Deno.test('DERDecodeSeqNext: error', () => {
+	const data = unhex('0A 01');
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+	const derSeq = new DERSequence();
+	const di = new DERDecodedInfo();
+	assertEquals(DERDecodeSeqContentInit(item, derSeq), DR_Success);
+
+	assertEquals(DERDecodeSeqNext(derSeq, di), DR_DecodeError);
 });

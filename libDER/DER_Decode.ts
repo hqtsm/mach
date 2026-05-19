@@ -8,7 +8,12 @@ import {
 	type DERSize,
 	type DERTag,
 } from './libDER_config.ts';
-import { type DERReturn, DR_DecodeError, DR_Success } from './libDER.ts';
+import {
+	type DERReturn,
+	DR_DecodeError,
+	DR_EndOfSequence,
+	DR_Success,
+} from './libDER.ts';
 
 const DER_TAG_MASK = (1n << BigInt(DER_TAG_SIZE) * 8n) - 1n;
 
@@ -294,5 +299,39 @@ export function DERDecodeSeqContentInit(
 	const data = content.data!;
 	derSeq.nextItem = data;
 	derSeq.end = new Uint8Ptr(data.buffer, data.byteOffset + content.length);
+	return DR_Success;
+}
+
+/**
+ * Decode next sequence item.
+ *
+ * @param derSeq Sequence.
+ * @param decoded Decoded info.
+ * @returns Return code.
+ */
+export function DERDecodeSeqNext(
+	derSeq: DERSequence,
+	decoded: DERDecodedInfo,
+): DERReturn {
+	const { nextItem, end } = derSeq;
+	const nextI = nextItem!.byteOffset;
+	const endI = end!.byteOffset;
+	if (nextI >= endI) {
+		return DR_EndOfSequence;
+	}
+
+	const item = new DERItem(nextItem!, endI - nextI);
+	const drtn = DERDecodeItem(item, decoded);
+	if (drtn) {
+		return drtn;
+	}
+
+	const { data } = item;
+	const { content } = decoded;
+	derSeq.nextItem = new Uint8Ptr(
+		data!.buffer,
+		content.data!.byteOffset + content.length,
+		data!.littleEndian,
+	);
 	return DR_Success;
 }
