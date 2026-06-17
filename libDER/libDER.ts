@@ -77,25 +77,25 @@ export class DERItemSpec {
 	public tag: DERTag;
 
 	/**
-	 * Length.
+	 * Options.
 	 */
-	public length: DERShort;
+	public options: DERShort;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param offset Offset.
 	 * @param tag Tag.
-	 * @param length Length.
+	 * @param options Options.
 	 */
 	public constructor(
 		offset: DERSize = 0,
 		tag: DERTag = 0n,
-		length: DERShort = 0,
+		options: DERShort = 0,
 	) {
 		this.offset = offset;
 		this.tag = tag;
-		this.length = length;
+		this.options = options;
 	}
 
 	static {
