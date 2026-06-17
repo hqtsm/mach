@@ -8,6 +8,7 @@ import type {
 	uint64_t,
 	uint8_t,
 } from '../libc/stdint.ts';
+import { memset } from '../libc/stdlib.ts';
 
 /**
  * DER byte.
@@ -48,6 +49,11 @@ export type DERSize = size_t;
  * DER boolean.
  */
 export type DERBool = bool;
+
+/**
+ * DER memset.
+ */
+export const DERMemset = memset;
 
 /**
  * DER encode enable.

@@ -9,10 +9,13 @@ import {
 	type DERTag,
 } from './libDER_config.ts';
 import {
+	type DERItemSpec,
 	type DERReturn,
 	DR_DecodeError,
 	DR_EndOfSequence,
+	DR_IncompleteSeq,
 	DR_Success,
+	DR_UnexpectedTag,
 } from './libDER.ts';
 
 const DER_TAG_MASK = (1n << BigInt(DER_TAG_SIZE) * 8n) - 1n;
@@ -334,6 +337,106 @@ export function DERDecodeSeqNext(
 		data!.littleEndian,
 	);
 	return DR_Success;
+}
+
+/**
+ * Parse sequence content.
+ *
+ * @param content Content.
+ * @param itemSpecs Item specs.
+ * @param dest Destination.
+ * @param zero Zero out destination.
+ * @returns Return code.
+ */
+export function DERParseSequenceContent<T extends Readonly<DERItemSpec>>(
+	content: _const<DERItem>,
+	itemSpecs: readonly T[],
+	dest: Record<T['offset'], DERItem>,
+	zero: bool,
+): DERReturn {
+	const numItems = itemSpecs.length;
+	if (zero) {
+		for (const { offset } of itemSpecs) {
+			const item = dest[offset as keyof typeof dest];
+			item.data = null;
+			item.length = 0;
+		}
+	}
+
+	const derSeq = new DERSequence();
+	DERDecodeSeqContentInit(content, derSeq);
+
+	const currDecoded = new DERDecodedInfo();
+	for (let itemDex = 0; itemDex < numItems;) {
+		const currDER = derSeq.nextItem;
+
+		const drtn = DERDecodeSeqNext(derSeq, currDecoded);
+		if (drtn) {
+			if (drtn === DR_EndOfSequence) {
+				for (let i = itemDex; i < numItems; i++) {
+					if (!(itemSpecs[i].options & DER_DEC_OPTIONAL)) {
+						return DR_IncompleteSeq;
+					}
+				}
+				return DR_Success;
+			}
+			return drtn;
+		}
+
+		const foundTag = currDecoded.tag;
+
+		let foundMatch = false;
+		for (let i = itemDex; i < numItems; i++) {
+			const { tag, options, offset } = itemSpecs[i];
+			if (
+				(options & DER_DEC_ASN_ANY) ||
+				(foundTag === tag)
+			) {
+				if (!(options & DER_DEC_SKIP)) {
+					const dst = dest[offset as keyof typeof dest];
+					const { content } = currDecoded;
+					if (options & DER_DEC_SAVE_DER) {
+						dst.data = currDER;
+						dst.length = currDecoded.content.length +
+							content.data!.byteOffset -
+							currDER!.byteOffset;
+					} else {
+						dst.data = content.data;
+						dst.length = content.length;
+					}
+				}
+
+				itemDex = i + 1;
+
+				if (itemDex === numItems) {
+					if (
+						currDecoded.content.data!.byteOffset +
+								currDecoded.content.length ===
+							content.data!.byteOffset + content.length
+					) {
+						return DR_Success;
+					}
+					return DR_DecodeError;
+				}
+
+				foundMatch = true;
+				break;
+			}
+
+			if (!(options & DER_DEC_OPTIONAL)) {
+				return DR_UnexpectedTag;
+			}
+		}
+
+		if (!foundMatch) {
+			return DR_UnexpectedTag;
+		}
+	}
+
+	if (derSeq.nextItem!.byteOffset === derSeq.end!.byteOffset) {
+		return DR_Success;
+	}
+	return DR_DecodeError;
 }
 
 /**

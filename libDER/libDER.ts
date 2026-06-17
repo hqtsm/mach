@@ -1,6 +1,5 @@
-import { toStringTag } from '@hqtsm/class';
 import type { int } from '../libc/c.ts';
-import type { DERShort, DERSize, DERTag } from './libDER_config.ts';
+import type { DERShort, DERTag } from './libDER_config.ts';
 
 // enum {
 
@@ -65,40 +64,19 @@ export type DERReturn =
 /**
  * DER item spec.
  */
-export class DERItemSpec {
+export interface DERItemSpec {
 	/**
 	 * Offset.
 	 */
-	public offset: DERSize;
+	offset: string;
 
 	/**
 	 * Tag.
 	 */
-	public tag: DERTag;
+	tag: DERTag;
 
 	/**
 	 * Options.
 	 */
-	public options: DERShort;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param offset Offset.
-	 * @param tag Tag.
-	 * @param options Options.
-	 */
-	public constructor(
-		offset: DERSize = 0,
-		tag: DERTag = 0n,
-		options: DERShort = 0,
-	) {
-		this.offset = offset;
-		this.tag = tag;
-		this.options = options;
-	}
-
-	static {
-		toStringTag(this, 'DERItemSpec');
-	}
+	options: DERShort;
 }

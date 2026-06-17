@@ -6,16 +6,26 @@ import {
 } from '@std/assert';
 import { unhex } from '../spec/hex.ts';
 import {
+	DER_DEC_NO_OPTS,
+	DER_DEC_OPTIONAL,
+	DER_DEC_SAVE_DER,
 	DERDecodedInfo,
 	DERDecodeItem,
 	DERDecodeItemPartialBuffer,
 	DERDecodeItemPartialBufferGetLength,
 	DERDecodeSeqContentInit,
 	DERDecodeSeqNext,
+	DERParseSequenceContent,
 	DERSequence,
 } from './DER_Decode.ts';
 import { DERItem } from './DERItem.ts';
-import { DR_DecodeError, DR_EndOfSequence, DR_Success } from './libDER.ts';
+import {
+	DR_DecodeError,
+	DR_EndOfSequence,
+	DR_IncompleteSeq,
+	DR_Success,
+	DR_UnexpectedTag,
+} from './libDER.ts';
 import type { _const } from '../libc/c.ts';
 
 Deno.test('DERDecodedInfo', () => {
@@ -412,4 +422,215 @@ Deno.test('DERDecodeSeqNext: error', () => {
 	assertEquals(DERDecodeSeqContentInit(item, derSeq), DR_Success);
 
 	assertEquals(DERDecodeSeqNext(derSeq, di), DR_DecodeError);
+});
+
+Deno.test('DERParseSequenceContent: sequence', () => {
+	const data = unhex('0A 01 AA 0B 02 BB BB');
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+
+	const a = new DERItem();
+	const b = new DERItem();
+	const ret = DERParseSequenceContent(
+		item,
+		[
+			{ offset: 'a', tag: 0xAn, options: DER_DEC_NO_OPTS },
+			{ offset: 'b', tag: 0xBn, options: DER_DEC_NO_OPTS },
+		] as const,
+		{ a, b },
+		false,
+	);
+	assertEquals(ret, DR_Success);
+
+	assertEquals(a.length, 1);
+	assertEquals(a.data!.byteOffset, 2);
+	assertEquals(b.length, 2);
+	assertEquals(b.data!.byteOffset, 5);
+});
+
+Deno.test('DERParseSequenceContent: optional', () => {
+	const data = unhex('0A 01 AA 0C 03 CC CC CC');
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+	const ptr = new Uint8Ptr(new ArrayBuffer(1));
+
+	const a = new DERItem(ptr, 1);
+	const b = new DERItem(ptr, 1);
+	const c = new DERItem(ptr, 1);
+	const ret = DERParseSequenceContent(
+		item,
+		[
+			{ offset: 'a', tag: 0xAn, options: DER_DEC_NO_OPTS },
+			{ offset: 'b', tag: 0xBn, options: DER_DEC_OPTIONAL },
+			{ offset: 'c', tag: 0xCn, options: DER_DEC_NO_OPTS },
+		] as const,
+		{ a, b, c },
+		true,
+	);
+	assertEquals(ret, DR_Success);
+
+	assertEquals(a.length, 1);
+	assertEquals(a.data!.byteOffset, 2);
+	assertEquals(b.length, 0);
+	assertEquals(b.data, null);
+	assertEquals(c.length, 3);
+	assertEquals(c.data!.byteOffset, 5);
+});
+
+Deno.test('DERParseSequenceContent: optional end', () => {
+	const data = unhex('0A 01 AA 0B 02 BB BB');
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+
+	const a = new DERItem();
+	const b = new DERItem();
+	const c = new DERItem();
+	const ret = DERParseSequenceContent(
+		item,
+		[
+			{ offset: 'a', tag: 0xAn, options: DER_DEC_NO_OPTS },
+			{ offset: 'b', tag: 0xBn, options: DER_DEC_NO_OPTS },
+			{ offset: 'c', tag: 0xCn, options: DER_DEC_OPTIONAL },
+		] as const,
+		{ a, b, c },
+		false,
+	);
+	assertEquals(ret, DR_Success);
+
+	assertEquals(a.length, 1);
+	assertEquals(a.data!.byteOffset, 2);
+	assertEquals(b.length, 2);
+	assertEquals(b.data!.byteOffset, 5);
+	assertEquals(c.length, 0);
+	assertEquals(c.data, null);
+});
+
+Deno.test('DERParseSequenceContent: save der', () => {
+	const data = unhex('0A 01 AA 0B 02 BB BB');
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+
+	const a = new DERItem();
+	const b = new DERItem();
+	const ret = DERParseSequenceContent(
+		item,
+		[
+			{ offset: 'a', tag: 0xAn, options: DER_DEC_SAVE_DER },
+			{ offset: 'b', tag: 0xBn, options: DER_DEC_SAVE_DER },
+		] as const,
+		{ a, b },
+		false,
+	);
+	assertEquals(ret, DR_Success);
+
+	assertEquals(a.length, 3);
+	assertEquals(a.data!.byteOffset, 0);
+	assertEquals(b.length, 4);
+	assertEquals(b.data!.byteOffset, 3);
+});
+
+Deno.test('DERParseSequenceContent: bad tag', () => {
+	const data = unhex('0A 01 AA');
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+
+	const a = new DERItem();
+	const ret = DERParseSequenceContent(
+		item,
+		[
+			{ offset: 'a', tag: 0xBn, options: DER_DEC_NO_OPTS },
+		] as const,
+		{ a },
+		false,
+	);
+	assertEquals(ret, DR_UnexpectedTag);
+});
+
+Deno.test('DERParseSequenceContent: bad end', () => {
+	const data = unhex('0A 01 AA');
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+
+	const a = new DERItem();
+	const b = new DERItem();
+	const ret = DERParseSequenceContent(
+		item,
+		[
+			{ offset: 'a', tag: 0xAn, options: DER_DEC_NO_OPTS },
+			{ offset: 'b', tag: 0xBn, options: DER_DEC_NO_OPTS },
+		] as const,
+		{ a, b },
+		false,
+	);
+	assertEquals(ret, DR_IncompleteSeq);
+});
+
+Deno.test('DERParseSequenceContent: extra after', () => {
+	const data = unhex('0A 01 AA 0B');
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+
+	const a = new DERItem();
+	const ret = DERParseSequenceContent(
+		item,
+		[
+			{ offset: 'a', tag: 0xAn, options: DER_DEC_NO_OPTS },
+		] as const,
+		{ a },
+		false,
+	);
+	assertEquals(ret, DR_DecodeError);
+});
+
+Deno.test('DERParseSequenceContent: incomplete tag', () => {
+	const data = unhex('0A 01');
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+
+	const a = new DERItem();
+	const ret = DERParseSequenceContent(
+		item,
+		[
+			{ offset: 'a', tag: 0xAn, options: DER_DEC_NO_OPTS },
+		] as const,
+		{ a },
+		false,
+	);
+	assertEquals(ret, DR_DecodeError);
+});
+
+Deno.test('DERParseSequenceContent: bad optional end', () => {
+	const data = unhex('0A 01 AA 0C 01 CC');
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+
+	const a = new DERItem();
+	const b = new DERItem();
+	const ret = DERParseSequenceContent(
+		item,
+		[
+			{ offset: 'a', tag: 0xAn, options: DER_DEC_NO_OPTS },
+			{ offset: 'b', tag: 0xBn, options: DER_DEC_OPTIONAL },
+		] as const,
+		{ a, b },
+		false,
+	);
+	assertEquals(ret, DR_UnexpectedTag);
+});
+
+Deno.test('DERParseSequenceContent: empty', () => {
+	const data = new Uint8Array();
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+
+	const ret = DERParseSequenceContent(
+		item,
+		[] as const,
+		{},
+		false,
+	);
+	assertEquals(ret, DR_Success);
+});
+
+Deno.test('DERParseSequenceContent: empty extra', () => {
+	const data = new Uint8Array(1);
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+
+	const ret = DERParseSequenceContent(
+		item,
+		[] as const,
+		{},
+		false,
+	);
+	assertEquals(ret, DR_DecodeError);
 });
