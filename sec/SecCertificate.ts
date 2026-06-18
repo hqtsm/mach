@@ -7,7 +7,7 @@ import {
 	pointerBytes,
 	viewBytes,
 } from '../helpers/memory.ts';
-import type { _ptr, bool } from '../libc/c.ts';
+import type { _const, _ptr, bool } from '../libc/c.ts';
 import { INT32_MAX, type int32_t } from '../libc/stdint.ts';
 import { DERItem } from '../libDER/DERItem.ts';
 import type { SecCertificateRef } from '../Security/SecBase.ts';
@@ -79,6 +79,22 @@ export class __SecCertificate {
 	static {
 		toStringTag(this, '__SecCertificate');
 	}
+}
+
+/**
+ * Copy hex description.
+ *
+ * @param blob Blob.
+ * @returns Hex description.
+ */
+export function copyHexDescription(blob: _const<DERItem>): string | null {
+	const d = blob.data!;
+	const l = blob.length;
+	let r = '';
+	for (let i = 0; i < l; i++) {
+		r += (i ? ' ' : '') + d[i].toString(16).toUpperCase().padStart(2, '0');
+	}
+	return r;
 }
 
 /**

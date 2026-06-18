@@ -1,9 +1,11 @@
 import { Uint8Ptr } from '@hqtsm/struct';
 import { assertEquals, assertInstanceOf } from '@std/assert';
 import { INT32_MAX, INT32_MIN, UINT32_MAX } from '../libc/stdint.ts';
+import { DERItem } from '../libDER/DERItem.ts';
 import { digest } from '../spec/hash.ts';
 import {
 	__SecCertificate,
+	copyHexDescription,
 	GetDecimalValueOfString,
 	SecCertificateCopyExtensionValue,
 	SecCertificateCopyIssuerSHA256Digest,
@@ -14,6 +16,11 @@ import {
 } from './SecCertificate.ts';
 
 export const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
+
+Deno.test('copyHexDescription', () => {
+	const blob = new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength);
+	assertEquals(copyHexDescription(blob), '41 42 43 44');
+});
 
 Deno.test('SecCertificateCopySHA1Digest', async () => {
 	const sc = new __SecCertificate();
