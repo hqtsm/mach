@@ -1,3 +1,4 @@
+export * from './asn1Types.ts';
 export * from './DER_Decode.ts';
 export * from './DERItem.ts';
 export * from './libDER.ts';
