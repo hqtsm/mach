@@ -9,6 +9,7 @@ import type {
 	uint8_t,
 } from '../libc/stdint.ts';
 import { memset } from '../libc/stdlib.ts';
+import { memcmp } from '../libc/string.ts';
 
 /**
  * DER byte.
@@ -54,6 +55,11 @@ export type DERBool = bool;
  * DER memset.
  */
 export const DERMemset = memset;
+
+/**
+ * DER memcmp.
+ */
+export const DERMemcmp = memcmp;
 
 /**
  * DER encode enable.
