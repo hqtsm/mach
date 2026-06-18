@@ -1,5 +1,10 @@
 import { toStringTag } from '@hqtsm/class';
 import type { CFIndex } from '../CoreFoundation/CFBase.ts';
+import {
+	CFStringCreateWithBytes,
+	type CFStringEncoding,
+	kCFStringEncodingUTF16,
+} from '../CoreFoundation/CFString.ts';
 import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
 import {
 	type ArrayBufferLikeData,
@@ -95,6 +100,40 @@ export function copyHexDescription(blob: _const<DERItem>): string | null {
 		r += (i ? ' ' : '') + d[i].toString(16).toUpperCase().padStart(2, '0');
 	}
 	return r;
+}
+
+/**
+ * Copy content string.
+ *
+ * @param string String.
+ * @param encoding Encoding.
+ * @param printableOnly Printable only.
+ * @returns Content string.
+ */
+export function copyContentString(
+	string: _const<DERItem>,
+	encoding: CFStringEncoding,
+	printableOnly: bool,
+): string | null {
+	let { length } = string;
+	const data = string.data!;
+	if (length && !data[length - 1]) {
+		if (encoding !== kCFStringEncodingUTF16) {
+			length--;
+		}
+	}
+	if (!length && printableOnly) {
+		return null;
+	}
+	const result = CFStringCreateWithBytes(
+		new Uint8Array(data.buffer, data.byteOffset, length),
+		encoding,
+		encoding === kCFStringEncodingUTF16,
+	);
+	if (result) {
+		return result.value;
+	}
+	return printableOnly ? null : copyHexDescription(string);
 }
 
 /**

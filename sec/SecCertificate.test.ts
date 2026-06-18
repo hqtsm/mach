@@ -1,10 +1,12 @@
 import { Uint8Ptr } from '@hqtsm/struct';
 import { assertEquals, assertInstanceOf } from '@std/assert';
+import { kCFStringEncodingASCII } from '../CoreFoundation/CFString.ts';
 import { INT32_MAX, INT32_MIN, UINT32_MAX } from '../libc/stdint.ts';
 import { DERItem } from '../libDER/DERItem.ts';
 import { digest } from '../spec/hash.ts';
 import {
 	__SecCertificate,
+	copyContentString,
 	copyHexDescription,
 	GetDecimalValueOfString,
 	SecCertificateCopyExtensionValue,
@@ -16,10 +18,54 @@ import {
 } from './SecCertificate.ts';
 
 export const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
+export const ABCD0 = new Uint8Array([...'ABCD\0'].map((c) => c.charCodeAt(0)));
 
 Deno.test('copyHexDescription', () => {
 	const blob = new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength);
 	assertEquals(copyHexDescription(blob), '41 42 43 44');
+});
+
+Deno.test('copyContentString', () => {
+	assertEquals(
+		copyContentString(
+			new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength),
+			kCFStringEncodingASCII,
+			false,
+		),
+		'ABCD',
+	);
+	assertEquals(
+		copyContentString(
+			new DERItem(new Uint8Ptr(ABCD0.buffer), ABCD0.byteLength),
+			kCFStringEncodingASCII,
+			false,
+		),
+		'ABCD',
+	);
+	assertEquals(
+		copyContentString(
+			new DERItem(new Uint8Ptr(new ArrayBuffer()), 0),
+			kCFStringEncodingASCII,
+			true,
+		),
+		null,
+	);
+	assertEquals(
+		copyContentString(
+			new DERItem(new Uint8Ptr(new Uint8Array([0xFF, 0xEE]).buffer), 2),
+			kCFStringEncodingASCII,
+			true,
+		),
+		null,
+	);
+	assertEquals(
+		copyContentString(
+			new DERItem(new Uint8Ptr(new Uint8Array([0xFF, 0xEE]).buffer), 2),
+			kCFStringEncodingASCII,
+			false,
+		),
+		'FF EE',
+	);
 });
 
 Deno.test('SecCertificateCopySHA1Digest', async () => {
