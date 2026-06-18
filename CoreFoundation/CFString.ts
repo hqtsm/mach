@@ -1,9 +1,18 @@
+import { PLString } from '@hqtsm/plist';
+import { BIG_ENDIAN } from '@hqtsm/struct';
+import { type ArrayBufferLikeData, viewBytes } from '../helpers/memory.ts';
 import type { UInt32 } from '../MacOSX/MacTypes.ts';
+import type { CFStringRef } from './CFBase.ts';
 
 /**
  * String encoding.
  */
 export type CFStringEncoding = UInt32;
+
+/**
+ * Invalid encoding ID.
+ */
+export const kCFStringEncodingInvalidId = 0xffffffff;
 
 // CF_ENUM(CFStringEncoding, CFStringBuiltInEncodings) {
 
@@ -100,3 +109,83 @@ export const kCFStringEncodingUTF32BE = 0x18000100;
 export const kCFStringEncodingUTF32LE = 0x1c000100;
 
 // }
+
+/**
+ * Decode bytes to string.
+ *
+ * @param bytes Array buffer.
+ * @param encoding Encoding.
+ * @param isExternalRepresentation Is external representation.
+ * @returns String.
+ */
+export function CFStringCreateWithBytes(
+	bytes: ArrayBufferLikeData,
+	encoding: CFStringEncoding,
+	isExternalRepresentation: boolean,
+): CFStringRef | null {
+	let view = viewBytes(bytes);
+	let s = '';
+	switch (encoding) {
+		case kCFStringEncodingASCII: {
+			for (let i = 0, l = view.length; i < l; i++) {
+				const c = view[i];
+				if (c > 127) {
+					return null;
+				}
+				s += String.fromCharCode(c);
+			}
+			break;
+		}
+		case kCFStringEncodingISOLatin1: {
+			for (let i = 0, l = view.length; i < l; i++) {
+				s += String.fromCharCode(view[i]);
+			}
+			break;
+		}
+		case kCFStringEncodingUTF8: {
+			const td = new TextDecoder('utf-8', {
+				fatal: true,
+			});
+			try {
+				s = td.decode(bytes);
+			} catch {
+				return null;
+			}
+			break;
+		}
+		case kCFStringEncodingUTF16: {
+			let label;
+			switch (view[0] << 8 | view[1]) {
+				case 0xFEFF: {
+					label = 'utf-16be';
+					view = view.subarray(2);
+					break;
+				}
+				case 0xFFFE: {
+					label = 'utf-16le';
+					view = view.subarray(2);
+					break;
+				}
+				default: {
+					label = isExternalRepresentation
+						? 'utf-16be'
+						: ['utf-16le', 'utf-16be'][+BIG_ENDIAN];
+				}
+			}
+			const td = new TextDecoder(label, {
+				fatal: true,
+			});
+			try {
+				s = td.decode(view);
+			} catch {
+				return null;
+			}
+			break;
+		}
+		// TODO: Implement the remaining encodings.
+		default: {
+			return null;
+		}
+	}
+	return new PLString(s);
+}
