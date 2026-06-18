@@ -32,71 +32,71 @@ export type CFStringBuiltInEncodings =
 /**
  * MacRoman encoding.
  */
-const kCFStringEncodingMacRoman = 0;
+export const kCFStringEncodingMacRoman = 0;
 
 /**
  * ANSI codepage 1252.
  */
-const kCFStringEncodingWindowsLatin1 = 0x0500;
+export const kCFStringEncodingWindowsLatin1 = 0x0500;
 
 /**
  * ISO 8859-1.
  */
-const kCFStringEncodingISOLatin1 = 0x0201;
+export const kCFStringEncodingISOLatin1 = 0x0201;
 
 /**
  * NextStep encoding.
  */
-const kCFStringEncodingNextStepLatin = 0x0B01;
+export const kCFStringEncodingNextStepLatin = 0x0B01;
 
 /**
  * ASCII encoding.
  */
-const kCFStringEncodingASCII = 0x0600;
+export const kCFStringEncodingASCII = 0x0600;
 
 /**
  * kTextEncodingUnicodeDefault + kTextEncodingDefaultFormat.
  */
-const kCFStringEncodingUnicode = 0x0100;
+export const kCFStringEncodingUnicode = 0x0100;
 
 /**
  * kTextEncodingUnicodeDefault + kUnicodeUTF8Format
  */
-const kCFStringEncodingUTF8 = 0x08000100;
+export const kCFStringEncodingUTF8 = 0x08000100;
 
 /**
  * 7bit Unicode variants used by Cocoa & Java.
  */
-const kCFStringEncodingNonLossyASCII = 0x0BFF;
+export const kCFStringEncodingNonLossyASCII = 0x0BFF;
 
 /**
  * kTextEncodingUnicodeDefault + kUnicodeUTF16Format.
  */
-const kCFStringEncodingUTF16 = 0x0100;
+export const kCFStringEncodingUTF16 = 0x0100;
 
 /**
  * kTextEncodingUnicodeDefault + kUnicodeUTF16BEFormat
  */
-const kCFStringEncodingUTF16BE = 0x10000100;
+export const kCFStringEncodingUTF16BE = 0x10000100;
 
 /**
  * kTextEncodingUnicodeDefault + kUnicodeUTF16LEFormat
  */
-const kCFStringEncodingUTF16LE = 0x14000100;
+export const kCFStringEncodingUTF16LE = 0x14000100;
 
 /**
  * kTextEncodingUnicodeDefault + kUnicodeUTF32Format
  */
-const kCFStringEncodingUTF32 = 0x0c000100;
+export const kCFStringEncodingUTF32 = 0x0c000100;
 
 /**
  * kTextEncodingUnicodeDefault + kUnicodeUTF32BEFormat
  */
-const kCFStringEncodingUTF32BE = 0x18000100;
+export const kCFStringEncodingUTF32BE = 0x18000100;
 
 /**
  * kTextEncodingUnicodeDefault + kUnicodeUTF32LEFormat
  */
-const kCFStringEncodingUTF32LE = 0x1c000100;
+export const kCFStringEncodingUTF32LE = 0x1c000100;
 
 // }
