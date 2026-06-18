@@ -1,6 +1,10 @@
 import { PLString } from '@hqtsm/plist';
 import { BIG_ENDIAN } from '@hqtsm/struct';
-import { type ArrayBufferLikeData, viewBytes } from '../helpers/memory.ts';
+import {
+	type ArrayBufferLikeData,
+	bufferBytes,
+	viewBytes,
+} from '../helpers/memory.ts';
 import type { UInt32 } from '../MacOSX/MacTypes.ts';
 import type { CFStringRef } from './CFBase.ts';
 
@@ -147,7 +151,9 @@ export function CFStringCreateWithBytes(
 				fatal: true,
 			});
 			try {
-				s = td.decode(bytes);
+				s = td.decode(
+					bufferBytes(view.buffer, view.byteOffset, view.byteLength),
+				);
 			} catch {
 				return null;
 			}
@@ -176,7 +182,9 @@ export function CFStringCreateWithBytes(
 				fatal: true,
 			});
 			try {
-				s = td.decode(view);
+				s = td.decode(
+					bufferBytes(view.buffer, view.byteOffset, view.byteLength),
+				);
 			} catch {
 				return null;
 			}
