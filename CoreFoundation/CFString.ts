@@ -161,6 +161,7 @@ export function CFStringCreateWithBytes(
 		}
 		case kCFStringEncodingUTF16: {
 			let label;
+			view = bufferBytes(view.buffer, view.byteOffset, view.byteLength);
 			switch (view[0] << 8 | view[1]) {
 				case 0xFEFF: {
 					label = 'utf-16be';
@@ -182,9 +183,7 @@ export function CFStringCreateWithBytes(
 				fatal: true,
 			});
 			try {
-				s = td.decode(
-					bufferBytes(view.buffer, view.byteOffset, view.byteLength),
-				);
+				s = td.decode(view);
 			} catch {
 				return null;
 			}
