@@ -8,6 +8,7 @@ import {
 	__SecCertificate,
 	copyContentString,
 	copyHexDescription,
+	copyIntegerContentDescription,
 	GetDecimalValueOfString,
 	SecCertificateCopyExtensionValue,
 	SecCertificateCopyIssuerSHA256Digest,
@@ -65,6 +66,42 @@ Deno.test('copyContentString', () => {
 			false,
 		),
 		'FF EE',
+	);
+});
+
+Deno.test('copyIntegerContentDescription', () => {
+	assertEquals(
+		copyIntegerContentDescription(
+			new DERItem(),
+		),
+		'',
+	);
+	assertEquals(
+		copyIntegerContentDescription(
+			new DERItem(
+				new Uint8Ptr(
+					new Uint8Array([
+						0x12,
+						0x34,
+						0x56,
+						0x78,
+						0x9A,
+						0xBC,
+						0xDE,
+						0xF0,
+						0x0F,
+					]).buffer,
+				),
+				9,
+			),
+		),
+		'12 34 56 78 9A BC DE F0 0F',
+	);
+	assertEquals(
+		copyIntegerContentDescription(
+			new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength),
+		),
+		(0x41424344).toString(),
 	);
 });
 

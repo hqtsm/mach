@@ -137,6 +137,27 @@ export function copyContentString(
 }
 
 /**
+ * Copy integer content description.
+ *
+ * @param integer Integer.
+ * @returns Content description.
+ */
+export function copyIntegerContentDescription(
+	integer: _const<DERItem>,
+): string | null {
+	const { length } = integer;
+	if (!length || length > 8) {
+		return copyHexDescription(integer);
+	}
+	const data = integer.data!;
+	let value = 0n;
+	for (let ix = 0; ix < length; ++ix) {
+		value = (value << 8n) + BigInt(data[ix]);
+	}
+	return value.toString();
+}
+
+/**
  * Get SHA-1 digest for certificate.
  *
  * @param certificate Certificate.
