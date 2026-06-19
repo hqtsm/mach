@@ -23,7 +23,6 @@ import { DERItem } from '../libDER/DERItem.ts';
 import { digest } from '../spec/hash.ts';
 import {
 	__SecCertificate,
-	copyBlobString,
 	copyDERThingContentDescription,
 	copyHexDescription,
 	copyOidDescription,
@@ -36,12 +35,7 @@ import {
 	SecCertificateIsOidString,
 	SecDERItemCopyOIDDecimalRepresentation,
 } from './SecCertificate.ts';
-import {
-	SEC_BYTE_STRING_KEY,
-	SEC_BYTES_KEY,
-	SEC_NULL_KEY,
-	SEC_OID_TOO_LONG_KEY,
-} from './SecFrameworkStrings.ts';
+import { SEC_NULL_KEY, SEC_OID_TOO_LONG_KEY } from './SecFrameworkStrings.ts';
 
 export const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
 export const ABCD0 = new Uint8Array([...'ABCD\0'].map((c) => c.charCodeAt(0)));
@@ -139,18 +133,31 @@ Deno.test('copyHexDescription', () => {
 Deno.test('copyBlobString', () => {
 	const blob = new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength);
 	assertEquals(
-		copyBlobString(SEC_BYTE_STRING_KEY, SEC_BYTES_KEY, blob, false),
+		copyDERThingContentDescription(ASN1_OCTET_STRING, blob, false, false),
 		'Byte string; 4 bytes; data = 41 42 43 44',
 	);
 	assertEquals(
-		copyBlobString(SEC_BYTE_STRING_KEY, SEC_BYTES_KEY, blob, true),
-		'Byte string; 4 bytes; data = 41 42 43 44',
+		copyDERThingContentDescription(ASN1_BIT_STRING, blob, false, false),
+		'Bit string; 4 bits; data = 41 42 43 44',
 	);
 	assertEquals(
-		copyBlobString(
-			SEC_BYTE_STRING_KEY,
-			SEC_BYTES_KEY,
+		copyDERThingContentDescription(
+			ASN1_CONSTR_SEQUENCE,
+			blob,
+			false,
+			false,
+		),
+		'Sequence; 4 bytes; data = 41 42 43 44',
+	);
+	assertEquals(
+		copyDERThingContentDescription(ASN1_CONSTR_SET, blob, false, false),
+		'Set; 4 bytes; data = 41 42 43 44',
+	);
+	assertEquals(
+		copyDERThingContentDescription(
+			ASN1_OCTET_STRING,
 			new DERItem(new Uint8Ptr(new ArrayBuffer()), INT32_MAX),
+			false,
 			true,
 		),
 		`Byte string; ${INT32_MAX} bytes; data = (null)`,

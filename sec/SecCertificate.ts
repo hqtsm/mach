@@ -205,7 +205,7 @@ export function copyHexDescription(blob: _const<DERItem>): string | null {
  * @param localized Localized.
  * @returns Blob string.
  */
-export function copyBlobString(
+function copyBlobString(
 	blobType: string,
 	quanta: string,
 	blob: _const<DERItem>,
