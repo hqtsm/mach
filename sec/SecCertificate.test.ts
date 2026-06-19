@@ -130,37 +130,57 @@ Deno.test('copyHexDescription', () => {
 	);
 });
 
-Deno.test('copyBlobString', () => {
-	const blob = new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength);
-	assertEquals(
-		copyDERThingContentDescription(ASN1_OCTET_STRING, blob, false, false),
-		'Byte string; 4 bytes; data = 41 42 43 44',
-	);
-	assertEquals(
-		copyDERThingContentDescription(ASN1_BIT_STRING, blob, false, false),
-		'Bit string; 4 bits; data = 41 42 43 44',
-	);
+Deno.test('copyDERThingContentDescription: int bool', () => {
 	assertEquals(
 		copyDERThingContentDescription(
-			ASN1_CONSTR_SEQUENCE,
-			blob,
+			ASN1_BOOLEAN,
+			new DERItem(),
 			false,
 			false,
 		),
-		'Sequence; 4 bytes; data = 41 42 43 44',
-	);
-	assertEquals(
-		copyDERThingContentDescription(ASN1_CONSTR_SET, blob, false, false),
-		'Set; 4 bytes; data = 41 42 43 44',
+		'',
 	);
 	assertEquals(
 		copyDERThingContentDescription(
-			ASN1_OCTET_STRING,
-			new DERItem(new Uint8Ptr(new ArrayBuffer()), INT32_MAX),
+			ASN1_INTEGER,
+			new DERItem(
+				new Uint8Ptr(
+					new Uint8Array([
+						0x12,
+						0x34,
+						0x56,
+						0x78,
+						0x9A,
+						0xBC,
+						0xDE,
+						0xF0,
+						0x0F,
+					]).buffer,
+				),
+				9,
+			),
 			false,
+			false,
+		),
+		'12 34 56 78 9A BC DE F0 0F',
+	);
+	assertEquals(
+		copyDERThingContentDescription(
+			ASN1_INTEGER,
+			new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength),
+			false,
+			false,
+		),
+		(0x41424344).toString(),
+	);
+	assertEquals(
+		copyDERThingContentDescription(
+			ASN1_INTEGER,
+			new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength),
 			true,
+			false,
 		),
-		`Byte string; ${INT32_MAX} bytes; data = (null)`,
+		null,
 	);
 });
 
@@ -300,57 +320,37 @@ Deno.test('copyDERThingContentDescription: UTF-16', () => {
 	);
 });
 
-Deno.test('copyDERThingContentDescription: int bool', () => {
+Deno.test('copyDERThingContentDescription: blob strings', () => {
+	const blob = new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength);
 	assertEquals(
-		copyDERThingContentDescription(
-			ASN1_BOOLEAN,
-			new DERItem(),
-			false,
-			false,
-		),
-		'',
+		copyDERThingContentDescription(ASN1_OCTET_STRING, blob, false, false),
+		'Byte string; 4 bytes; data = 41 42 43 44',
+	);
+	assertEquals(
+		copyDERThingContentDescription(ASN1_BIT_STRING, blob, false, false),
+		'Bit string; 4 bits; data = 41 42 43 44',
 	);
 	assertEquals(
 		copyDERThingContentDescription(
-			ASN1_INTEGER,
-			new DERItem(
-				new Uint8Ptr(
-					new Uint8Array([
-						0x12,
-						0x34,
-						0x56,
-						0x78,
-						0x9A,
-						0xBC,
-						0xDE,
-						0xF0,
-						0x0F,
-					]).buffer,
-				),
-				9,
-			),
+			ASN1_CONSTR_SEQUENCE,
+			blob,
 			false,
 			false,
 		),
-		'12 34 56 78 9A BC DE F0 0F',
+		'Sequence; 4 bytes; data = 41 42 43 44',
+	);
+	assertEquals(
+		copyDERThingContentDescription(ASN1_CONSTR_SET, blob, false, false),
+		'Set; 4 bytes; data = 41 42 43 44',
 	);
 	assertEquals(
 		copyDERThingContentDescription(
-			ASN1_INTEGER,
-			new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength),
+			ASN1_OCTET_STRING,
+			new DERItem(new Uint8Ptr(new ArrayBuffer()), INT32_MAX),
 			false,
-			false,
-		),
-		(0x41424344).toString(),
-	);
-	assertEquals(
-		copyDERThingContentDescription(
-			ASN1_INTEGER,
-			new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength),
 			true,
-			false,
 		),
-		null,
+		`Byte string; ${INT32_MAX} bytes; data = (null)`,
 	);
 });
 
