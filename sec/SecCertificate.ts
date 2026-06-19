@@ -132,6 +132,23 @@ export function SecDERItemCopyOIDDecimalRepresentation(
 }
 
 /**
+ * Copy OID description.
+ *
+ * @param oid OID.
+ * @param localized Localized.
+ * @returns Description.
+ */
+export function copyOidDescription(
+	oid: _const<DERItem> | null,
+	localized: bool,
+): string | null {
+	if (!oid || !oid.length) {
+		return localized ? SecCopyCertString(SEC_NULL_KEY) : SEC_NULL_KEY;
+	}
+	return SecDERItemCopyOIDDecimalRepresentation(oid);
+}
+
+/**
  * Copy hex description.
  *
  * @param blob Blob.

@@ -10,6 +10,7 @@ import {
 	copyContentString,
 	copyHexDescription,
 	copyIntegerContentDescription,
+	copyOidDescription,
 	GetDecimalValueOfString,
 	SecCertificateCopyExtensionValue,
 	SecCertificateCopyIssuerSHA256Digest,
@@ -30,6 +31,18 @@ export const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
 export const ABCD0 = new Uint8Array([...'ABCD\0'].map((c) => c.charCodeAt(0)));
 
 Deno.test('SecDERItemCopyOIDDecimalRepresentation', () => {
+	assertEquals(
+		SecDERItemCopyOIDDecimalRepresentation(
+			new DERItem(new Uint8Ptr(new ArrayBuffer()), 0),
+		),
+		SEC_NULL_KEY,
+	);
+	assertEquals(
+		SecDERItemCopyOIDDecimalRepresentation(
+			new DERItem(new Uint8Ptr(new ArrayBuffer()), 33),
+		),
+		SEC_OID_TOO_LONG_KEY,
+	);
 	assertEquals(
 		SecDERItemCopyOIDDecimalRepresentation(
 			new DERItem(
@@ -60,17 +73,38 @@ Deno.test('SecDERItemCopyOIDDecimalRepresentation', () => {
 		),
 		'2.90.3.4',
 	);
+});
+
+Deno.test('copyOidDescription', () => {
 	assertEquals(
-		SecDERItemCopyOIDDecimalRepresentation(
+		copyOidDescription(
 			new DERItem(new Uint8Ptr(new ArrayBuffer()), 0),
+			false,
 		),
 		SEC_NULL_KEY,
 	);
 	assertEquals(
-		SecDERItemCopyOIDDecimalRepresentation(
-			new DERItem(new Uint8Ptr(new ArrayBuffer()), 33),
+		copyOidDescription(
+			new DERItem(new Uint8Ptr(new ArrayBuffer()), 0),
+			true,
 		),
-		SEC_OID_TOO_LONG_KEY,
+		SEC_NULL_KEY,
+	);
+	assertEquals(
+		copyOidDescription(
+			new DERItem(
+				new Uint8Ptr(
+					new Uint8Array([
+						0x2A,
+						0x03,
+						0x04,
+					]).buffer,
+				),
+				3,
+			),
+			false,
+		),
+		'1.2.3.4',
 	);
 });
 
