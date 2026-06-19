@@ -25,7 +25,6 @@ import {
 	__SecCertificate,
 	copyDERThingContentDescription,
 	copyHexDescription,
-	copyOidDescription,
 	GetDecimalValueOfString,
 	SecCertificateCopyExtensionValue,
 	SecCertificateCopyIssuerSHA256Digest,
@@ -82,39 +81,6 @@ Deno.test('SecDERItemCopyOIDDecimalRepresentation', () => {
 			),
 		),
 		'2.90.3.4',
-	);
-});
-
-Deno.test('copyOidDescription', () => {
-	assertEquals(
-		copyOidDescription(
-			new DERItem(new Uint8Ptr(new ArrayBuffer()), 0),
-			false,
-		),
-		SEC_NULL_KEY,
-	);
-	assertEquals(
-		copyOidDescription(
-			new DERItem(new Uint8Ptr(new ArrayBuffer()), 0),
-			true,
-		),
-		SEC_NULL_KEY,
-	);
-	assertEquals(
-		copyOidDescription(
-			new DERItem(
-				new Uint8Ptr(
-					new Uint8Array([
-						0x2A,
-						0x03,
-						0x04,
-					]).buffer,
-				),
-				3,
-			),
-			false,
-		),
-		'1.2.3.4',
 	);
 });
 
@@ -351,6 +317,45 @@ Deno.test('copyDERThingContentDescription: blob strings', () => {
 			true,
 		),
 		`Byte string; ${INT32_MAX} bytes; data = (null)`,
+	);
+});
+
+Deno.test('copyDERThingContentDescription: OID', () => {
+	assertEquals(
+		copyDERThingContentDescription(
+			ASN1_OBJECT_ID,
+			new DERItem(new Uint8Ptr(new ArrayBuffer()), 0),
+			false,
+			false,
+		),
+		SEC_NULL_KEY,
+	);
+	assertEquals(
+		copyDERThingContentDescription(
+			ASN1_OBJECT_ID,
+			new DERItem(new Uint8Ptr(new ArrayBuffer()), 0),
+			false,
+			true,
+		),
+		SEC_NULL_KEY,
+	);
+	assertEquals(
+		copyDERThingContentDescription(
+			ASN1_OBJECT_ID,
+			new DERItem(
+				new Uint8Ptr(
+					new Uint8Array([
+						0x2A,
+						0x03,
+						0x04,
+					]).buffer,
+				),
+				3,
+			),
+			false,
+			false,
+		),
+		'1.2.3.4',
 	);
 });
 

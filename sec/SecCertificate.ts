@@ -167,7 +167,7 @@ export function SecDERItemCopyOIDDecimalRepresentation(
  * @param localized Localized.
  * @returns Description.
  */
-export function copyOidDescription(
+function copyOidDescription(
 	oid: _const<DERItem> | null,
 	localized: bool,
 ): string | null {
