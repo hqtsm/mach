@@ -49,30 +49,36 @@ Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF8 RAW', () => {
 });
 
 Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF8 BOM', () => {
-	const str = CFStringCreateWithBytes(
-		new Uint8Array([0xEF, 0xBB, 0xBF, 0x61, 0x62, 0x63]),
-		kCFStringEncodingUTF8,
-		false,
+	assertEquals(
+		CFStringCreateWithBytes(
+			new Uint8Array([0xEF, 0xBB, 0xBF, 0x61, 0x62, 0x63]),
+			kCFStringEncodingUTF8,
+			false,
+		),
+		'abc',
 	);
-	assertEquals(str, 'abc');
 });
 
 Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF8 invalid', () => {
-	const str = CFStringCreateWithBytes(
-		new Uint8Array([0xC2]),
-		kCFStringEncodingUTF8,
-		false,
+	assertEquals(
+		CFStringCreateWithBytes(
+			new Uint8Array([0xC2]),
+			kCFStringEncodingUTF8,
+			false,
+		),
+		null,
 	);
-	assertEquals(str, null);
 });
 
 Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF16 native', () => {
-	const str = CFStringCreateWithBytes(
-		new Uint16Array([0x61, 0x62, 0x63]),
-		kCFStringEncodingUTF16,
-		false,
+	assertEquals(
+		CFStringCreateWithBytes(
+			new Uint16Array([0x61, 0x62, 0x63]),
+			kCFStringEncodingUTF16,
+			false,
+		),
+		'abc',
 	);
-	assertEquals(str, 'abc');
 });
 
 Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF16 external', () => {
@@ -80,12 +86,14 @@ Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF16 external', () => {
 	view.setUint16(0, 0x61);
 	view.setUint16(2, 0x62);
 	view.setUint16(4, 0x63);
-	const str = CFStringCreateWithBytes(
-		view,
-		kCFStringEncodingUTF16,
-		true,
+	assertEquals(
+		CFStringCreateWithBytes(
+			view,
+			kCFStringEncodingUTF16,
+			true,
+		),
+		'abc',
 	);
-	assertEquals(str, 'abc');
 });
 
 Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF16 BE-BOM', () => {
@@ -94,12 +102,14 @@ Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF16 BE-BOM', () => {
 	view.setUint16(2, 0x61);
 	view.setUint16(4, 0x62);
 	view.setUint16(6, 0x63);
-	const str = CFStringCreateWithBytes(
-		view,
-		kCFStringEncodingUTF16,
-		false,
+	assertEquals(
+		CFStringCreateWithBytes(
+			view,
+			kCFStringEncodingUTF16,
+			false,
+		),
+		'abc',
 	);
-	assertEquals(str, 'abc');
 });
 
 Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF16 LE-BOM', () => {
@@ -108,28 +118,42 @@ Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF16 LE-BOM', () => {
 	view.setUint16(2, 0x61, true);
 	view.setUint16(4, 0x62, true);
 	view.setUint16(6, 0x63, true);
-	const str = CFStringCreateWithBytes(
-		view,
-		kCFStringEncodingUTF16,
-		false,
+	assertEquals(
+		CFStringCreateWithBytes(
+			view,
+			kCFStringEncodingUTF16,
+			false,
+		),
+		'abc',
 	);
-	assertEquals(str, 'abc');
 });
 
 Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF16 invalid', () => {
-	const str = CFStringCreateWithBytes(
-		new Uint16Array([0xD83D]),
-		kCFStringEncodingUTF16,
-		false,
+	assertEquals(
+		CFStringCreateWithBytes(
+			new Uint16Array([0xD83D]),
+			kCFStringEncodingUTF16,
+			false,
+		),
+		null,
 	);
-	assertEquals(str, null);
+	assertEquals(
+		CFStringCreateWithBytes(
+			new Uint8Array([0x00, 0x61, 0x00]),
+			kCFStringEncodingUTF16,
+			true,
+		),
+		null,
+	);
 });
 
 Deno.test('CFStringCreateWithBytes: kCFStringEncodingInvalidId', () => {
-	const str = CFStringCreateWithBytes(
-		new Uint8Array([0x61, 0x62, 0x63]),
-		kCFStringEncodingInvalidId,
-		false,
+	assertEquals(
+		CFStringCreateWithBytes(
+			new Uint8Array([0x61, 0x62, 0x63]),
+			kCFStringEncodingInvalidId,
+			false,
+		),
+		null,
 	);
-	assertEquals(str, null);
 });

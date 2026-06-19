@@ -160,6 +160,9 @@ export function CFStringCreateWithBytes(
 		case kCFStringEncodingUTF16: {
 			let label;
 			view = bufferBytes(view.buffer, view.byteOffset, view.byteLength);
+			if (view.byteLength % 2) {
+				return null;
+			}
 			switch (view[0] << 8 | view[1]) {
 				case 0xFEFF: {
 					label = 'utf-16be';
