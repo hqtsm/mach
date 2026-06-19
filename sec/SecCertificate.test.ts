@@ -2,14 +2,15 @@ import { Uint8Ptr } from '@hqtsm/struct';
 import { assertEquals, assertInstanceOf } from '@std/assert';
 import { kCFStringEncodingASCII } from '../CoreFoundation/CFString.ts';
 import { INT32_MAX, INT32_MIN, UINT32_MAX } from '../libc/stdint.ts';
+import { ASN1_BOOLEAN, ASN1_INTEGER } from '../libDER/asn1Types.ts';
 import { DERItem } from '../libDER/DERItem.ts';
 import { digest } from '../spec/hash.ts';
 import {
 	__SecCertificate,
 	copyBlobString,
 	copyContentString,
+	copyDERThingContentDescription,
 	copyHexDescription,
-	copyIntegerContentDescription,
 	copyOidDescription,
 	GetDecimalValueOfString,
 	SecCertificateCopyExtensionValue,
@@ -202,15 +203,19 @@ Deno.test('copyContentString', () => {
 	);
 });
 
-Deno.test('copyIntegerContentDescription', () => {
+Deno.test('copyDERThingContentDescription: int bool', () => {
 	assertEquals(
-		copyIntegerContentDescription(
+		copyDERThingContentDescription(
+			ASN1_BOOLEAN,
 			new DERItem(),
+			false,
+			false,
 		),
 		'',
 	);
 	assertEquals(
-		copyIntegerContentDescription(
+		copyDERThingContentDescription(
+			ASN1_INTEGER,
 			new DERItem(
 				new Uint8Ptr(
 					new Uint8Array([
@@ -227,14 +232,67 @@ Deno.test('copyIntegerContentDescription', () => {
 				),
 				9,
 			),
+			false,
+			false,
 		),
 		'12 34 56 78 9A BC DE F0 0F',
 	);
 	assertEquals(
-		copyIntegerContentDescription(
+		copyDERThingContentDescription(
+			ASN1_INTEGER,
 			new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength),
+			false,
+			false,
 		),
 		(0x41424344).toString(),
+	);
+	assertEquals(
+		copyDERThingContentDescription(
+			ASN1_INTEGER,
+			new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength),
+			true,
+			false,
+		),
+		null,
+	);
+});
+
+Deno.test('copyDERThingContentDescription', () => {
+	assertEquals(
+		copyDERThingContentDescription(
+			0xFFFFFFFFn,
+			null,
+			true,
+			false,
+		),
+		null,
+	);
+	assertEquals(
+		copyDERThingContentDescription(
+			0xFFFFFFFFn,
+			new DERItem(new Uint8Ptr(new ArrayBuffer()), 42),
+			true,
+			false,
+		),
+		null,
+	);
+	assertEquals(
+		copyDERThingContentDescription(
+			0xFFFFFFFFn,
+			new DERItem(new Uint8Ptr(new ArrayBuffer()), 42),
+			false,
+			false,
+		),
+		'not displayed (tag = 4294967295; length 42)',
+	);
+	assertEquals(
+		copyDERThingContentDescription(
+			0xFFFFFFFFn,
+			new DERItem(new Uint8Ptr(new ArrayBuffer()), 42),
+			false,
+			true,
+		),
+		'not displayed (tag = 4294967295; length 42)',
 	);
 });
 

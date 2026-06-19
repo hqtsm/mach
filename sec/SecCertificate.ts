@@ -3,7 +3,10 @@ import type { CFIndex } from '../CoreFoundation/CFBase.ts';
 import {
 	CFStringCreateWithBytes,
 	type CFStringEncoding,
+	kCFStringEncodingASCII,
+	kCFStringEncodingISOLatin1,
 	kCFStringEncodingUTF16,
+	kCFStringEncodingUTF8,
 } from '../CoreFoundation/CFString.ts';
 import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
 import {
@@ -15,13 +18,39 @@ import {
 import type { _const, _ptr, bool } from '../libc/c.ts';
 import { INT32_MAX, type int32_t } from '../libc/stdint.ts';
 import { memcmp } from '../libc/string.ts';
+import {
+	ASN1_BIT_STRING,
+	ASN1_BMP_STRING,
+	ASN1_BOOLEAN,
+	ASN1_CONSTR_SEQUENCE,
+	ASN1_CONSTR_SET,
+	ASN1_GENERAL_STRING,
+	ASN1_IA5_STRING,
+	ASN1_INTEGER,
+	ASN1_OBJECT_ID,
+	ASN1_OCTET_STRING,
+	ASN1_PRINTABLE_STRING,
+	ASN1_T61_STRING,
+	ASN1_UNIVERSAL_STRING,
+	ASN1_UTF8_STRING,
+	ASN1_VIDEOTEX_STRING,
+	ASN1_VISIBLE_STRING,
+} from '../libDER/asn1Types.ts';
 import { DERItem } from '../libDER/DERItem.ts';
+import type { DERTag } from '../libDER/libDER_config.ts';
 import type { SecCertificateRef } from '../Security/SecBase.ts';
 import { SecSHA1DigestCreate, SecSHA256DigestCreate } from './SecDigest.ts';
 import {
+	SEC_BIT_STRING_KEY,
+	SEC_BITS_KEY,
 	SEC_BLOB_KEY,
+	SEC_BYTE_STRING_KEY,
+	SEC_BYTES_KEY,
+	SEC_NOT_DISPLAYED_KEY,
 	SEC_NULL_KEY,
 	SEC_OID_TOO_LONG_KEY,
+	SEC_SEQUENCE_KEY,
+	SEC_SET_KEY,
 	SecCopyCertString,
 } from './SecFrameworkStrings.ts';
 
@@ -240,7 +269,7 @@ export function copyContentString(
  * @param integer Integer.
  * @returns Content description.
  */
-export function copyIntegerContentDescription(
+function copyIntegerContentDescription(
 	integer: _const<DERItem>,
 ): string | null {
 	const { length } = integer;
@@ -253,6 +282,116 @@ export function copyIntegerContentDescription(
 		value = (value << 8n) + BigInt(data[ix]);
 	}
 	return value.toString();
+}
+
+/**
+ * Copy a DER item content description.
+ *
+ * @param tag Tag.
+ * @param derThing DER thing.
+ * @param printableOnly Printable only.
+ * @param localized Localized.
+ * @returns Content description.
+ */
+export function copyDERThingContentDescription(
+	tag: DERTag,
+	derThing: _const<DERItem> | null,
+	printableOnly: bool,
+	localized: bool,
+): string | null {
+	if (!derThing) {
+		return null;
+	}
+	switch (tag) {
+		case ASN1_INTEGER:
+		case ASN1_BOOLEAN: {
+			return printableOnly
+				? null
+				: copyIntegerContentDescription(derThing);
+		}
+		case ASN1_PRINTABLE_STRING:
+		case ASN1_IA5_STRING: {
+			return copyContentString(
+				derThing,
+				kCFStringEncodingASCII,
+				printableOnly,
+			);
+		}
+		case ASN1_UTF8_STRING:
+		case ASN1_GENERAL_STRING:
+		case ASN1_UNIVERSAL_STRING: {
+			return copyContentString(
+				derThing,
+				kCFStringEncodingUTF8,
+				printableOnly,
+			);
+		}
+		case ASN1_T61_STRING:
+		case ASN1_VIDEOTEX_STRING:
+		case ASN1_VISIBLE_STRING: {
+			return copyContentString(
+				derThing,
+				kCFStringEncodingISOLatin1,
+				printableOnly,
+			);
+		}
+		case ASN1_BMP_STRING: {
+			return copyContentString(
+				derThing,
+				kCFStringEncodingUTF16,
+				printableOnly,
+			);
+		}
+		case ASN1_OCTET_STRING: {
+			return printableOnly ? null : copyBlobString(
+				SEC_BYTE_STRING_KEY,
+				SEC_BYTES_KEY,
+				derThing,
+				localized,
+			);
+		}
+		case ASN1_BIT_STRING: {
+			return printableOnly ? null : copyBlobString(
+				SEC_BIT_STRING_KEY,
+				SEC_BITS_KEY,
+				derThing,
+				localized,
+			);
+		}
+		case ASN1_CONSTR_SEQUENCE: {
+			return printableOnly ? null : copyBlobString(
+				SEC_SEQUENCE_KEY,
+				SEC_BYTES_KEY,
+				derThing,
+				localized,
+			);
+		}
+		case ASN1_CONSTR_SET: {
+			return printableOnly ? null : copyBlobString(
+				SEC_SET_KEY,
+				SEC_BYTES_KEY,
+				derThing,
+				localized,
+			);
+		}
+		case ASN1_OBJECT_ID: {
+			return printableOnly ? null : copyOidDescription(
+				derThing,
+				localized,
+			);
+		}
+		default: {
+			if (printableOnly) {
+				return null;
+			}
+			const fmt = localized
+				? SecCopyCertString(SEC_NOT_DISPLAYED_KEY)
+				: SEC_NOT_DISPLAYED_KEY;
+			return fmt
+				.replace('%ld', String(tag))
+				.replace('%ld', String(derThing.length));
+		}
+	}
 }
 
 /**
