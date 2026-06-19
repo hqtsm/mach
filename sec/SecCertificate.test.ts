@@ -24,7 +24,6 @@ import { digest } from '../spec/hash.ts';
 import {
 	__SecCertificate,
 	copyDERThingContentDescription,
-	copyHexDescription,
 	GetDecimalValueOfString,
 	SecCertificateCopyExtensionValue,
 	SecCertificateCopyIssuerSHA256Digest,
@@ -81,18 +80,6 @@ Deno.test('SecDERItemCopyOIDDecimalRepresentation', () => {
 			),
 		),
 		'2.90.3.4',
-	);
-});
-
-Deno.test('copyHexDescription', () => {
-	const blob = new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength);
-	assertEquals(copyHexDescription(blob), '41 42 43 44');
-
-	assertEquals(
-		copyHexDescription(
-			new DERItem(new Uint8Ptr(new ArrayBuffer()), INT32_MAX),
-		),
-		null,
 	);
 });
 
@@ -283,6 +270,18 @@ Deno.test('copyDERThingContentDescription: UTF-16', () => {
 			false,
 		),
 		'\xFF',
+	);
+	assertEquals(
+		copyDERThingContentDescription(
+			ASN1_BMP_STRING,
+			new DERItem(
+				new Uint8Ptr(new Uint8Array([0x12, 0x00, 0x34]).buffer),
+				3,
+			),
+			false,
+			false,
+		),
+		'12 00 34',
 	);
 });
 

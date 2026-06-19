@@ -183,7 +183,7 @@ function copyOidDescription(
  * @param blob Blob.
  * @returns Hex description.
  */
-export function copyHexDescription(blob: _const<DERItem>): string | null {
+function copyHexDescription(blob: _const<DERItem>): string | null {
 	const { length } = blob;
 	if (length >= ((INT32_MAX / 3) | 0)) {
 		return null;
