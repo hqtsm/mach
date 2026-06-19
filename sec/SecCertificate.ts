@@ -167,8 +167,8 @@ export function copyContentString(
 		encoding,
 		encoding === kCFStringEncodingUTF16,
 	);
-	if (result) {
-		return result.value;
+	if (result !== null) {
+		return result;
 	}
 	return printableOnly ? null : copyHexDescription(string);
 }

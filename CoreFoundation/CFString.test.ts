@@ -1,5 +1,4 @@
-import { assertEquals, assertInstanceOf } from '@std/assert';
-import { PLString } from '@hqtsm/plist';
+import { assertEquals } from '@std/assert';
 import {
 	CFStringCreateWithBytes,
 	kCFStringEncodingASCII,
@@ -14,8 +13,7 @@ Deno.test('CFStringCreateWithBytes: kCFStringEncodingASCII valid', () => {
 	for (let i = 0; i <= 0x7F; i++) {
 		a[0] = i;
 		const str = CFStringCreateWithBytes(a, kCFStringEncodingASCII, false);
-		assertInstanceOf(str, PLString);
-		assertEquals(str.value, String.fromCharCode(i));
+		assertEquals(str, String.fromCharCode(i));
 	}
 });
 
@@ -37,8 +35,7 @@ Deno.test('CFStringCreateWithBytes: kCFStringEncodingISOLatin1', () => {
 			kCFStringEncodingISOLatin1,
 			false,
 		);
-		assertInstanceOf(str, PLString);
-		assertEquals(str.value, String.fromCharCode(i));
+		assertEquals(str, String.fromCharCode(i));
 	}
 });
 
@@ -48,8 +45,7 @@ Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF8 RAW', () => {
 		kCFStringEncodingUTF8,
 		false,
 	);
-	assertInstanceOf(str, PLString);
-	assertEquals(str.value, 'abc');
+	assertEquals(str, 'abc');
 });
 
 Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF8 BOM', () => {
@@ -58,8 +54,7 @@ Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF8 BOM', () => {
 		kCFStringEncodingUTF8,
 		false,
 	);
-	assertInstanceOf(str, PLString);
-	assertEquals(str.value, 'abc');
+	assertEquals(str, 'abc');
 });
 
 Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF8 invalid', () => {
@@ -77,8 +72,7 @@ Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF16 native', () => {
 		kCFStringEncodingUTF16,
 		false,
 	);
-	assertInstanceOf(str, PLString);
-	assertEquals(str.value, 'abc');
+	assertEquals(str, 'abc');
 });
 
 Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF16 external', () => {
@@ -91,8 +85,7 @@ Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF16 external', () => {
 		kCFStringEncodingUTF16,
 		true,
 	);
-	assertInstanceOf(str, PLString);
-	assertEquals(str.value, 'abc');
+	assertEquals(str, 'abc');
 });
 
 Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF16 BE-BOM', () => {
@@ -106,8 +99,7 @@ Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF16 BE-BOM', () => {
 		kCFStringEncodingUTF16,
 		false,
 	);
-	assertInstanceOf(str, PLString);
-	assertEquals(str.value, 'abc');
+	assertEquals(str, 'abc');
 });
 
 Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF16 LE-BOM', () => {
@@ -121,8 +113,7 @@ Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF16 LE-BOM', () => {
 		kCFStringEncodingUTF16,
 		false,
 	);
-	assertInstanceOf(str, PLString);
-	assertEquals(str.value, 'abc');
+	assertEquals(str, 'abc');
 });
 
 Deno.test('CFStringCreateWithBytes: kCFStringEncodingUTF16 invalid', () => {

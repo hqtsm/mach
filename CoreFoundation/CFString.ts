@@ -1,4 +1,3 @@
-import { PLString } from '@hqtsm/plist';
 import { BIG_ENDIAN } from '@hqtsm/struct';
 import {
 	type ArrayBufferLikeData,
@@ -6,7 +5,6 @@ import {
 	viewBytes,
 } from '../helpers/memory.ts';
 import type { UInt32 } from '../MacOSX/MacTypes.ts';
-import type { CFStringRef } from './CFBase.ts';
 
 /**
  * String encoding.
@@ -126,7 +124,7 @@ export function CFStringCreateWithBytes(
 	bytes: ArrayBufferLikeData,
 	encoding: CFStringEncoding,
 	isExternalRepresentation: boolean,
-): CFStringRef | null {
+): string | null {
 	let view = viewBytes(bytes);
 	let s = '';
 	switch (encoding) {
@@ -194,5 +192,5 @@ export function CFStringCreateWithBytes(
 			return null;
 		}
 	}
-	return new PLString(s);
+	return s;
 }
