@@ -18,7 +18,12 @@ import { memcmp } from '../libc/string.ts';
 import { DERItem } from '../libDER/DERItem.ts';
 import type { SecCertificateRef } from '../Security/SecBase.ts';
 import { SecSHA1DigestCreate, SecSHA256DigestCreate } from './SecDigest.ts';
-import { SEC_BLOB_KEY, SecCopyCertString } from './SecFrameworkStrings.ts';
+import {
+	SEC_BLOB_KEY,
+	SEC_NULL_KEY,
+	SEC_OID_TOO_LONG_KEY,
+	SecCopyCertString,
+} from './SecFrameworkStrings.ts';
 
 /**
  * X.509 certificate extension.
@@ -87,6 +92,45 @@ export class __SecCertificate {
 	}
 }
 
+const MAX_OID_SIZE = 32;
+
+/**
+ * Copy OID decimal representation.
+ *
+ * @param oid OID.
+ * @returns Decimal representation.
+ */
+export function SecDERItemCopyOIDDecimalRepresentation(
+	oid: _const<DERItem>,
+): string {
+	const { length } = oid;
+	if (!length) {
+		return SecCopyCertString(SEC_NULL_KEY);
+	}
+	if (length > MAX_OID_SIZE) {
+		return SecCopyCertString(SEC_OID_TOO_LONG_KEY);
+	}
+
+	const data = oid.data!;
+	let x = (data[0] / 40) | 0;
+	let y = (data[0] % 40) | 0;
+	if (x > 2) {
+		y += ((x - 2) * 40) | 0;
+		x = 2;
+	}
+	let result = `${x}.${y}`;
+
+	let value = 0;
+	for (let x = 1; x < length; ++x) {
+		value = (value << 7) | (data[x] & 0x7F);
+		if (!(data[x] & 0x80)) {
+			result += `.${value >>> 0}`;
+			value = 0;
+		}
+	}
+	return result;
+}
+
 /**
  * Copy hex description.
  *
@@ -95,7 +139,7 @@ export class __SecCertificate {
  */
 export function copyHexDescription(blob: _const<DERItem>): string | null {
 	const { length } = blob;
-	if (length >= ((INT32_MAX / 3) >> 0)) {
+	if (length >= ((INT32_MAX / 3) | 0)) {
 		return null;
 	}
 	const d = blob.data!;
