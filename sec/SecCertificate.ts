@@ -93,11 +93,14 @@ export class __SecCertificate {
  * @param blob Blob.
  * @returns Hex description.
  */
-export function copyHexDescription(blob: _const<DERItem>): string {
+export function copyHexDescription(blob: _const<DERItem>): string | null {
+	const { length } = blob;
+	if (length >= ((INT32_MAX / 3) >> 0)) {
+		return null;
+	}
 	const d = blob.data!;
-	const l = blob.length;
 	let r = '';
-	for (let i = 0; i < l; i++) {
+	for (let i = 0; i < length; i++) {
 		r += (i ? ' ' : '') + d[i].toString(16).toUpperCase().padStart(2, '0');
 	}
 	return r;
@@ -130,7 +133,7 @@ export function copyBlobString(
 		.replace('%@', localizedBlobType)
 		.replace('%d', String(blob.length))
 		.replace('%@', localizedQuanta)
-		.replace('%@', hex);
+		.replace('%@', hex ?? '(null)');
 }
 
 /**
@@ -154,6 +157,9 @@ export function copyContentString(
 		}
 	}
 	if (!length && printableOnly) {
+		return null;
+	}
+	if (length > INT32_MAX) {
 		return null;
 	}
 	const result = CFStringCreateWithBytes(

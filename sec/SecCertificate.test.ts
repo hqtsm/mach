@@ -26,6 +26,13 @@ export const ABCD0 = new Uint8Array([...'ABCD\0'].map((c) => c.charCodeAt(0)));
 Deno.test('copyHexDescription', () => {
 	const blob = new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength);
 	assertEquals(copyHexDescription(blob), '41 42 43 44');
+
+	assertEquals(
+		copyHexDescription(
+			new DERItem(new Uint8Ptr(new ArrayBuffer()), INT32_MAX),
+		),
+		null,
+	);
 });
 
 Deno.test('copyBlobString', () => {
@@ -37,6 +44,15 @@ Deno.test('copyBlobString', () => {
 	assertEquals(
 		copyBlobString(SEC_BYTE_STRING_KEY, SEC_BYTES_KEY, blob, true),
 		'Byte string; 4 bytes; data = 41 42 43 44',
+	);
+	assertEquals(
+		copyBlobString(
+			SEC_BYTE_STRING_KEY,
+			SEC_BYTES_KEY,
+			new DERItem(new Uint8Ptr(new ArrayBuffer()), INT32_MAX),
+			true,
+		),
+		`Byte string; ${INT32_MAX} bytes; data = (null)`,
 	);
 });
 
@@ -80,6 +96,24 @@ Deno.test('copyContentString', () => {
 			false,
 		),
 		'FF EE',
+	);
+	assertEquals(
+		copyContentString(
+			new DERItem(
+				new Proxy(new Uint8Ptr(new ArrayBuffer()), {
+					get(target, prop): unknown {
+						if (typeof prop === 'string' && /^\d+$/.test(prop)) {
+							return 1;
+						}
+						return Reflect.get(target, prop);
+					},
+				}),
+				INT32_MAX + 1,
+			),
+			kCFStringEncodingASCII,
+			false,
+		),
+		null,
 	);
 });
 
