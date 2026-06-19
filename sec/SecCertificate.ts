@@ -14,10 +14,11 @@ import {
 } from '../helpers/memory.ts';
 import type { _const, _ptr, bool } from '../libc/c.ts';
 import { INT32_MAX, type int32_t } from '../libc/stdint.ts';
+import { memcmp } from '../libc/string.ts';
 import { DERItem } from '../libDER/DERItem.ts';
 import type { SecCertificateRef } from '../Security/SecBase.ts';
 import { SecSHA1DigestCreate, SecSHA256DigestCreate } from './SecDigest.ts';
-import { memcmp } from '../libc/string.ts';
+import { SEC_BLOB_KEY, SecCopyCertString } from './SecFrameworkStrings.ts';
 
 /**
  * X.509 certificate extension.
@@ -92,7 +93,7 @@ export class __SecCertificate {
  * @param blob Blob.
  * @returns Hex description.
  */
-export function copyHexDescription(blob: _const<DERItem>): string | null {
+export function copyHexDescription(blob: _const<DERItem>): string {
 	const d = blob.data!;
 	const l = blob.length;
 	let r = '';
@@ -100,6 +101,36 @@ export function copyHexDescription(blob: _const<DERItem>): string | null {
 		r += (i ? ' ' : '') + d[i].toString(16).toUpperCase().padStart(2, '0');
 	}
 	return r;
+}
+
+/**
+ * Copy blob string.
+ *
+ * @param blobType Blob type.
+ * @param quanta Quanta.
+ * @param blob Blob.
+ * @param localized Localized.
+ * @returns Blob string.
+ */
+export function copyBlobString(
+	blobType: string,
+	quanta: string,
+	blob: _const<DERItem>,
+	localized: bool,
+): string {
+	const localizedBlobType = localized
+		? SecCopyCertString(blobType)
+		: blobType;
+	const localizedQuanta = localized ? SecCopyCertString(quanta) : quanta;
+	const blobFormat = localized
+		? SecCopyCertString(SEC_BLOB_KEY)
+		: SEC_BLOB_KEY;
+	const hex = copyHexDescription(blob);
+	return blobFormat
+		.replace('%@', localizedBlobType)
+		.replace('%d', String(blob.length))
+		.replace('%@', localizedQuanta)
+		.replace('%@', hex);
 }
 
 /**

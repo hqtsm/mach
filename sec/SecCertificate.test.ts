@@ -6,6 +6,7 @@ import { DERItem } from '../libDER/DERItem.ts';
 import { digest } from '../spec/hash.ts';
 import {
 	__SecCertificate,
+	copyBlobString,
 	copyContentString,
 	copyHexDescription,
 	copyIntegerContentDescription,
@@ -17,6 +18,7 @@ import {
 	SecCertificateExtension,
 	SecCertificateIsOidString,
 } from './SecCertificate.ts';
+import { SEC_BYTE_STRING_KEY, SEC_BYTES_KEY } from './SecFrameworkStrings.ts';
 
 export const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
 export const ABCD0 = new Uint8Array([...'ABCD\0'].map((c) => c.charCodeAt(0)));
@@ -24,6 +26,18 @@ export const ABCD0 = new Uint8Array([...'ABCD\0'].map((c) => c.charCodeAt(0)));
 Deno.test('copyHexDescription', () => {
 	const blob = new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength);
 	assertEquals(copyHexDescription(blob), '41 42 43 44');
+});
+
+Deno.test('copyBlobString', () => {
+	const blob = new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength);
+	assertEquals(
+		copyBlobString(SEC_BYTE_STRING_KEY, SEC_BYTES_KEY, blob, false),
+		'Byte string; 4 bytes; data = 41 42 43 44',
+	);
+	assertEquals(
+		copyBlobString(SEC_BYTE_STRING_KEY, SEC_BYTES_KEY, blob, true),
+		'Byte string; 4 bytes; data = 41 42 43 44',
+	);
 });
 
 Deno.test('copyContentString', () => {
