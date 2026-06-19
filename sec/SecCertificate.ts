@@ -234,7 +234,7 @@ export function copyBlobString(
  * @param printableOnly Printable only.
  * @returns Content string.
  */
-export function copyContentString(
+function copyContentString(
 	string: _const<DERItem>,
 	encoding: CFStringEncoding,
 	printableOnly: bool,

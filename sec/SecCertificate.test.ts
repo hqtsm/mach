@@ -1,14 +1,24 @@
 import { Uint8Ptr } from '@hqtsm/struct';
 import { assertEquals, assertInstanceOf } from '@std/assert';
-import { kCFStringEncodingASCII } from '../CoreFoundation/CFString.ts';
 import { INT32_MAX, INT32_MIN, UINT32_MAX } from '../libc/stdint.ts';
-import { ASN1_BOOLEAN, ASN1_INTEGER } from '../libDER/asn1Types.ts';
+import {
+	ASN1_BMP_STRING,
+	ASN1_BOOLEAN,
+	ASN1_GENERAL_STRING,
+	ASN1_IA5_STRING,
+	ASN1_INTEGER,
+	ASN1_PRINTABLE_STRING,
+	ASN1_T61_STRING,
+	ASN1_UNIVERSAL_STRING,
+	ASN1_UTF8_STRING,
+	ASN1_VIDEOTEX_STRING,
+	ASN1_VISIBLE_STRING,
+} from '../libDER/asn1Types.ts';
 import { DERItem } from '../libDER/DERItem.ts';
 import { digest } from '../spec/hash.ts';
 import {
 	__SecCertificate,
 	copyBlobString,
-	copyContentString,
 	copyDERThingContentDescription,
 	copyHexDescription,
 	copyOidDescription,
@@ -142,49 +152,58 @@ Deno.test('copyBlobString', () => {
 	);
 });
 
-Deno.test('copyContentString', () => {
+Deno.test('copyDERThingContentDescription: ASCII', () => {
+	for (const tag of [ASN1_PRINTABLE_STRING, ASN1_IA5_STRING]) {
+		assertEquals(
+			copyDERThingContentDescription(
+				tag,
+				new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength),
+				false,
+				false,
+			),
+			'ABCD',
+			String(tag),
+		);
+	}
 	assertEquals(
-		copyContentString(
-			new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength),
-			kCFStringEncodingASCII,
-			false,
-		),
-		'ABCD',
-	);
-	assertEquals(
-		copyContentString(
+		copyDERThingContentDescription(
+			ASN1_PRINTABLE_STRING,
 			new DERItem(new Uint8Ptr(ABCD0.buffer), ABCD0.byteLength),
-			kCFStringEncodingASCII,
+			false,
 			false,
 		),
 		'ABCD',
 	);
 	assertEquals(
-		copyContentString(
+		copyDERThingContentDescription(
+			ASN1_PRINTABLE_STRING,
 			new DERItem(new Uint8Ptr(new ArrayBuffer()), 0),
-			kCFStringEncodingASCII,
 			true,
+			false,
 		),
 		null,
 	);
 	assertEquals(
-		copyContentString(
+		copyDERThingContentDescription(
+			ASN1_PRINTABLE_STRING,
 			new DERItem(new Uint8Ptr(new Uint8Array([0xFF, 0xEE]).buffer), 2),
-			kCFStringEncodingASCII,
 			true,
+			false,
 		),
 		null,
 	);
 	assertEquals(
-		copyContentString(
+		copyDERThingContentDescription(
+			ASN1_PRINTABLE_STRING,
 			new DERItem(new Uint8Ptr(new Uint8Array([0xFF, 0xEE]).buffer), 2),
-			kCFStringEncodingASCII,
+			false,
 			false,
 		),
 		'FF EE',
 	);
 	assertEquals(
-		copyContentString(
+		copyDERThingContentDescription(
+			ASN1_PRINTABLE_STRING,
 			new DERItem(
 				new Proxy(new Uint8Ptr(new ArrayBuffer()), {
 					get(target, prop): unknown {
@@ -196,10 +215,76 @@ Deno.test('copyContentString', () => {
 				}),
 				INT32_MAX + 1,
 			),
-			kCFStringEncodingASCII,
+			false,
 			false,
 		),
 		null,
+	);
+});
+
+Deno.test('copyDERThingContentDescription: UTF-8', () => {
+	for (
+		const tag of [
+			ASN1_UTF8_STRING,
+			ASN1_GENERAL_STRING,
+			ASN1_UNIVERSAL_STRING,
+		]
+	) {
+		assertEquals(
+			copyDERThingContentDescription(
+				tag,
+				new DERItem(
+					new Uint8Ptr(new Uint8Array([0xC2, 0xA9]).buffer),
+					2,
+				),
+				false,
+				false,
+			),
+			// deno-lint-ignore prefer-ascii
+			'©',
+			String(tag),
+		);
+	}
+});
+
+Deno.test('copyDERThingContentDescription: Latin-1', () => {
+	for (
+		const tag of [
+			ASN1_T61_STRING,
+			ASN1_VIDEOTEX_STRING,
+			ASN1_VISIBLE_STRING,
+		]
+	) {
+		assertEquals(
+			copyDERThingContentDescription(
+				tag,
+				new DERItem(
+					new Uint8Ptr(new Uint8Array([0xFF, 0xA9]).buffer),
+					1,
+				),
+				false,
+				false,
+			),
+			'\xFF',
+			String(tag),
+		);
+	}
+});
+
+Deno.test('copyDERThingContentDescription: UTF-16', () => {
+	const data = new DataView(new ArrayBuffer(2));
+	data.setUint16(0, 0xFF);
+	assertEquals(
+		copyDERThingContentDescription(
+			ASN1_BMP_STRING,
+			new DERItem(
+				new Uint8Ptr(data.buffer),
+				2,
+			),
+			false,
+			false,
+		),
+		'\xFF',
 	);
 });
 
