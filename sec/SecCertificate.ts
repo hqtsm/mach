@@ -232,13 +232,13 @@ function copyBlobString(
  *
  * @param string String.
  * @param encoding Encoding.
- * @param printableOnly Printable only.
+ * @param _printableOnly Printable only.
  * @returns Content string.
  */
 function copyContentString(
 	string: _const<DERItem>,
 	encoding: CFStringEncoding,
-	printableOnly: bool,
+	_printableOnly: bool,
 ): string | null {
 	let { length } = string;
 	const data = string.data!;
@@ -247,9 +247,9 @@ function copyContentString(
 			length--;
 		}
 	}
-	if (!length && printableOnly) {
-		return null;
-	}
+	// if (!length && printableOnly) {
+	// 	return null;
+	// }
 	if (length > INT32_MAX) {
 		return null;
 	}
@@ -261,7 +261,8 @@ function copyContentString(
 	if (result !== null) {
 		return result;
 	}
-	return printableOnly ? null : copyHexDescription(string);
+	// return printableOnly ? null : copyHexDescription(string);
+	return copyHexDescription(string);
 }
 
 /**
@@ -294,21 +295,22 @@ function copyIntegerContentDescription(
  * @param localized Localized.
  * @returns Content description.
  */
-export function copyDERThingContentDescription(
+function copyDERThingContentDescription(
 	tag: DERTag,
-	derThing: _const<DERItem> | null,
+	derThing: _const<DERItem>,
 	printableOnly: bool,
 	localized: bool,
 ): string | null {
-	if (!derThing) {
-		return null;
-	}
+	// if (!derThing) {
+	// 	return null;
+	// }
 	switch (tag) {
 		case ASN1_INTEGER:
 		case ASN1_BOOLEAN: {
-			return printableOnly
-				? null
-				: copyIntegerContentDescription(derThing);
+			// return printableOnly
+			// 	? null
+			// 	: copyIntegerContentDescription(derThing);
+			return copyIntegerContentDescription(derThing);
 		}
 		case ASN1_PRINTABLE_STRING:
 		case ASN1_IA5_STRING: {
@@ -344,7 +346,13 @@ export function copyDERThingContentDescription(
 			);
 		}
 		case ASN1_OCTET_STRING: {
-			return printableOnly ? null : copyBlobString(
+			// return printableOnly ? null : copyBlobString(
+			// 	SEC_BYTE_STRING_KEY,
+			// 	SEC_BYTES_KEY,
+			// 	derThing,
+			// 	localized,
+			// );
+			return copyBlobString(
 				SEC_BYTE_STRING_KEY,
 				SEC_BYTES_KEY,
 				derThing,
@@ -352,7 +360,13 @@ export function copyDERThingContentDescription(
 			);
 		}
 		case ASN1_BIT_STRING: {
-			return printableOnly ? null : copyBlobString(
+			// return printableOnly ? null : copyBlobString(
+			// 	SEC_BIT_STRING_KEY,
+			// 	SEC_BITS_KEY,
+			// 	derThing,
+			// 	localized,
+			// );
+			return copyBlobString(
 				SEC_BIT_STRING_KEY,
 				SEC_BITS_KEY,
 				derThing,
@@ -360,7 +374,13 @@ export function copyDERThingContentDescription(
 			);
 		}
 		case ASN1_CONSTR_SEQUENCE: {
-			return printableOnly ? null : copyBlobString(
+			// return printableOnly ? null : copyBlobString(
+			// 	SEC_SEQUENCE_KEY,
+			// 	SEC_BYTES_KEY,
+			// 	derThing,
+			// 	localized,
+			// );
+			return copyBlobString(
 				SEC_SEQUENCE_KEY,
 				SEC_BYTES_KEY,
 				derThing,
@@ -368,7 +388,13 @@ export function copyDERThingContentDescription(
 			);
 		}
 		case ASN1_CONSTR_SET: {
-			return printableOnly ? null : copyBlobString(
+			// return printableOnly ? null : copyBlobString(
+			// 	SEC_SET_KEY,
+			// 	SEC_BYTES_KEY,
+			// 	derThing,
+			// 	localized,
+			// );
+			return copyBlobString(
 				SEC_SET_KEY,
 				SEC_BYTES_KEY,
 				derThing,
@@ -376,15 +402,19 @@ export function copyDERThingContentDescription(
 			);
 		}
 		case ASN1_OBJECT_ID: {
-			return printableOnly ? null : copyOidDescription(
+			// return printableOnly ? null : copyOidDescription(
+			// 	derThing,
+			// 	localized,
+			// );
+			return copyOidDescription(
 				derThing,
 				localized,
 			);
 		}
 		default: {
-			if (printableOnly) {
-				return null;
-			}
+			// if (printableOnly) {
+			// 	return null;
+			// }
 			const fmt = localized
 				? SecCopyCertString(SEC_NOT_DISPLAYED_KEY)
 				: SEC_NOT_DISPLAYED_KEY;

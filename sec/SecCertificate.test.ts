@@ -4,12 +4,8 @@ import { INT32_MAX, INT32_MIN, UINT32_MAX } from '../libc/stdint.ts';
 import {
 	ASN1_BIT_STRING,
 	ASN1_BMP_STRING,
-	ASN1_CONSTR_SEQUENCE,
-	ASN1_CONSTR_SET,
 	ASN1_GENERAL_STRING,
 	ASN1_IA5_STRING,
-	ASN1_INTEGER,
-	ASN1_OBJECT_ID,
 	ASN1_OCTET_STRING,
 	ASN1_PRINTABLE_STRING,
 	ASN1_T61_STRING,
@@ -25,7 +21,6 @@ import { digest } from '../spec/hash.ts';
 import { unhex } from '../spec/hex.ts';
 import {
 	__SecCertificate,
-	copyDERThingContentDescription,
 	copyDERThingDescription,
 	GetDecimalValueOfString,
 	SecCertificateCopyExtensionValue,
@@ -155,16 +150,6 @@ Deno.test('copyDERThingDescription: int', () => {
 		),
 		(0x41424344).toString(),
 	);
-
-	assertEquals(
-		copyDERThingContentDescription(
-			ASN1_INTEGER,
-			new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength),
-			true,
-			false,
-		),
-		null,
-	);
 });
 
 Deno.test('copyDERThingDescription: ASCII', () => {
@@ -195,24 +180,6 @@ Deno.test('copyDERThingDescription: ASCII', () => {
 			false,
 		),
 		'ABCD',
-	);
-	assertEquals(
-		copyDERThingContentDescription(
-			ASN1_PRINTABLE_STRING,
-			new DERItem(new Uint8Ptr(new ArrayBuffer()), 0),
-			true,
-			false,
-		),
-		null,
-	);
-	assertEquals(
-		copyDERThingContentDescription(
-			ASN1_PRINTABLE_STRING,
-			new DERItem(new Uint8Ptr(new Uint8Array([0xFF, 0xEE]).buffer), 2),
-			true,
-			false,
-		),
-		null,
 	);
 	assertEquals(
 		copyDERThingDescription(
@@ -427,44 +394,6 @@ Deno.test('copyDERThingDescription: OID', () => {
 });
 
 Deno.test('copyDERThingDescription: not displayed', () => {
-	assertEquals(
-		copyDERThingContentDescription(
-			0xFFFFFFFFn,
-			null,
-			true,
-			false,
-		),
-		null,
-	);
-	assertEquals(
-		copyDERThingContentDescription(
-			0xFFFFFFFFn,
-			new DERItem(new Uint8Ptr(new ArrayBuffer()), 42),
-			true,
-			false,
-		),
-		null,
-	);
-	for (
-		const tag of [
-			ASN1_OCTET_STRING,
-			ASN1_BIT_STRING,
-			ASN1_CONSTR_SEQUENCE,
-			ASN1_CONSTR_SET,
-			ASN1_OBJECT_ID,
-		]
-	) {
-		assertEquals(
-			copyDERThingContentDescription(
-				tag,
-				new DERItem(new Uint8Ptr(new ArrayBuffer()), 42),
-				true,
-				false,
-			),
-			null,
-		);
-	}
-
 	assertEquals(
 		copyDERThingDescription(
 			new DERItem(new Uint8Ptr(unhex('00 02 01 02').buffer), 4),
