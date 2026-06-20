@@ -220,25 +220,44 @@ Deno.test('copyDERThingContentDescription: ASCII', () => {
 		),
 		'FF EE',
 	);
-	assertEquals(
-		copyDERThingContentDescription(
-			ASN1_PRINTABLE_STRING,
-			new DERItem(
-				new Proxy(new Uint8Ptr(new ArrayBuffer()), {
-					get(target, prop): unknown {
-						if (typeof prop === 'string' && /^\d+$/.test(prop)) {
-							return 1;
-						}
-						return Reflect.get(target, prop);
-					},
-				}),
-				INT32_MAX + 1,
+});
+
+Deno.test('copyDERThingContentDescription: ASCII over', () => {
+	const data = unhex('13 84 80 00 00 00');
+
+	// Fake reading from a huge buffer.
+	const desc = Object.getOwnPropertyDescriptor(
+		Uint8Ptr.prototype,
+		'get',
+	)!;
+	Object.defineProperty(Uint8Ptr.prototype, 'get', {
+		...desc,
+		value: function get(
+			this: Uint8Ptr,
+			index: number,
+		): number {
+			if (index >= data.byteLength) {
+				return 1;
+			}
+			return Reflect.apply(desc.value, this, arguments);
+		},
+	})!;
+
+	try {
+		assertEquals(
+			copyDERThingDescription(
+				new DERItem(
+					new Uint8Ptr(data.buffer),
+					data.byteLength + INT32_MAX + 1,
+				),
+				false,
+				false,
 			),
-			false,
-			false,
-		),
-		null,
-	);
+			null,
+		);
+	} finally {
+		Object.defineProperty(Uint8Ptr.prototype, 'get', desc);
+	}
 });
 
 Deno.test('copyDERThingContentDescription: UTF-8', () => {
