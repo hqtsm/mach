@@ -268,13 +268,10 @@ Deno.test('copyDERThingContentDescription: UTF-8', () => {
 			ASN1_UNIVERSAL_STRING,
 		]
 	) {
+		const data = new Uint8Array([Number(tag), 2, 0xC2, 0xA9]);
 		assertEquals(
-			copyDERThingContentDescription(
-				tag,
-				new DERItem(
-					new Uint8Ptr(new Uint8Array([0xC2, 0xA9]).buffer),
-					2,
-				),
+			copyDERThingDescription(
+				new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
 				false,
 				false,
 			),
@@ -293,13 +290,10 @@ Deno.test('copyDERThingContentDescription: Latin-1', () => {
 			ASN1_VISIBLE_STRING,
 		]
 	) {
+		const data = new Uint8Array([Number(tag), 1, 0xFF]);
 		assertEquals(
-			copyDERThingContentDescription(
-				tag,
-				new DERItem(
-					new Uint8Ptr(new Uint8Array([0xFF, 0xA9]).buffer),
-					1,
-				),
+			copyDERThingDescription(
+				new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
 				false,
 				false,
 			),
@@ -310,32 +304,38 @@ Deno.test('copyDERThingContentDescription: Latin-1', () => {
 });
 
 Deno.test('copyDERThingContentDescription: UTF-16', () => {
-	const data = new DataView(new ArrayBuffer(2));
-	data.setUint16(0, 0xFF);
-	assertEquals(
-		copyDERThingContentDescription(
-			ASN1_BMP_STRING,
-			new DERItem(
-				new Uint8Ptr(data.buffer),
-				2,
+	{
+		const data = new DataView(new ArrayBuffer(4));
+		data.setUint8(0, Number(ASN1_BMP_STRING));
+		data.setUint8(1, 2);
+		data.setUint16(2, 0xFF);
+		assertEquals(
+			copyDERThingDescription(
+				new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
+				false,
+				false,
 			),
-			false,
-			false,
-		),
-		'\xFF',
-	);
-	assertEquals(
-		copyDERThingContentDescription(
-			ASN1_BMP_STRING,
-			new DERItem(
-				new Uint8Ptr(new Uint8Array([0x12, 0x00, 0x34]).buffer),
-				3,
+			'\xFF',
+		);
+	}
+	{
+		const data = new DataView(new ArrayBuffer(5));
+		data.setUint8(0, Number(ASN1_BMP_STRING));
+		data.setUint8(1, 3);
+		data.setUint16(2, 0x12);
+		data.setUint8(4, 0x34);
+		assertEquals(
+			copyDERThingDescription(
+				new DERItem(
+					new Uint8Ptr(data.buffer),
+					data.byteLength,
+				),
+				false,
+				false,
 			),
-			false,
-			false,
-		),
-		'12 00 34',
-	);
+			'00 12 34',
+		);
+	}
 });
 
 Deno.test('copyDERThingContentDescription: blob strings', () => {
