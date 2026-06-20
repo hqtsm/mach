@@ -19,8 +19,5 @@ export function DEROidCompare(
 	if (oid1.length !== oid2.length) {
 		return false;
 	}
-	if (!DERMemcmp(oid1.data!, oid2.data!, oid1.length)) {
-		return true;
-	}
-	return false;
+	return !DERMemcmp(oid1.data!, oid2.data!, oid1.length);
 }
