@@ -17,6 +17,8 @@ import {
 	ASN1_UTF8_STRING,
 	ASN1_VIDEOTEX_STRING,
 	ASN1_VISIBLE_STRING,
+	ONE_BYTE_ASN1_CONSTR_SEQUENCE,
+	ONE_BYTE_ASN1_CONSTR_SET,
 } from '../libDER/asn1Types.ts';
 import { DERItem } from '../libDER/DERItem.ts';
 import { digest } from '../spec/hash.ts';
@@ -342,40 +344,45 @@ Deno.test('copyDERThingDescription: UTF-16', () => {
 });
 
 Deno.test('copyDERThingDescription: blob strings', () => {
-	const short = new Uint8Array([0, 4, ...ABCD]);
+	const data = new Uint8Array([0, 4, ...ABCD]);
 
-	short[0] = Number(ASN1_OCTET_STRING);
+	data[0] = Number(ASN1_OCTET_STRING);
 	assertEquals(
 		copyDERThingDescription(
-			new DERItem(new Uint8Ptr(short.buffer), short.byteLength),
+			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
 			false,
 			false,
 		),
 		'Byte string; 4 bytes; data = 41 42 43 44',
 	);
 
-	short[0] = Number(ASN1_BIT_STRING);
+	data[0] = Number(ASN1_BIT_STRING);
 	assertEquals(
 		copyDERThingDescription(
-			new DERItem(new Uint8Ptr(short.buffer), short.byteLength),
+			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
 			false,
 			false,
 		),
 		'Bit string; 4 bits; data = 41 42 43 44',
 	);
 
-	const blob = new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength);
+	data[0] = Number(ONE_BYTE_ASN1_CONSTR_SEQUENCE);
 	assertEquals(
-		copyDERThingContentDescription(
-			ASN1_CONSTR_SEQUENCE,
-			blob,
+		copyDERThingDescription(
+			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
 			false,
 			false,
 		),
 		'Sequence; 4 bytes; data = 41 42 43 44',
 	);
+
+	data[0] = Number(ONE_BYTE_ASN1_CONSTR_SET);
 	assertEquals(
-		copyDERThingContentDescription(ASN1_CONSTR_SET, blob, false, false),
+		copyDERThingDescription(
+			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
+			false,
+			false,
+		),
 		'Set; 4 bytes; data = 41 42 43 44',
 	);
 });
