@@ -339,15 +339,29 @@ Deno.test('copyDERThingContentDescription: UTF-16', () => {
 });
 
 Deno.test('copyDERThingContentDescription: blob strings', () => {
-	const blob = new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength);
+	const short = new Uint8Array([0, 4, ...ABCD]);
+
+	short[0] = Number(ASN1_OCTET_STRING);
 	assertEquals(
-		copyDERThingContentDescription(ASN1_OCTET_STRING, blob, false, false),
+		copyDERThingDescription(
+			new DERItem(new Uint8Ptr(short.buffer), short.byteLength),
+			false,
+			false,
+		),
 		'Byte string; 4 bytes; data = 41 42 43 44',
 	);
+
+	short[0] = Number(ASN1_BIT_STRING);
 	assertEquals(
-		copyDERThingContentDescription(ASN1_BIT_STRING, blob, false, false),
+		copyDERThingDescription(
+			new DERItem(new Uint8Ptr(short.buffer), short.byteLength),
+			false,
+			false,
+		),
 		'Bit string; 4 bits; data = 41 42 43 44',
 	);
+
+	const blob = new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength);
 	assertEquals(
 		copyDERThingContentDescription(
 			ASN1_CONSTR_SEQUENCE,
@@ -361,10 +375,13 @@ Deno.test('copyDERThingContentDescription: blob strings', () => {
 		copyDERThingContentDescription(ASN1_CONSTR_SET, blob, false, false),
 		'Set; 4 bytes; data = 41 42 43 44',
 	);
+});
+
+Deno.test('copyDERThingContentDescription: blob strings over', () => {
+	const data = unhex('04 84 7F FF FF FF');
 	assertEquals(
-		copyDERThingContentDescription(
-			ASN1_OCTET_STRING,
-			new DERItem(new Uint8Ptr(new ArrayBuffer()), INT32_MAX),
+		copyDERThingDescription(
+			new DERItem(new Uint8Ptr(data.buffer), data.byteLength + INT32_MAX),
 			false,
 			true,
 		),
