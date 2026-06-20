@@ -103,7 +103,7 @@ Deno.test('copyDERThingDescription', () => {
 	);
 });
 
-Deno.test('copyDERThingContentDescription: int bool', () => {
+Deno.test('copyDERThingDescription: bool', () => {
 	assertEquals(
 		copyDERThingDescription(
 			new DERItem(new Uint8Ptr(unhex('01 00').buffer), 2),
@@ -120,6 +120,9 @@ Deno.test('copyDERThingContentDescription: int bool', () => {
 		),
 		'0',
 	);
+});
+
+Deno.test('copyDERThingDescription: int', () => {
 	assertEquals(
 		copyDERThingDescription(
 			new DERItem(new Uint8Ptr(unhex('02 01 00').buffer), 3),
@@ -162,7 +165,7 @@ Deno.test('copyDERThingContentDescription: int bool', () => {
 	);
 });
 
-Deno.test('copyDERThingContentDescription: ASCII', () => {
+Deno.test('copyDERThingDescription: ASCII', () => {
 	for (const tag of [ASN1_PRINTABLE_STRING, ASN1_IA5_STRING]) {
 		const b = new Uint8Array(ABCD.byteLength + 2);
 		b[0] = Number(tag);
@@ -222,7 +225,7 @@ Deno.test('copyDERThingContentDescription: ASCII', () => {
 	);
 });
 
-Deno.test('copyDERThingContentDescription: ASCII over', () => {
+Deno.test('copyDERThingDescription: ASCII over', () => {
 	const data = unhex('13 84 80 00 00 00');
 
 	// Fake reading from a huge buffer.
@@ -260,7 +263,7 @@ Deno.test('copyDERThingContentDescription: ASCII over', () => {
 	}
 });
 
-Deno.test('copyDERThingContentDescription: UTF-8', () => {
+Deno.test('copyDERThingDescription: UTF-8', () => {
 	for (
 		const tag of [
 			ASN1_UTF8_STRING,
@@ -282,7 +285,7 @@ Deno.test('copyDERThingContentDescription: UTF-8', () => {
 	}
 });
 
-Deno.test('copyDERThingContentDescription: Latin-1', () => {
+Deno.test('copyDERThingDescription: Latin-1', () => {
 	for (
 		const tag of [
 			ASN1_T61_STRING,
@@ -303,7 +306,7 @@ Deno.test('copyDERThingContentDescription: Latin-1', () => {
 	}
 });
 
-Deno.test('copyDERThingContentDescription: UTF-16', () => {
+Deno.test('copyDERThingDescription: UTF-16', () => {
 	{
 		const data = new DataView(new ArrayBuffer(4));
 		data.setUint8(0, Number(ASN1_BMP_STRING));
@@ -338,7 +341,7 @@ Deno.test('copyDERThingContentDescription: UTF-16', () => {
 	}
 });
 
-Deno.test('copyDERThingContentDescription: blob strings', () => {
+Deno.test('copyDERThingDescription: blob strings', () => {
 	const short = new Uint8Array([0, 4, ...ABCD]);
 
 	short[0] = Number(ASN1_OCTET_STRING);
@@ -377,7 +380,7 @@ Deno.test('copyDERThingContentDescription: blob strings', () => {
 	);
 });
 
-Deno.test('copyDERThingContentDescription: blob strings over', () => {
+Deno.test('copyDERThingDescription: blob strings over', () => {
 	const data = unhex('04 84 7F FF FF FF');
 	assertEquals(
 		copyDERThingDescription(
@@ -389,38 +392,26 @@ Deno.test('copyDERThingContentDescription: blob strings over', () => {
 	);
 });
 
-Deno.test('copyDERThingContentDescription: OID', () => {
+Deno.test('copyDERThingDescription: OID', () => {
 	assertEquals(
-		copyDERThingContentDescription(
-			ASN1_OBJECT_ID,
-			new DERItem(new Uint8Ptr(new ArrayBuffer()), 0),
+		copyDERThingDescription(
+			new DERItem(new Uint8Ptr(unhex('06 00').buffer), 2),
 			false,
 			false,
 		),
 		SEC_NULL_KEY,
 	);
 	assertEquals(
-		copyDERThingContentDescription(
-			ASN1_OBJECT_ID,
-			new DERItem(new Uint8Ptr(new ArrayBuffer()), 0),
+		copyDERThingDescription(
+			new DERItem(new Uint8Ptr(unhex('06 00').buffer), 2),
 			false,
 			true,
 		),
 		SEC_NULL_KEY,
 	);
 	assertEquals(
-		copyDERThingContentDescription(
-			ASN1_OBJECT_ID,
-			new DERItem(
-				new Uint8Ptr(
-					new Uint8Array([
-						0x2A,
-						0x03,
-						0x04,
-					]).buffer,
-				),
-				3,
-			),
+		copyDERThingDescription(
+			new DERItem(new Uint8Ptr(unhex('06 03 2A 03 04').buffer), 5),
 			false,
 			false,
 		),
