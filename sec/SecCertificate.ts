@@ -238,7 +238,7 @@ function copyBlobString(
 function copyContentString(
 	string: _const<DERItem>,
 	encoding: CFStringEncoding,
-	_printableOnly: bool,
+	_printableOnly: false,
 ): string | null {
 	let { length } = string;
 	const data = string.data!;
@@ -298,7 +298,7 @@ function copyIntegerContentDescription(
 function copyDERThingContentDescription(
 	tag: DERTag,
 	derThing: _const<DERItem>,
-	printableOnly: bool,
+	printableOnly: false,
 	localized: bool,
 ): string | null {
 	// if (!derThing) {
