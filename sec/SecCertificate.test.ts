@@ -4,7 +4,6 @@ import { INT32_MAX, INT32_MIN, UINT32_MAX } from '../libc/stdint.ts';
 import {
 	ASN1_BIT_STRING,
 	ASN1_BMP_STRING,
-	ASN1_BOOLEAN,
 	ASN1_CONSTR_SEQUENCE,
 	ASN1_CONSTR_SET,
 	ASN1_GENERAL_STRING,
@@ -21,9 +20,11 @@ import {
 } from '../libDER/asn1Types.ts';
 import { DERItem } from '../libDER/DERItem.ts';
 import { digest } from '../spec/hash.ts';
+import { unhex } from '../spec/hex.ts';
 import {
 	__SecCertificate,
 	copyDERThingContentDescription,
+	copyDERThingDescription,
 	GetDecimalValueOfString,
 	SecCertificateCopyExtensionValue,
 	SecCertificateCopyIssuerSHA256Digest,
@@ -83,34 +84,55 @@ Deno.test('SecDERItemCopyOIDDecimalRepresentation', () => {
 	);
 });
 
+Deno.test('copyDERThingDescription', () => {
+	assertEquals(
+		copyDERThingDescription(
+			new DERItem(new Uint8Ptr(new ArrayBuffer(1)), 1),
+			true,
+			false,
+		),
+		null,
+	);
+	assertEquals(
+		copyDERThingDescription(
+			new DERItem(new Uint8Ptr(new ArrayBuffer(1)), 1),
+			false,
+			false,
+		),
+		'00',
+	);
+});
+
 Deno.test('copyDERThingContentDescription: int bool', () => {
 	assertEquals(
-		copyDERThingContentDescription(
-			ASN1_BOOLEAN,
-			new DERItem(),
+		copyDERThingDescription(
+			new DERItem(new Uint8Ptr(unhex('01 00').buffer), 2),
 			false,
 			false,
 		),
 		'',
 	);
 	assertEquals(
-		copyDERThingContentDescription(
-			ASN1_INTEGER,
+		copyDERThingDescription(
+			new DERItem(new Uint8Ptr(unhex('01 01 00').buffer), 3),
+			false,
+			false,
+		),
+		'0',
+	);
+	assertEquals(
+		copyDERThingDescription(
+			new DERItem(new Uint8Ptr(unhex('02 01 00').buffer), 3),
+			false,
+			false,
+		),
+		'0',
+	);
+	assertEquals(
+		copyDERThingDescription(
 			new DERItem(
-				new Uint8Ptr(
-					new Uint8Array([
-						0x12,
-						0x34,
-						0x56,
-						0x78,
-						0x9A,
-						0xBC,
-						0xDE,
-						0xF0,
-						0x0F,
-					]).buffer,
-				),
-				9,
+				new Uint8Ptr(unhex('02 09 12 34 56 78 9A BC DE F0 0F').buffer),
+				11,
 			),
 			false,
 			false,
@@ -118,14 +140,17 @@ Deno.test('copyDERThingContentDescription: int bool', () => {
 		'12 34 56 78 9A BC DE F0 0F',
 	);
 	assertEquals(
-		copyDERThingContentDescription(
-			ASN1_INTEGER,
-			new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength),
+		copyDERThingDescription(
+			new DERItem(
+				new Uint8Ptr(unhex('02 04 41 42 43 44').buffer),
+				6,
+			),
 			false,
 			false,
 		),
 		(0x41424344).toString(),
 	);
+
 	assertEquals(
 		copyDERThingContentDescription(
 			ASN1_INTEGER,

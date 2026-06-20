@@ -36,6 +36,7 @@ import {
 	ASN1_VIDEOTEX_STRING,
 	ASN1_VISIBLE_STRING,
 } from '../libDER/asn1Types.ts';
+import { DERDecodedInfo, DERDecodeItem } from '../libDER/DER_Decode.ts';
 import { DERItem } from '../libDER/DERItem.ts';
 import type { DERTag } from '../libDER/libDER_config.ts';
 import type { SecCertificateRef } from '../Security/SecBase.ts';
@@ -392,6 +393,32 @@ export function copyDERThingContentDescription(
 				.replace('%ld', String(derThing.length));
 		}
 	}
+}
+
+/**
+ * Copy DER thing description.
+ *
+ * @param derThing DER thing.
+ * @param printableOnly Printable only.
+ * @param localized Localized.
+ * @returns Content description.
+ */
+export function copyDERThingDescription(
+	derThing: _const<DERItem>,
+	printableOnly: bool,
+	localized: bool,
+): string | null {
+	const decoded = new DERDecodedInfo();
+	const drtn = DERDecodeItem(derThing, decoded);
+	if (drtn) {
+		return printableOnly ? null : copyHexDescription(derThing);
+	}
+	return copyDERThingContentDescription(
+		decoded.tag,
+		decoded.content,
+		false,
+		localized,
+	);
 }
 
 /**
