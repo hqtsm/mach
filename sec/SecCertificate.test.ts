@@ -164,10 +164,13 @@ Deno.test('copyDERThingContentDescription: int bool', () => {
 
 Deno.test('copyDERThingContentDescription: ASCII', () => {
 	for (const tag of [ASN1_PRINTABLE_STRING, ASN1_IA5_STRING]) {
+		const b = new Uint8Array(ABCD.byteLength + 2);
+		b[0] = Number(tag);
+		b[1] = ABCD.byteLength;
+		b.set(ABCD, 2);
 		assertEquals(
-			copyDERThingContentDescription(
-				tag,
-				new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength),
+			copyDERThingDescription(
+				new DERItem(new Uint8Ptr(b.buffer), b.byteLength),
 				false,
 				false,
 			),
@@ -176,9 +179,13 @@ Deno.test('copyDERThingContentDescription: ASCII', () => {
 		);
 	}
 	assertEquals(
-		copyDERThingContentDescription(
-			ASN1_PRINTABLE_STRING,
-			new DERItem(new Uint8Ptr(ABCD0.buffer), ABCD0.byteLength),
+		copyDERThingDescription(
+			new DERItem(
+				new Uint8Ptr(
+					new Uint8Array([19, ABCD0.byteLength, ...ABCD0]).buffer,
+				),
+				2 + ABCD0.byteLength,
+			),
 			false,
 			false,
 		),
@@ -203,9 +210,11 @@ Deno.test('copyDERThingContentDescription: ASCII', () => {
 		null,
 	);
 	assertEquals(
-		copyDERThingContentDescription(
-			ASN1_PRINTABLE_STRING,
-			new DERItem(new Uint8Ptr(new Uint8Array([0xFF, 0xEE]).buffer), 2),
+		copyDERThingDescription(
+			new DERItem(
+				new Uint8Ptr(new Uint8Array([19, 2, 0xFF, 0xEE]).buffer),
+				4,
+			),
 			false,
 			false,
 		),
