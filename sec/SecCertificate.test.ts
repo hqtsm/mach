@@ -426,7 +426,7 @@ Deno.test('copyDERThingDescription: OID', () => {
 	);
 });
 
-Deno.test('copyDERThingContentDescription: not displayed', () => {
+Deno.test('copyDERThingDescription: not displayed', () => {
 	assertEquals(
 		copyDERThingContentDescription(
 			0xFFFFFFFFn,
@@ -464,23 +464,22 @@ Deno.test('copyDERThingContentDescription: not displayed', () => {
 			null,
 		);
 	}
+
 	assertEquals(
-		copyDERThingContentDescription(
-			0xFFFFFFFFn,
-			new DERItem(new Uint8Ptr(new ArrayBuffer()), 42),
+		copyDERThingDescription(
+			new DERItem(new Uint8Ptr(unhex('00 02 01 02').buffer), 4),
 			false,
 			false,
 		),
-		'not displayed (tag = 4294967295; length 42)',
+		'not displayed (tag = 0; length 2)',
 	);
 	assertEquals(
-		copyDERThingContentDescription(
-			0xFFFFFFFFn,
-			new DERItem(new Uint8Ptr(new ArrayBuffer()), 42),
+		copyDERThingDescription(
+			new DERItem(new Uint8Ptr(unhex('00 02 01 02').buffer), 4),
 			false,
 			true,
 		),
-		'not displayed (tag = 4294967295; length 42)',
+		'not displayed (tag = 0; length 2)',
 	);
 });
 
