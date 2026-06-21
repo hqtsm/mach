@@ -10,4 +10,5 @@ export * from './macho.ts';
 export * from './oidsbase.ts';
 export * from './SecAsn1Types.ts';
 export * from './SecBase.ts';
+export * from './SecBasePriv.ts';
 export * from './superblob.ts';
