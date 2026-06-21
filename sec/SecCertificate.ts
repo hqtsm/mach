@@ -38,8 +38,11 @@ import {
 } from '../libDER/asn1Types.ts';
 import { DERDecodedInfo, DERDecodeItem } from '../libDER/DER_Decode.ts';
 import { DERItem } from '../libDER/DERItem.ts';
+import { DEROidCompare } from '../libDER/oids.ts';
 import type { DERTag } from '../libDER/libDER_config.ts';
-import type { SecCertificateRef } from '../Security/SecBase.ts';
+import type { OSStatus } from '../MacOSX/MacTypes.ts';
+import { errSecSuccess, type SecCertificateRef } from '../Security/SecBase.ts';
+import { errSecInvalidCertificate } from '../Security/SecBasePriv.ts';
 import { SecSHA1DigestCreate, SecSHA256DigestCreate } from './SecDigest.ts';
 import {
 	SEC_BIT_STRING_KEY,
@@ -449,6 +452,52 @@ export function copyDERThingDescription(
 		false,
 		localized,
 	);
+}
+
+/**
+ * ATV context.
+ */
+interface ATV_Context {
+	/**
+	 * Attribute OID.
+	 */
+	attributeOID: DERItem;
+
+	/**
+	 * Result.
+	 */
+	result: string | null;
+}
+
+/**
+ * Copy attribute value from X.501 name.
+ *
+ * @param context Context.
+ * @param type Type.
+ * @param value Value.
+ * @param _rdnIX RDN index.
+ * @param localized Localized.
+ * @returns Status.
+ */
+export function copyAttributeValueFromX501Name(
+	context: ATV_Context,
+	type: _const<DERItem>,
+	value: _const<DERItem>,
+	_rdnIX: CFIndex,
+	localized: bool,
+): OSStatus {
+	if (DEROidCompare(type, context.attributeOID)) {
+		const string = copyDERThingDescription(
+			value,
+			true,
+			localized,
+		);
+		if (string === null) {
+			return errSecInvalidCertificate;
+		}
+		context.result = string;
+	}
+	return errSecSuccess;
 }
 
 /**

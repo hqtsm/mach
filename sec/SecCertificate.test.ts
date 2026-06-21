@@ -17,10 +17,13 @@ import {
 	ONE_BYTE_ASN1_CONSTR_SET,
 } from '../libDER/asn1Types.ts';
 import { DERItem } from '../libDER/DERItem.ts';
+import { errSecSuccess } from '../Security/SecBase.ts';
+import { errSecInvalidCertificate } from '../Security/SecBasePriv.ts';
 import { digest } from '../spec/hash.ts';
 import { unhex } from '../spec/hex.ts';
 import {
 	__SecCertificate,
+	copyAttributeValueFromX501Name,
 	copyDERThingDescription,
 	GetDecimalValueOfString,
 	SecCertificateCopyExtensionValue,
@@ -33,8 +36,24 @@ import {
 } from './SecCertificate.ts';
 import { SEC_NULL_KEY, SEC_OID_TOO_LONG_KEY } from './SecFrameworkStrings.ts';
 
-export const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
-export const ABCD0 = new Uint8Array([...'ABCD\0'].map((c) => c.charCodeAt(0)));
+/**
+ * ATV context.
+ */
+interface ATV_Context {
+	/**
+	 * Attribute OID.
+	 */
+	attributeOID: DERItem;
+
+	/**
+	 * Result.
+	 */
+	result: string | null;
+}
+
+const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
+const ABCD0 = new Uint8Array([...'ABCD\0'].map((c) => c.charCodeAt(0)));
+const itemABCD = new DERItem(new Uint8Ptr(ABCD.buffer), ABCD.byteLength);
 
 Deno.test('SecDERItemCopyOIDDecimalRepresentation', () => {
 	assertEquals(
@@ -81,15 +100,23 @@ Deno.test('SecDERItemCopyOIDDecimalRepresentation', () => {
 	);
 });
 
-Deno.test('copyDERThingDescription', () => {
+Deno.test('copyAttributeValueFromX501Name', () => {
+	const context: ATV_Context = {
+		attributeOID: itemABCD,
+		result: null,
+	};
+
 	assertEquals(
-		copyDERThingDescription(
+		copyAttributeValueFromX501Name(
+			context,
+			itemABCD,
 			new DERItem(new Uint8Ptr(new ArrayBuffer(1)), 1),
-			true,
+			0,
 			false,
 		),
-		null,
+		errSecInvalidCertificate,
 	);
+
 	assertEquals(
 		copyDERThingDescription(
 			new DERItem(new Uint8Ptr(new ArrayBuffer(1)), 1),
@@ -100,101 +127,150 @@ Deno.test('copyDERThingDescription', () => {
 	);
 });
 
-Deno.test('copyDERThingDescription: bool', () => {
+Deno.test('copyAttributeValueFromX501Name: bool', () => {
+	const context: ATV_Context = {
+		attributeOID: itemABCD,
+		result: null,
+	};
+
 	assertEquals(
-		copyDERThingDescription(
+		copyAttributeValueFromX501Name(
+			context,
+			itemABCD,
 			new DERItem(new Uint8Ptr(unhex('01 00').buffer), 2),
-			false,
+			0,
 			false,
 		),
-		'',
+		errSecSuccess,
 	);
+	assertEquals(context.result, '');
+
 	assertEquals(
-		copyDERThingDescription(
+		copyAttributeValueFromX501Name(
+			context,
+			itemABCD,
 			new DERItem(new Uint8Ptr(unhex('01 01 00').buffer), 3),
-			false,
+			0,
 			false,
 		),
-		'0',
+		errSecSuccess,
 	);
+	assertEquals(context.result, '0');
 });
 
-Deno.test('copyDERThingDescription: int', () => {
+Deno.test('copyAttributeValueFromX501Name: int', () => {
+	const context: ATV_Context = {
+		attributeOID: itemABCD,
+		result: null,
+	};
+
 	assertEquals(
-		copyDERThingDescription(
+		copyAttributeValueFromX501Name(
+			context,
+			itemABCD,
 			new DERItem(new Uint8Ptr(unhex('02 01 00').buffer), 3),
-			false,
+			0,
 			false,
 		),
-		'0',
+		errSecSuccess,
 	);
+	assertEquals(context.result, '0');
+
 	assertEquals(
-		copyDERThingDescription(
+		copyAttributeValueFromX501Name(
+			context,
+			itemABCD,
 			new DERItem(
 				new Uint8Ptr(unhex('02 09 12 34 56 78 9A BC DE F0 0F').buffer),
 				11,
 			),
-			false,
+			0,
 			false,
 		),
-		'12 34 56 78 9A BC DE F0 0F',
+		errSecSuccess,
 	);
+	assertEquals(context.result, '12 34 56 78 9A BC DE F0 0F');
+
 	assertEquals(
-		copyDERThingDescription(
+		copyAttributeValueFromX501Name(
+			context,
+			itemABCD,
 			new DERItem(
 				new Uint8Ptr(unhex('02 04 41 42 43 44').buffer),
 				6,
 			),
-			false,
+			0,
 			false,
 		),
-		(0x41424344).toString(),
+		errSecSuccess,
 	);
+	assertEquals(context.result, (0x41424344).toString());
 });
 
-Deno.test('copyDERThingDescription: ASCII', () => {
+Deno.test('copyAttributeValueFromX501Name: ASCII', () => {
+	const context: ATV_Context = {
+		attributeOID: itemABCD,
+		result: null,
+	};
+
 	for (const tag of [ASN1_PRINTABLE_STRING, ASN1_IA5_STRING]) {
 		const b = new Uint8Array(ABCD.byteLength + 2);
 		b[0] = Number(tag);
 		b[1] = ABCD.byteLength;
 		b.set(ABCD, 2);
+		context.result = '?';
 		assertEquals(
-			copyDERThingDescription(
+			copyAttributeValueFromX501Name(
+				context,
+				itemABCD,
 				new DERItem(new Uint8Ptr(b.buffer), b.byteLength),
-				false,
+				0,
 				false,
 			),
-			'ABCD',
-			String(tag),
+			errSecSuccess,
 		);
+		assertEquals(context.result, 'ABCD', String(tag));
 	}
+
+	context.result = null;
 	assertEquals(
-		copyDERThingDescription(
+		copyAttributeValueFromX501Name(
+			context,
+			itemABCD,
 			new DERItem(
 				new Uint8Ptr(
 					new Uint8Array([19, ABCD0.byteLength, ...ABCD0]).buffer,
 				),
 				2 + ABCD0.byteLength,
 			),
-			false,
+			0,
 			false,
 		),
-		'ABCD',
+		errSecSuccess,
 	);
+	assertEquals(context.result, 'ABCD');
+
 	assertEquals(
-		copyDERThingDescription(
+		copyAttributeValueFromX501Name(
+			context,
+			itemABCD,
 			new DERItem(
 				new Uint8Ptr(new Uint8Array([19, 2, 0xFF, 0xEE]).buffer),
 				4,
 			),
-			false,
+			0,
 			false,
 		),
-		'FF EE',
+		errSecSuccess,
 	);
+	assertEquals(context.result, 'FF EE');
 });
 
-Deno.test('copyDERThingDescription: ASCII over', () => {
+Deno.test('copyAttributeValueFromX501Name: ASCII over', () => {
+	const context: ATV_Context = {
+		attributeOID: itemABCD,
+		result: null,
+	};
 	const data = unhex('13 84 80 00 00 00');
 
 	// Fake reading from a huge buffer.
@@ -217,22 +293,29 @@ Deno.test('copyDERThingDescription: ASCII over', () => {
 
 	try {
 		assertEquals(
-			copyDERThingDescription(
+			copyAttributeValueFromX501Name(
+				context,
+				itemABCD,
 				new DERItem(
 					new Uint8Ptr(data.buffer),
 					data.byteLength + INT32_MAX + 1,
 				),
-				false,
+				0,
 				false,
 			),
-			null,
+			errSecInvalidCertificate,
 		);
 	} finally {
 		Object.defineProperty(Uint8Ptr.prototype, 'get', desc);
 	}
 });
 
-Deno.test('copyDERThingDescription: UTF-8', () => {
+Deno.test('copyAttributeValueFromX501Name: UTF-8', () => {
+	const context: ATV_Context = {
+		attributeOID: itemABCD,
+		result: null,
+	};
+	const data = new Uint8Array([0, 2, 0xC2, 0xA9]);
 	for (
 		const tag of [
 			ASN1_UTF8_STRING,
@@ -240,21 +323,30 @@ Deno.test('copyDERThingDescription: UTF-8', () => {
 			ASN1_UNIVERSAL_STRING,
 		]
 	) {
-		const data = new Uint8Array([Number(tag), 2, 0xC2, 0xA9]);
+		data[0] = Number(tag);
+		context.result = null;
 		assertEquals(
-			copyDERThingDescription(
+			copyAttributeValueFromX501Name(
+				context,
+				itemABCD,
 				new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
-				false,
+				0,
 				false,
 			),
-			// deno-lint-ignore prefer-ascii
-			'©',
+			errSecSuccess,
 			String(tag),
 		);
+		// deno-lint-ignore prefer-ascii
+		assertEquals(context.result, '©', String(tag));
 	}
 });
 
-Deno.test('copyDERThingDescription: Latin-1', () => {
+Deno.test('copyAttributeValueFromX501Name: Latin-1', () => {
+	const context: ATV_Context = {
+		attributeOID: itemABCD,
+		result: null,
+	};
+	const data = new Uint8Array([0, 1, 0xFF]);
 	for (
 		const tag of [
 			ASN1_T61_STRING,
@@ -262,33 +354,44 @@ Deno.test('copyDERThingDescription: Latin-1', () => {
 			ASN1_VISIBLE_STRING,
 		]
 	) {
-		const data = new Uint8Array([Number(tag), 1, 0xFF]);
+		data[0] = Number(tag);
+		context.result = null;
 		assertEquals(
-			copyDERThingDescription(
+			copyAttributeValueFromX501Name(
+				context,
+				itemABCD,
 				new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
-				false,
+				0,
 				false,
 			),
-			'\xFF',
+			errSecSuccess,
 			String(tag),
 		);
+		assertEquals(context.result, '\xFF', String(tag));
 	}
 });
 
-Deno.test('copyDERThingDescription: UTF-16', () => {
+Deno.test('copyAttributeValueFromX501Name: UTF-16', () => {
+	const context: ATV_Context = {
+		attributeOID: itemABCD,
+		result: null,
+	};
 	{
 		const data = new DataView(new ArrayBuffer(4));
 		data.setUint8(0, Number(ASN1_BMP_STRING));
 		data.setUint8(1, 2);
 		data.setUint16(2, 0xFF);
 		assertEquals(
-			copyDERThingDescription(
+			copyAttributeValueFromX501Name(
+				context,
+				itemABCD,
 				new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
-				false,
+				0,
 				false,
 			),
-			'\xFF',
+			errSecSuccess,
 		);
+		assertEquals(context.result, '\xFF');
 	}
 	{
 		const data = new DataView(new ArrayBuffer(5));
@@ -297,71 +400,98 @@ Deno.test('copyDERThingDescription: UTF-16', () => {
 		data.setUint16(2, 0x12);
 		data.setUint8(4, 0x34);
 		assertEquals(
-			copyDERThingDescription(
-				new DERItem(
-					new Uint8Ptr(data.buffer),
-					data.byteLength,
-				),
-				false,
+			copyAttributeValueFromX501Name(
+				context,
+				itemABCD,
+				new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
+				0,
 				false,
 			),
-			'00 12 34',
+			errSecSuccess,
 		);
+		assertEquals(context.result, '00 12 34');
 	}
 });
 
-Deno.test('copyDERThingDescription: blob strings', () => {
+Deno.test('copyAttributeValueFromX501Name: blob strings', () => {
+	const context: ATV_Context = {
+		attributeOID: itemABCD,
+		result: null,
+	};
 	const data = new Uint8Array([0, 4, ...ABCD]);
 
 	data[0] = Number(ASN1_OCTET_STRING);
 	assertEquals(
-		copyDERThingDescription(
+		copyAttributeValueFromX501Name(
+			context,
+			itemABCD,
 			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
-			false,
+			0,
 			false,
 		),
-		'Byte string; 4 bytes; data = 41 42 43 44',
+		errSecSuccess,
 	);
+	assertEquals(context.result, 'Byte string; 4 bytes; data = 41 42 43 44');
 
 	data[0] = Number(ASN1_BIT_STRING);
 	assertEquals(
-		copyDERThingDescription(
+		copyAttributeValueFromX501Name(
+			context,
+			itemABCD,
 			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
-			false,
+			0,
 			false,
 		),
-		'Bit string; 4 bits; data = 41 42 43 44',
+		errSecSuccess,
 	);
+	assertEquals(context.result, 'Bit string; 4 bits; data = 41 42 43 44');
 
 	data[0] = Number(ONE_BYTE_ASN1_CONSTR_SEQUENCE);
 	assertEquals(
-		copyDERThingDescription(
+		copyAttributeValueFromX501Name(
+			context,
+			itemABCD,
 			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
-			false,
+			0,
 			false,
 		),
-		'Sequence; 4 bytes; data = 41 42 43 44',
+		errSecSuccess,
 	);
+	assertEquals(context.result, 'Sequence; 4 bytes; data = 41 42 43 44');
 
 	data[0] = Number(ONE_BYTE_ASN1_CONSTR_SET);
 	assertEquals(
-		copyDERThingDescription(
+		copyAttributeValueFromX501Name(
+			context,
+			itemABCD,
 			new DERItem(new Uint8Ptr(data.buffer), data.byteLength),
-			false,
+			0,
 			false,
 		),
-		'Set; 4 bytes; data = 41 42 43 44',
+		errSecSuccess,
 	);
+	assertEquals(context.result, 'Set; 4 bytes; data = 41 42 43 44');
 });
 
-Deno.test('copyDERThingDescription: blob strings over', () => {
+Deno.test('copyAttributeValueFromX501Name: blob strings over', () => {
+	const context: ATV_Context = {
+		attributeOID: itemABCD,
+		result: null,
+	};
 	const data = unhex('04 84 7F FF FF FF');
+
 	assertEquals(
-		copyDERThingDescription(
+		copyAttributeValueFromX501Name(
+			context,
+			itemABCD,
 			new DERItem(new Uint8Ptr(data.buffer), data.byteLength + INT32_MAX),
+			0,
 			false,
-			true,
 		),
+		errSecSuccess,
+	);
+	assertEquals(
+		context.result,
 		`Byte string; ${INT32_MAX} bytes; data = (null)`,
 	);
 });
