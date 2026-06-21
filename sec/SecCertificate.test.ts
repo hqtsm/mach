@@ -496,50 +496,54 @@ Deno.test('copyAttributeValueFromX501Name: blob strings over', () => {
 	);
 });
 
-Deno.test('copyDERThingDescription: OID', () => {
+Deno.test('copyAttributeValueFromX501Name: OID', () => {
+	const context: ATV_Context = {
+		attributeOID: itemABCD,
+		result: null,
+	};
+
 	assertEquals(
-		copyDERThingDescription(
+		copyAttributeValueFromX501Name(
+			context,
+			itemABCD,
 			new DERItem(new Uint8Ptr(unhex('06 00').buffer), 2),
-			false,
+			0,
 			false,
 		),
-		SEC_NULL_KEY,
+		errSecSuccess,
 	);
+	assertEquals(context.result, SEC_NULL_KEY);
+
 	assertEquals(
-		copyDERThingDescription(
-			new DERItem(new Uint8Ptr(unhex('06 00').buffer), 2),
-			false,
-			true,
-		),
-		SEC_NULL_KEY,
-	);
-	assertEquals(
-		copyDERThingDescription(
+		copyAttributeValueFromX501Name(
+			context,
+			itemABCD,
 			new DERItem(new Uint8Ptr(unhex('06 03 2A 03 04').buffer), 5),
-			false,
+			0,
 			false,
 		),
-		'1.2.3.4',
+		errSecSuccess,
 	);
+	assertEquals(context.result, '1.2.3.4');
 });
 
-Deno.test('copyDERThingDescription: not displayed', () => {
+Deno.test('copyAttributeValueFromX501Name: not displayed', () => {
+	const context: ATV_Context = {
+		attributeOID: itemABCD,
+		result: null,
+	};
+
 	assertEquals(
-		copyDERThingDescription(
+		copyAttributeValueFromX501Name(
+			context,
+			itemABCD,
 			new DERItem(new Uint8Ptr(unhex('00 02 01 02').buffer), 4),
-			false,
+			0,
 			false,
 		),
-		'not displayed (tag = 0; length 2)',
+		errSecSuccess,
 	);
-	assertEquals(
-		copyDERThingDescription(
-			new DERItem(new Uint8Ptr(unhex('00 02 01 02').buffer), 4),
-			false,
-			true,
-		),
-		'not displayed (tag = 0; length 2)',
-	);
+	assertEquals(context.result, 'not displayed (tag = 0; length 2)');
 });
 
 Deno.test('SecCertificateCopySHA1Digest', async () => {
