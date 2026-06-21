@@ -24,7 +24,6 @@ import { unhex } from '../spec/hex.ts';
 import {
 	__SecCertificate,
 	copyAttributeValueFromX501Name,
-	copyDERThingDescription,
 	GetDecimalValueOfString,
 	SecCertificateCopyExtensionValue,
 	SecCertificateCopyIssuerSHA256Digest,
@@ -115,15 +114,6 @@ Deno.test('copyAttributeValueFromX501Name', () => {
 			false,
 		),
 		errSecInvalidCertificate,
-	);
-
-	assertEquals(
-		copyDERThingDescription(
-			new DERItem(new Uint8Ptr(new ArrayBuffer(1)), 1),
-			false,
-			false,
-		),
-		'00',
 	);
 });
 

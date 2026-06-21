@@ -436,7 +436,7 @@ function copyDERThingContentDescription(
  * @param localized Localized.
  * @returns Content description.
  */
-export function copyDERThingDescription(
+function copyDERThingDescription(
 	derThing: _const<DERItem>,
 	printableOnly: bool,
 	localized: bool,
