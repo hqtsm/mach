@@ -1,3 +1,5 @@
+export { SecSHA1DigestCreate, SecSHA256DigestCreate } from './SecDigest.ts';
+
 /**
  * String.
  *

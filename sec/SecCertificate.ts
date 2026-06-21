@@ -43,7 +43,7 @@ import type { DERTag } from '../libDER/libDER_config.ts';
 import type { OSStatus } from '../MacOSX/MacTypes.ts';
 import { errSecSuccess, type SecCertificateRef } from '../Security/SecBase.ts';
 import { errSecInvalidCertificate } from '../Security/SecBasePriv.ts';
-import { SecSHA1DigestCreate, SecSHA256DigestCreate } from './SecDigest.ts';
+import { SecSHA1DigestCreate, SecSHA256DigestCreate } from './SecFramework.ts';
 import {
 	SEC_BIT_STRING_KEY,
 	SEC_BITS_KEY,
