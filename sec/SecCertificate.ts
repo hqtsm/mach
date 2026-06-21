@@ -487,11 +487,7 @@ export function copyAttributeValueFromX501Name(
 	localized: bool,
 ): OSStatus {
 	if (DEROidCompare(type, context.attributeOID)) {
-		const string = copyDERThingDescription(
-			value,
-			true,
-			localized,
-		);
+		const string = copyDERThingDescription(value, true, localized);
 		if (string === null) {
 			return errSecInvalidCertificate;
 		}
