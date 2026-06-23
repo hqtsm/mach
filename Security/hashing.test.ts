@@ -12,7 +12,7 @@ import {
 	kCCDigestSHA3_256,
 	kCCDigestSHA3_384,
 	kCCDigestSHA3_512,
-} from '../CommonCrypto/Private/CommonDigestSPI.ts';
+} from '../CommonCrypto/CommonDigestSPI.ts';
 import { ENOMEM } from '../libc/errno.ts';
 import { assertThrowsUnixError } from '../spec/assert.ts';
 import { hex } from '../spec/hex.ts';

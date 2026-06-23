@@ -1,4 +1,4 @@
-import { kCCDigestMax } from './Private/CommonDigestSPI.ts';
+import { kCCDigestMax } from './CommonDigestSPI.ts';
 
 /**
  * The maximum number of digest algorithms supported by CommonCrypto.

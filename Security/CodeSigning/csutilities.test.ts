@@ -1,6 +1,6 @@
 import { Uint8Ptr } from '@hqtsm/struct';
 import { assertEquals } from '@std/assert';
-import { kCCDigestSHA1 } from '../../CommonCrypto/Private/CommonDigestSPI.ts';
+import { kCCDigestSHA1 } from '../../CommonCrypto/CommonDigestSPI.ts';
 import {
 	__SecCertificate,
 	SecCertificateCreateOidDataFromString,

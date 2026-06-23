@@ -29,7 +29,7 @@ import {
 	kCCDigestSHA256,
 	kCCDigestSHA384,
 	kCCDigestSHA512,
-} from './Private/CommonDigestSPI.ts';
+} from './CommonDigestSPI.ts';
 
 /**
  * 32-bit insigned integer.

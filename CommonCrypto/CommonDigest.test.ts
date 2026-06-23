@@ -19,23 +19,6 @@ import {
 } from '../spec/hash.ts';
 import { hex } from '../spec/hex.ts';
 import {
-	kCCDigestMax,
-	kCCDigestMD2,
-	kCCDigestMD4,
-	kCCDigestMD5,
-	kCCDigestNone,
-	kCCDigestRMD160,
-	kCCDigestSHA1,
-	kCCDigestSHA224,
-	kCCDigestSHA256,
-	kCCDigestSHA384,
-	kCCDigestSHA3_224,
-	kCCDigestSHA3_256,
-	kCCDigestSHA3_384,
-	kCCDigestSHA3_512,
-	kCCDigestSHA512,
-} from './Private/CommonDigestSPI.ts';
-import {
 	kCCCallSequenceError,
 	kCCParamError,
 	kCCSuccess,
@@ -57,6 +40,23 @@ import {
 	CCDigestReset,
 	CCDigestUpdate,
 } from './CommonDigest.ts';
+import {
+	kCCDigestMax,
+	kCCDigestMD2,
+	kCCDigestMD4,
+	kCCDigestMD5,
+	kCCDigestNone,
+	kCCDigestRMD160,
+	kCCDigestSHA1,
+	kCCDigestSHA224,
+	kCCDigestSHA256,
+	kCCDigestSHA384,
+	kCCDigestSHA3_224,
+	kCCDigestSHA3_256,
+	kCCDigestSHA3_384,
+	kCCDigestSHA3_512,
+	kCCDigestSHA512,
+} from './CommonDigestSPI.ts';
 
 Deno.test('CCDigestInit', () => {
 	const ctx = new CCDigestRef();

@@ -7,7 +7,7 @@ import {
 	type CCDigestRef,
 	CCDigestUpdate,
 } from '../CommonCrypto/CommonDigest.ts';
-import type { CCDigestAlg } from '../CommonCrypto/Private/CommonDigestSPI.ts';
+import type { CCDigestAlg } from '../CommonCrypto/CommonDigestSPI.ts';
 import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
 import type { SizeAsyncIterator, SizeIterator } from '../helpers/iterator.ts';
 import { type ArrayBufferData, pointerBytes } from '../helpers/memory.ts';

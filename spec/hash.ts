@@ -6,7 +6,7 @@ import {
 	kCCDigestSHA256,
 	kCCDigestSHA384,
 	kCCDigestSHA512,
-} from '../CommonCrypto/Private/CommonDigestSPI.ts';
+} from '../CommonCrypto/CommonDigestSPI.ts';
 import type {
 	SubtleCrypto,
 	SubtleCryptoDigestAlgorithm,

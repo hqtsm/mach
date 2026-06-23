@@ -1,4 +1,4 @@
-import type { uint32_t } from '../../libc/stdint.ts';
+import type { uint32_t } from '../libc/stdint.ts';
 
 // CCDigestAlgorithm:
 // enum {

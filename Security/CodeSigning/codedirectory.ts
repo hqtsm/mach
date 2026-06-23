@@ -15,7 +15,7 @@ import {
 	kCCDigestSHA1,
 	kCCDigestSHA256,
 	kCCDigestSHA384,
-} from '../../CommonCrypto/Private/CommonDigestSPI.ts';
+} from '../../CommonCrypto/CommonDigestSPI.ts';
 import type { SubtleCryptoDigest } from '../../helpers/crypto.ts';
 import {
 	sizeAsyncIterators,

@@ -8,7 +8,7 @@ import {
 import {
 	kCCDigestSHA1,
 	kCCDigestSHA256,
-} from '../CommonCrypto/Private/CommonDigestSPI.ts';
+} from '../CommonCrypto/CommonDigestSPI.ts';
 import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
 import { INT32_MAX } from '../libc/stdint.ts';
 
