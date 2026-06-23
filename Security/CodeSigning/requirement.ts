@@ -7,7 +7,7 @@ import { type ArrayBufferLikeData, viewBytes } from '../../helpers/memory.ts';
 import { CS_VALIDATION_CATEGORY_INVALID } from '../../kern/cs_blobs.ts';
 import type { _const, bool, int, uint } from '../../libc/c.ts';
 import type { uint32_t, uint8_t } from '../../libc/stdint.ts';
-import { Blob } from '../blob.ts';
+import { Security_Blob } from '../blob.ts';
 import {
 	kSecCodeSignatureNoHash,
 	type SecCSDigestAlgorithm,
@@ -16,26 +16,26 @@ import {
 	kSecCodeMagicRequirement,
 	kSecCodeMagicRequirementSet,
 } from '../CSCommonPriv.ts';
-import type { Endian } from '../endian.ts';
+import type { Security_Endian } from '../endian.ts';
 import type { SecCertificateRef } from '../SecBase.ts';
-import { SuperBlob, SuperBlob_Maker } from '../superblob.ts';
-import type { CodeDirectory } from './codedirectory.ts';
+import { Security_SuperBlob, Security_SuperBlob_Maker } from '../superblob.ts';
+import type { Security_CodeSigning_CodeDirectory } from './codedirectory.ts';
 
 /**
  * Requirement kind.
  */
-export type RequirementKind =
-	| typeof Requirement.exprForm
-	| typeof Requirement.lwcrForm;
+export type Security_CodeSigning_RequirementKind =
+	| typeof Security_CodeSigning_Requirement.exprForm
+	| typeof Security_CodeSigning_Requirement.lwcrForm;
 
 /**
  * Single requirement.
  *
  * @template TArrayBuffer Buffer type.
  */
-export class Requirement<
+export class Security_CodeSigning_Requirement<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
-> extends Blob<TArrayBuffer> {
+> extends Security_Blob<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicRequirement;
 
 	/**
@@ -54,7 +54,9 @@ export class Requirement<
 	 * @param _this This.
 	 * @returns Kind.
 	 */
-	public static kind(_this: Requirement): RequirementKind;
+	public static kind(
+		_this: Security_CodeSigning_Requirement,
+	): Security_CodeSigning_RequirementKind;
 
 	/**
 	 * Set kind.
@@ -62,7 +64,10 @@ export class Requirement<
 	 * @param _this This.
 	 * @param k Kind.
 	 */
-	public static kind(_this: Requirement, k: RequirementKind): void;
+	public static kind(
+		_this: Security_CodeSigning_Requirement,
+		k: Security_CodeSigning_RequirementKind,
+	): void;
 
 	/**
 	 * Get or set kind.
@@ -72,11 +77,11 @@ export class Requirement<
 	 * @returns Kind on get or undefined on set.
 	 */
 	public static kind(
-		_this: Requirement,
-		k?: RequirementKind,
-	): RequirementKind | void {
+		_this: Security_CodeSigning_Requirement,
+		k?: Security_CodeSigning_RequirementKind,
+	): Security_CodeSigning_RequirementKind | void {
 		if (k === undefined) {
-			return _this.mKind as RequirementKind;
+			return _this.mKind as Security_CodeSigning_RequirementKind;
 		}
 		_this.mKind = k >>> 0;
 	}
@@ -99,10 +104,10 @@ export class Requirement<
 	/**
 	 * Requirement kind.
 	 */
-	declare private mKind: Endian<uint32_t>;
+	declare private mKind: Security_Endian<uint32_t>;
 
 	static {
-		toStringTag(this, 'Requirement');
+		toStringTag(this, 'Security_CodeSigning_Requirement');
 		uint32BE(this, 'mKind' as never);
 		constant(this, 'BYTE_LENGTH');
 		constant(this, 'typeMagic');
@@ -117,7 +122,7 @@ export class Requirement<
 /**
  * Interpretation context.
  */
-export class Requirement_Context {
+export class Security_CodeSigning_Requirement_Context {
 	/**
 	 * Constructor.
 	 */
@@ -147,7 +152,7 @@ export class Requirement_Context {
 		infoDict: CFDictionaryRef | null,
 		entitlementDict: CFDictionaryRef | null,
 		ident: ArrayBufferLikeData,
-		dir: _const<CodeDirectory | null>,
+		dir: _const<Security_CodeSigning_CodeDirectory | null>,
 		packageChecksum: CFDataRef | null,
 		packageAlgorithm: SecCSDigestAlgorithm,
 		force_platform: bool,
@@ -184,7 +189,7 @@ export class Requirement_Context {
 		infoDict?: CFDictionaryRef | null,
 		entitlementDict?: CFDictionaryRef | null,
 		ident?: ArrayBufferLikeData,
-		dir?: _const<CodeDirectory | null>,
+		dir?: _const<Security_CodeSigning_CodeDirectory | null>,
 		packageChecksum?: CFDataRef | null,
 		packageAlgorithm?: SecCSDigestAlgorithm,
 		force_platform?: bool,
@@ -256,7 +261,7 @@ export class Requirement_Context {
 	/**
 	 * Code directory.
 	 */
-	public directory: _const<CodeDirectory> | null;
+	public directory: _const<Security_CodeSigning_CodeDirectory> | null;
 
 	/**
 	 * Package checksum.
@@ -316,7 +321,7 @@ export class Requirement_Context {
 	 * @returns Cert or null.
 	 */
 	public static cert(
-		_this: Requirement_Context,
+		_this: Security_CodeSigning_Requirement_Context,
 		ix: int,
 	): SecCertificateRef | null {
 		const { certs } = _this;
@@ -329,13 +334,15 @@ export class Requirement_Context {
 	 * @param _this This.
 	 * @returns Cert count, including root.
 	 */
-	public static certCount(_this: Requirement_Context): uint {
+	public static certCount(
+		_this: Security_CodeSigning_Requirement_Context,
+	): uint {
 		const { certs } = _this;
 		return certs ? certs.length : 0;
 	}
 
 	static {
-		toStringTag(this, 'Requirement_Context');
+		toStringTag(this, 'Security_CodeSigning_Requirement_Context');
 	}
 }
 
@@ -345,17 +352,17 @@ export class Requirement_Context {
 /**
  * Opcode flag mask.
  */
-export const opFlagMask = 0xFF000000;
+export const Security_CodeSigning_opFlagMask = 0xFF000000;
 
 /**
  * Opcode generic false.
  */
-export const opGenericFalse = 0x80000000;
+export const Security_CodeSigning_opGenericFalse = 0x80000000;
 
 /**
  * Opcode generic skip.
  */
-export const opGenericSkip = 0x40000000;
+export const Security_CodeSigning_opGenericSkip = 0x40000000;
 
 // }
 
@@ -364,157 +371,157 @@ export const opGenericSkip = 0x40000000;
 /**
  * Expression opcode.
  */
-export type ExprOp =
-	| typeof opFalse
-	| typeof opTrue
-	| typeof opIdent
-	| typeof opAppleAnchor
-	| typeof opAnchorHash
-	| typeof opInfoKeyValue
-	| typeof opAnd
-	| typeof opOr
-	| typeof opCDHash
-	| typeof opNot
-	| typeof opInfoKeyField
-	| typeof opCertField
-	| typeof opTrustedCert
-	| typeof opTrustedCerts
-	| typeof opCertGeneric
-	| typeof opAppleGenericAnchor
-	| typeof opEntitlementField
-	| typeof opCertPolicy
-	| typeof opNamedAnchor
-	| typeof opNamedCode
-	| typeof opPlatform
-	| typeof opNotarized
-	| typeof opCertFieldDate
-	| typeof opLegacyDevID
-	| typeof exprOpCount;
+export type Security_CodeSigning_ExprOp =
+	| typeof Security_CodeSigning_opFalse
+	| typeof Security_CodeSigning_opTrue
+	| typeof Security_CodeSigning_opIdent
+	| typeof Security_CodeSigning_opAppleAnchor
+	| typeof Security_CodeSigning_opAnchorHash
+	| typeof Security_CodeSigning_opInfoKeyValue
+	| typeof Security_CodeSigning_opAnd
+	| typeof Security_CodeSigning_opOr
+	| typeof Security_CodeSigning_opCDHash
+	| typeof Security_CodeSigning_opNot
+	| typeof Security_CodeSigning_opInfoKeyField
+	| typeof Security_CodeSigning_opCertField
+	| typeof Security_CodeSigning_opTrustedCert
+	| typeof Security_CodeSigning_opTrustedCerts
+	| typeof Security_CodeSigning_opCertGeneric
+	| typeof Security_CodeSigning_opAppleGenericAnchor
+	| typeof Security_CodeSigning_opEntitlementField
+	| typeof Security_CodeSigning_opCertPolicy
+	| typeof Security_CodeSigning_opNamedAnchor
+	| typeof Security_CodeSigning_opNamedCode
+	| typeof Security_CodeSigning_opPlatform
+	| typeof Security_CodeSigning_opNotarized
+	| typeof Security_CodeSigning_opCertFieldDate
+	| typeof Security_CodeSigning_opLegacyDevID
+	| typeof Security_CodeSigning_exprOpCount;
 
 /**
  * Opcode: False.
  */
-export const opFalse = 0;
+export const Security_CodeSigning_opFalse = 0;
 
 /**
  * Opcode: True.
  */
-export const opTrue = 1;
+export const Security_CodeSigning_opTrue = 1;
 
 /**
  * Opcode: Ident.
  */
-export const opIdent = 2;
+export const Security_CodeSigning_opIdent = 2;
 
 /**
  * Opcode: Apple anchor.
  */
-export const opAppleAnchor = 3;
+export const Security_CodeSigning_opAppleAnchor = 3;
 
 /**
  * Opcode: Anchor hash.
  */
-export const opAnchorHash = 4;
+export const Security_CodeSigning_opAnchorHash = 4;
 
 /**
  * Opcode: Info key value.
  */
-export const opInfoKeyValue = 5;
+export const Security_CodeSigning_opInfoKeyValue = 5;
 
 /**
  * Opcode: And.
  */
-export const opAnd = 6;
+export const Security_CodeSigning_opAnd = 6;
 
 /**
  * Opcode: Or.
  */
-export const opOr = 7;
+export const Security_CodeSigning_opOr = 7;
 
 /**
  * Opcode: CD hash.
  */
-export const opCDHash = 8;
+export const Security_CodeSigning_opCDHash = 8;
 
 /**
  * Opcode: Not.
  */
-export const opNot = 9;
+export const Security_CodeSigning_opNot = 9;
 
 /**
  * Opcode: Info key field.
  */
-export const opInfoKeyField = 10;
+export const Security_CodeSigning_opInfoKeyField = 10;
 
 /**
  * Opcode: Op cert field.
  */
-export const opCertField = 11;
+export const Security_CodeSigning_opCertField = 11;
 
 /**
  * Opcode: Trusted cert.
  */
-export const opTrustedCert = 12;
+export const Security_CodeSigning_opTrustedCert = 12;
 
 /**
  * Opcode: Trusted certs.
  */
-export const opTrustedCerts = 13;
+export const Security_CodeSigning_opTrustedCerts = 13;
 
 /**
  * Opcode: Generic.
  */
-export const opCertGeneric = 14;
+export const Security_CodeSigning_opCertGeneric = 14;
 
 /**
  * Opcode: Apple generic anchor.
  */
-export const opAppleGenericAnchor = 15;
+export const Security_CodeSigning_opAppleGenericAnchor = 15;
 
 /**
  * Opcode: Entitlement field.
  */
-export const opEntitlementField = 16;
+export const Security_CodeSigning_opEntitlementField = 16;
 
 /**
  * Opcode: Cert policy.
  */
-export const opCertPolicy = 17;
+export const Security_CodeSigning_opCertPolicy = 17;
 
 /**
  * Opcode: Named anchor.
  */
-export const opNamedAnchor = 18;
+export const Security_CodeSigning_opNamedAnchor = 18;
 
 /**
  * Opcode: Named code.
  */
-export const opNamedCode = 19;
+export const Security_CodeSigning_opNamedCode = 19;
 
 /**
  * Opcode: Platform.
  */
-export const opPlatform = 20;
+export const Security_CodeSigning_opPlatform = 20;
 
 /**
  * Opcode: Notarized.
  */
-export const opNotarized = 21;
+export const Security_CodeSigning_opNotarized = 21;
 
 /**
  * Opcode: Cert field date.
  */
-export const opCertFieldDate = 22;
+export const Security_CodeSigning_opCertFieldDate = 22;
 
 /**
  * Opcode: Legacy dev ID.
  */
-export const opLegacyDevID = 23;
+export const Security_CodeSigning_opLegacyDevID = 23;
 
 /**
  * Opcode count.
  */
-export const exprOpCount = 24;
+export const Security_CodeSigning_exprOpCount = 24;
 
 // }
 
@@ -523,97 +530,97 @@ export const exprOpCount = 24;
 /**
  * Match operation.
  */
-export type MatchOperation =
-	| typeof matchExists
-	| typeof matchEqual
-	| typeof matchContains
-	| typeof matchBeginsWith
-	| typeof matchEndsWith
-	| typeof matchLessThan
-	| typeof matchGreaterThan
-	| typeof matchLessEqual
-	| typeof matchGreaterEqual
-	| typeof matchOn
-	| typeof matchBefore
-	| typeof matchAfter
-	| typeof matchOnOrBefore
-	| typeof matchOnOrAfter
-	| typeof matchAbsent;
+export type Security_CodeSigning_MatchOperation =
+	| typeof Security_CodeSigning_matchExists
+	| typeof Security_CodeSigning_matchEqual
+	| typeof Security_CodeSigning_matchContains
+	| typeof Security_CodeSigning_matchBeginsWith
+	| typeof Security_CodeSigning_matchEndsWith
+	| typeof Security_CodeSigning_matchLessThan
+	| typeof Security_CodeSigning_matchGreaterThan
+	| typeof Security_CodeSigning_matchLessEqual
+	| typeof Security_CodeSigning_matchGreaterEqual
+	| typeof Security_CodeSigning_matchOn
+	| typeof Security_CodeSigning_matchBefore
+	| typeof Security_CodeSigning_matchAfter
+	| typeof Security_CodeSigning_matchOnOrBefore
+	| typeof Security_CodeSigning_matchOnOrAfter
+	| typeof Security_CodeSigning_matchAbsent;
 
 /**
  * Match: Exists.
  */
-export const matchExists = 0;
+export const Security_CodeSigning_matchExists = 0;
 
 /**
  * Match: Equal.
  */
-export const matchEqual = 1;
+export const Security_CodeSigning_matchEqual = 1;
 
 /**
  * Match: Contains.
  */
-export const matchContains = 2;
+export const Security_CodeSigning_matchContains = 2;
 
 /**
  * Match: Begins with.
  */
-export const matchBeginsWith = 3;
+export const Security_CodeSigning_matchBeginsWith = 3;
 
 /**
  * Match: Ends with.
  */
-export const matchEndsWith = 4;
+export const Security_CodeSigning_matchEndsWith = 4;
 
 /**
  * Match: Less than.
  */
-export const matchLessThan = 5;
+export const Security_CodeSigning_matchLessThan = 5;
 
 /**
  * Match: Greater than.
  */
-export const matchGreaterThan = 6;
+export const Security_CodeSigning_matchGreaterThan = 6;
 
 /**
  * Match: Less than or equal.
  */
-export const matchLessEqual = 7;
+export const Security_CodeSigning_matchLessEqual = 7;
 
 /**
  * Match: Greater than or equal.
  */
-export const matchGreaterEqual = 8;
+export const Security_CodeSigning_matchGreaterEqual = 8;
 
 /**
  * Match: On.
  */
-export const matchOn = 9;
+export const Security_CodeSigning_matchOn = 9;
 
 /**
  * Match: Before.
  */
-export const matchBefore = 10;
+export const Security_CodeSigning_matchBefore = 10;
 
 /**
  * Match: After.
  */
-export const matchAfter = 11;
+export const Security_CodeSigning_matchAfter = 11;
 
 /**
  * Match: On or before.
  */
-export const matchOnOrBefore = 12;
+export const Security_CodeSigning_matchOnOrBefore = 12;
 
 /**
  * Match: On or after.
  */
-export const matchOnOrAfter = 13;
+export const Security_CodeSigning_matchOnOrAfter = 13;
 
 /**
  * Match: Absent.
  */
-export const matchAbsent = 14;
+export const Security_CodeSigning_matchAbsent = 14;
 
 // }
 
@@ -622,13 +629,13 @@ export const matchAbsent = 14;
  *
  * @template TArrayBuffer Buffer type.
  */
-export class Requirements<
+export class Security_CodeSigning_Requirements<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
-> extends SuperBlob<TArrayBuffer> {
+> extends Security_SuperBlob<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicRequirementSet;
 
 	static {
-		toStringTag(this, 'Requirements');
+		toStringTag(this, 'Security_CodeSigning_Requirements');
 		constant(this, 'typeMagic');
 	}
 }
@@ -636,13 +643,15 @@ export class Requirements<
 /**
  * SuperBlob maker for Requirements.
  */
-export class Requirements_Maker extends SuperBlob_Maker {
-	public static override readonly SuperBlob: typeof Requirements<
-		ArrayBuffer
-	> = Requirements;
+export class Security_CodeSigning_Requirements_Maker
+	extends Security_SuperBlob_Maker {
+	public static override readonly SuperBlob:
+		typeof Security_CodeSigning_Requirements<
+			ArrayBuffer
+		> = Security_CodeSigning_Requirements;
 
 	static {
-		toStringTag(this, 'Requirements_Maker');
+		toStringTag(this, 'Security_CodeSigning_Requirements_Maker');
 		constant(this, 'SuperBlob');
 	}
 }

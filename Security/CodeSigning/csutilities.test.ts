@@ -6,23 +6,27 @@ import {
 	SecCertificateCreateOidDataFromString,
 	SecCertificateExtension,
 } from '../../sec/SecCertificate.ts';
-import { CCHashInstance } from '../../Security/hashing.ts';
+import { Security_CCHashInstance } from '../../Security/hashing.ts';
 import { unhex } from '../../spec/hex.ts';
 import { cssm_data } from '../SecAsn1Types.ts';
-import { certificateHasField, hashFileData, isAppleCA } from './csutilities.ts';
+import {
+	Security_CodeSigning_certificateHasField,
+	Security_CodeSigning_hashFileData,
+	Security_CodeSigning_isAppleCA,
+} from './csutilities.ts';
 
 export const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
 
 const AppleRootCAHash =
 	'b0b1730ecbc7ff4505142c49f1295e6eda6bcaed7e2c68c5be91b5a11001f024';
 
-Deno.test('isAppleCA', async () => {
+Deno.test('Security_CodeSigning_isAppleCA', async () => {
 	const sc = new __SecCertificate();
-	assertEquals(await isAppleCA(sc), false);
+	assertEquals(await Security_CodeSigning_isAppleCA(sc), false);
 	sc._der.data = new Uint8Ptr(new ArrayBuffer(100));
 	sc._der.length = 100;
 	assertEquals(
-		await isAppleCA(sc, {
+		await Security_CodeSigning_isAppleCA(sc, {
 			/**
 			 * Return specific hash.
 			 *
@@ -36,14 +40,17 @@ Deno.test('isAppleCA', async () => {
 	);
 });
 
-Deno.test('hashFileData full', async () => {
+Deno.test('Security_CodeSigning_hashFileData: full', async () => {
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	const expected = new Uint8Array(
 		await crypto.subtle.digest('SHA-1', data),
 	);
 
-	const hasher = new CCHashInstance(kCCDigestSHA1);
-	const size = await hashFileData(new Blob([data]), hasher);
+	const hasher = new Security_CCHashInstance(kCCDigestSHA1);
+	const size = await Security_CodeSigning_hashFileData(
+		new Blob([data]),
+		hasher,
+	);
 	assertEquals(size, 8);
 	const digest = new Uint8Array(hasher.digestLength());
 	await hasher.finish(digest);
@@ -51,14 +58,18 @@ Deno.test('hashFileData full', async () => {
 	assertEquals(digest, expected);
 });
 
-Deno.test('hashFileData limit', async () => {
+Deno.test('Security_CodeSigning_hashFileData: limit', async () => {
 	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 	const expected = new Uint8Array(
 		await crypto.subtle.digest('SHA-1', data.slice(0, 4)),
 	);
 
-	const hasher = new CCHashInstance(kCCDigestSHA1);
-	const size = await hashFileData(new Blob([data]), hasher, 4);
+	const hasher = new Security_CCHashInstance(kCCDigestSHA1);
+	const size = await Security_CodeSigning_hashFileData(
+		new Blob([data]),
+		hasher,
+		4,
+	);
 	assertEquals(size, 4);
 	const digest = new Uint8Array(hasher.digestLength());
 	await hasher.finish(digest);
@@ -66,7 +77,7 @@ Deno.test('hashFileData limit', async () => {
 	assertEquals(digest, expected);
 });
 
-Deno.test('certificateHasField', () => {
+Deno.test('Security_CodeSigning_certificateHasField', () => {
 	const sce = new SecCertificateExtension();
 	const sc = new __SecCertificate();
 	const oid = '1.2.3';
@@ -84,6 +95,6 @@ Deno.test('certificateHasField', () => {
 	const cssm = new cssm_data();
 	cssm.Data = new Uint8Ptr(oidData.buffer.slice());
 	cssm.Length = oidData.byteLength;
-	assertEquals(certificateHasField(null, cssm), false);
-	assertEquals(certificateHasField(sc, cssm), true);
+	assertEquals(Security_CodeSigning_certificateHasField(null, cssm), false);
+	assertEquals(Security_CodeSigning_certificateHasField(sc, cssm), true);
 });

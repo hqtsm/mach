@@ -3,7 +3,7 @@ import type { size_t } from '../../libc/stddef.ts';
 /**
  * System alignment.
  */
-export const systemAlignment = 4;
+export const Security_LowLevelMemoryUtilities_systemAlignment = 4;
 
 /**
  * Align a size up.
@@ -12,9 +12,9 @@ export const systemAlignment = 4;
  * @param alignment Alignment.
  * @returns Aligned size.
  */
-export function alignUp(
+export function Security_LowLevelMemoryUtilities_alignUp(
 	size: size_t,
-	alignment: size_t = systemAlignment,
+	alignment: size_t = Security_LowLevelMemoryUtilities_systemAlignment,
 ): size_t {
 	const over = size % alignment;
 	return over ? size + alignment - over : size;

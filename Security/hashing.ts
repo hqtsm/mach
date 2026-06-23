@@ -15,26 +15,26 @@ import type { Reader } from '../helpers/reader.ts';
 import type { bool, uchar } from '../libc/c.ts';
 import type { size_t } from '../libc/stddef.ts';
 import { ENOMEM } from '../libc/errno.ts';
-import { UnixError } from './errors.ts';
+import { Security_UnixError } from './errors.ts';
 
 /**
  * Hashing Byte.
  */
-export type Hashing_Byte = uchar;
+export type Security_Hashing_Byte = uchar;
 
 /**
  * Base class for all hash objects.
  */
-export class Hashing {
+export class Security_Hashing {
 	static {
-		toStringTag(this, 'Hashing');
+		toStringTag(this, 'Security_Hashing');
 	}
 }
 
 /**
  * Dynamic hash.
  */
-export abstract class DynamicHash extends Hashing {
+export abstract class Security_DynamicHash extends Security_Hashing {
 	/**
 	 * Get the digest length.
 	 *
@@ -87,7 +87,7 @@ export abstract class DynamicHash extends Hashing {
 	 * @returns True if verified, false if not.
 	 */
 	public static async verify(
-		_this: DynamicHash,
+		_this: Security_DynamicHash,
 		digest: ArrayBufferLike | ArrayBufferPointer,
 	): Promise<bool> {
 		const l = _this.digestLength();
@@ -107,14 +107,14 @@ export abstract class DynamicHash extends Hashing {
 	public subtle: SubtleCryptoDigest | null = null;
 
 	static {
-		toStringTag(this, 'DynamicHash');
+		toStringTag(this, 'Security_DynamicHash');
 	}
 }
 
 /**
  * CCHashInstance dynamic hash.
  */
-export class CCHashInstance extends DynamicHash {
+export class Security_CCHashInstance extends Security_DynamicHash {
 	/**
 	 * CCHashInstance constructor.
 	 *
@@ -126,7 +126,7 @@ export class CCHashInstance extends DynamicHash {
 		const d = CCDigestCreate(alg);
 		if (!d) {
 			// More likely invalid algorithm.
-			UnixError.throwMe(ENOMEM);
+			Security_UnixError.throwMe(ENOMEM);
 		}
 		this.mDigest = d;
 		this.mTruncate = truncate;
@@ -202,6 +202,6 @@ export class CCHashInstance extends DynamicHash {
 	private mTruncate: size_t;
 
 	static {
-		toStringTag(this, 'CCHashInstance');
+		toStringTag(this, 'Security_CCHashInstance');
 	}
 }

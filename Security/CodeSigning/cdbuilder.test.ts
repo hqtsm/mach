@@ -15,8 +15,11 @@ import {
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
 } from '../CSCommon.ts';
-import { CodeDirectory_Builder } from './cdbuilder.ts';
-import { CodeDirectory, CodeDirectory_Scatter } from './codedirectory.ts';
+import { Security_CodeSigning_CodeDirectory_Builder } from './cdbuilder.ts';
+import {
+	Security_CodeSigning_CodeDirectory,
+	Security_CodeSigning_CodeDirectory_Scatter,
+} from './codedirectory.ts';
 
 class ErrorReader implements Reader {
 	#size: number;
@@ -48,84 +51,139 @@ class ErrorReader implements Reader {
 	}
 }
 
-Deno.test('CodeDirectory_Builder: hashType', () => {
-	let builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA1);
+Deno.test('Security_CodeSigning_CodeDirectory_Builder: hashType', () => {
+	let builder = new Security_CodeSigning_CodeDirectory_Builder(
+		kSecCodeSignatureHashSHA1,
+	);
 	assertEquals(
-		CodeDirectory_Builder.hashType(builder),
+		Security_CodeSigning_CodeDirectory_Builder.hashType(builder),
 		kSecCodeSignatureHashSHA1,
 	);
 
-	builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA256);
+	builder = new Security_CodeSigning_CodeDirectory_Builder(
+		kSecCodeSignatureHashSHA256,
+	);
 	assertEquals(
-		CodeDirectory_Builder.hashType(builder),
+		Security_CodeSigning_CodeDirectory_Builder.hashType(builder),
 		kSecCodeSignatureHashSHA256,
 	);
 });
 
-Deno.test('CodeDirectory_Builder: opened', () => {
-	const builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA1);
-	assertEquals(CodeDirectory_Builder.opened(builder), false);
-});
-
-Deno.test('CodeDirectory_Builder: identifier', async () => {
-	const expected = new TextEncoder().encode('IDENTIFIER');
-	const builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA1);
-	CodeDirectory_Builder.executable(builder, new Blob([]), 0, 0, 0);
-	CodeDirectory_Builder.identifier(
-		builder,
-		new Uint8Array([1, ...expected, 1]).slice(1, -1),
+Deno.test('Security_CodeSigning_CodeDirectory_Builder: opened', () => {
+	const builder = new Security_CodeSigning_CodeDirectory_Builder(
+		kSecCodeSignatureHashSHA1,
 	);
-	{
-		const cd = await CodeDirectory_Builder.build(builder);
-		const ptr = CodeDirectory.identifier(cd);
-		const data = new Uint8Array(ptr.buffer, ptr.byteOffset);
-		assertEquals(data.slice(0, data.indexOf(0)), expected);
-	}
-	CodeDirectory_Builder.identifier(builder, expected.buffer);
-	{
-		const cd = await CodeDirectory_Builder.build(builder);
-		const ptr = CodeDirectory.identifier(cd);
-		const data = new Uint8Array(ptr.buffer, ptr.byteOffset);
-		assertEquals(data.slice(0, data.indexOf(0)), expected);
-	}
-});
-
-Deno.test('CodeDirectory_Builder: teamID', async () => {
-	const expected = new TextEncoder().encode('TEAMID');
-	const builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA1);
-	CodeDirectory_Builder.executable(builder, new Blob([]), 0, 0, 0);
-	CodeDirectory_Builder.teamID(
-		builder,
-		new Uint8Array([1, ...expected, 1]).slice(1, -1),
-	);
-	{
-		const cd = await CodeDirectory_Builder.build(builder);
-		const ptr = CodeDirectory.teamID(cd)!;
-		const data = new Uint8Array(ptr.buffer, ptr.byteOffset);
-		assertEquals(data.slice(0, data.indexOf(0)), expected);
-	}
-	CodeDirectory_Builder.teamID(builder, expected.buffer);
-	{
-		const cd = await CodeDirectory_Builder.build(builder);
-		const ptr = CodeDirectory.teamID(cd)!;
-		const data = new Uint8Array(ptr.buffer, ptr.byteOffset);
-		assertEquals(data.slice(0, data.indexOf(0)), expected);
-	}
-});
-
-Deno.test('CodeDirectory_Builder: codeSlots', async () => {
-	let builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA1);
-	CodeDirectory_Builder.executable(builder, new Blob([]), 0, 0, 0);
-	const zero = CodeDirectory.size(await CodeDirectory_Builder.build(builder));
-
-	CodeDirectory_Builder.reopen(builder, new Blob([new Uint8Array(1)]), 0, 1);
 	assertEquals(
-		CodeDirectory.size(await CodeDirectory_Builder.build(builder)),
+		Security_CodeSigning_CodeDirectory_Builder.opened(builder),
+		false,
+	);
+});
+
+Deno.test('Security_CodeSigning_CodeDirectory_Builder: identifier', async () => {
+	const expected = new TextEncoder().encode('IDENTIFIER');
+	const builder = new Security_CodeSigning_CodeDirectory_Builder(
+		kSecCodeSignatureHashSHA1,
+	);
+	Security_CodeSigning_CodeDirectory_Builder.executable(
+		builder,
+		new Blob([]),
+		0,
+		0,
+		0,
+	);
+	Security_CodeSigning_CodeDirectory_Builder.identifier(
+		builder,
+		new Uint8Array([1, ...expected, 1]).slice(1, -1),
+	);
+	{
+		const cd = await Security_CodeSigning_CodeDirectory_Builder.build(
+			builder,
+		);
+		const ptr = Security_CodeSigning_CodeDirectory.identifier(cd);
+		const data = new Uint8Array(ptr.buffer, ptr.byteOffset);
+		assertEquals(data.slice(0, data.indexOf(0)), expected);
+	}
+	Security_CodeSigning_CodeDirectory_Builder.identifier(
+		builder,
+		expected.buffer,
+	);
+	{
+		const cd = await Security_CodeSigning_CodeDirectory_Builder.build(
+			builder,
+		);
+		const ptr = Security_CodeSigning_CodeDirectory.identifier(cd);
+		const data = new Uint8Array(ptr.buffer, ptr.byteOffset);
+		assertEquals(data.slice(0, data.indexOf(0)), expected);
+	}
+});
+
+Deno.test('Security_CodeSigning_CodeDirectory_Builder: teamID', async () => {
+	const expected = new TextEncoder().encode('TEAMID');
+	const builder = new Security_CodeSigning_CodeDirectory_Builder(
+		kSecCodeSignatureHashSHA1,
+	);
+	Security_CodeSigning_CodeDirectory_Builder.executable(
+		builder,
+		new Blob([]),
+		0,
+		0,
+		0,
+	);
+	Security_CodeSigning_CodeDirectory_Builder.teamID(
+		builder,
+		new Uint8Array([1, ...expected, 1]).slice(1, -1),
+	);
+	{
+		const cd = await Security_CodeSigning_CodeDirectory_Builder.build(
+			builder,
+		);
+		const ptr = Security_CodeSigning_CodeDirectory.teamID(cd)!;
+		const data = new Uint8Array(ptr.buffer, ptr.byteOffset);
+		assertEquals(data.slice(0, data.indexOf(0)), expected);
+	}
+	Security_CodeSigning_CodeDirectory_Builder.teamID(builder, expected.buffer);
+	{
+		const cd = await Security_CodeSigning_CodeDirectory_Builder.build(
+			builder,
+		);
+		const ptr = Security_CodeSigning_CodeDirectory.teamID(cd)!;
+		const data = new Uint8Array(ptr.buffer, ptr.byteOffset);
+		assertEquals(data.slice(0, data.indexOf(0)), expected);
+	}
+});
+
+Deno.test('Security_CodeSigning_CodeDirectory_Builder: codeSlots', async () => {
+	let builder = new Security_CodeSigning_CodeDirectory_Builder(
+		kSecCodeSignatureHashSHA1,
+	);
+	Security_CodeSigning_CodeDirectory_Builder.executable(
+		builder,
+		new Blob([]),
+		0,
+		0,
+		0,
+	);
+	const zero = Security_CodeSigning_CodeDirectory.size(
+		await Security_CodeSigning_CodeDirectory_Builder.build(builder),
+	);
+
+	Security_CodeSigning_CodeDirectory_Builder.reopen(
+		builder,
+		new Blob([new Uint8Array(1)]),
+		0,
+		1,
+	);
+	assertEquals(
+		Security_CodeSigning_CodeDirectory.size(
+			await Security_CodeSigning_CodeDirectory_Builder.build(builder),
+		),
 		zero + CS_SHA1_LEN * 1,
 	);
 
-	builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA1);
-	CodeDirectory_Builder.executable(
+	builder = new Security_CodeSigning_CodeDirectory_Builder(
+		kSecCodeSignatureHashSHA1,
+	);
+	Security_CodeSigning_CodeDirectory_Builder.executable(
 		builder,
 		new Blob([new Uint8Array(1024)]),
 		1024,
@@ -133,71 +191,129 @@ Deno.test('CodeDirectory_Builder: codeSlots', async () => {
 		1024,
 	);
 	assertEquals(
-		CodeDirectory.size(await CodeDirectory_Builder.build(builder)),
+		Security_CodeSigning_CodeDirectory.size(
+			await Security_CodeSigning_CodeDirectory_Builder.build(builder),
+		),
 		zero + CS_SHA1_LEN * 1,
 	);
 
-	CodeDirectory_Builder.reopen(
+	Security_CodeSigning_CodeDirectory_Builder.reopen(
 		builder,
 		new Blob([new Uint8Array(1025)]),
 		0,
 		1025,
 	);
 	assertEquals(
-		CodeDirectory.size(await CodeDirectory_Builder.build(builder)),
+		Security_CodeSigning_CodeDirectory.size(
+			await Security_CodeSigning_CodeDirectory_Builder.build(builder),
+		),
 		zero + CS_SHA1_LEN * 2,
 	);
 });
 
-Deno.test('CodeDirectory_Builder: addExecSegFlags', async () => {
-	const builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA1);
-	CodeDirectory_Builder.executable(builder, new Blob([]), 0, 0, 0);
-	CodeDirectory_Builder.execSeg(builder, 1n, 2n, 0n);
-	CodeDirectory_Builder.addExecSegFlags(builder, 1n);
-	assertEquals((await CodeDirectory_Builder.build(builder)).execSegFlags, 1n);
+Deno.test('Security_CodeSigning_CodeDirectory_Builder: addExecSegFlags', async () => {
+	const builder = new Security_CodeSigning_CodeDirectory_Builder(
+		kSecCodeSignatureHashSHA1,
+	);
+	Security_CodeSigning_CodeDirectory_Builder.executable(
+		builder,
+		new Blob([]),
+		0,
+		0,
+		0,
+	);
+	Security_CodeSigning_CodeDirectory_Builder.execSeg(builder, 1n, 2n, 0n);
+	Security_CodeSigning_CodeDirectory_Builder.addExecSegFlags(builder, 1n);
+	assertEquals(
+		(await Security_CodeSigning_CodeDirectory_Builder.build(builder))
+			.execSegFlags,
+		1n,
+	);
 
-	CodeDirectory_Builder.addExecSegFlags(builder, 2n);
-	assertEquals((await CodeDirectory_Builder.build(builder)).execSegFlags, 3n);
+	Security_CodeSigning_CodeDirectory_Builder.addExecSegFlags(builder, 2n);
+	assertEquals(
+		(await Security_CodeSigning_CodeDirectory_Builder.build(builder))
+			.execSegFlags,
+		3n,
+	);
 
-	CodeDirectory_Builder.addExecSegFlags(builder, 4n);
-	assertEquals((await CodeDirectory_Builder.build(builder)).execSegFlags, 7n);
+	Security_CodeSigning_CodeDirectory_Builder.addExecSegFlags(builder, 4n);
+	assertEquals(
+		(await Security_CodeSigning_CodeDirectory_Builder.build(builder))
+			.execSegFlags,
+		7n,
+	);
 });
 
-Deno.test('CodeDirectory_Builder: specialSlot', async () => {
-	const builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA1);
-	CodeDirectory_Builder.executable(builder, new Blob([]), 0, 0, 0);
-	const zero = CodeDirectory.size(await CodeDirectory_Builder.build(builder));
+Deno.test('Security_CodeSigning_CodeDirectory_Builder: specialSlot', async () => {
+	const builder = new Security_CodeSigning_CodeDirectory_Builder(
+		kSecCodeSignatureHashSHA1,
+	);
+	Security_CodeSigning_CodeDirectory_Builder.executable(
+		builder,
+		new Blob([]),
+		0,
+		0,
+		0,
+	);
+	const zero = Security_CodeSigning_CodeDirectory.size(
+		await Security_CodeSigning_CodeDirectory_Builder.build(builder),
+	);
 	assertEquals(
-		CodeDirectory.size(await CodeDirectory_Builder.build(builder)),
+		Security_CodeSigning_CodeDirectory.size(
+			await Security_CodeSigning_CodeDirectory_Builder.build(builder),
+		),
 		zero + CS_SHA1_LEN * 0,
 	);
 
-	await CodeDirectory_Builder.specialSlot(builder, 1, new ArrayBuffer());
+	await Security_CodeSigning_CodeDirectory_Builder.specialSlot(
+		builder,
+		1,
+		new ArrayBuffer(),
+	);
 	assertEquals(
-		CodeDirectory.size(await CodeDirectory_Builder.build(builder)),
+		Security_CodeSigning_CodeDirectory.size(
+			await Security_CodeSigning_CodeDirectory_Builder.build(builder),
+		),
 		zero + CS_SHA1_LEN * 1,
 	);
 });
 
-Deno.test('CodeDirectory_Builder: createScatter', async () => {
-	const builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA1);
-	CodeDirectory_Builder.executable(builder, new Blob([]), 0, 0, 0);
-	assertEquals(CodeDirectory_Builder.scatter(builder), null);
+Deno.test('Security_CodeSigning_CodeDirectory_Builder: createScatter', async () => {
+	const builder = new Security_CodeSigning_CodeDirectory_Builder(
+		kSecCodeSignatureHashSHA1,
+	);
+	Security_CodeSigning_CodeDirectory_Builder.executable(
+		builder,
+		new Blob([]),
+		0,
+		0,
+		0,
+	);
+	assertEquals(
+		Security_CodeSigning_CodeDirectory_Builder.scatter(builder),
+		null,
+	);
 
-	const scatter = CodeDirectory_Builder.scatter(builder, 2);
+	const scatter = Security_CodeSigning_CodeDirectory_Builder.scatter(
+		builder,
+		2,
+	);
 	scatter[0].count = 1;
 	scatter[1].count = 2;
 	assertEquals(
 		scatter.buffer.byteLength,
-		CodeDirectory_Scatter.BYTE_LENGTH * 3,
+		Security_CodeSigning_CodeDirectory_Scatter.BYTE_LENGTH * 3,
 	);
-	await CodeDirectory_Builder.build(builder);
+	await Security_CodeSigning_CodeDirectory_Builder.build(builder);
 });
 
-Deno.test('CodeDirectory_Builder: version and size', () => {
+Deno.test('Security_CodeSigning_CodeDirectory_Builder: version and size', () => {
 	let size = 0;
-	const builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA1);
-	CodeDirectory_Builder.executable(
+	const builder = new Security_CodeSigning_CodeDirectory_Builder(
+		kSecCodeSignatureHashSHA1,
+	);
+	Security_CodeSigning_CodeDirectory_Builder.executable(
 		builder,
 		new Blob([new Uint8Array(1)]),
 		1024,
@@ -206,144 +322,179 @@ Deno.test('CodeDirectory_Builder: version and size', () => {
 	);
 
 	assertEquals(
-		CodeDirectory_Builder.minVersion(builder),
-		CodeDirectory.supportsScatter,
+		Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
+		Security_CodeSigning_CodeDirectory.supportsScatter,
 	);
 
-	builder.minVersion = CodeDirectory.earliestVersion;
+	builder.minVersion = Security_CodeSigning_CodeDirectory.earliestVersion;
 	assertEquals(
-		CodeDirectory_Builder.minVersion(builder),
-		CodeDirectory.earliestVersion,
+		Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
+		Security_CodeSigning_CodeDirectory.earliestVersion,
 	);
 	assertGreater(
-		CodeDirectory_Builder.size(
+		Security_CodeSigning_CodeDirectory_Builder.size(
 			builder,
-			CodeDirectory_Builder.minVersion(builder),
+			Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
 		),
 		size,
 	);
-	size = CodeDirectory_Builder.size(
+	size = Security_CodeSigning_CodeDirectory_Builder.size(
 		builder,
-		CodeDirectory_Builder.minVersion(builder),
+		Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
 	);
 
-	CodeDirectory_Builder.scatter(builder, 1);
+	Security_CodeSigning_CodeDirectory_Builder.scatter(builder, 1);
 	assertEquals(
-		CodeDirectory_Builder.minVersion(builder),
-		CodeDirectory.supportsScatter,
+		Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
+		Security_CodeSigning_CodeDirectory.supportsScatter,
 	);
 	assertGreater(
-		CodeDirectory_Builder.size(
+		Security_CodeSigning_CodeDirectory_Builder.size(
 			builder,
-			CodeDirectory_Builder.minVersion(builder),
+			Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
 		),
 		size,
 	);
-	size = CodeDirectory_Builder.size(
+	size = Security_CodeSigning_CodeDirectory_Builder.size(
 		builder,
-		CodeDirectory_Builder.minVersion(builder),
+		Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
 	);
 
-	CodeDirectory_Builder.teamID(builder, new TextEncoder().encode('TEAM'));
-	assertEquals(
-		CodeDirectory_Builder.minVersion(builder),
-		CodeDirectory.supportsTeamID,
-	);
-	assertGreater(
-		CodeDirectory_Builder.size(
-			builder,
-			CodeDirectory_Builder.minVersion(builder),
-		),
-		size,
-	);
-	size = CodeDirectory_Builder.size(
+	Security_CodeSigning_CodeDirectory_Builder.teamID(
 		builder,
-		CodeDirectory_Builder.minVersion(builder),
+		new TextEncoder().encode('TEAM'),
 	);
-
-	CodeDirectory_Builder.reopen(builder, new Blob([]), 0, UINT32_MAX + 1);
 	assertEquals(
-		CodeDirectory_Builder.minVersion(builder),
-		CodeDirectory.supportsCodeLimit64,
+		Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
+		Security_CodeSigning_CodeDirectory.supportsTeamID,
 	);
 	assertGreater(
-		CodeDirectory_Builder.size(
+		Security_CodeSigning_CodeDirectory_Builder.size(
 			builder,
-			CodeDirectory_Builder.minVersion(builder),
+			Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
 		),
 		size,
 	);
-	size = CodeDirectory_Builder.size(
+	size = Security_CodeSigning_CodeDirectory_Builder.size(
 		builder,
-		CodeDirectory_Builder.minVersion(builder),
+		Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
 	);
 
-	CodeDirectory_Builder.execSeg(builder, 0n, 1n, 0n);
-	assertEquals(
-		CodeDirectory_Builder.minVersion(builder),
-		CodeDirectory.supportsExecSegment,
-	);
-	assertGreater(
-		CodeDirectory_Builder.size(
-			builder,
-			CodeDirectory_Builder.minVersion(builder),
-		),
-		size,
-	);
-	size = CodeDirectory_Builder.size(
+	Security_CodeSigning_CodeDirectory_Builder.reopen(
 		builder,
-		CodeDirectory_Builder.minVersion(builder),
+		new Blob([]),
+		0,
+		UINT32_MAX + 1,
 	);
-
-	CodeDirectory_Builder.generatePreEncryptHashes(builder, true);
 	assertEquals(
-		CodeDirectory_Builder.minVersion(builder),
-		CodeDirectory.supportsPreEncrypt,
+		Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
+		Security_CodeSigning_CodeDirectory.supportsCodeLimit64,
 	);
 	assertGreater(
-		CodeDirectory_Builder.size(
+		Security_CodeSigning_CodeDirectory_Builder.size(
 			builder,
-			CodeDirectory_Builder.minVersion(builder),
+			Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
+		),
+		size,
+	);
+	size = Security_CodeSigning_CodeDirectory_Builder.size(
+		builder,
+		Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
+	);
+
+	Security_CodeSigning_CodeDirectory_Builder.execSeg(builder, 0n, 1n, 0n);
+	assertEquals(
+		Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
+		Security_CodeSigning_CodeDirectory.supportsExecSegment,
+	);
+	assertGreater(
+		Security_CodeSigning_CodeDirectory_Builder.size(
+			builder,
+			Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
+		),
+		size,
+	);
+	size = Security_CodeSigning_CodeDirectory_Builder.size(
+		builder,
+		Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
+	);
+
+	Security_CodeSigning_CodeDirectory_Builder.generatePreEncryptHashes(
+		builder,
+		true,
+	);
+	assertEquals(
+		Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
+		Security_CodeSigning_CodeDirectory.supportsPreEncrypt,
+	);
+	assertGreater(
+		Security_CodeSigning_CodeDirectory_Builder.size(
+			builder,
+			Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
 		),
 		size,
 	);
 
-	CodeDirectory_Builder.generatePreEncryptHashes(builder, false);
-	CodeDirectory_Builder.runTimeVersion(builder, 1);
+	Security_CodeSigning_CodeDirectory_Builder.generatePreEncryptHashes(
+		builder,
+		false,
+	);
+	Security_CodeSigning_CodeDirectory_Builder.runTimeVersion(builder, 1);
 	assertEquals(
-		CodeDirectory_Builder.minVersion(builder),
-		CodeDirectory.supportsPreEncrypt,
+		Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
+		Security_CodeSigning_CodeDirectory.supportsPreEncrypt,
 	);
 	assertGreater(
-		CodeDirectory_Builder.size(
+		Security_CodeSigning_CodeDirectory_Builder.size(
 			builder,
-			CodeDirectory_Builder.minVersion(builder),
+			Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
 		),
 		size,
 	);
 
-	CodeDirectory_Builder.scatter(builder, 0);
-	testOOM([CodeDirectory_Scatter.BYTE_LENGTH * 2], () => {
-		assertThrowsUnixError(
-			() => CodeDirectory_Builder.scatter(builder, 1),
-			ENOMEM,
-		);
-	});
+	Security_CodeSigning_CodeDirectory_Builder.scatter(builder, 0);
+	testOOM(
+		[Security_CodeSigning_CodeDirectory_Scatter.BYTE_LENGTH * 2],
+		() => {
+			assertThrowsUnixError(
+				() =>
+					Security_CodeSigning_CodeDirectory_Builder.scatter(
+						builder,
+						1,
+					),
+				ENOMEM,
+			);
+		},
+	);
 });
 
-Deno.test('CodeDirectory_Builder: platform', async () => {
-	const builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA1);
-	CodeDirectory_Builder.executable(builder, new Blob([]), 0, 0, 0);
-	CodeDirectory_Builder.platform(builder, PLATFORM_MACOS);
+Deno.test('Security_CodeSigning_CodeDirectory_Builder: platform', async () => {
+	const builder = new Security_CodeSigning_CodeDirectory_Builder(
+		kSecCodeSignatureHashSHA1,
+	);
+	Security_CodeSigning_CodeDirectory_Builder.executable(
+		builder,
+		new Blob([]),
+		0,
+		0,
+		0,
+	);
+	Security_CodeSigning_CodeDirectory_Builder.platform(
+		builder,
+		PLATFORM_MACOS,
+	);
 	assertEquals(
-		(await CodeDirectory_Builder.build(builder)).platform,
+		(await Security_CodeSigning_CodeDirectory_Builder.build(builder))
+			.platform,
 		PLATFORM_MACOS,
 	);
 });
 
-Deno.test('CodeDirectory_Builder: generatePreEncryptHashes', async () => {
-	const builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA1);
-	CodeDirectory_Builder.executable(
+Deno.test('Security_CodeSigning_CodeDirectory_Builder: generatePreEncryptHashes', async () => {
+	const builder = new Security_CodeSigning_CodeDirectory_Builder(
+		kSecCodeSignatureHashSHA1,
+	);
+	Security_CodeSigning_CodeDirectory_Builder.executable(
 		builder,
 		new Blob([new Uint8Array(1)]),
 		0,
@@ -351,21 +502,28 @@ Deno.test('CodeDirectory_Builder: generatePreEncryptHashes', async () => {
 		1,
 	);
 
-	builder.minVersion = CodeDirectory.supportsPreEncrypt;
-	const zero = CodeDirectory.size(
-		await CodeDirectory_Builder.build(builder),
+	builder.minVersion = Security_CodeSigning_CodeDirectory.supportsPreEncrypt;
+	const zero = Security_CodeSigning_CodeDirectory.size(
+		await Security_CodeSigning_CodeDirectory_Builder.build(builder),
 	);
 
-	CodeDirectory_Builder.generatePreEncryptHashes(builder, true);
+	Security_CodeSigning_CodeDirectory_Builder.generatePreEncryptHashes(
+		builder,
+		true,
+	);
 	assertEquals(
-		CodeDirectory.size(await CodeDirectory_Builder.build(builder)),
+		Security_CodeSigning_CodeDirectory.size(
+			await Security_CodeSigning_CodeDirectory_Builder.build(builder),
+		),
 		zero + CS_SHA1_LEN * 1,
 	);
 });
 
-Deno.test('CodeDirectory_Builder: read validation', async () => {
-	const builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA1);
-	CodeDirectory_Builder.executable(
+Deno.test('Security_CodeSigning_CodeDirectory_Builder: read validation', async () => {
+	const builder = new Security_CodeSigning_CodeDirectory_Builder(
+		kSecCodeSignatureHashSHA1,
+	);
+	Security_CodeSigning_CodeDirectory_Builder.executable(
 		builder,
 		new ErrorReader(1024),
 		1024,
@@ -373,16 +531,18 @@ Deno.test('CodeDirectory_Builder: read validation', async () => {
 		UINT32_MAX + 1,
 	);
 	await assertRejects(
-		() => CodeDirectory_Builder.build(builder),
+		() => Security_CodeSigning_CodeDirectory_Builder.build(builder),
 		Error,
 		'BadReader',
 	);
 });
 
-Deno.test('CodeDirectory_Builder: codeslots limit', async () => {
-	const builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA1);
+Deno.test('Security_CodeSigning_CodeDirectory_Builder: codeslots limit', async () => {
+	const builder = new Security_CodeSigning_CodeDirectory_Builder(
+		kSecCodeSignatureHashSHA1,
+	);
 	const size = UINT32_MAX + 1;
-	CodeDirectory_Builder.executable(
+	Security_CodeSigning_CodeDirectory_Builder.executable(
 		builder,
 		new ErrorReader(size),
 		1,
@@ -390,20 +550,22 @@ Deno.test('CodeDirectory_Builder: codeslots limit', async () => {
 		size,
 	);
 	await assertRejectsMacOSError(
-		() => CodeDirectory_Builder.build(builder),
+		() => Security_CodeSigning_CodeDirectory_Builder.build(builder),
 		errSecCSTooBig,
 	);
 });
 
-Deno.test('CodeDirectory_Builder: build', async () => {
-	const builder = new CodeDirectory_Builder(kSecCodeSignatureHashSHA1);
-	const size = CodeDirectory_Builder.size(
+Deno.test('Security_CodeSigning_CodeDirectory_Builder: build', async () => {
+	const builder = new Security_CodeSigning_CodeDirectory_Builder(
+		kSecCodeSignatureHashSHA1,
+	);
+	const size = Security_CodeSigning_CodeDirectory_Builder.size(
 		builder,
-		CodeDirectory_Builder.minVersion(builder),
+		Security_CodeSigning_CodeDirectory_Builder.minVersion(builder),
 	);
 	await testOOM([size], async () => {
 		await assertRejectsUnixError(
-			() => CodeDirectory_Builder.build(builder),
+			() => Security_CodeSigning_CodeDirectory_Builder.build(builder),
 			ENOMEM,
 		);
 	});

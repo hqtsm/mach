@@ -21,7 +21,7 @@ const whatBufferSize = 128;
 /**
  * Common error.
  */
-export class CommonError extends Error {
+export class Security_CommonError extends Error {
 	/**
 	 * Constructor.
 	 */
@@ -87,14 +87,14 @@ export class CommonError extends Error {
 	 * @param arg Value.
 	 * @returns Is CommonError.
 	 */
-	public static isCommonError(arg: unknown): arg is CommonError {
-		return isToStringTag(CommonError, arg);
+	public static isCommonError(arg: unknown): arg is Security_CommonError {
+		return isToStringTag(Security_CommonError, arg);
 	}
 
 	static {
-		toStringTag(this, 'CommonError');
+		toStringTag(this, 'Security_CommonError');
 		Object.defineProperty(this.prototype, 'name', {
-			value: 'CommonError',
+			value: 'Security_CommonError',
 			configurable: true,
 			enumerable: false,
 			writable: true,
@@ -105,7 +105,7 @@ export class CommonError extends Error {
 /**
  * Unix error.
  */
-export class UnixError extends CommonError {
+export class Security_UnixError extends Security_CommonError {
 	/**
 	 * Constructor.
 	 *
@@ -180,7 +180,7 @@ export class UnixError extends CommonError {
 	 */
 	public static check(result: int, context: { errno: int }): void {
 		if (result === -1) {
-			UnixError.throwMe(context);
+			Security_UnixError.throwMe(context);
 		}
 	}
 
@@ -190,7 +190,10 @@ export class UnixError extends CommonError {
 	 * @param err Error code or context.
 	 */
 	public static throwMe(err: int | { errno: int }): never {
-		throw new UnixError(typeof err === 'number' ? err : err.errno, false);
+		throw new Security_UnixError(
+			typeof err === 'number' ? err : err.errno,
+			false,
+		);
 	}
 
 	/**
@@ -199,7 +202,10 @@ export class UnixError extends CommonError {
 	 * @param err Error code or context.
 	 */
 	public static throwMeNoLogging(err: int | { errno: int }): never {
-		throw new UnixError(typeof err === 'number' ? err : err.errno, true);
+		throw new Security_UnixError(
+			typeof err === 'number' ? err : err.errno,
+			true,
+		);
 	}
 
 	/**
@@ -208,8 +214,11 @@ export class UnixError extends CommonError {
 	 * @param err Error code or context.
 	 * @returns UnixError.
 	 */
-	public static make(err: int | { errno: int }): UnixError {
-		return new UnixError(typeof err === 'number' ? err : err.errno, false);
+	public static make(err: int | { errno: int }): Security_UnixError {
+		return new Security_UnixError(
+			typeof err === 'number' ? err : err.errno,
+			false,
+		);
 	}
 
 	/**
@@ -218,14 +227,14 @@ export class UnixError extends CommonError {
 	 * @param arg Value.
 	 * @returns Is UnixError.
 	 */
-	public static isUnixError(arg: unknown): arg is UnixError {
-		return isToStringTag(UnixError, arg);
+	public static isUnixError(arg: unknown): arg is Security_UnixError {
+		return isToStringTag(Security_UnixError, arg);
 	}
 
 	static {
-		toStringTag(this, 'UnixError');
+		toStringTag(this, 'Security_UnixError');
 		Object.defineProperty(this.prototype, 'name', {
-			value: 'UnixError',
+			value: 'Security_UnixError',
 			configurable: true,
 			enumerable: false,
 			writable: true,
@@ -236,7 +245,7 @@ export class UnixError extends CommonError {
 /**
  * MacOS error.
  */
-export class MacOSError extends CommonError {
+export class Security_MacOSError extends Security_CommonError {
 	/**
 	 * Constructor.
 	 *
@@ -284,7 +293,7 @@ export class MacOSError extends CommonError {
 	 */
 	public static check(status: OSStatus): void {
 		if (status !== errSecSuccess) {
-			MacOSError.throwMe(status);
+			Security_MacOSError.throwMe(status);
 		}
 	}
 
@@ -294,7 +303,7 @@ export class MacOSError extends CommonError {
 	 * @param err Error code.
 	 */
 	public static throwMe(err: int): never {
-		throw new MacOSError(err);
+		throw new Security_MacOSError(err);
 	}
 
 	/**
@@ -303,8 +312,8 @@ export class MacOSError extends CommonError {
 	 * @param err Error code.
 	 * @returns MacOSError.
 	 */
-	public static make(err: int): MacOSError {
-		return new MacOSError(err);
+	public static make(err: int): Security_MacOSError {
+		return new Security_MacOSError(err);
 	}
 
 	/**
@@ -313,14 +322,14 @@ export class MacOSError extends CommonError {
 	 * @param arg Value.
 	 * @returns Is MacOSError.
 	 */
-	public static isMacOSError(arg: unknown): arg is MacOSError {
-		return isToStringTag(MacOSError, arg);
+	public static isMacOSError(arg: unknown): arg is Security_MacOSError {
+		return isToStringTag(Security_MacOSError, arg);
 	}
 
 	static {
-		toStringTag(this, 'MacOSError');
+		toStringTag(this, 'Security_MacOSError');
 		Object.defineProperty(this.prototype, 'name', {
-			value: 'MacOSError',
+			value: 'Security_MacOSError',
 			configurable: true,
 			enumerable: false,
 			writable: true,
@@ -331,7 +340,7 @@ export class MacOSError extends CommonError {
 /**
  * CoreFoundation error.
  */
-export class CFError extends CommonError {
+export class Security_CFError extends Security_CommonError {
 	/**
 	 * Constructor.
 	 */
@@ -368,7 +377,7 @@ export class CFError extends CommonError {
 	 */
 	public static check(p: unknown): void {
 		if (!p) {
-			CFError.throwMe();
+			Security_CFError.throwMe();
 		}
 	}
 
@@ -376,7 +385,7 @@ export class CFError extends CommonError {
 	 * Throw CFError.
 	 */
 	public static throwMe(): never {
-		throw new CFError();
+		throw new Security_CFError();
 	}
 
 	/**
@@ -385,14 +394,14 @@ export class CFError extends CommonError {
 	 * @param arg Value.
 	 * @returns Is CFError.
 	 */
-	public static isCFError(arg: unknown): arg is CFError {
-		return isToStringTag(CFError, arg);
+	public static isCFError(arg: unknown): arg is Security_CFError {
+		return isToStringTag(Security_CFError, arg);
 	}
 
 	static {
-		toStringTag(this, 'CFError');
+		toStringTag(this, 'Security_CFError');
 		Object.defineProperty(this.prototype, 'name', {
-			value: 'CFError',
+			value: 'Security_CFError',
 			configurable: true,
 			enumerable: false,
 			writable: true,

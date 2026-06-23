@@ -7,45 +7,49 @@ import {
 	Struct,
 	uint32BE,
 } from '@hqtsm/struct';
-import { Blob, BlobCore, type BlobCore_Offset } from './blob.ts';
+import {
+	Security_Blob,
+	Security_BlobCore,
+	type Security_BlobCore_Offset,
+} from './blob.ts';
 import type { bool, uint } from '../libc/c.ts';
 import { ENOMEM } from '../libc/errno.ts';
 import type { size_t } from '../libc/stddef.ts';
 import type { uint32_t } from '../libc/stdint.ts';
 import { malloc } from '../libc/stdlib.ts';
-import type { Endian } from './endian.ts';
-import { UnixError } from './errors.ts';
+import type { Security_Endian } from './endian.ts';
+import { Security_UnixError } from './errors.ts';
 
 /**
  * SuperBlobCore Type.
  */
-export type SuperBlobCore_Type = uint32_t;
+export type Security_SuperBlobCore_Type = uint32_t;
 
 /**
  * SuperBlobCore Offset.
  */
-export type SuperBlobCore_Offset = BlobCore_Offset;
+export type Security_SuperBlobCore_Offset = Security_BlobCore_Offset;
 
 /**
  * Super blob index entry.
  *
  * @template TArrayBuffer Buffer type.
  */
-export class SuperBlobCore_Index<
+export class Security_SuperBlobCore_Index<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
 > extends Struct<TArrayBuffer> {
 	/**
 	 * Blob type.
 	 */
-	declare public type: Endian<SuperBlobCore_Type>;
+	declare public type: Security_Endian<Security_SuperBlobCore_Type>;
 
 	/**
 	 * Blob offset.
 	 */
-	declare public offset: Endian<SuperBlobCore_Offset>;
+	declare public offset: Security_Endian<Security_SuperBlobCore_Offset>;
 
 	static {
-		toStringTag(this, 'SuperBlobCore_Index');
+		toStringTag(this, 'Security_SuperBlobCore_Index');
 		uint32BE(this, 'type');
 		uint32BE(this, 'offset');
 		constant(this, 'BYTE_LENGTH');
@@ -57,9 +61,9 @@ export class SuperBlobCore_Index<
  *
  * @template TArrayBuffer Buffer type.
  */
-export abstract class SuperBlobCore<
+export abstract class Security_SuperBlobCore<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
-> extends Blob<TArrayBuffer> {
+> extends Security_Blob<TArrayBuffer> {
 	/**
 	 * Setup size and number of blobs in super blob.
 	 *
@@ -67,8 +71,12 @@ export abstract class SuperBlobCore<
 	 * @param size Blob length.
 	 * @param count Number of blobs.
 	 */
-	public static setup(_this: SuperBlobCore, size: size_t, count: uint): void {
-		SuperBlobCore.initializeSize.call(this, _this, size);
+	public static setup(
+		_this: Security_SuperBlobCore,
+		size: size_t,
+		count: uint,
+	): void {
+		Security_SuperBlobCore.initializeSize.call(this, _this, size);
 		_this.mCount = count;
 	}
 
@@ -78,7 +86,7 @@ export abstract class SuperBlobCore<
 	 * @param _this This.
 	 * @returns Blob count.
 	 */
-	public static count(_this: SuperBlobCore): uint {
+	public static count(_this: Security_SuperBlobCore): uint {
 		return _this.mCount;
 	}
 
@@ -89,7 +97,7 @@ export abstract class SuperBlobCore<
 	 * @param n Index.
 	 * @returns Type.
 	 */
-	public static type(_this: SuperBlobCore, n: uint): uint {
+	public static type(_this: Security_SuperBlobCore, n: uint): uint {
 		n >>>= 0;
 		return _this.mIndex[n].type;
 	}
@@ -102,13 +110,15 @@ export abstract class SuperBlobCore<
 	 * @param n Index.
 	 * @returns Blob or null if no offset in index.
 	 */
-	public static blob<T extends SuperBlobCore>(
+	public static blob<T extends Security_SuperBlobCore>(
 		_this: T,
 		n: uint,
-	): BlobCore<ArrayBufferType<T>> | null {
+	): Security_BlobCore<ArrayBufferType<T>> | null {
 		n >>>= 0;
 		const { offset } = _this.mIndex[n];
-		return offset ? SuperBlobCore.at(_this, BlobCore, offset) : null;
+		return offset
+			? Security_SuperBlobCore.at(_this, Security_BlobCore, offset)
+			: null;
 	}
 
 	/**
@@ -119,10 +129,10 @@ export abstract class SuperBlobCore<
 	 * @param type Index type.
 	 * @returns First match or null.
 	 */
-	public static find<T extends SuperBlobCore>(
+	public static find<T extends Security_SuperBlobCore>(
 		_this: T,
 		type: uint,
-	): BlobCore<ArrayBufferType<T>> | null {
+	): Security_BlobCore<ArrayBufferType<T>> | null {
 		type >>>= 0;
 		const { mCount, mIndex } = _this;
 		for (let i = 0; i < mCount; i++) {
@@ -130,7 +140,11 @@ export abstract class SuperBlobCore<
 			if (index.type === type) {
 				const { offset } = index;
 				return offset
-					? SuperBlobCore.at(_this, BlobCore, offset)
+					? Security_SuperBlobCore.at(
+						_this,
+						Security_BlobCore,
+						offset,
+					)
 					: null;
 			}
 		}
@@ -140,17 +154,19 @@ export abstract class SuperBlobCore<
 	/**
 	 * Number of blobs in super blob.
 	 */
-	declare private mCount: Endian<uint32_t>;
+	declare private mCount: Security_Endian<uint32_t>;
 
 	/**
 	 * Data of payload (only).
 	 */
-	declare private readonly mIndex: Arr<SuperBlobCore_Index<TArrayBuffer>>;
+	declare private readonly mIndex: Arr<
+		Security_SuperBlobCore_Index<TArrayBuffer>
+	>;
 
 	static {
-		toStringTag(this, 'SuperBlobCore');
+		toStringTag(this, 'Security_SuperBlobCore');
 		uint32BE(this, 'mCount' as never);
-		member(array(SuperBlobCore_Index, 0), this, 'mIndex' as never);
+		member(array(Security_SuperBlobCore_Index, 0), this, 'mIndex' as never);
 		constant(this, 'BYTE_LENGTH');
 	}
 }
@@ -158,28 +174,32 @@ export abstract class SuperBlobCore<
 /**
  * SuperBlobCore maker blob map.
  */
-export type SuperBlobCore_Maker_BlobMap = Map<SuperBlobCore_Type, BlobCore>;
+export type Security_SuperBlobCore_Maker_BlobMap = Map<
+	Security_SuperBlobCore_Type,
+	Security_BlobCore
+>;
 
 /**
  * SuperBlobCore_Maker template.
  */
-export type Template_SuperBlobCore_Maker =
+export type Security_Template_SuperBlobCore_Maker =
 	& {
 		readonly SuperBlob:
-			& Concrete<typeof SuperBlobCore<ArrayBuffer>>
-			& typeof SuperBlobCore<ArrayBuffer>;
+			& Concrete<typeof Security_SuperBlobCore<ArrayBuffer>>
+			& typeof Security_SuperBlobCore<ArrayBuffer>;
 	}
-	& typeof SuperBlobCore_Maker;
+	& typeof Security_SuperBlobCore_Maker;
 
 /**
  * SuperBlob core maker.
  */
-export abstract class SuperBlobCore_Maker {
+export abstract class Security_SuperBlobCore_Maker {
 	/**
 	 * SuperBlob class.
 	 */
-	public static readonly SuperBlob: typeof SuperBlobCore<ArrayBuffer> =
-		SuperBlobCore;
+	public static readonly SuperBlob: typeof Security_SuperBlobCore<
+		ArrayBuffer
+	> = Security_SuperBlobCore;
 
 	/**
 	 * Add blob to super blob, by reference.
@@ -189,9 +209,9 @@ export abstract class SuperBlobCore_Maker {
 	 * @param blob Blob.
 	 */
 	public static add(
-		_this: SuperBlobCore_Maker,
-		type: SuperBlobCore_Type,
-		blob: BlobCore,
+		_this: Security_SuperBlobCore_Maker,
+		type: Security_SuperBlobCore_Type,
+		blob: Security_BlobCore,
 	): void;
 
 	/**
@@ -201,8 +221,8 @@ export abstract class SuperBlobCore_Maker {
 	 * @param blobs Blobs.
 	 */
 	public static add(
-		_this: SuperBlobCore_Maker,
-		blobs: SuperBlob,
+		_this: Security_SuperBlobCore_Maker,
+		blobs: Security_SuperBlob,
 	): void;
 
 	/**
@@ -212,8 +232,8 @@ export abstract class SuperBlobCore_Maker {
 	 * @param maker Maker.
 	 */
 	public static add(
-		_this: SuperBlobCore_Maker,
-		maker: SuperBlobCore_Maker,
+		_this: Security_SuperBlobCore_Maker,
+		maker: Security_SuperBlobCore_Maker,
 	): void;
 
 	/**
@@ -224,14 +244,17 @@ export abstract class SuperBlobCore_Maker {
 	 * @param blob Blob if a type else undefined.
 	 */
 	public static add(
-		_this: SuperBlobCore_Maker,
-		type: SuperBlobCore_Type | SuperBlob | SuperBlobCore_Maker,
-		blob?: BlobCore,
+		_this: Security_SuperBlobCore_Maker,
+		type:
+			| Security_SuperBlobCore_Type
+			| Security_SuperBlob
+			| Security_SuperBlobCore_Maker,
+		blob?: Security_BlobCore,
 	): void {
 		if (typeof type === 'number') {
 			_this.mPieces.set(
 				type,
-				new BlobCore(
+				new Security_BlobCore(
 					blob!.buffer,
 					blob!.byteOffset,
 					blob!.littleEndian,
@@ -242,7 +265,11 @@ export abstract class SuperBlobCore_Maker {
 
 		if ('mPieces' in type) {
 			for (const [t, b] of type.mPieces) {
-				SuperBlobCore_Maker.add(_this, t, BlobCore.clone(b)!);
+				Security_SuperBlobCore_Maker.add(
+					_this,
+					t,
+					Security_BlobCore.clone(b)!,
+				);
 			}
 			return;
 		}
@@ -250,10 +277,10 @@ export abstract class SuperBlobCore_Maker {
 		const mIndex = type['mIndex'];
 		const mCount = type['mCount'];
 		for (let ix = 0; ix < mCount; ix++) {
-			SuperBlobCore_Maker.add(
+			Security_SuperBlobCore_Maker.add(
 				_this,
 				mIndex[ix].type,
-				BlobCore.clone(SuperBlob.blob(type, ix)!)!,
+				Security_BlobCore.clone(Security_SuperBlob.blob(type, ix)!)!,
 			);
 		}
 	}
@@ -266,8 +293,8 @@ export abstract class SuperBlobCore_Maker {
 	 * @returns Is contained.
 	 */
 	public static contains(
-		_this: SuperBlobCore_Maker,
-		type: SuperBlobCore_Type,
+		_this: Security_SuperBlobCore_Maker,
+		type: Security_SuperBlobCore_Type,
 	): bool {
 		return _this.mPieces.has(type);
 	}
@@ -280,10 +307,10 @@ export abstract class SuperBlobCore_Maker {
 	 * @param type Index type.
 	 * @returns Blob or null if not found.
 	 */
-	public static get<T extends SuperBlobCore_Maker>(
+	public static get<T extends Security_SuperBlobCore_Maker>(
 		_this: T,
-		type: SuperBlobCore_Type,
-	): BlobCore<ArrayBufferType<T>> | null {
+		type: Security_SuperBlobCore_Type,
+	): Security_BlobCore<ArrayBufferType<T>> | null {
 		return _this.mPieces.get(type) || null;
 	}
 
@@ -296,7 +323,7 @@ export abstract class SuperBlobCore_Maker {
 	 * @returns Byte length.
 	 */
 	public static size(
-		_this: SuperBlobCore_Maker,
+		_this: Security_SuperBlobCore_Maker,
 		sizes: Iterable<size_t>,
 		...size1: size_t[]
 	): size_t {
@@ -304,7 +331,7 @@ export abstract class SuperBlobCore_Maker {
 		let total = 0;
 		for (const blob of _this.mPieces.values()) {
 			count++;
-			total += BlobCore.size(blob);
+			total += Security_BlobCore.size(blob);
 		}
 		for (const s of sizes) {
 			count++;
@@ -314,8 +341,8 @@ export abstract class SuperBlobCore_Maker {
 			count++;
 			total += s;
 		}
-		return SuperBlobCore.BYTE_LENGTH +
-			count * SuperBlobCore_Index.BYTE_LENGTH +
+		return Security_SuperBlobCore.BYTE_LENGTH +
+			count * Security_SuperBlobCore_Index.BYTE_LENGTH +
 			total;
 	}
 
@@ -328,31 +355,31 @@ export abstract class SuperBlobCore_Maker {
 	 * @returns SuperBlob.
 	 */
 	public static make<
-		TSuperBlobCore_Maker extends Template_SuperBlobCore_Maker,
+		TSuperBlobCore_Maker extends Security_Template_SuperBlobCore_Maker,
 	>(
 		this: TSuperBlobCore_Maker,
 		_this: InstanceType<TSuperBlobCore_Maker>,
 	): InstanceType<TSuperBlobCore_Maker['SuperBlob']> {
 		const { mPieces } = _this;
 		const count = mPieces.size;
-		const total = SuperBlobCore_Maker.size(_this, []);
+		const total = Security_SuperBlobCore_Maker.size(_this, []);
 		const buffer = malloc(total);
 		if (!buffer) {
-			UnixError.throwMe(ENOMEM);
+			Security_UnixError.throwMe(ENOMEM);
 		}
 		const data = new Uint8Array(buffer);
 		const result = new this.SuperBlob(buffer);
 		const mIndex = result['mIndex'];
 		this.SuperBlob.setup(result, total, count);
-		let pc = SuperBlobCore.BYTE_LENGTH +
-			count * SuperBlobCore_Index.BYTE_LENGTH;
+		let pc = Security_SuperBlobCore.BYTE_LENGTH +
+			count * Security_SuperBlobCore_Index.BYTE_LENGTH;
 		let n = 0;
 		for (const type of [...mPieces.keys()].sort((a, b) => a - b)) {
 			const index = mIndex[n];
 			index.type = type;
 			index.offset = pc;
 			const p = mPieces.get(type)!;
-			const l = BlobCore.size(p);
+			const l = Security_BlobCore.size(p);
 			data.set(new Uint8Array(p.buffer, p.byteOffset, l), pc);
 			pc += l;
 			n++;
@@ -363,10 +390,10 @@ export abstract class SuperBlobCore_Maker {
 	/**
 	 * Blobs in super blob.
 	 */
-	private readonly mPieces: SuperBlobCore_Maker_BlobMap = new Map();
+	private readonly mPieces: Security_SuperBlobCore_Maker_BlobMap = new Map();
 
 	static {
-		toStringTag(this, 'SuperBlobCore_Maker');
+		toStringTag(this, 'Security_SuperBlobCore_Maker');
 		constant(this, 'SuperBlob');
 	}
 }
@@ -376,23 +403,25 @@ export abstract class SuperBlobCore_Maker {
  *
  * @template TArrayBuffer Array buffer type.
  */
-export abstract class SuperBlob<
+export abstract class Security_SuperBlob<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
-> extends SuperBlobCore<TArrayBuffer> {
+> extends Security_SuperBlobCore<TArrayBuffer> {
 	static {
-		toStringTag(this, 'SuperBlob');
+		toStringTag(this, 'Security_SuperBlob');
 	}
 }
 
 /**
  * SuperBlob maker.
  */
-export abstract class SuperBlob_Maker extends SuperBlobCore_Maker {
-	public static override readonly SuperBlob: typeof SuperBlob<ArrayBuffer> =
-		SuperBlob;
+export abstract class Security_SuperBlob_Maker
+	extends Security_SuperBlobCore_Maker {
+	public static override readonly SuperBlob: typeof Security_SuperBlob<
+		ArrayBuffer
+	> = Security_SuperBlob;
 
 	static {
-		toStringTag(this, 'SuperBlob_Maker');
+		toStringTag(this, 'Security_SuperBlob_Maker');
 		constant(this, 'SuperBlob');
 	}
 }

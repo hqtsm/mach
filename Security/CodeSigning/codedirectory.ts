@@ -27,7 +27,7 @@ import type { _const, bool, char, int, uchar, uint } from '../../libc/c.ts';
 import type { big_size_t, size_t } from '../../libc/stddef.ts';
 import type { uint32_t, uint64_t, uint8_t } from '../../libc/stdint.ts';
 import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../../mach/vm_param.ts';
-import { Blob } from '../blob.ts';
+import { Security_Blob } from '../blob.ts';
 import {
 	errSecCSSignatureUnsupported,
 	errSecCSUnsupportedDigestAlgorithm,
@@ -41,10 +41,13 @@ import {
 	kSecCodeCDHashLength,
 	kSecCodeMagicCodeDirectory,
 } from '../CSCommonPriv.ts';
-import { MacOSError } from '../errors.ts';
-import type { Endian } from '../endian.ts';
-import { CCHashInstance, type DynamicHash } from '../hashing.ts';
-import { hashFileData } from './csutilities.ts';
+import { Security_MacOSError } from '../errors.ts';
+import type { Security_Endian } from '../endian.ts';
+import {
+	Security_CCHashInstance,
+	type Security_DynamicHash,
+} from '../hashing.ts';
+import { Security_CodeSigning_hashFileData } from './csutilities.ts';
 
 const max = (values: number[]) => Math.max(...values);
 
@@ -127,99 +130,99 @@ export const kSecCS_LIBRARYCONSTRAINTFILE = 'LibraryConstraint';
 /**
  * Code directory Info.plist slot.
  */
-export const cdInfoSlot = 1;
+export const Security_CodeSigning_cdInfoSlot = 1;
 
 /**
  * Code directory internal requirements slot.
  */
-export const cdRequirementsSlot = 2;
+export const Security_CodeSigning_cdRequirementsSlot = 2;
 
 /**
  * Code directory resource directory slot.
  */
-export const cdResourceDirSlot = 3;
+export const Security_CodeSigning_cdResourceDirSlot = 3;
 
 /**
  * Code directory top directory slot.
  */
-export const cdTopDirectorySlot = 4;
+export const Security_CodeSigning_cdTopDirectorySlot = 4;
 
 /**
  * Code directory embedded entitlement slot.
  */
-export const cdEntitlementSlot = 5;
+export const Security_CodeSigning_cdEntitlementSlot = 5;
 
 /**
  * Code directory disk rep slot.
  */
-export const cdRepSpecificSlot = 6;
+export const Security_CodeSigning_cdRepSpecificSlot = 6;
 
 /**
  * Code directory entitlement DER slot.
  */
-export const cdEntitlementDERSlot = 7;
+export const Security_CodeSigning_cdEntitlementDERSlot = 7;
 
 /**
  * Code directory launch constraint self slot.
  */
-export const cdLaunchConstraintSelf = 8;
+export const Security_CodeSigning_cdLaunchConstraintSelf = 8;
 
 /**
  * Code directory launch constraint parent slot.
  */
-export const cdLaunchConstraintParent = 9;
+export const Security_CodeSigning_cdLaunchConstraintParent = 9;
 
 /**
  * Code directory launch constraint responsible slot.
  */
-export const cdLaunchConstraintResponsible = 10;
+export const Security_CodeSigning_cdLaunchConstraintResponsible = 10;
 
 /**
  * Code directory library constraint slot.
  */
-export const cdLibraryConstraint = 11;
+export const Security_CodeSigning_cdLibraryConstraint = 11;
 
 /**
  * Code directory slot count.
  */
-export const cdSlotCount = 12;
+export const Security_CodeSigning_cdSlotCount = 12;
 
 /**
  * Code directoty maximum slot.
  */
-export const cdSlotMax = 11;
+export const Security_CodeSigning_cdSlotMax = 11;
 
 // Virtual slots:
 
 /**
  * Code directory code directory slot.
  */
-export const cdCodeDirectorySlot = 0;
+export const Security_CodeSigning_cdCodeDirectorySlot = 0;
 
 /**
  * Code directory alternate code directory array slots.
  */
-export const cdAlternateCodeDirectorySlots = 0x1000;
+export const Security_CodeSigning_cdAlternateCodeDirectorySlots = 0x1000;
 
 /**
  * Code directory alternate code directory array limit.
  */
-export const cdAlternateCodeDirectoryLimit = 0x1005;
+export const Security_CodeSigning_cdAlternateCodeDirectoryLimit = 0x1005;
 
 /**
  * Code directory CMS signature slot.
  */
-export const cdSignatureSlot = 0x10000;
+export const Security_CodeSigning_cdSignatureSlot = 0x10000;
 
 /**
  * Code directory identification blob slot.
  */
-export const cdIdentificationSlot = 0x10001;
+export const Security_CodeSigning_cdIdentificationSlot = 0x10001;
 
 /**
  * Code directory ticket slot.
  */
-export const cdTicketSlot = 0x10002;
+export const Security_CodeSigning_cdTicketSlot = 0x10002;
 
 // }
 
@@ -229,80 +232,82 @@ export const cdTicketSlot = 0x10002;
 /**
  * Slot values differs for each architecture.
  */
-export const cdComponentPerArchitecture = 1;
+export const Security_CodeSigning_cdComponentPerArchitecture = 1;
 
 /**
  * Slot value is Blob.
  */
-export const cdComponentIsBlob = 2;
+export const Security_CodeSigning_cdComponentIsBlob = 2;
 
 // }
 
 /**
  * Platform identifier.
  */
-export type PlatformIdentifier = uint8_t;
+export type Security_CodeSigning_PlatformIdentifier = uint8_t;
 
 /**
  * No platform.
  */
-export const noPlatform = 0;
+export const Security_CodeSigning_noPlatform = 0;
 
 /**
  * Maximum platform.
  */
-export const maxPlatform = 255;
+export const Security_CodeSigning_maxPlatform = 255;
 
 /**
  * Hash algorithm.
  */
-export type CodeDirectory_HashAlgorithm = uint32_t;
+export type Security_CodeSigning_CodeDirectory_HashAlgorithm = uint32_t;
 
 /**
  * Set of hash algorithms.
  */
-export type CodeDirectory_HashAlgorithms = Set<CodeDirectory_HashAlgorithm>;
+export type Security_CodeSigning_CodeDirectory_HashAlgorithms = Set<
+	Security_CodeSigning_CodeDirectory_HashAlgorithm
+>;
 
 /**
  * Slot index.
  */
-export type CodeDirectory_Slot = int;
+export type Security_CodeSigning_CodeDirectory_Slot = int;
 
 /**
  * Special slot.
  */
-export type CodeDirectory_SpecialSlot = uint;
+export type Security_CodeSigning_CodeDirectory_SpecialSlot = uint;
 
 /**
  * CodeDirectory scatter vector element.
  *
  * @template TArrayBuffer Buffer type.
  */
-export class CodeDirectory_Scatter<
+export class Security_CodeSigning_CodeDirectory_Scatter<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
 > extends Struct<TArrayBuffer> {
 	/**
 	 * Page count; zero for sentinel (only).
 	 */
-	declare public count: Endian<uint32_t>;
+	declare public count: Security_Endian<uint32_t>;
 
 	/**
 	 * First page number.
 	 */
-	declare public base: Endian<uint32_t>;
+	declare public base: Security_Endian<uint32_t>;
 
 	/**
 	 * Byte offset in target.
 	 */
-	declare public targetOffset: Endian<uint64_t>;
+	declare public targetOffset: Security_Endian<uint64_t>;
 
 	/**
 	 * Reserved, must be zero.
 	 */
-	declare public spare: Endian<uint64_t>;
+	declare public spare: Security_Endian<uint64_t>;
 
 	static {
-		toStringTag(this, 'CodeDirectory_Scatter');
+		toStringTag(this, 'Security_CodeSigning_CodeDirectory_Scatter');
 		uint32BE(this, 'count');
 		uint32BE(this, 'base');
 		uint64BE(this, 'targetOffset');
@@ -316,123 +321,123 @@ export class CodeDirectory_Scatter<
  *
  * @template TArrayBuffer Buffer type.
  */
-export class CodeDirectory<
+export class Security_CodeSigning_CodeDirectory<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
-> extends Blob<TArrayBuffer> {
+> extends Security_Blob<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicCodeDirectory;
 
 	/**
 	 * Compatibility version.
 	 */
-	declare public version: Endian<uint32_t>;
+	declare public version: Security_Endian<uint32_t>;
 
 	/**
 	 * Setup and mode flags (SecCodeSignatureFlags kSecCodeSignature*).
 	 */
-	declare public flags: Endian<uint32_t>;
+	declare public flags: Security_Endian<uint32_t>;
 
 	/**
 	 * Offset of hash slot element at index zero.
 	 */
-	declare public hashOffset: Endian<uint32_t>;
+	declare public hashOffset: Security_Endian<uint32_t>;
 
 	/**
 	 * Offset of identifier string.
 	 */
-	declare public identOffset: Endian<uint32_t>;
+	declare public identOffset: Security_Endian<uint32_t>;
 
 	/**
 	 * Number of special hash slots.
 	 */
-	declare public nSpecialSlots: Endian<uint32_t>;
+	declare public nSpecialSlots: Security_Endian<uint32_t>;
 
 	/**
 	 * Number of ordinary (code) hash slots.
 	 */
-	declare public nCodeSlots: Endian<uint32_t>;
+	declare public nCodeSlots: Security_Endian<uint32_t>;
 
 	/**
 	 * Limit to main image signature range, 32 bits.
 	 */
-	declare public codeLimit: Endian<uint32_t>;
+	declare public codeLimit: Security_Endian<uint32_t>;
 
 	/**
 	 * Size of each hash in bytes.
 	 */
-	declare public hashSize: Endian<uint8_t>;
+	declare public hashSize: Security_Endian<uint8_t>;
 
 	/**
 	 * Hash type (SecCSDigestAlgorithm kSecCodeSignatureHash*).
 	 */
-	declare public hashType: Endian<uint8_t>;
+	declare public hashType: Security_Endian<uint8_t>;
 
 	/**
 	 * Platform identifier, zero if not platform binary.
 	 */
-	declare public platform: Endian<uint8_t>;
+	declare public platform: Security_Endian<uint8_t>;
 
 	/**
 	 * The page size, log2(page size in bytes), 0 => infinite.
 	 */
-	declare public pageSize: Endian<uint8_t>;
+	declare public pageSize: Security_Endian<uint8_t>;
 
 	/**
 	 * Unused, must be zero.
 	 */
-	declare public spare2: Endian<uint32_t>;
+	declare public spare2: Security_Endian<uint32_t>;
 
 	/**
 	 * Offset of scatter vector or 0 for none.
 	 * Assumes supportsScatter.
 	 */
-	declare public scatterOffset: Endian<uint32_t>;
+	declare public scatterOffset: Security_Endian<uint32_t>;
 
 	/**
 	 * Offset of team identifier or 0 for none.
 	 * Assumes supportsTeamID.
 	 */
-	declare public teamIDOffset: Endian<uint32_t>;
+	declare public teamIDOffset: Security_Endian<uint32_t>;
 
 	/**
 	 * Unused, must be zero.
 	 */
-	declare public spare3: Endian<uint32_t>;
+	declare public spare3: Security_Endian<uint32_t>;
 
 	/**
 	 * Limit to main image signature range, 64 bits.
 	 * Assumes supportsCodeLimit64.
 	 */
-	declare public codeLimit64: Endian<uint64_t>;
+	declare public codeLimit64: Security_Endian<uint64_t>;
 
 	/**
 	 * Offset of executable segment (TEXT segment file offset),
 	 * Assumes supportsExecSegment.
 	 */
-	declare public execSegBase: Endian<uint64_t>;
+	declare public execSegBase: Security_Endian<uint64_t>;
 
 	/**
 	 * Limit of executable segment (TEXT segment file size).
 	 * Assumes supportsExecSegment.
 	 */
-	declare public execSegLimit: Endian<uint64_t>;
+	declare public execSegLimit: Security_Endian<uint64_t>;
 
 	/**
 	 * The exec segment flags (SecCodeExecSegFlags kSecCodeExecSeg*).
 	 * Assumes supportsExecSegment.
 	 */
-	declare public execSegFlags: Endian<uint64_t>;
+	declare public execSegFlags: Security_Endian<uint64_t>;
 
 	/**
 	 * Runtime version encoded as an unsigned integer.
 	 * Assumes supportsPreEncrypt.
 	 */
-	declare public runtime: Endian<uint32_t>;
+	declare public runtime: Security_Endian<uint32_t>;
 
 	/**
 	 * Offset of pre-encrypt hash slots.
 	 * Assumes supportsPreEncrypt.
 	 */
-	declare public preEncryptOffset: Endian<uint32_t>;
+	declare public preEncryptOffset: Security_Endian<uint32_t>;
 
 	/**
 	 * Current version, subject to change.
@@ -481,7 +486,7 @@ export class CodeDirectory<
 	 * @param _this This.
 	 * @returns Char pointer.
 	 */
-	public static identifier<T extends CodeDirectory>(
+	public static identifier<T extends Security_CodeSigning_CodeDirectory>(
 		_this: T,
 	): Ptr<char, ArrayBufferType<T>> {
 		return new Int8Ptr(
@@ -497,8 +502,13 @@ export class CodeDirectory<
 	 * @param _this This.
 	 * @returns Code limit.
 	 */
-	public static signingLimit(_this: CodeDirectory): big_size_t {
-		if (_this.version >= CodeDirectory.supportsCodeLimit64) {
+	public static signingLimit(
+		_this: Security_CodeSigning_CodeDirectory,
+	): big_size_t {
+		if (
+			_this.version >=
+				Security_CodeSigning_CodeDirectory.supportsCodeLimit64
+		) {
 			const { codeLimit64 } = _this;
 			if (codeLimit64) {
 				return codeLimit64;
@@ -514,10 +524,12 @@ export class CodeDirectory<
 	 * @returns Slot index.
 	 */
 	public static maxSpecialSlot(
-		_this: CodeDirectory,
-	): CodeDirectory_SpecialSlot {
+		_this: Security_CodeSigning_CodeDirectory,
+	): Security_CodeSigning_CodeDirectory_SpecialSlot {
 		const slot = _this.nSpecialSlots;
-		return slot > cdSlotMax ? cdSlotMax : slot;
+		return slot > Security_CodeSigning_cdSlotMax
+			? Security_CodeSigning_cdSlotMax
+			: slot;
 	}
 
 	/**
@@ -529,15 +541,16 @@ export class CodeDirectory<
 	 * @param preEncrypt Pre-encrypt version.
 	 * @returns Hash value, or null.
 	 */
-	public static getSlotMutable<T extends CodeDirectory>(
+	public static getSlotMutable<T extends Security_CodeSigning_CodeDirectory>(
 		_this: T,
-		slot: CodeDirectory_Slot,
+		slot: Security_CodeSigning_CodeDirectory_Slot,
 		preEncrypt: bool,
 	): Ptr<uchar, ArrayBufferType<T>> | null {
 		let offset;
 		if (preEncrypt) {
 			if (
-				_this.version < CodeDirectory.supportsPreEncrypt ||
+				_this.version <
+					Security_CodeSigning_CodeDirectory.supportsPreEncrypt ||
 				!(offset = _this.preEncryptOffset)
 			) {
 				return null;
@@ -561,12 +574,16 @@ export class CodeDirectory<
 	 * @param preEncrypt Pre-encrypt version.
 	 * @returns Hash value, or null.
 	 */
-	public static getSlot<T extends CodeDirectory>(
+	public static getSlot<T extends Security_CodeSigning_CodeDirectory>(
 		_this: T,
-		slot: CodeDirectory_Slot,
+		slot: Security_CodeSigning_CodeDirectory_Slot,
 		preEncrypt: bool,
 	): _const<Ptr<uchar, ArrayBufferType<T>>> | null {
-		return CodeDirectory.getSlotMutable(_this, slot, preEncrypt);
+		return Security_CodeSigning_CodeDirectory.getSlotMutable(
+			_this,
+			slot,
+			preEncrypt,
+		);
 	}
 
 	/**
@@ -576,13 +593,19 @@ export class CodeDirectory<
 	 * @param _this This.
 	 * @returns Scatter pointer, or null.
 	 */
-	public static scatterVector<T extends CodeDirectory>(
+	public static scatterVector<T extends Security_CodeSigning_CodeDirectory>(
 		_this: T,
-	): Ptr<CodeDirectory_Scatter<ArrayBufferType<T>>> | null {
-		if (_this.version >= CodeDirectory.supportsScatter) {
+	):
+		| Ptr<Security_CodeSigning_CodeDirectory_Scatter<ArrayBufferType<T>>>
+		| null {
+		if (
+			_this.version >= Security_CodeSigning_CodeDirectory.supportsScatter
+		) {
 			const { scatterOffset } = _this;
 			if (scatterOffset) {
-				return new (pointer(CodeDirectory_Scatter))(
+				return new (pointer(
+					Security_CodeSigning_CodeDirectory_Scatter,
+				))(
 					_this.buffer,
 					_this.byteOffset + scatterOffset,
 					_this.littleEndian,
@@ -599,10 +622,12 @@ export class CodeDirectory<
 	 * @param _this This.
 	 * @returns Char pointer, or null.
 	 */
-	public static teamID<T extends CodeDirectory>(
+	public static teamID<T extends Security_CodeSigning_CodeDirectory>(
 		_this: T,
 	): Ptr<char, ArrayBufferType<T>> | null {
-		if (_this.version >= CodeDirectory.supportsTeamID) {
+		if (
+			_this.version >= Security_CodeSigning_CodeDirectory.supportsTeamID
+		) {
 			const { teamIDOffset } = _this;
 			if (teamIDOffset) {
 				return new Int8Ptr(
@@ -621,8 +646,11 @@ export class CodeDirectory<
 	 * @param _this This.
 	 * @returns Byte offset, zero if not supported.
 	 */
-	public static execSegmentBase(_this: CodeDirectory): uint64_t {
-		return _this.version >= CodeDirectory.supportsExecSegment
+	public static execSegmentBase(
+		_this: Security_CodeSigning_CodeDirectory,
+	): uint64_t {
+		return _this.version >=
+				Security_CodeSigning_CodeDirectory.supportsExecSegment
 			? _this.execSegBase
 			: 0n;
 	}
@@ -633,8 +661,11 @@ export class CodeDirectory<
 	 * @param _this This.
 	 * @returns Byte length, zero if not supported.
 	 */
-	public static execSegmentLimit(_this: CodeDirectory): uint64_t {
-		return _this.version >= CodeDirectory.supportsExecSegment
+	public static execSegmentLimit(
+		_this: Security_CodeSigning_CodeDirectory,
+	): uint64_t {
+		return _this.version >=
+				Security_CodeSigning_CodeDirectory.supportsExecSegment
 			? _this.execSegLimit
 			: 0n;
 	}
@@ -645,8 +676,11 @@ export class CodeDirectory<
 	 * @param _this This.
 	 * @returns Flags, zero if not supported.
 	 */
-	public static execSegmentFlags(_this: CodeDirectory): uint64_t {
-		return _this.version >= CodeDirectory.supportsExecSegment
+	public static execSegmentFlags(
+		_this: Security_CodeSigning_CodeDirectory,
+	): uint64_t {
+		return _this.version >=
+				Security_CodeSigning_CodeDirectory.supportsExecSegment
 			? _this.execSegFlags
 			: 0n;
 	}
@@ -658,10 +692,12 @@ export class CodeDirectory<
 	 * @param _this This.
 	 * @returns Hash pointer, or null.
 	 */
-	public static preEncryptHashes<T extends CodeDirectory>(
+	public static preEncryptHashes<
+		T extends Security_CodeSigning_CodeDirectory,
+	>(
 		_this: T,
 	): _const<Ptr<uchar, ArrayBufferType<T>>> | null {
-		return CodeDirectory.getSlot(_this, 0, true);
+		return Security_CodeSigning_CodeDirectory.getSlot(_this, 0, true);
 	}
 
 	/**
@@ -670,8 +706,11 @@ export class CodeDirectory<
 	 * @param _this This.
 	 * @returns Version, zero if not supported.
 	 */
-	public static runtimeVersion(_this: CodeDirectory): uint32_t {
-		return _this.version >= CodeDirectory.supportsPreEncrypt
+	public static runtimeVersion(
+		_this: Security_CodeSigning_CodeDirectory,
+	): uint32_t {
+		return _this.version >=
+				Security_CodeSigning_CodeDirectory.supportsPreEncrypt
 			? _this.runtime
 			: 0;
 	}
@@ -688,21 +727,26 @@ export class CodeDirectory<
 	 * @returns True if valid.
 	 */
 	public static async validateSlot(
-		_this: CodeDirectory,
+		_this: Security_CodeSigning_CodeDirectory,
 		source: ArrayBufferLike | ArrayBufferPointer | Reader,
 		size: size_t,
-		slot: CodeDirectory_Slot,
+		slot: Security_CodeSigning_CodeDirectory_Slot,
 		preEncrypted: bool,
 		subtle: SubtleCryptoDigest | null = null,
 	): Promise<bool> {
-		const hash = CodeDirectory.getHash(_this);
+		const hash = Security_CodeSigning_CodeDirectory.getHash(_this);
 		hash.subtle = subtle;
 		const l = hash.digestLength();
 		const digest = new Uint8Array(l);
 		await (
 			'arrayBuffer' in source
-				? CodeDirectory.generateHash(hash, source, digest, size)
-				: CodeDirectory.generateHash(
+				? Security_CodeSigning_CodeDirectory.generateHash(
+					hash,
+					source,
+					digest,
+					size,
+				)
+				: Security_CodeSigning_CodeDirectory.generateHash(
 					hash,
 					'buffer' in source
 						? bufferBytes(source.buffer, source.byteOffset, size)
@@ -711,7 +755,11 @@ export class CodeDirectory<
 					digest,
 				)
 		);
-		const slotDigest = CodeDirectory.getSlot(_this, slot, preEncrypted)!;
+		const slotDigest = Security_CodeSigning_CodeDirectory.getSlot(
+			_this,
+			slot,
+			preEncrypted,
+		)!;
 		for (let i = 0; i < l; i++) {
 			if (digest[i] !== slotDigest[i]) {
 				return false;
@@ -728,11 +776,15 @@ export class CodeDirectory<
 	 * @returns True if present.
 	 */
 	public static slotIsPresent(
-		_this: CodeDirectory,
-		slot: CodeDirectory_Slot,
+		_this: Security_CodeSigning_CodeDirectory,
+		slot: Security_CodeSigning_CodeDirectory_Slot,
 	): bool {
 		if (slot >= -_this.nSpecialSlots && slot < _this.nCodeSlots) {
-			const digest = CodeDirectory.getSlot(_this, slot, false);
+			const digest = Security_CodeSigning_CodeDirectory.getSlot(
+				_this,
+				slot,
+				false,
+			);
 			if (digest) {
 				for (let i = 0, l = _this.hashSize; i < l; i++) {
 					if (digest[i]) {
@@ -750,22 +802,24 @@ export class CodeDirectory<
 	 * @param hashType Hash type.
 	 * @returns Hasher instance.
 	 */
-	public static hashFor(hashType: CodeDirectory_HashAlgorithm): DynamicHash {
+	public static hashFor(
+		hashType: Security_CodeSigning_CodeDirectory_HashAlgorithm,
+	): Security_DynamicHash {
 		switch (hashType) {
 			case kSecCodeSignatureHashSHA1: {
-				return new CCHashInstance(kCCDigestSHA1);
+				return new Security_CCHashInstance(kCCDigestSHA1);
 			}
 			case kSecCodeSignatureHashSHA256: {
-				return new CCHashInstance(kCCDigestSHA256);
+				return new Security_CCHashInstance(kCCDigestSHA256);
 			}
 			case kSecCodeSignatureHashSHA384: {
-				return new CCHashInstance(kCCDigestSHA384);
+				return new Security_CCHashInstance(kCCDigestSHA384);
 			}
 			case kSecCodeSignatureHashSHA256Truncated: {
-				return new CCHashInstance(kCCDigestSHA256, 20);
+				return new Security_CCHashInstance(kCCDigestSHA256, 20);
 			}
 		}
-		MacOSError.throwMe(errSecCSSignatureUnsupported);
+		Security_MacOSError.throwMe(errSecCSSignatureUnsupported);
 	}
 
 	/**
@@ -774,8 +828,10 @@ export class CodeDirectory<
 	 * @param _this This.
 	 * @returns Hash instance.
 	 */
-	public static getHash(_this: CodeDirectory): DynamicHash {
-		return CodeDirectory.hashFor(_this.hashType);
+	public static getHash(
+		_this: Security_CodeSigning_CodeDirectory,
+	): Security_DynamicHash {
+		return Security_CodeSigning_CodeDirectory.hashFor(_this.hashType);
 	}
 
 	/**
@@ -787,17 +843,17 @@ export class CodeDirectory<
 	 * @returns Hash digest.
 	 */
 	public static async cdhash(
-		_this: CodeDirectory,
+		_this: Security_CodeSigning_CodeDirectory,
 		truncate = false,
 		subtle: SubtleCryptoDigest | null = null,
 	): Promise<ArrayBuffer> {
-		const hash = CodeDirectory.getHash(_this);
+		const hash = Security_CodeSigning_CodeDirectory.getHash(_this);
 		hash.subtle = subtle;
 		await hash.update(
 			bufferBytes(
 				_this.buffer,
 				_this.byteOffset,
-				CodeDirectory.size(_this),
+				Security_CodeSigning_CodeDirectory.size(_this),
 			),
 		);
 		const l = hash.digestLength();
@@ -820,17 +876,20 @@ export class CodeDirectory<
 	public static async multipleHashFileData(
 		reader: Reader,
 		limit: size_t,
-		types: CodeDirectory_HashAlgorithms,
+		types: Security_CodeSigning_CodeDirectory_HashAlgorithms,
 		action: (
-			type: CodeDirectory_HashAlgorithm,
-			hasher: DynamicHash,
+			type: Security_CodeSigning_CodeDirectory_HashAlgorithm,
+			hasher: Security_DynamicHash,
 		) => Promise<void>,
 		subtle: SubtleCryptoDigest | null = null,
 	): Promise<void> {
 		const total = limit ? Math.min(limit, reader.size) : reader.size;
-		const hashes: [CodeDirectory_HashAlgorithm, DynamicHash][] = [];
+		const hashes: [
+			Security_CodeSigning_CodeDirectory_HashAlgorithm,
+			Security_DynamicHash,
+		][] = [];
 		for (const type of types) {
-			const hash = CodeDirectory.hashFor(type);
+			const hash = Security_CodeSigning_CodeDirectory.hashFor(type);
 			hash.subtle = subtle;
 			hashes.push([type, hash]);
 		}
@@ -865,7 +924,9 @@ export class CodeDirectory<
 	 * @param type Hash type.
 	 * @returns True if viable.
 	 */
-	public static viableHash(type: CodeDirectory_HashAlgorithm): bool {
+	public static viableHash(
+		type: Security_CodeSigning_CodeDirectory_HashAlgorithm,
+	): bool {
 		for (
 			let i = 0, t;
 			(t = hashPriorities[i]) !== kSecCodeSignatureNoHash;
@@ -885,8 +946,8 @@ export class CodeDirectory<
 	 * @returns Hash type.
 	 */
 	public static bestHashOf(
-		types: CodeDirectory_HashAlgorithms,
-	): CodeDirectory_HashAlgorithm {
+		types: Security_CodeSigning_CodeDirectory_HashAlgorithms,
+	): Security_CodeSigning_CodeDirectory_HashAlgorithm {
 		for (
 			let i = 0, type;
 			(type = hashPriorities[i]) !== kSecCodeSignatureNoHash;
@@ -896,7 +957,7 @@ export class CodeDirectory<
 				return type;
 			}
 		}
-		MacOSError.throwMe(errSecCSUnsupportedDigestAlgorithm);
+		Security_MacOSError.throwMe(errSecCSUnsupportedDigestAlgorithm);
 	}
 
 	/**
@@ -907,7 +968,7 @@ export class CodeDirectory<
 	 * @returns Hex hash.
 	 */
 	public static hexHash(
-		_this: CodeDirectory,
+		_this: Security_CodeSigning_CodeDirectory,
 		hash: ArrayBufferLike | ArrayBufferPointer,
 	): Uint8Array<ArrayBuffer> {
 		const size = _this.hashSize;
@@ -931,7 +992,7 @@ export class CodeDirectory<
 	 * @returns Size.
 	 */
 	protected static async generateHash(
-		hasher: DynamicHash,
+		hasher: Security_DynamicHash,
 		reader: Reader,
 		digest: ArrayBufferLike | ArrayBufferPointer,
 		limit?: size_t,
@@ -947,7 +1008,7 @@ export class CodeDirectory<
 	 * @returns Size.
 	 */
 	protected static async generateHash(
-		hasher: DynamicHash,
+		hasher: Security_DynamicHash,
 		data: ArrayBufferPointer<ArrayBuffer>,
 		length: size_t,
 		digest: ArrayBufferLike | ArrayBufferPointer,
@@ -963,7 +1024,7 @@ export class CodeDirectory<
 	 * @returns Size.
 	 */
 	protected static async generateHash(
-		hasher: DynamicHash,
+		hasher: Security_DynamicHash,
 		reader: Reader | ArrayBufferPointer<ArrayBuffer>,
 		digest: ArrayBufferLike | ArrayBufferPointer | size_t,
 		limit?: size_t | ArrayBufferLike | ArrayBufferPointer,
@@ -976,7 +1037,7 @@ export class CodeDirectory<
 			await hasher.finish(limit as ArrayBufferPointer<ArrayBuffer>);
 			return digest;
 		}
-		const size = await hashFileData(
+		const size = await Security_CodeSigning_hashFileData(
 			reader as Reader,
 			hasher,
 			limit as size_t | undefined,
@@ -992,42 +1053,42 @@ export class CodeDirectory<
 	 * @returns Slot name, or null.
 	 */
 	public static canonicalSlotName(
-		slot: CodeDirectory_SpecialSlot,
+		slot: Security_CodeSigning_CodeDirectory_SpecialSlot,
 	): string | null {
 		switch (slot) {
-			case cdRequirementsSlot:
+			case Security_CodeSigning_cdRequirementsSlot:
 				return kSecCS_REQUIREMENTSFILE;
-			case cdAlternateCodeDirectorySlots:
+			case Security_CodeSigning_cdAlternateCodeDirectorySlots:
 				return `${kSecCS_REQUIREMENTSFILE}-1`;
-			case cdAlternateCodeDirectorySlots + 1:
+			case Security_CodeSigning_cdAlternateCodeDirectorySlots + 1:
 				return `${kSecCS_REQUIREMENTSFILE}-2`;
-			case cdAlternateCodeDirectorySlots + 2:
+			case Security_CodeSigning_cdAlternateCodeDirectorySlots + 2:
 				return `${kSecCS_REQUIREMENTSFILE}-3`;
-			case cdAlternateCodeDirectorySlots + 3:
+			case Security_CodeSigning_cdAlternateCodeDirectorySlots + 3:
 				return `${kSecCS_REQUIREMENTSFILE}-4`;
-			case cdAlternateCodeDirectorySlots + 4:
+			case Security_CodeSigning_cdAlternateCodeDirectorySlots + 4:
 				return `${kSecCS_REQUIREMENTSFILE}-5`;
-			case cdResourceDirSlot:
+			case Security_CodeSigning_cdResourceDirSlot:
 				return kSecCS_RESOURCEDIRFILE;
-			case cdCodeDirectorySlot:
+			case Security_CodeSigning_cdCodeDirectorySlot:
 				return kSecCS_CODEDIRECTORYFILE;
-			case cdSignatureSlot:
+			case Security_CodeSigning_cdSignatureSlot:
 				return kSecCS_SIGNATUREFILE;
-			case cdTopDirectorySlot:
+			case Security_CodeSigning_cdTopDirectorySlot:
 				return kSecCS_TOPDIRECTORYFILE;
-			case cdEntitlementSlot:
+			case Security_CodeSigning_cdEntitlementSlot:
 				return kSecCS_ENTITLEMENTFILE;
-			case cdEntitlementDERSlot:
+			case Security_CodeSigning_cdEntitlementDERSlot:
 				return kSecCS_ENTITLEMENTDERFILE;
-			case cdRepSpecificSlot:
+			case Security_CodeSigning_cdRepSpecificSlot:
 				return kSecCS_REPSPECIFICFILE;
-			case cdLaunchConstraintSelf:
+			case Security_CodeSigning_cdLaunchConstraintSelf:
 				return kSecCS_LAUNCHCONSTRAINTSELFFILE;
-			case cdLaunchConstraintParent:
+			case Security_CodeSigning_cdLaunchConstraintParent:
 				return kSecCS_LAUNCHCONSTRAINTPARENTFILE;
-			case cdLaunchConstraintResponsible:
+			case Security_CodeSigning_cdLaunchConstraintResponsible:
 				return kSecCS_LAUNCHCONSTRAINTRESPONSIBLEFILE;
-			case cdLibraryConstraint:
+			case Security_CodeSigning_cdLibraryConstraint:
 				return kSecCS_LIBRARYCONSTRAINTFILE;
 		}
 		return null;
@@ -1039,34 +1100,37 @@ export class CodeDirectory<
 	 * @param slot Slot index.
 	 * @returns Slot attributes.
 	 */
-	public static slotAttributes(slot: CodeDirectory_SpecialSlot): uint {
+	public static slotAttributes(
+		slot: Security_CodeSigning_CodeDirectory_SpecialSlot,
+	): uint {
 		switch (slot) {
-			case cdRequirementsSlot:
-				return cdComponentIsBlob;
-			case cdCodeDirectorySlot:
-			case cdAlternateCodeDirectorySlots:
-			case cdAlternateCodeDirectorySlots + 1:
-			case cdAlternateCodeDirectorySlots + 2:
-			case cdAlternateCodeDirectorySlots + 3:
-			case cdAlternateCodeDirectorySlots + 4:
-				return cdComponentPerArchitecture | cdComponentIsBlob;
-			case cdSignatureSlot:
-				return cdComponentPerArchitecture;
-			case cdLaunchConstraintSelf:
-			case cdLaunchConstraintParent:
-			case cdLaunchConstraintResponsible:
-			case cdLibraryConstraint:
-			case cdEntitlementSlot:
-			case cdEntitlementDERSlot:
-				return cdComponentIsBlob;
-			case cdIdentificationSlot:
-				return cdComponentPerArchitecture;
+			case Security_CodeSigning_cdRequirementsSlot:
+				return Security_CodeSigning_cdComponentIsBlob;
+			case Security_CodeSigning_cdCodeDirectorySlot:
+			case Security_CodeSigning_cdAlternateCodeDirectorySlots:
+			case Security_CodeSigning_cdAlternateCodeDirectorySlots + 1:
+			case Security_CodeSigning_cdAlternateCodeDirectorySlots + 2:
+			case Security_CodeSigning_cdAlternateCodeDirectorySlots + 3:
+			case Security_CodeSigning_cdAlternateCodeDirectorySlots + 4:
+				return Security_CodeSigning_cdComponentPerArchitecture |
+					Security_CodeSigning_cdComponentIsBlob;
+			case Security_CodeSigning_cdSignatureSlot:
+				return Security_CodeSigning_cdComponentPerArchitecture;
+			case Security_CodeSigning_cdLaunchConstraintSelf:
+			case Security_CodeSigning_cdLaunchConstraintParent:
+			case Security_CodeSigning_cdLaunchConstraintResponsible:
+			case Security_CodeSigning_cdLibraryConstraint:
+			case Security_CodeSigning_cdEntitlementSlot:
+			case Security_CodeSigning_cdEntitlementDERSlot:
+				return Security_CodeSigning_cdComponentIsBlob;
+			case Security_CodeSigning_cdIdentificationSlot:
+				return Security_CodeSigning_cdComponentPerArchitecture;
 		}
 		return 0;
 	}
 
 	static {
-		toStringTag(this, 'CodeDirectory');
+		toStringTag(this, 'Security_CodeSigning_CodeDirectory');
 		uint32BE(this, 'version');
 		uint32BE(this, 'flags');
 		uint32BE(this, 'hashOffset');

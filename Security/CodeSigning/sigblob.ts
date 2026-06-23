@@ -6,8 +6,15 @@ import { type ArrayBufferLikeData, viewBytes } from '../../helpers/memory.ts';
 import type { size_t } from '../../libc/stddef.ts';
 import type { uint8_t } from '../../libc/stdint.ts';
 import { malloc } from '../../libc/stdlib.ts';
-import { Blob, BlobCore, BlobWrapper } from '../blob.ts';
-import { makeCFData, makeCFDictionaryFrom } from '../cfutilities.ts';
+import {
+	Security_Blob,
+	Security_BlobCore,
+	Security_BlobWrapper,
+} from '../blob.ts';
+import {
+	Security_makeCFData,
+	Security_makeCFDictionaryFrom,
+} from '../cfutilities.ts';
 import { errSecCSSignatureInvalid } from '../CSCommon.ts';
 import {
 	kSecCodeMagicDetachedSignature,
@@ -16,17 +23,17 @@ import {
 	kSecCodeMagicEntitlementDER,
 	kSecCodeMagicLaunchConstraint,
 } from '../CSCommonPriv.ts';
-import { MacOSError } from '../errors.ts';
+import { Security_MacOSError } from '../errors.ts';
 import {
-	SuperBlob,
-	SuperBlob_Maker,
-	SuperBlobCore,
-	SuperBlobCore_Maker,
+	Security_SuperBlob,
+	Security_SuperBlob_Maker,
+	Security_SuperBlobCore,
+	Security_SuperBlobCore_Maker,
 } from '../superblob.ts';
 import {
-	cdComponentIsBlob,
-	CodeDirectory,
-	type CodeDirectory_SpecialSlot,
+	Security_CodeSigning_cdComponentIsBlob,
+	Security_CodeSigning_CodeDirectory,
+	type Security_CodeSigning_CodeDirectory_SpecialSlot,
 } from './codedirectory.ts';
 
 /**
@@ -35,9 +42,9 @@ import {
  *
  * @template TArrayBuffer Buffer type.
  */
-export class EmbeddedSignatureBlob<
+export class Security_CodeSigning_EmbeddedSignatureBlob<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
-> extends SuperBlobCore<TArrayBuffer> {
+> extends Security_SuperBlobCore<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicEmbeddedSignature;
 
 	/**
@@ -48,17 +55,20 @@ export class EmbeddedSignatureBlob<
 	 * @returns Blob data.
 	 */
 	public static blobData(
-		slot: CodeDirectory_SpecialSlot,
-		blob: BlobCore,
+		slot: Security_CodeSigning_CodeDirectory_SpecialSlot,
+		blob: Security_BlobCore,
 	): CFDataRef {
-		if (CodeDirectory.slotAttributes(slot) & cdComponentIsBlob) {
-			return makeCFData(BlobCore, blob);
+		if (
+			Security_CodeSigning_CodeDirectory.slotAttributes(slot) &
+			Security_CodeSigning_cdComponentIsBlob
+		) {
+			return Security_makeCFData(Security_BlobCore, blob);
 		}
-		const wrap = BlobWrapper.specific(blob);
+		const wrap = Security_BlobWrapper.specific(blob);
 		if (wrap) {
-			return makeCFData(BlobWrapper, wrap);
+			return Security_makeCFData(Security_BlobWrapper, wrap);
 		}
-		MacOSError.throwMe(errSecCSSignatureInvalid);
+		Security_MacOSError.throwMe(errSecCSSignatureInvalid);
 	}
 
 	/**
@@ -69,18 +79,24 @@ export class EmbeddedSignatureBlob<
 	 * @returns Blob data or null.
 	 */
 	public static component(
-		_this: EmbeddedSignatureBlob,
-		slot: CodeDirectory_SpecialSlot,
+		_this: Security_CodeSigning_EmbeddedSignatureBlob,
+		slot: Security_CodeSigning_CodeDirectory_SpecialSlot,
 	): CFDataRef | null {
-		const blob = EmbeddedSignatureBlob.find(_this, slot);
+		const blob = Security_CodeSigning_EmbeddedSignatureBlob.find(
+			_this,
+			slot,
+		);
 		if (blob) {
-			return EmbeddedSignatureBlob.blobData(slot, blob);
+			return Security_CodeSigning_EmbeddedSignatureBlob.blobData(
+				slot,
+				blob,
+			);
 		}
 		return null;
 	}
 
 	static {
-		toStringTag(this, 'EmbeddedSignatureBlob');
+		toStringTag(this, 'Security_CodeSigning_EmbeddedSignatureBlob');
 		constant(this, 'typeMagic');
 	}
 }
@@ -88,10 +104,12 @@ export class EmbeddedSignatureBlob<
 /**
  * SuperBlob maker for EmbeddedSignatureBlob.
  */
-export class EmbeddedSignatureBlob_Maker extends SuperBlobCore_Maker {
-	public static override readonly SuperBlob: typeof EmbeddedSignatureBlob<
-		ArrayBuffer
-	> = EmbeddedSignatureBlob;
+export class Security_CodeSigning_EmbeddedSignatureBlob_Maker
+	extends Security_SuperBlobCore_Maker {
+	public static override readonly SuperBlob:
+		typeof Security_CodeSigning_EmbeddedSignatureBlob<
+			ArrayBuffer
+		> = Security_CodeSigning_EmbeddedSignatureBlob;
 
 	/**
 	 * Add component to super blob.
@@ -101,28 +119,33 @@ export class EmbeddedSignatureBlob_Maker extends SuperBlobCore_Maker {
 	 * @param data Blob data.
 	 */
 	public static component(
-		_this: EmbeddedSignatureBlob_Maker,
-		slot: CodeDirectory_SpecialSlot,
+		_this: Security_CodeSigning_EmbeddedSignatureBlob_Maker,
+		slot: Security_CodeSigning_CodeDirectory_SpecialSlot,
 		data: ArrayBufferLikeData,
 	): void {
 		data = viewBytes(data);
-		if (CodeDirectory.slotAttributes(slot) & cdComponentIsBlob) {
-			EmbeddedSignatureBlob_Maker.add(
+		if (
+			Security_CodeSigning_CodeDirectory.slotAttributes(slot) &
+			Security_CodeSigning_cdComponentIsBlob
+		) {
+			Security_CodeSigning_EmbeddedSignatureBlob_Maker.add(
 				_this,
 				slot,
-				BlobCore.clone(new BlobCore(data.buffer, data.byteOffset))!,
+				Security_BlobCore.clone(
+					new Security_BlobCore(data.buffer, data.byteOffset),
+				)!,
 			);
 		} else {
-			EmbeddedSignatureBlob_Maker.add(
+			Security_CodeSigning_EmbeddedSignatureBlob_Maker.add(
 				_this,
 				slot,
-				BlobWrapper.alloc(data, data.byteLength),
+				Security_BlobWrapper.alloc(data, data.byteLength),
 			);
 		}
 	}
 
 	static {
-		toStringTag(this, 'EmbeddedSignatureBlob_Maker');
+		toStringTag(this, 'Security_CodeSigning_EmbeddedSignatureBlob_Maker');
 		constant(this, 'SuperBlob');
 	}
 }
@@ -133,13 +156,13 @@ export class EmbeddedSignatureBlob_Maker extends SuperBlobCore_Maker {
  *
  * @template TArrayBuffer Buffer type.
  */
-export class DetachedSignatureBlob<
+export class Security_CodeSigning_DetachedSignatureBlob<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
-> extends SuperBlob<TArrayBuffer> {
+> extends Security_SuperBlob<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicDetachedSignature;
 
 	static {
-		toStringTag(this, 'DetachedSignatureBlob');
+		toStringTag(this, 'Security_CodeSigning_DetachedSignatureBlob');
 		constant(this, 'typeMagic');
 	}
 }
@@ -147,13 +170,15 @@ export class DetachedSignatureBlob<
 /**
  * SuperBlob maker for DetachedSignatureBlob.
  */
-export class DetachedSignatureBlob_Maker extends SuperBlob_Maker {
-	public static override readonly SuperBlob: typeof DetachedSignatureBlob<
-		ArrayBuffer
-	> = DetachedSignatureBlob;
+export class Security_CodeSigning_DetachedSignatureBlob_Maker
+	extends Security_SuperBlob_Maker {
+	public static override readonly SuperBlob:
+		typeof Security_CodeSigning_DetachedSignatureBlob<
+			ArrayBuffer
+		> = Security_CodeSigning_DetachedSignatureBlob;
 
 	static {
-		toStringTag(this, 'DetachedSignatureBlob_Maker');
+		toStringTag(this, 'Security_CodeSigning_DetachedSignatureBlob_Maker');
 		constant(this, 'SuperBlob');
 	}
 }
@@ -164,13 +189,13 @@ export class DetachedSignatureBlob_Maker extends SuperBlob_Maker {
  *
  * @template TArrayBuffer Buffer type.
  */
-export class LibraryDependencyBlob<
+export class Security_CodeSigning_LibraryDependencyBlob<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
-> extends SuperBlob<TArrayBuffer> {
+> extends Security_SuperBlob<TArrayBuffer> {
 	public static override readonly typeMagic = 0xfade0c05;
 
 	static {
-		toStringTag(this, 'LibraryDependencyBlob');
+		toStringTag(this, 'Security_CodeSigning_LibraryDependencyBlob');
 		constant(this, 'typeMagic');
 	}
 }
@@ -178,13 +203,15 @@ export class LibraryDependencyBlob<
 /**
  * SuperBlob maker for LibraryDependencyBlob.
  */
-export class LibraryDependencyBlob_Maker extends SuperBlob_Maker {
-	public static override readonly SuperBlob: typeof LibraryDependencyBlob<
-		ArrayBuffer
-	> = LibraryDependencyBlob;
+export class Security_CodeSigning_LibraryDependencyBlob_Maker
+	extends Security_SuperBlob_Maker {
+	public static override readonly SuperBlob:
+		typeof Security_CodeSigning_LibraryDependencyBlob<
+			ArrayBuffer
+		> = Security_CodeSigning_LibraryDependencyBlob;
 
 	static {
-		toStringTag(this, 'LibraryDependencyBlob_Maker');
+		toStringTag(this, 'Security_CodeSigning_LibraryDependencyBlob_Maker');
 		constant(this, 'SuperBlob');
 	}
 }
@@ -194,9 +221,9 @@ export class LibraryDependencyBlob_Maker extends SuperBlob_Maker {
  *
  * @template TArrayBuffer Buffer type.
  */
-export class EntitlementBlob<
+export class Security_CodeSigning_EntitlementBlob<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
-> extends Blob<TArrayBuffer> {
+> extends Security_Blob<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicEntitlement;
 
 	/**
@@ -205,21 +232,23 @@ export class EntitlementBlob<
 	 * @param _this This.
 	 * @returns Entitlements dictionary or null.
 	 */
-	public static entitlements(_this: EntitlementBlob): CFDictionaryRef | null {
-		const { BYTE_LENGTH } = EntitlementBlob;
-		return makeCFDictionaryFrom(
-			EntitlementBlob.at(
+	public static entitlements(
+		_this: Security_CodeSigning_EntitlementBlob,
+	): CFDictionaryRef | null {
+		const { BYTE_LENGTH } = Security_CodeSigning_EntitlementBlob;
+		return Security_makeCFDictionaryFrom(
+			Security_CodeSigning_EntitlementBlob.at(
 				_this,
 				Uint8Ptr,
 				BYTE_LENGTH,
 				_this.littleEndian,
 			),
-			EntitlementBlob.size(_this) - BYTE_LENGTH,
+			Security_CodeSigning_EntitlementBlob.size(_this) - BYTE_LENGTH,
 		);
 	}
 
 	static {
-		toStringTag(this, 'EntitlementBlob');
+		toStringTag(this, 'Security_CodeSigning_EntitlementBlob');
 		constant(this, 'typeMagic');
 	}
 }
@@ -229,9 +258,9 @@ export class EntitlementBlob<
  *
  * @template TArrayBuffer Buffer type.
  */
-export class EntitlementDERBlob<
+export class Security_CodeSigning_EntitlementDERBlob<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
-> extends Blob<TArrayBuffer> {
+> extends Security_Blob<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicEntitlementDER;
 
 	/**
@@ -242,15 +271,19 @@ export class EntitlementDERBlob<
 	 */
 	public static alloc(
 		length: size_t,
-	): EntitlementDERBlob<ArrayBuffer> | null {
-		const blobLength = length + BlobCore.BYTE_LENGTH;
+	): Security_CodeSigning_EntitlementDERBlob<ArrayBuffer> | null {
+		const blobLength = length + Security_BlobCore.BYTE_LENGTH;
 		const d = malloc(blobLength);
 		if (!d) {
 			return null;
 		}
 
-		const b = new EntitlementDERBlob(d);
-		BlobCore.initialize(b, kSecCodeMagicEntitlementDER, blobLength);
+		const b = new Security_CodeSigning_EntitlementDERBlob(d);
+		Security_BlobCore.initialize(
+			b,
+			kSecCodeMagicEntitlementDER,
+			blobLength,
+		);
 		return b;
 	}
 
@@ -260,7 +293,9 @@ export class EntitlementDERBlob<
 	 * @param _this This.
 	 * @returns Data pointer.
 	 */
-	public static der(_this: EntitlementDERBlob): Ptr<uint8_t> {
+	public static der(
+		_this: Security_CodeSigning_EntitlementDERBlob,
+	): Ptr<uint8_t> {
 		const { data } = _this;
 		return new Uint8Ptr(data.buffer, data.byteOffset, _this.littleEndian);
 	}
@@ -271,8 +306,10 @@ export class EntitlementDERBlob<
 	 * @param _this This.
 	 * @returns Byte length.
 	 */
-	public static derLength(_this: EntitlementDERBlob): size_t {
-		return BlobCore.size(_this) - BlobCore.BYTE_LENGTH;
+	public static derLength(
+		_this: Security_CodeSigning_EntitlementDERBlob,
+	): size_t {
+		return Security_BlobCore.size(_this) - Security_BlobCore.BYTE_LENGTH;
 	}
 
 	/**
@@ -281,7 +318,7 @@ export class EntitlementDERBlob<
 	declare private readonly data: Uint8Ptr;
 
 	static {
-		toStringTag(this, 'EntitlementDERBlob');
+		toStringTag(this, 'Security_CodeSigning_EntitlementDERBlob');
 		member(array(Uint8Ptr, 0), this, 'data' as never);
 		constant(this, 'BYTE_LENGTH');
 		constant(this, 'typeMagic');
@@ -293,9 +330,9 @@ export class EntitlementDERBlob<
  *
  * @template TArrayBuffer Buffer type.
  */
-export class LaunchConstraintBlob<
+export class Security_CodeSigning_LaunchConstraintBlob<
 	TArrayBuffer extends ArrayBufferLike = ArrayBufferLike,
-> extends Blob<TArrayBuffer> {
+> extends Security_Blob<TArrayBuffer> {
 	public static override readonly typeMagic = kSecCodeMagicLaunchConstraint;
 
 	/**
@@ -306,15 +343,19 @@ export class LaunchConstraintBlob<
 	 */
 	public static alloc(
 		length: size_t,
-	): LaunchConstraintBlob<ArrayBuffer> | null {
-		const blobLength = length + BlobCore.BYTE_LENGTH;
+	): Security_CodeSigning_LaunchConstraintBlob<ArrayBuffer> | null {
+		const blobLength = length + Security_BlobCore.BYTE_LENGTH;
 		const d = malloc(blobLength);
 		if (!d) {
 			return null;
 		}
 
-		const b = new LaunchConstraintBlob(d);
-		BlobCore.initialize(b, kSecCodeMagicLaunchConstraint, blobLength);
+		const b = new Security_CodeSigning_LaunchConstraintBlob(d);
+		Security_BlobCore.initialize(
+			b,
+			kSecCodeMagicLaunchConstraint,
+			blobLength,
+		);
 		return b;
 	}
 
@@ -324,7 +365,9 @@ export class LaunchConstraintBlob<
 	 * @param _this This.
 	 * @returns Data pointer.
 	 */
-	public static der(_this: LaunchConstraintBlob): Ptr<uint8_t> {
+	public static der(
+		_this: Security_CodeSigning_LaunchConstraintBlob,
+	): Ptr<uint8_t> {
 		const { data } = _this;
 		return new Uint8Ptr(data.buffer, data.byteOffset, _this.littleEndian);
 	}
@@ -335,8 +378,10 @@ export class LaunchConstraintBlob<
 	 * @param _this This.
 	 * @returns Byte length.
 	 */
-	public static derLength(_this: LaunchConstraintBlob): size_t {
-		return BlobCore.size(_this) - BlobCore.BYTE_LENGTH;
+	public static derLength(
+		_this: Security_CodeSigning_LaunchConstraintBlob,
+	): size_t {
+		return Security_BlobCore.size(_this) - Security_BlobCore.BYTE_LENGTH;
 	}
 
 	/**
@@ -345,7 +390,7 @@ export class LaunchConstraintBlob<
 	declare private readonly data: Uint8Ptr;
 
 	static {
-		toStringTag(this, 'LaunchConstraintBlob');
+		toStringTag(this, 'Security_CodeSigning_LaunchConstraintBlob');
 		member(array(Uint8Ptr, 0), this, 'data' as never);
 		constant(this, 'BYTE_LENGTH');
 		constant(this, 'typeMagic');

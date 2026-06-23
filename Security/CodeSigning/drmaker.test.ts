@@ -9,12 +9,12 @@ const entries = <T extends Record<string, unknown>>(obj: T) =>
 	Object.entries(obj) as [keyof T, T[keyof T]][];
 
 const oids = {
-	adcSdkMarkerOID: '1.2.840.113635.100.6.2.1',
-	devIdSdkMarkerOID: '1.2.840.113635.100.6.2.6',
-	devIdLeafMarkerOID: '1.2.840.113635.100.6.1.13',
+	Security_CodeSigning_adcSdkMarkerOID: '1.2.840.113635.100.6.2.1',
+	Security_CodeSigning_devIdSdkMarkerOID: '1.2.840.113635.100.6.2.6',
+	Security_CodeSigning_devIdLeafMarkerOID: '1.2.840.113635.100.6.1.13',
 };
 
-Deno.test('OIDs', () => {
+Deno.test('Security_CodeSigning: OIDs', () => {
 	// Check OIDs against their expected values.
 	for (const [K, V] of entries(oids)) {
 		const cssmd = C[K];

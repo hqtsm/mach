@@ -13,7 +13,7 @@ import {
 	viewBytes,
 } from '../helpers/memory.ts';
 import type { size_t } from '../libc/stddef.ts';
-import { CFError } from './errors.ts';
+import { Security_CFError } from './errors.ts';
 
 /**
  * Make CFData from a buffer pointer and size.
@@ -22,7 +22,10 @@ import { CFError } from './errors.ts';
  * @param size Size in bytes.
  * @returns CFData copy of data.
  */
-export function makeCFData(data: ArrayBufferPointer, size: size_t): CFDataRef;
+export function Security_makeCFData(
+	data: ArrayBufferPointer,
+	size: size_t,
+): CFDataRef;
 
 /**
  * Make CFData from a generic type.
@@ -32,7 +35,7 @@ export function makeCFData(data: ArrayBufferPointer, size: size_t): CFDataRef;
  * @param source Generic value.
  * @returns CFData copy of data.
  */
-export function makeCFData<T>(
+export function Security_makeCFData<T>(
 	Type: {
 		/**
 		 * Get buffer pointer.
@@ -61,7 +64,7 @@ export function makeCFData<T>(
  * @param size Size in bytes or generic value.
  * @returns CFData copy of data.
  */
-export function makeCFData<T>(
+export function Security_makeCFData<T>(
 	data: ArrayBufferPointer | {
 		data(value: T): ArrayBufferPointer;
 		size(value: T): size_t;
@@ -89,7 +92,7 @@ export function makeCFData<T>(
  * @param decoder Optional XML decoder for obscure encoding.
  * @returns Dictionary or null.
  */
-export function makeCFDictionaryFrom(
+export function Security_makeCFDictionaryFrom(
 	data: ArrayBufferLikeData | null,
 	decoder?: DecodeXmlDecoder,
 ): CFDictionaryRef | null;
@@ -102,7 +105,7 @@ export function makeCFDictionaryFrom(
  * @param decoder Optional XML decoder for obscure encoding.
  * @returns Dictionary or null.
  */
-export function makeCFDictionaryFrom(
+export function Security_makeCFDictionaryFrom(
 	data: ArrayBufferPointer | null,
 	length: size_t,
 	decoder?: DecodeXmlDecoder,
@@ -116,7 +119,7 @@ export function makeCFDictionaryFrom(
  * @param decoder Optional XML decoder for obscure encoding.
  * @returns Dictionary or null.
  */
-export function makeCFDictionaryFrom(
+export function Security_makeCFDictionaryFrom(
 	data: ArrayBufferLikeData | ArrayBufferPointer | null,
 	length?: size_t | DecodeXmlDecoder,
 	decoder?: DecodeXmlDecoder,
@@ -149,7 +152,7 @@ export function makeCFDictionaryFrom(
 			// Ignore.
 		}
 		if (plist && !PLDictionary.is(plist)) {
-			CFError.throwMe();
+			Security_CFError.throwMe();
 		}
 		return plist;
 	}

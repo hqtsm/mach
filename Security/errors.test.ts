@@ -5,12 +5,12 @@ import {
 	assertThrows,
 } from '@std/assert';
 import {
-	CFError,
-	CommonError,
 	errSecErrnoBase,
 	errSecErrnoLimit,
-	MacOSError,
-	UnixError,
+	Security_CFError,
+	Security_CommonError,
+	Security_MacOSError,
+	Security_UnixError,
 } from './errors.ts';
 import {
 	errSecCoreFoundationUnknown,
@@ -19,27 +19,27 @@ import {
 } from './SecBase.ts';
 import { EFAULT } from '../libc/errno.ts';
 
-class MyCommonError extends CommonError {
+class MyCommonError extends Security_CommonError {
 	constructor() {
 		super();
 	}
 }
 
-const cfError = (): CFError => {
-	let r: CFError;
+const cfError = (): Security_CFError => {
+	let r: Security_CFError;
 	try {
-		CFError.throwMe();
+		Security_CFError.throwMe();
 	} catch (e) {
-		r = e as CFError;
+		r = e as Security_CFError;
 	}
 	return r;
 };
 
-Deno.test('CommonError: instanceof', () => {
+Deno.test('Security_CommonError: instanceof', () => {
 	assertInstanceOf(new MyCommonError(), Error);
 });
 
-Deno.test('CommonError: message', () => {
+Deno.test('Security_CommonError: message', () => {
 	const err = new MyCommonError();
 	assertGreater(err.whatBufferSize, 0);
 	assertEquals(err.whatBuffer.length, err.whatBufferSize);
@@ -51,26 +51,26 @@ Deno.test('CommonError: message', () => {
 	assertEquals(err.message, 'ABC');
 });
 
-Deno.test('CommonError: osStatus', () => {
+Deno.test('Security_CommonError: osStatus', () => {
 	const err = new MyCommonError();
 	assertEquals(err.osStatus(), 0);
 });
 
-Deno.test('CommonError: unixError', () => {
+Deno.test('Security_CommonError: unixError', () => {
 	const err = new MyCommonError();
 	assertEquals(err.unixError(), 0);
 });
 
-Deno.test('CommonError: isCommonError', () => {
-	assertEquals(CommonError.isCommonError(new MyCommonError()), true);
-	assertEquals(CommonError.isCommonError(new Error()), false);
-	assertEquals(CommonError.isCommonError({}), false);
-	assertEquals(CommonError.isCommonError(null), false);
-	assertEquals(CommonError.isCommonError(undefined), false);
-	assertEquals(CommonError.isCommonError(0), false);
+Deno.test('Security_CommonError: isCommonError', () => {
+	assertEquals(Security_CommonError.isCommonError(new MyCommonError()), true);
+	assertEquals(Security_CommonError.isCommonError(new Error()), false);
+	assertEquals(Security_CommonError.isCommonError({}), false);
+	assertEquals(Security_CommonError.isCommonError(null), false);
+	assertEquals(Security_CommonError.isCommonError(undefined), false);
+	assertEquals(Security_CommonError.isCommonError(0), false);
 });
 
-Deno.test('CommonError: throw', () => {
+Deno.test('Security_CommonError: throw', () => {
 	assertThrows(
 		() => {
 			throw new MyCommonError();
@@ -80,223 +80,250 @@ Deno.test('CommonError: throw', () => {
 	);
 });
 
-Deno.test('UnixError: instanceof', () => {
-	assertInstanceOf(UnixError.make(42), Error);
-	assertInstanceOf(UnixError.make(42), CommonError as never);
+Deno.test('Security_UnixError: instanceof', () => {
+	assertInstanceOf(Security_UnixError.make(42), Error);
+	assertInstanceOf(
+		Security_UnixError.make(42),
+		Security_CommonError as never,
+	);
 });
 
-Deno.test('UnixError: message', () => {
+Deno.test('Security_UnixError: message', () => {
 	assertEquals(
 		(
 			assertThrows(
-				() => UnixError.throwMeNoLogging(42),
-			) as UnixError
+				() => Security_UnixError.throwMeNoLogging(42),
+			) as Security_UnixError
 		).message,
 		'',
 	);
 	assertEquals(
 		(
 			assertThrows(
-				() => UnixError.throwMe(42),
-			) as UnixError
+				() => Security_UnixError.throwMe(42),
+			) as Security_UnixError
 		).message,
 		'UNIX error exception: 42',
 	);
 	assertEquals(
-		Reflect.construct(UnixError, [{ errno: 42 }]).message,
+		Reflect.construct(Security_UnixError, [{ errno: 42 }]).message,
 		'UNIX errno exception: 42',
 	);
 });
 
-Deno.test('UnixError: osStatus', () => {
-	assertEquals(UnixError.make(0).osStatus(), errSecErrnoBase);
-	assertEquals(UnixError.make(1).osStatus(), errSecErrnoBase + 1);
+Deno.test('Security_UnixError: osStatus', () => {
+	assertEquals(Security_UnixError.make(0).osStatus(), errSecErrnoBase);
+	assertEquals(Security_UnixError.make(1).osStatus(), errSecErrnoBase + 1);
 });
 
-Deno.test('UnixError: unixError', () => {
-	assertEquals(UnixError.make(0).unixError(), 0);
-	assertEquals(UnixError.make(1).unixError(), 1);
+Deno.test('Security_UnixError: unixError', () => {
+	assertEquals(Security_UnixError.make(0).unixError(), 0);
+	assertEquals(Security_UnixError.make(1).unixError(), 1);
 });
 
-Deno.test('UnixError: what', () => {
-	const err = UnixError.make(42);
+Deno.test('Security_UnixError: what', () => {
+	const err = Security_UnixError.make(42);
 	assertEquals(err.what(), err.whatBuffer);
 });
 
-Deno.test('UnixError: check', () => {
-	UnixError.check(1, { errno: 42 });
-	UnixError.check(0, { errno: 42 });
+Deno.test('Security_UnixError: check', () => {
+	Security_UnixError.check(1, { errno: 42 });
+	Security_UnixError.check(0, { errno: 42 });
 	assertThrows(
-		() => UnixError.check(-1, { errno: 42 }),
-		UnixError as never,
+		() => Security_UnixError.check(-1, { errno: 42 }),
+		Security_UnixError as never,
 		'UNIX error exception: 42',
 	);
-	UnixError.check(-2, { errno: 42 });
+	Security_UnixError.check(-2, { errno: 42 });
 });
 
-Deno.test('UnixError: throwMe + throwMeNoLogging', () => {
+Deno.test('Security_UnixError: throwMe + throwMeNoLogging', () => {
 	assertThrows(
-		() => UnixError.throwMe(42),
-		UnixError as never,
+		() => Security_UnixError.throwMe(42),
+		Security_UnixError as never,
 		'UNIX error exception: 42',
 	);
 	assertThrows(
-		() => UnixError.throwMe({ errno: 42 }),
-		UnixError as never,
+		() => Security_UnixError.throwMe({ errno: 42 }),
+		Security_UnixError as never,
 		'UNIX error exception: 42',
 	);
 });
 
-Deno.test('UnixError: throwMeNoLogging', () => {
+Deno.test('Security_UnixError: throwMeNoLogging', () => {
 	assertThrows(
-		() => UnixError.throwMeNoLogging(42),
-		UnixError as never,
+		() => Security_UnixError.throwMeNoLogging(42),
+		Security_UnixError as never,
 		'',
 	);
 	assertThrows(
-		() => UnixError.throwMeNoLogging({ errno: 42 }),
-		UnixError as never,
+		() => Security_UnixError.throwMeNoLogging({ errno: 42 }),
+		Security_UnixError as never,
 		'',
 	);
 });
 
-Deno.test('UnixError: make', () => {
-	assertEquals(UnixError.make(42).error, 42);
-	assertEquals(UnixError.make({ errno: 42 }).error, 42);
+Deno.test('Security_UnixError: make', () => {
+	assertEquals(Security_UnixError.make(42).error, 42);
+	assertEquals(Security_UnixError.make({ errno: 42 }).error, 42);
 });
 
-Deno.test('UnixError: isUnixError', () => {
-	assertEquals(UnixError.isUnixError(UnixError.make(42)), true);
-	assertEquals(UnixError.isUnixError(new MyCommonError()), false);
-	assertEquals(UnixError.isUnixError(new Error()), false);
-	assertEquals(UnixError.isUnixError({}), false);
-	assertEquals(UnixError.isUnixError(null), false);
-	assertEquals(UnixError.isUnixError(undefined), false);
-	assertEquals(UnixError.isUnixError(0), false);
-	assertEquals(CommonError.isCommonError(UnixError.make(42)), true);
-	assertEquals(UnixError.isCommonError(UnixError.make(42)), true);
+Deno.test('Security_UnixError: isUnixError', () => {
+	assertEquals(
+		Security_UnixError.isUnixError(Security_UnixError.make(42)),
+		true,
+	);
+	assertEquals(Security_UnixError.isUnixError(new MyCommonError()), false);
+	assertEquals(Security_UnixError.isUnixError(new Error()), false);
+	assertEquals(Security_UnixError.isUnixError({}), false);
+	assertEquals(Security_UnixError.isUnixError(null), false);
+	assertEquals(Security_UnixError.isUnixError(undefined), false);
+	assertEquals(Security_UnixError.isUnixError(0), false);
+	assertEquals(
+		Security_CommonError.isCommonError(Security_UnixError.make(42)),
+		true,
+	);
+	assertEquals(
+		Security_UnixError.isCommonError(Security_UnixError.make(42)),
+		true,
+	);
 });
 
-Deno.test('MacOSError: instanceof', () => {
-	assertInstanceOf(MacOSError.make(42), Error);
-	assertInstanceOf(MacOSError.make(42), CommonError as never);
+Deno.test('Security_MacOSError: instanceof', () => {
+	assertInstanceOf(Security_MacOSError.make(42), Error);
+	assertInstanceOf(
+		Security_MacOSError.make(42),
+		Security_CommonError as never,
+	);
 });
 
-Deno.test('MacOSError: message', () => {
-	const err = MacOSError.make(42);
+Deno.test('Security_MacOSError: message', () => {
+	const err = Security_MacOSError.make(42);
 	assertEquals(err.message, 'MacOS error: 42');
 });
 
-Deno.test('MacOSError: osStatus', () => {
-	assertEquals(MacOSError.make(0).osStatus(), 0);
-	assertEquals(MacOSError.make(1).osStatus(), 1);
+Deno.test('Security_MacOSError: osStatus', () => {
+	assertEquals(Security_MacOSError.make(0).osStatus(), 0);
+	assertEquals(Security_MacOSError.make(1).osStatus(), 1);
 	assertEquals(
-		MacOSError.make(errSecErrnoBase - 1).osStatus(),
+		Security_MacOSError.make(errSecErrnoBase - 1).osStatus(),
 		errSecErrnoBase - 1,
 	);
 	assertEquals(
-		MacOSError.make(errSecErrnoBase).osStatus(),
+		Security_MacOSError.make(errSecErrnoBase).osStatus(),
 		errSecErrnoBase,
 	);
 	assertEquals(
-		MacOSError.make(errSecErrnoLimit).osStatus(),
+		Security_MacOSError.make(errSecErrnoLimit).osStatus(),
 		errSecErrnoLimit,
 	);
 	assertEquals(
-		MacOSError.make(errSecErrnoLimit + 1).osStatus(),
+		Security_MacOSError.make(errSecErrnoLimit + 1).osStatus(),
 		errSecErrnoLimit + 1,
 	);
 });
 
-Deno.test('MacOSError: unixError', () => {
-	assertEquals(MacOSError.make(0).unixError(), -1);
-	assertEquals(MacOSError.make(1).unixError(), -1);
-	assertEquals(MacOSError.make(errSecErrnoBase - 1).unixError(), -1);
-	assertEquals(MacOSError.make(errSecErrnoBase).unixError(), 0);
+Deno.test('Security_MacOSError: unixError', () => {
+	assertEquals(Security_MacOSError.make(0).unixError(), -1);
+	assertEquals(Security_MacOSError.make(1).unixError(), -1);
+	assertEquals(Security_MacOSError.make(errSecErrnoBase - 1).unixError(), -1);
+	assertEquals(Security_MacOSError.make(errSecErrnoBase).unixError(), 0);
 	assertEquals(
-		MacOSError.make(errSecErrnoLimit).unixError(),
+		Security_MacOSError.make(errSecErrnoLimit).unixError(),
 		errSecErrnoLimit - errSecErrnoBase,
 	);
-	assertEquals(MacOSError.make(errSecErrnoLimit + 1).unixError(), -1);
+	assertEquals(
+		Security_MacOSError.make(errSecErrnoLimit + 1).unixError(),
+		-1,
+	);
 });
 
-Deno.test('MacOSError: what', () => {
-	const err = MacOSError.make(42);
+Deno.test('Security_MacOSError: what', () => {
+	const err = Security_MacOSError.make(42);
 	assertEquals(err.what(), err.whatBuffer);
 });
 
-Deno.test('MacOSError: check', () => {
-	MacOSError.check(errSecSuccess);
+Deno.test('Security_MacOSError: check', () => {
+	Security_MacOSError.check(errSecSuccess);
 	assertThrows(
-		() => MacOSError.check(errSecUnimplemented),
-		MacOSError as never,
+		() => Security_MacOSError.check(errSecUnimplemented),
+		Security_MacOSError as never,
 		`MacOS error: ${errSecUnimplemented}`,
 	);
 });
 
-Deno.test('MacOSError: throwMe', () => {
+Deno.test('Security_MacOSError: throwMe', () => {
 	assertThrows(
-		() => MacOSError.throwMe(42),
-		MacOSError as never,
+		() => Security_MacOSError.throwMe(42),
+		Security_MacOSError as never,
 		`MacOS error: 42`,
 	);
 });
 
-Deno.test('MacOSError: make', () => {
-	assertEquals(MacOSError.make(42).error, 42);
+Deno.test('Security_MacOSError: make', () => {
+	assertEquals(Security_MacOSError.make(42).error, 42);
 });
 
-Deno.test('MacOSError: isMacOSError', () => {
-	assertEquals(MacOSError.isMacOSError(MacOSError.make(42)), true);
-	assertEquals(MacOSError.isMacOSError(new MyCommonError()), false);
-	assertEquals(MacOSError.isMacOSError(new Error()), false);
-	assertEquals(MacOSError.isMacOSError({}), false);
-	assertEquals(MacOSError.isMacOSError(null), false);
-	assertEquals(MacOSError.isMacOSError(undefined), false);
-	assertEquals(MacOSError.isMacOSError(0), false);
-	assertEquals(CommonError.isCommonError(MacOSError.make(42)), true);
-	assertEquals(MacOSError.isCommonError(MacOSError.make(42)), true);
+Deno.test('Security_MacOSError: isMacOSError', () => {
+	assertEquals(
+		Security_MacOSError.isMacOSError(Security_MacOSError.make(42)),
+		true,
+	);
+	assertEquals(Security_MacOSError.isMacOSError(new MyCommonError()), false);
+	assertEquals(Security_MacOSError.isMacOSError(new Error()), false);
+	assertEquals(Security_MacOSError.isMacOSError({}), false);
+	assertEquals(Security_MacOSError.isMacOSError(null), false);
+	assertEquals(Security_MacOSError.isMacOSError(undefined), false);
+	assertEquals(Security_MacOSError.isMacOSError(0), false);
+	assertEquals(
+		Security_CommonError.isCommonError(Security_MacOSError.make(42)),
+		true,
+	);
+	assertEquals(
+		Security_MacOSError.isCommonError(Security_MacOSError.make(42)),
+		true,
+	);
 });
 
-Deno.test('CFError: instanceof', () => {
+Deno.test('Security_CFError: instanceof', () => {
 	assertInstanceOf(cfError(), Error);
-	assertInstanceOf(cfError(), CommonError as never);
+	assertInstanceOf(cfError(), Security_CommonError as never);
 });
 
-Deno.test('CFError: message', () => {
+Deno.test('Security_CFError: message', () => {
 	assertEquals(cfError().message, 'CoreFoundation error');
 });
 
-Deno.test('CFError: osStatus', () => {
+Deno.test('Security_CFError: osStatus', () => {
 	assertEquals(cfError().osStatus(), errSecCoreFoundationUnknown);
 });
 
-Deno.test('CFError: unixError', () => {
+Deno.test('Security_CFError: unixError', () => {
 	assertEquals(cfError().unixError(), EFAULT);
 });
 
-Deno.test('CFError: what', () => {
+Deno.test('Security_CFError: what', () => {
 	const err = cfError();
 	assertEquals(err.what(), err.whatBuffer);
 });
 
-Deno.test('CFError: check', () => {
-	CFError.check(1);
+Deno.test('Security_CFError: check', () => {
+	Security_CFError.check(1);
 	assertThrows(
-		() => CFError.check(null),
-		CFError as never,
+		() => Security_CFError.check(null),
+		Security_CFError as never,
 		'CoreFoundation error',
 	);
 });
 
-Deno.test('CFError: isCFError', () => {
-	assertEquals(CFError.isCFError(cfError()), true);
-	assertEquals(CFError.isCFError(new MyCommonError()), false);
-	assertEquals(CFError.isCFError(new Error()), false);
-	assertEquals(CFError.isCFError({}), false);
-	assertEquals(CFError.isCFError(null), false);
-	assertEquals(CFError.isCFError(undefined), false);
-	assertEquals(CFError.isCFError(0), false);
-	assertEquals(CommonError.isCommonError(cfError()), true);
-	assertEquals(CFError.isCommonError(cfError()), true);
+Deno.test('Security_CFError: isCFError', () => {
+	assertEquals(Security_CFError.isCFError(cfError()), true);
+	assertEquals(Security_CFError.isCFError(new MyCommonError()), false);
+	assertEquals(Security_CFError.isCFError(new Error()), false);
+	assertEquals(Security_CFError.isCFError({}), false);
+	assertEquals(Security_CFError.isCFError(null), false);
+	assertEquals(Security_CFError.isCFError(undefined), false);
+	assertEquals(Security_CFError.isCFError(0), false);
+	assertEquals(Security_CommonError.isCommonError(cfError()), true);
+	assertEquals(Security_CFError.isCommonError(cfError()), true);
 });

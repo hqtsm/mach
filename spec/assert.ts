@@ -1,5 +1,9 @@
 import { assertRejects, assertStrictEquals, assertThrows } from '@std/assert';
-import { CFError, MacOSError, UnixError } from '../Security/errors.ts';
+import {
+	Security_CFError,
+	Security_MacOSError,
+	Security_UnixError,
+} from '../Security/errors.ts';
 
 const cfMessage = 'CoreFoundation error';
 
@@ -7,11 +11,11 @@ export async function assertRejectsUnixError(
 	f: () => Promise<unknown>,
 	code: number,
 	msg?: string,
-): Promise<UnixError> {
-	const e: UnixError = await assertRejects(
+): Promise<Security_UnixError> {
+	const e: Security_UnixError = await assertRejects(
 		f,
-		UnixError as never,
-		UnixError.make(code).message,
+		Security_UnixError as never,
+		Security_UnixError.make(code).message,
 		msg,
 	);
 	assertStrictEquals(e.error, code, msg);
@@ -22,11 +26,11 @@ export function assertThrowsUnixError(
 	f: () => unknown,
 	code: number,
 	msg?: string,
-): UnixError {
-	const e: UnixError = assertThrows(
+): Security_UnixError {
+	const e: Security_UnixError = assertThrows(
 		f,
-		UnixError as never,
-		UnixError.make(code).message,
+		Security_UnixError as never,
+		Security_UnixError.make(code).message,
 		msg,
 	);
 	assertStrictEquals(e.error, code, msg);
@@ -37,11 +41,11 @@ export async function assertRejectsMacOSError(
 	f: () => Promise<unknown>,
 	code: number,
 	msg?: string,
-): Promise<MacOSError> {
-	const e: MacOSError = await assertRejects(
+): Promise<Security_MacOSError> {
+	const e: Security_MacOSError = await assertRejects(
 		f,
-		MacOSError as never,
-		MacOSError.make(code).message,
+		Security_MacOSError as never,
+		Security_MacOSError.make(code).message,
 		msg,
 	);
 	assertStrictEquals(e.error, code, msg);
@@ -52,11 +56,11 @@ export function assertThrowsMacOSError(
 	f: () => unknown,
 	code: number,
 	msg?: string,
-): MacOSError {
-	const e: MacOSError = assertThrows(
+): Security_MacOSError {
+	const e: Security_MacOSError = assertThrows(
 		f,
-		MacOSError as never,
-		MacOSError.make(code).message,
+		Security_MacOSError as never,
+		Security_MacOSError.make(code).message,
 		msg,
 	);
 	assertStrictEquals(e.error, code, msg);
@@ -65,10 +69,14 @@ export function assertThrowsMacOSError(
 
 export async function assertRejectsCFError(
 	f: () => Promise<unknown>,
-): Promise<CFError> {
-	return await assertRejects(f, CFError as never, cfMessage);
+): Promise<Security_CFError> {
+	return await assertRejects(f, Security_CFError as never, cfMessage);
 }
 
-export function assertThrowsCFError(f: () => unknown): CFError {
-	return assertThrows(f, CFError as never, cfMessage) as CFError;
+export function assertThrowsCFError(f: () => unknown): Security_CFError {
+	return assertThrows(
+		f,
+		Security_CFError as never,
+		cfMessage,
+	) as Security_CFError;
 }

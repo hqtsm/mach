@@ -4,7 +4,7 @@ import type { Reader } from '../../helpers/reader.ts';
 import type { _const, bool } from '../../libc/c.ts';
 import type { size_t } from '../../libc/stddef.ts';
 import { SecCertificateCopyExtensionValue } from '../../sec/SecCertificate.ts';
-import type { DynamicHash } from '../../Security/hashing.ts';
+import type { Security_DynamicHash } from '../../Security/hashing.ts';
 import { SecIsAppleTrustAnchor } from '../../utilities/SecAppleAnchor.ts';
 import type {
 	SecAppleTrustAnchorFlags,
@@ -19,7 +19,7 @@ import type { SecCertificateRef } from '../SecBase.ts';
  * @param subtle Hash crypto.
  * @returns True if certificate is an Apple CA, else false.
  */
-export async function isAppleCA(
+export async function Security_CodeSigning_isAppleCA(
 	cert: SecCertificateRef,
 	subtle?: SubtleCryptoDigest | null,
 ): Promise<bool> {
@@ -42,9 +42,9 @@ export async function isAppleCA(
  * @param limit Limit.
  * @returns Size.
  */
-export async function hashFileData(
+export async function Security_CodeSigning_hashFileData(
 	reader: Reader,
-	hasher: DynamicHash,
+	hasher: Security_DynamicHash,
 	limit: size_t = 0,
 ): Promise<size_t> {
 	await hasher.update(reader = limit ? reader.slice(0, limit) : reader);
@@ -58,7 +58,7 @@ export async function hashFileData(
  * @param oid OID.
  * @returns True if certificate has field, else false.
  */
-export function certificateHasField(
+export function Security_CodeSigning_certificateHasField(
 	cert: SecCertificateRef | null,
 	oid: _const<CSSM_OID>,
 ): bool {

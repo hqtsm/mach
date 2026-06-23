@@ -14,55 +14,61 @@ import {
 } from '../spec/assert.ts';
 import { unhex } from '../spec/hex.ts';
 import { testOOM } from '../spec/memory.ts';
-import { Blob, BlobCore, BlobWrapper } from './blob.ts';
+import {
+	Security_Blob,
+	Security_BlobCore,
+	Security_BlobWrapper,
+} from './blob.ts';
 import { errSecAllocate } from './SecBase.ts';
 
-Deno.test('BlobCore: BYTE_LENGTH', () => {
-	assertEquals(BlobCore.BYTE_LENGTH, 8);
+Deno.test('Security_BlobCore: BYTE_LENGTH', () => {
+	assertEquals(Security_BlobCore.BYTE_LENGTH, 8);
 });
 
-Deno.test('BlobCore: magic', () => {
+Deno.test('Security_BlobCore: magic', () => {
 	const data = new Uint8Array([0x12, 0x34, 0x56, 0x78]);
-	const blob = new BlobCore(data.buffer);
-	assertEquals(BlobCore.magic(blob), 0x12345678);
+	const blob = new Security_BlobCore(data.buffer);
+	assertEquals(Security_BlobCore.magic(blob), 0x12345678);
 });
 
-Deno.test('BlobCore: length', () => {
-	const bw = new BlobCore(new ArrayBuffer(BlobCore.BYTE_LENGTH));
-	assertEquals(BlobCore.size(bw), 0);
-	assertEquals(BlobCore.size(bw, 16), undefined);
-	assertEquals(BlobCore.size(bw), 16);
+Deno.test('Security_BlobCore: length', () => {
+	const bw = new Security_BlobCore(
+		new ArrayBuffer(Security_BlobCore.BYTE_LENGTH),
+	);
+	assertEquals(Security_BlobCore.size(bw), 0);
+	assertEquals(Security_BlobCore.size(bw, 16), undefined);
+	assertEquals(Security_BlobCore.size(bw), 16);
 });
 
-Deno.test('BlobCore: data', () => {
+Deno.test('Security_BlobCore: data', () => {
 	const data = new Uint8Array(12);
-	const blob = new BlobCore(data.buffer, 2);
-	assertEquals(BlobCore.data(blob).byteOffset, 2);
+	const blob = new Security_BlobCore(data.buffer, 2);
+	assertEquals(Security_BlobCore.data(blob).byteOffset, 2);
 });
 
-Deno.test('BlobCore: clone', () => {
+Deno.test('Security_BlobCore: clone', () => {
 	const data = new Uint8Array(12);
-	const blob = new BlobCore(data.buffer, 2);
-	const clone = BlobCore.clone(blob);
-	assertInstanceOf(clone, BlobCore);
-	assertEquals(BlobCore.data(clone).byteOffset, 0);
-	new Uint8Array(BlobCore.data(clone).buffer).fill(1);
+	const blob = new Security_BlobCore(data.buffer, 2);
+	const clone = Security_BlobCore.clone(blob);
+	assertInstanceOf(clone, Security_BlobCore);
+	assertEquals(Security_BlobCore.data(clone).byteOffset, 0);
+	new Uint8Array(Security_BlobCore.data(clone).buffer).fill(1);
 	assertEquals(data, new Uint8Array(12));
 
-	BlobCore.size(blob, 0xDEADDEAD);
+	Security_BlobCore.size(blob, 0xDEADDEAD);
 	testOOM([0xDEADDEAD], () => {
 		assertThrowsUnixError(
-			() => BlobCore.clone(blob),
+			() => Security_BlobCore.clone(blob),
 			ENOMEM,
 		);
 	});
 });
 
-Deno.test('BlobCore: innerData', () => {
+Deno.test('Security_BlobCore: innerData', () => {
 	const data = new Uint8Array(12);
-	const blob = new BlobCore(data.buffer, 2);
-	BlobCore.size(blob, 10);
-	const inner = BlobCore.innerData(blob);
+	const blob = new Security_BlobCore(data.buffer, 2);
+	Security_BlobCore.size(blob, 10);
+	const inner = Security_BlobCore.innerData(blob);
 	data[10] = 1;
 	data[11] = 2;
 	assertEquals(inner.length, 2);
@@ -70,23 +76,23 @@ Deno.test('BlobCore: innerData', () => {
 	assertEquals(inner[1], 2);
 });
 
-Deno.test('BlobCore: initialize', () => {
+Deno.test('Security_BlobCore: initialize', () => {
 	const data = new Uint8Array(12);
-	const blob = new BlobCore(data.buffer, 2);
-	BlobCore.initialize(blob, 0x12345678, 10);
-	assertEquals(BlobCore.magic(blob), 0x12345678);
-	assertEquals(BlobCore.size(blob), 10);
+	const blob = new Security_BlobCore(data.buffer, 2);
+	Security_BlobCore.initialize(blob, 0x12345678, 10);
+	assertEquals(Security_BlobCore.magic(blob), 0x12345678);
+	assertEquals(Security_BlobCore.size(blob), 10);
 });
 
-Deno.test('BlobCore: validateBlob', () => {
+Deno.test('Security_BlobCore: validateBlob', () => {
 	const data = new Uint8Array(12);
-	const blob = new BlobCore(data.buffer, 2);
-	BlobCore.initialize(blob, 0x12345678, 10);
-	assertEquals(BlobCore.validateBlob(blob, 0x12345678), true);
+	const blob = new Security_BlobCore(data.buffer, 2);
+	Security_BlobCore.initialize(blob, 0x12345678, 10);
+	assertEquals(Security_BlobCore.validateBlob(blob, 0x12345678), true);
 	{
 		const context = { errno: 0 };
 		assertEquals(
-			BlobCore.validateBlob(
+			Security_BlobCore.validateBlob(
 				blob,
 				0x12345678,
 				undefined,
@@ -101,7 +107,7 @@ Deno.test('BlobCore: validateBlob', () => {
 	{
 		const context = { errno: 0 };
 		assertEquals(
-			BlobCore.validateBlob(
+			Security_BlobCore.validateBlob(
 				blob,
 				0x12345679,
 				undefined,
@@ -113,13 +119,13 @@ Deno.test('BlobCore: validateBlob', () => {
 		assertEquals(context.errno, EINVAL);
 	}
 
-	assertEquals(BlobCore.validateBlob(blob, 0, 9), true);
-	assertEquals(BlobCore.validateBlob(blob, 0, 10), true);
+	assertEquals(Security_BlobCore.validateBlob(blob, 0, 9), true);
+	assertEquals(Security_BlobCore.validateBlob(blob, 0, 10), true);
 
 	{
 		const context = { errno: 0 };
 		assertEquals(
-			BlobCore.validateBlob(blob, 0, 11, undefined, context),
+			Security_BlobCore.validateBlob(blob, 0, 11, undefined, context),
 			false,
 		);
 		assertEquals(context.errno, EINVAL);
@@ -127,17 +133,20 @@ Deno.test('BlobCore: validateBlob', () => {
 
 	{
 		const context = { errno: 0 };
-		assertEquals(BlobCore.validateBlob(blob, 0, 0, 9, context), false);
+		assertEquals(
+			Security_BlobCore.validateBlob(blob, 0, 0, 9, context),
+			false,
+		);
 		assertEquals(context.errno, ENOMEM);
 	}
-	assertEquals(BlobCore.validateBlob(blob, 0, 0, 10), true);
-	assertEquals(BlobCore.validateBlob(blob, 0, 0, 11), true);
+	assertEquals(Security_BlobCore.validateBlob(blob, 0, 0, 10), true);
+	assertEquals(Security_BlobCore.validateBlob(blob, 0, 0, 11), true);
 
-	BlobCore.initialize(blob, 0x12345678, 7);
+	Security_BlobCore.initialize(blob, 0x12345678, 7);
 	{
 		const context = { errno: 0 };
 		assertEquals(
-			BlobCore.validateBlob(
+			Security_BlobCore.validateBlob(
 				blob,
 				0x12345678,
 				undefined,
@@ -150,43 +159,43 @@ Deno.test('BlobCore: validateBlob', () => {
 	}
 });
 
-Deno.test('BlobCore: contains', () => {
+Deno.test('Security_BlobCore: contains', () => {
 	const data = new Uint8Array(12);
-	const blob = new BlobCore(data.buffer, 2);
-	BlobCore.initialize(blob, 0x12345678, 10);
-	assertEquals(BlobCore.contains(blob, 0, 0), false);
-	assertEquals(BlobCore.contains(blob, 0, 1), false);
-	assertEquals(BlobCore.contains(blob, 0, 2), false);
-	assertEquals(BlobCore.contains(blob, 0, 3), false);
-	assertEquals(BlobCore.contains(blob, 0, 4), false);
-	assertEquals(BlobCore.contains(blob, 0, 5), false);
-	assertEquals(BlobCore.contains(blob, 0, 6), false);
-	assertEquals(BlobCore.contains(blob, 0, 7), false);
-	assertEquals(BlobCore.contains(blob, 0, 8), false);
-	assertEquals(BlobCore.contains(blob, 0, 9), false);
-	assertEquals(BlobCore.contains(blob, 0, 10), false);
-	assertEquals(BlobCore.contains(blob, 0, 11), false);
-	assertEquals(BlobCore.contains(blob, 0, 12), false);
-	assertEquals(BlobCore.contains(blob, 7, 1), false);
-	assertEquals(BlobCore.contains(blob, 8, 0), true);
-	assertEquals(BlobCore.contains(blob, 8, 1), true);
-	assertEquals(BlobCore.contains(blob, 8, 2), true);
-	assertEquals(BlobCore.contains(blob, 8, 3), false);
-	assertEquals(BlobCore.contains(blob, 9, 1), true);
-	assertEquals(BlobCore.contains(blob, 10, 0), true);
-	assertEquals(BlobCore.contains(blob, 9, -1), false);
-	assertEquals(BlobCore.contains(blob, 10, -1), false);
+	const blob = new Security_BlobCore(data.buffer, 2);
+	Security_BlobCore.initialize(blob, 0x12345678, 10);
+	assertEquals(Security_BlobCore.contains(blob, 0, 0), false);
+	assertEquals(Security_BlobCore.contains(blob, 0, 1), false);
+	assertEquals(Security_BlobCore.contains(blob, 0, 2), false);
+	assertEquals(Security_BlobCore.contains(blob, 0, 3), false);
+	assertEquals(Security_BlobCore.contains(blob, 0, 4), false);
+	assertEquals(Security_BlobCore.contains(blob, 0, 5), false);
+	assertEquals(Security_BlobCore.contains(blob, 0, 6), false);
+	assertEquals(Security_BlobCore.contains(blob, 0, 7), false);
+	assertEquals(Security_BlobCore.contains(blob, 0, 8), false);
+	assertEquals(Security_BlobCore.contains(blob, 0, 9), false);
+	assertEquals(Security_BlobCore.contains(blob, 0, 10), false);
+	assertEquals(Security_BlobCore.contains(blob, 0, 11), false);
+	assertEquals(Security_BlobCore.contains(blob, 0, 12), false);
+	assertEquals(Security_BlobCore.contains(blob, 7, 1), false);
+	assertEquals(Security_BlobCore.contains(blob, 8, 0), true);
+	assertEquals(Security_BlobCore.contains(blob, 8, 1), true);
+	assertEquals(Security_BlobCore.contains(blob, 8, 2), true);
+	assertEquals(Security_BlobCore.contains(blob, 8, 3), false);
+	assertEquals(Security_BlobCore.contains(blob, 9, 1), true);
+	assertEquals(Security_BlobCore.contains(blob, 10, 0), true);
+	assertEquals(Security_BlobCore.contains(blob, 9, -1), false);
+	assertEquals(Security_BlobCore.contains(blob, 10, -1), false);
 });
 
-Deno.test('BlobCore: stringAt', () => {
+Deno.test('Security_BlobCore: stringAt', () => {
 	const data = new Uint8Array(22);
-	const blob = new BlobCore(data.buffer, 2);
-	BlobCore.initialize(blob, 0x12345678, 20);
+	const blob = new Security_BlobCore(data.buffer, 2);
+	Security_BlobCore.initialize(blob, 0x12345678, 20);
 
-	assertEquals(BlobCore.stringAt(blob, -1), null);
-	assertEquals(BlobCore.stringAt(blob, 20), null);
+	assertEquals(Security_BlobCore.stringAt(blob, -1), null);
+	assertEquals(Security_BlobCore.stringAt(blob, 20), null);
 
-	let s = BlobCore.stringAt(blob, 0);
+	let s = Security_BlobCore.stringAt(blob, 0);
 	assertNotEquals(s, null);
 	assertEquals(s![0], 0x12);
 	assertEquals(s![1], 0x34);
@@ -194,11 +203,11 @@ Deno.test('BlobCore: stringAt', () => {
 	assertEquals(s![3], 0x78);
 	assertEquals(s![4], 0);
 
-	s = BlobCore.stringAt(blob, 8);
+	s = Security_BlobCore.stringAt(blob, 8);
 	assertNotEquals(s, null);
 	assertEquals(s![0], 0);
 
-	s = BlobCore.stringAt(blob, 19);
+	s = Security_BlobCore.stringAt(blob, 19);
 	assertNotEquals(s, null);
 	assertEquals(s![0], 0);
 
@@ -206,7 +215,7 @@ Deno.test('BlobCore: stringAt', () => {
 	data[blob.byteOffset + 11] = 'B'.charCodeAt(0);
 	data[blob.byteOffset + 12] = 'C'.charCodeAt(0);
 
-	s = BlobCore.stringAt(blob, 10);
+	s = Security_BlobCore.stringAt(blob, 10);
 	assertNotEquals(s, null);
 	assertEquals(s![0], 'A'.charCodeAt(0));
 	assertEquals(s![1], 'B'.charCodeAt(0));
@@ -217,10 +226,10 @@ Deno.test('BlobCore: stringAt', () => {
 	data[blob.byteOffset + 18] = 'B'.charCodeAt(0);
 	data[blob.byteOffset + 19] = 'C'.charCodeAt(0);
 
-	assertEquals(BlobCore.stringAt(blob, 17), null);
+	assertEquals(Security_BlobCore.stringAt(blob, 17), null);
 });
 
-Deno.test('BlobCore: is', () => {
+Deno.test('Security_BlobCore: is', () => {
 	const data = new ArrayBuffer(12);
 	const view = new DataView(data);
 	view.setUint32(0, 0x12345678);
@@ -230,39 +239,39 @@ Deno.test('BlobCore: is', () => {
 	view.setUint8(10, 3);
 	view.setUint8(11, 4);
 
-	const blob = new BlobCore(data);
+	const blob = new Security_BlobCore(data);
 
-	class Match extends BlobCore {
+	class Match extends Security_BlobCore {
 		static typeMagic = 0x12345678;
 	}
 	assertEquals(Match.is(blob), true);
 
-	class Mismatch extends BlobCore {
+	class Mismatch extends Security_BlobCore {
 		static typeMagic = 0x12345679;
 	}
 	assertEquals(Mismatch.is(blob), false);
 });
 
-Deno.test('BlobCore: readBlob', async () => {
+Deno.test('Security_BlobCore: readBlob', async () => {
 	assertEquals(
-		await BlobCore.readBlob(new globalThis.Blob([new Uint8Array(7)])),
+		await Security_BlobCore.readBlob(new Blob([new Uint8Array(7)])),
 		null,
 	);
 
 	const data = new Uint8Array(100);
-	const blob = new BlobCore(data.buffer);
-	BlobCore.initialize(blob, 0x12345678, 101);
+	const blob = new Security_BlobCore(data.buffer);
+	Security_BlobCore.initialize(blob, 0x12345678, 101);
 	{
 		const context = { errno: 0 };
-		await BlobCore.readBlob(new globalThis.Blob([data]), context);
+		await Security_BlobCore.readBlob(new Blob([data]), context);
 		assertEquals(context.errno, EINVAL);
 	}
 
-	BlobCore.initialize(blob, 0x12345678, 100);
-	const read = await BlobCore.readBlob(new globalThis.Blob([data]));
+	Security_BlobCore.initialize(blob, 0x12345678, 100);
+	const read = await Security_BlobCore.readBlob(new Blob([data]));
 	assertNotEquals(read, null);
-	assertEquals(BlobCore.magic(read!), 0x12345678);
-	assertEquals(BlobCore.size(read!), 100);
+	assertEquals(Security_BlobCore.magic(read!), 0x12345678);
+	assertEquals(Security_BlobCore.size(read!), 100);
 });
 
 class NoErrno {
@@ -275,7 +284,7 @@ class NoErrno {
 	}
 }
 
-class ExampleBlob extends Blob {
+class ExampleBlob extends Security_Blob {
 	/**
 	 * Example value.
 	 */
@@ -290,30 +299,34 @@ class ExampleBlob extends Blob {
 	}
 }
 
-Deno.test('Blob: BYTE_LENGTH', () => {
-	assertEquals(Blob.BYTE_LENGTH, 8);
+Deno.test('Security_Blob: BYTE_LENGTH', () => {
+	assertEquals(Security_Blob.BYTE_LENGTH, 8);
 });
 
-Deno.test('Blob: specific', () => {
+Deno.test('Security_Blob: specific', () => {
 	const data = new Uint8Array(12);
-	const blob = new BlobCore(data.buffer);
+	const blob = new Security_BlobCore(data.buffer);
 	{
 		const context = { errno: 0 };
 		assertEquals(ExampleBlob.specific(blob, context), null);
 		assertEquals(context.errno, EINVAL);
 	}
 
-	BlobCore.initialize(blob, ExampleBlob.typeMagic, ExampleBlob.BYTE_LENGTH);
+	Security_BlobCore.initialize(
+		blob,
+		ExampleBlob.typeMagic,
+		ExampleBlob.BYTE_LENGTH,
+	);
 	{
 		const example = ExampleBlob.specific(blob, new NoErrno());
 		assertInstanceOf(example, ExampleBlob);
 	}
 });
 
-Deno.test('Blob: clone', () => {
+Deno.test('Security_Blob: clone', () => {
 	const data = new Uint8Array(12);
 	const example = new ExampleBlob(data.buffer);
-	BlobCore.initialize(example, 0xFFFFFFFF, ExampleBlob.BYTE_LENGTH);
+	Security_BlobCore.initialize(example, 0xFFFFFFFF, ExampleBlob.BYTE_LENGTH);
 	example.value = 42;
 	{
 		const context = { errno: 0 };
@@ -329,16 +342,16 @@ Deno.test('Blob: clone', () => {
 	}
 });
 
-Deno.test('Blob: blobify buffer', () => {
-	const blobB = Blob.blobify(new Uint8Array([1, 2, 3, 4]).buffer);
+Deno.test('Security_Blob: blobify buffer', () => {
+	const blobB = Security_Blob.blobify(new Uint8Array([1, 2, 3, 4]).buffer);
 	assertEquals(
 		new Uint8Array(blobB.buffer),
 		new Uint8Array([0, 0, 0, 0, 0, 0, 0, 12, 1, 2, 3, 4]),
 	);
 });
 
-Deno.test('Blob: blobify view', () => {
-	const blobV = Blob.blobify(
+Deno.test('Security_Blob: blobify view', () => {
+	const blobV = Security_Blob.blobify(
 		new Uint8Array([1, 2, 3, 4, 5, 6]).subarray(1, -1),
 	);
 	assertEquals(
@@ -347,34 +360,34 @@ Deno.test('Blob: blobify view', () => {
 	);
 });
 
-Deno.test('Blob: blobify OOM', () => {
+Deno.test('Security_Blob: blobify OOM', () => {
 	const content = new ArrayBuffer(0xDEAD);
-	testOOM([BlobCore.BYTE_LENGTH + 0xDEAD], () => {
+	testOOM([Security_BlobCore.BYTE_LENGTH + 0xDEAD], () => {
 		const err = assertThrowsMacOSError(
-			() => Blob.blobify(content),
+			() => Security_Blob.blobify(content),
 			errSecAllocate,
 		);
 		assertEquals(err.error, errSecAllocate);
 	});
 });
 
-Deno.test('Blob: blobify exception', () => {
+Deno.test('Security_Blob: blobify exception', () => {
 	const content = new ArrayBuffer(0xDEAD);
-	testOOM([BlobCore.BYTE_LENGTH + 0xDEAD], () => {
+	testOOM([Security_BlobCore.BYTE_LENGTH + 0xDEAD], () => {
 		assertThrows(
-			() => Blob.blobify(content),
+			() => Security_Blob.blobify(content),
 			Error,
 		);
 	}, Error);
 });
 
-Deno.test('Blob: readBlob regular', async () => {
+Deno.test('Security_Blob: readBlob regular', async () => {
 	const data = new Uint8Array(100);
 	const blob = new ExampleBlob(data.buffer);
 	{
 		const context = { errno: 0 };
 		assertEquals(
-			await ExampleBlob.readBlob(new globalThis.Blob([data]), context),
+			await ExampleBlob.readBlob(new Blob([data]), context),
 			null,
 		);
 		assertEquals(context.errno, EINVAL);
@@ -383,10 +396,7 @@ Deno.test('Blob: readBlob regular', async () => {
 	ExampleBlob.initializeSize(blob, ExampleBlob.BYTE_LENGTH);
 	blob.value = 0xAABBCCDD;
 	const context = { errno: 0 };
-	const read = await ExampleBlob.readBlob(
-		new globalThis.Blob([data]),
-		context,
-	);
+	const read = await ExampleBlob.readBlob(new Blob([data]), context);
 	assertInstanceOf(read, ExampleBlob);
 	assertEquals(context.errno, 0);
 	assertEquals(ExampleBlob.magic(read), ExampleBlob.typeMagic);
@@ -394,14 +404,14 @@ Deno.test('Blob: readBlob regular', async () => {
 	assertEquals(read.value, 0xAABBCCDD);
 });
 
-Deno.test('Blob: readBlob offset', async () => {
+Deno.test('Security_Blob: readBlob offset', async () => {
 	const data = new Uint8Array(100);
 	const blob = new ExampleBlob(data.buffer, 10);
 	{
 		const context = { errno: 0 };
 		assertEquals(
 			await ExampleBlob.readBlob(
-				new globalThis.Blob([data]),
+				new Blob([data]),
 				10,
 				ExampleBlob.BYTE_LENGTH - 1,
 				context,
@@ -414,12 +424,7 @@ Deno.test('Blob: readBlob offset', async () => {
 	ExampleBlob.initializeSize(blob, ExampleBlob.BYTE_LENGTH);
 	blob.value = 0xAABBCCDD;
 	const context = { errno: 0 };
-	const read = await ExampleBlob.readBlob(
-		new globalThis.Blob([data]),
-		10,
-		0,
-		context,
-	);
+	const read = await ExampleBlob.readBlob(new Blob([data]), 10, 0, context);
 	assertInstanceOf(read, ExampleBlob);
 	assertEquals(context.errno, 0);
 	assertEquals(ExampleBlob.magic(read), ExampleBlob.typeMagic);
@@ -427,11 +432,11 @@ Deno.test('Blob: readBlob offset', async () => {
 	assertEquals(read.value, 0xAABBCCDD);
 });
 
-Deno.test('Blob: validateBlobSize', () => {
+Deno.test('Security_Blob: validateBlobSize', () => {
 	const data = new Uint8Array(22);
 	const blob = new ExampleBlob(data.buffer, 2);
 
-	BlobCore.initialize(blob, 0, 20);
+	Security_BlobCore.initialize(blob, 0, 20);
 	{
 		const context = { errno: 0 };
 		assertEquals(
@@ -447,7 +452,7 @@ Deno.test('Blob: validateBlobSize', () => {
 	ExampleBlob.initializeSize(blob, 11);
 	assertEquals(ExampleBlob.validateBlobSize(blob, 11, new NoErrno()), false);
 
-	BlobCore.initialize(blob, 0, 20);
+	Security_BlobCore.initialize(blob, 0, 20);
 	{
 		const context = { errno: 0 };
 		assertEquals(ExampleBlob.validateBlobSize(blob, 20, context), false);
@@ -461,81 +466,99 @@ Deno.test('Blob: validateBlobSize', () => {
 	assertEquals(ExampleBlob.validateBlobSize(blob, 19, new NoErrno()), true);
 });
 
-Deno.test('BlobWrapper: BYTE_LENGTH', () => {
-	assertEquals(BlobWrapper.BYTE_LENGTH, 8);
+Deno.test('Security_BlobWrapper: BYTE_LENGTH', () => {
+	assertEquals(Security_BlobWrapper.BYTE_LENGTH, 8);
 });
 
-Deno.test('BlobWrapper: length', () => {
-	const bw = new BlobWrapper(new ArrayBuffer(BlobWrapper.BYTE_LENGTH));
-	assertEquals(BlobWrapper.size(bw), -8);
-	assertEquals(BlobWrapper.size(bw, 8), undefined);
-	assertEquals(BlobWrapper.size(bw), 0);
-	assertEquals(BlobWrapper.size(bw, 16), undefined);
-	assertEquals(BlobWrapper.size(bw), 8);
+Deno.test('Security_BlobWrapper: length', () => {
+	const bw = new Security_BlobWrapper(
+		new ArrayBuffer(Security_BlobWrapper.BYTE_LENGTH),
+	);
+	assertEquals(Security_BlobWrapper.size(bw), -8);
+	assertEquals(Security_BlobWrapper.size(bw, 8), undefined);
+	assertEquals(Security_BlobWrapper.size(bw), 0);
+	assertEquals(Security_BlobWrapper.size(bw, 16), undefined);
+	assertEquals(Security_BlobWrapper.size(bw), 8);
 });
 
-Deno.test('BlobWrapper: empty', () => {
-	const { BYTE_LENGTH } = BlobWrapper;
+Deno.test('Security_BlobWrapper: empty', () => {
+	const { BYTE_LENGTH } = Security_BlobWrapper;
 	const buffer = new ArrayBuffer(BYTE_LENGTH);
-	const bw = new BlobWrapper(buffer);
-	BlobWrapper.initializeSize(bw, BYTE_LENGTH);
+	const bw = new Security_BlobWrapper(buffer);
+	Security_BlobWrapper.initializeSize(bw, BYTE_LENGTH);
 	assertEquals(
 		new Uint8Array(buffer),
 		unhex('FA DE 0B 01 00 00 00 08'),
 	);
 });
 
-Deno.test('BlobWrapper: alloc length', () => {
+Deno.test('Security_BlobWrapper: alloc length', () => {
 	const data = unhex('09 AB CD EF 01 02 03 04 05 06 07 08 09 0A 0B 0C');
-	const bw = BlobWrapper.alloc(data.length);
-	let ptr = BlobWrapper.data(bw);
+	const bw = Security_BlobWrapper.alloc(data.length);
+	let ptr = Security_BlobWrapper.data(bw);
 	new Uint8Array(ptr.buffer, ptr.byteOffset).set(data);
 	const dv = new DataView(bw.buffer, bw.byteOffset, 8);
 	assertEquals(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
-	assertEquals(dv.getUint32(4), BlobWrapper.size(bw) + 8);
-	ptr = BlobWrapper.data(bw);
+	assertEquals(dv.getUint32(4), Security_BlobWrapper.size(bw) + 8);
+	ptr = Security_BlobWrapper.data(bw);
 	assertEquals(
-		new Uint8Array(ptr.buffer, ptr.byteOffset, BlobWrapper.size(bw)),
+		new Uint8Array(
+			ptr.buffer,
+			ptr.byteOffset,
+			Security_BlobWrapper.size(bw),
+		),
 		data,
 	);
 });
 
-Deno.test('BlobWrapper: alloc size', () => {
+Deno.test('Security_BlobWrapper: alloc size', () => {
 	const data = new Uint8Array(16);
-	const bw = BlobWrapper.alloc(data.byteLength);
+	const bw = Security_BlobWrapper.alloc(data.byteLength);
 	const dv = new DataView(bw.buffer, bw.byteOffset, 8);
 	assertEquals(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
-	assertEquals(dv.getUint32(4), BlobWrapper.size(bw) + 8);
-	const ptr = BlobWrapper.data(bw);
+	assertEquals(dv.getUint32(4), Security_BlobWrapper.size(bw) + 8);
+	const ptr = Security_BlobWrapper.data(bw);
 	assertEquals(
-		new Uint8Array(ptr.buffer, ptr.byteOffset, BlobWrapper.size(bw)),
+		new Uint8Array(
+			ptr.buffer,
+			ptr.byteOffset,
+			Security_BlobWrapper.size(bw),
+		),
 		data,
 	);
 });
 
-Deno.test('BlobWrapper: alloc buffer', () => {
+Deno.test('Security_BlobWrapper: alloc buffer', () => {
 	const data = unhex('09 AB CD EF 01 02 03 04 05 06 07 08 09 0A 0B 0C');
-	const bw = BlobWrapper.alloc(data.buffer, data.byteLength);
+	const bw = Security_BlobWrapper.alloc(data.buffer, data.byteLength);
 	const dv = new DataView(bw.buffer, bw.byteOffset, 8);
 	assertEquals(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
-	assertEquals(dv.getUint32(4), BlobWrapper.size(bw) + 8);
-	const ptr = BlobWrapper.data(bw);
+	assertEquals(dv.getUint32(4), Security_BlobWrapper.size(bw) + 8);
+	const ptr = Security_BlobWrapper.data(bw);
 	assertEquals(
-		new Uint8Array(ptr.buffer, ptr.byteOffset, BlobWrapper.size(bw)),
+		new Uint8Array(
+			ptr.buffer,
+			ptr.byteOffset,
+			Security_BlobWrapper.size(bw),
+		),
 		data,
 	);
 });
 
-Deno.test('BlobWrapper: alloc view', () => {
+Deno.test('Security_BlobWrapper: alloc view', () => {
 	const data = unhex('09 AB CD EF 01 02 03 04 05 06 07 08 09 0A 0B 0C');
 	const view = new Uint8Array([1, ...data, 1]).subarray(1, -1);
-	const bw = BlobWrapper.alloc(view, view.byteLength);
+	const bw = Security_BlobWrapper.alloc(view, view.byteLength);
 	const dv = new DataView(bw.buffer, bw.byteOffset, 8);
 	assertEquals(dv.getUint32(0), CSMAGIC_BLOBWRAPPER);
-	assertEquals(dv.getUint32(4), BlobWrapper.size(bw) + 8);
-	const ptr = BlobWrapper.data(bw);
+	assertEquals(dv.getUint32(4), Security_BlobWrapper.size(bw) + 8);
+	const ptr = Security_BlobWrapper.data(bw);
 	assertEquals(
-		new Uint8Array(ptr.buffer, ptr.byteOffset, BlobWrapper.size(bw)),
+		new Uint8Array(
+			ptr.buffer,
+			ptr.byteOffset,
+			Security_BlobWrapper.size(bw),
+		),
 		data,
 	);
 });
