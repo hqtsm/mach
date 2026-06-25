@@ -13,7 +13,6 @@
 		"./mach-o": "./mach-o/mod.ts",
 		"./MacOSX": "./MacOSX/mod.ts",
 		"./plist": "./plist/mod.ts",
-		"./sec": "./sec/mod.ts",
 		"./Security": "./Security/mod.ts",
 		"./security_codesigning": "./security_codesigning/mod.ts",
 		"./security_utilities": "./security_utilities/mod.ts",

@@ -5,7 +5,7 @@ import {
 	SecIsAppleTrustAnchor,
 	SecIsAppleTrustAnchorData,
 } from './SecAppleAnchor.ts';
-import { __SecCertificate } from '../sec/SecCertificate.ts';
+import { __SecCertificate } from '../Security/SecCertificate.ts';
 
 const AppleRootCAHash =
 	'b0b1730ecbc7ff4505142c49f1295e6eda6bcaed7e2c68c5be91b5a11001f024';

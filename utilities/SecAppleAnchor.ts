@@ -1,8 +1,10 @@
 import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
 import { type ArrayBufferLikeData, viewBytes } from '../helpers/memory.ts';
 import type { bool } from '../libc/c.ts';
-import { SecCertificateCopyIssuerSHA256Digest } from '../sec/SecCertificate.ts';
 import type { SecCertificateRef } from '../Security/SecBase.ts';
+import {
+	SecCertificateCopyIssuerSHA256Digest,
+} from '../Security/SecCertificate.ts';
 import type { SecAppleTrustAnchorFlags } from './SecAppleAnchorPriv.ts';
 
 /**

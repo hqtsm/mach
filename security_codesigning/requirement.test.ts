@@ -6,7 +6,7 @@ import {
 	CS_VALIDATION_CATEGORY_PLATFORM,
 } from '../kern/cs_blobs.ts';
 import { PLATFORM_MACOS } from '../mach-o/loader.ts';
-import { __SecCertificate } from '../sec/SecCertificate.ts';
+import { __SecCertificate } from '../Security/SecCertificate.ts';
 import {
 	kSecCodeSignatureHashSHA256,
 	kSecDesignatedRequirementType,

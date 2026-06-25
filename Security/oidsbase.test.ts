@@ -1,7 +1,7 @@
 import { assertEquals, assertInstanceOf } from '@std/assert';
 import {
 	SecCertificateCreateOidDataFromString,
-} from '../sec/SecCertificate.ts';
+} from '../Security/SecCertificate.ts';
 import * as C from './oidsbase.ts';
 
 const entries = <T extends Record<string, unknown>>(obj: T) =>

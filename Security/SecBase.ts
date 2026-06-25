@@ -1,4 +1,4 @@
-import type { __SecCertificate } from '../sec/SecCertificate.ts';
+import type { __SecCertificate } from '../Security/SecCertificate.ts';
 
 /**
  * X.509 certificate.

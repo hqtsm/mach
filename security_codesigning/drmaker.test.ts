@@ -2,7 +2,7 @@ import { assertEquals } from '@std/assert';
 import { pointerBytes } from '../helpers/memory.ts';
 import {
 	SecCertificateCreateOidDataFromString,
-} from '../sec/SecCertificate.ts';
+} from '../Security/SecCertificate.ts';
 import * as C from './drmaker.ts';
 
 const entries = <T extends Record<string, unknown>>(obj: T) =>
