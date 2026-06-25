@@ -21,10 +21,10 @@ import {
 	ASN1_VISIBLE_STRING,
 } from '../libDER/asn1Types.ts';
 import { DERItem } from '../libDER/DERItem.ts';
-import { errSecSuccess } from '../Security/SecBase.ts';
-import { errSecInvalidCertificate } from '../Security/SecBasePriv.ts';
 import { digest } from '../spec/hash.ts';
 import { unhex } from '../spec/hex.ts';
+import { errSecSuccess } from './SecBase.ts';
+import { errSecInvalidCertificate } from './SecBasePriv.ts';
 import {
 	__SecCertificate,
 	type ATV_Context,
