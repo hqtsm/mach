@@ -24,9 +24,9 @@ import type { _const, bool, int, uchar } from '../libc/c.ts';
 import type { size_t } from '../libc/stddef.ts';
 import type { uint32_t, uint8_t } from '../libc/stdint.ts';
 import { malloc } from '../libc/stdlib.ts';
+import { errSecAllocate } from '../Security/SecBase.ts';
 import type { Security_Endian } from './endian.ts';
 import { Security_MacOSError, Security_UnixError } from './errors.ts';
-import { errSecAllocate } from './SecBase.ts';
 
 /**
  * BlobCore Offset.

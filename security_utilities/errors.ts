@@ -4,7 +4,10 @@ import type { _const, bool, char, int } from '../libc/c.ts';
 import { EFAULT } from '../libc/errno.ts';
 import type { size_t } from '../libc/stddef.ts';
 import type { OSStatus } from '../MacOSX/MacTypes.ts';
-import { errSecCoreFoundationUnknown, errSecSuccess } from './SecBase.ts';
+import {
+	errSecCoreFoundationUnknown,
+	errSecSuccess,
+} from '../Security/SecBase.ts';
 
 /**
  * Security error code base.

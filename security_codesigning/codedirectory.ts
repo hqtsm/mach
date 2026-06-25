@@ -27,7 +27,6 @@ import type { _const, bool, char, int, uchar, uint } from '../libc/c.ts';
 import type { big_size_t, size_t } from '../libc/stddef.ts';
 import type { uint32_t, uint64_t, uint8_t } from '../libc/stdint.ts';
 import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../mach/vm_param.ts';
-import { Security_Blob } from '../Security/blob.ts';
 import {
 	errSecCSSignatureUnsupported,
 	errSecCSUnsupportedDigestAlgorithm,
@@ -41,12 +40,13 @@ import {
 	kSecCodeCDHashLength,
 	kSecCodeMagicCodeDirectory,
 } from '../Security/CSCommonPriv.ts';
-import { Security_MacOSError } from '../Security/errors.ts';
-import type { Security_Endian } from '../Security/endian.ts';
+import { Security_Blob } from '../security_utilities/blob.ts';
+import { Security_MacOSError } from '../security_utilities/errors.ts';
+import type { Security_Endian } from '../security_utilities/endian.ts';
 import {
 	Security_CCHashInstance,
 	type Security_DynamicHash,
-} from '../Security/hashing.ts';
+} from '../security_utilities/hashing.ts';
 import { Security_CodeSigning_hashFileData } from './csutilities.ts';
 
 const max = (values: number[]) => Math.max(...values);

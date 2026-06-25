@@ -12,12 +12,15 @@ import { ENOMEM } from '../libc/errno.ts';
 import type { size_t } from '../libc/stddef.ts';
 import type { uint32_t } from '../libc/stdint.ts';
 import { realloc } from '../libc/stdlib.ts';
-import type { Security_BlobCore_Offset } from '../Security/blob.ts';
 import { errSecCSReqUnsupported } from '../Security/CSCommon.ts';
-import { Security_MacOSError, Security_UnixError } from '../Security/errors.ts';
+import type { Security_BlobCore_Offset } from '../security_utilities/blob.ts';
+import {
+	Security_MacOSError,
+	Security_UnixError,
+} from '../security_utilities/errors.ts';
 import {
 	Security_LowLevelMemoryUtilities_alignUp,
-} from '../Security/LowLevelMemoryUtilities/memutils.ts';
+} from '../security_utilities/memutils.ts';
 import {
 	type Security_CodeSigning_ExprOp,
 	type Security_CodeSigning_MatchOperation,

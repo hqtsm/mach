@@ -30,6 +30,7 @@ import {
 	fat_header,
 	FAT_MAGIC,
 } from '../mach-o/fat.ts';
+import { errSecInternalError } from '../Security/SecBase.ts';
 import {
 	build_version_command,
 	LC_BUILD_VERSION,
@@ -64,7 +65,6 @@ import {
 	version_min_command,
 } from '../mach-o/loader.ts';
 import { Security_MacOSError, Security_UnixError } from './errors.ts';
-import { errSecInternalError } from './SecBase.ts';
 
 /**
  * Maximum number of architectures fat binaries can have.

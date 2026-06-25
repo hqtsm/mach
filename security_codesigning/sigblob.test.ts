@@ -10,7 +10,6 @@ import {
 import { unhex } from '../spec/hex.ts';
 import { thin } from '../spec/macho.ts';
 import { testOOM } from '../spec/memory.ts';
-import { Security_BlobCore, Security_BlobWrapper } from '../Security/blob.ts';
 import {
 	errSecCSSignatureInvalid,
 	kSecCodeSignatureHashSHA1,
@@ -21,6 +20,10 @@ import {
 	kSecCodeMagicEntitlementDER,
 	kSecCodeMagicLaunchConstraint,
 } from '../Security/CSCommonPriv.ts';
+import {
+	Security_BlobCore,
+	Security_BlobWrapper,
+} from '../security_utilities/blob.ts';
 import { Security_CodeSigning_CodeDirectory_Builder } from './cdbuilder.ts';
 import {
 	Security_CodeSigning_cdAlternateCodeDirectorySlots,

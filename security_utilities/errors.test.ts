@@ -12,12 +12,12 @@ import {
 	Security_MacOSError,
 	Security_UnixError,
 } from './errors.ts';
+import { EFAULT } from '../libc/errno.ts';
 import {
 	errSecCoreFoundationUnknown,
 	errSecSuccess,
 	errSecUnimplemented,
-} from './SecBase.ts';
-import { EFAULT } from '../libc/errno.ts';
+} from '../Security/SecBase.ts';
 
 class MyCommonError extends Security_CommonError {
 	constructor() {

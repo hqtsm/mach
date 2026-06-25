@@ -8,6 +8,7 @@ import { constant } from '@hqtsm/class';
 import { uint32BE } from '@hqtsm/struct';
 import { CSMAGIC_BLOBWRAPPER } from '../kern/cs_blobs.ts';
 import { EINVAL, ENOMEM } from '../libc/errno.ts';
+import { errSecAllocate } from '../Security/SecBase.ts';
 import {
 	assertThrowsMacOSError,
 	assertThrowsUnixError,
@@ -19,7 +20,6 @@ import {
 	Security_BlobCore,
 	Security_BlobWrapper,
 } from './blob.ts';
-import { errSecAllocate } from './SecBase.ts';
 
 Deno.test('Security_BlobCore: BYTE_LENGTH', () => {
 	assertEquals(Security_BlobCore.BYTE_LENGTH, 8);

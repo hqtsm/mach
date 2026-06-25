@@ -3,10 +3,10 @@ import { pointerBytes } from '../helpers/memory.ts';
 import type { Reader } from '../helpers/reader.ts';
 import type { _const, bool } from '../libc/c.ts';
 import type { size_t } from '../libc/stddef.ts';
-import type { Security_DynamicHash } from '../Security/hashing.ts';
+import { SecCertificateCopyExtensionValue } from '../sec/SecCertificate.ts';
 import type { CSSM_OID } from '../Security/cssmtype.ts';
 import type { SecCertificateRef } from '../Security/SecBase.ts';
-import { SecCertificateCopyExtensionValue } from '../sec/SecCertificate.ts';
+import type { Security_DynamicHash } from '../security_utilities/hashing.ts';
 import { SecIsAppleTrustAnchor } from '../utilities/SecAppleAnchor.ts';
 import type {
 	SecAppleTrustAnchorFlags,

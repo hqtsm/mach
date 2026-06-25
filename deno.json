@@ -15,8 +15,8 @@
 		"./plist": "./plist/mod.ts",
 		"./sec": "./sec/mod.ts",
 		"./Security": "./Security/mod.ts",
-		"./Security/LowLevelMemoryUtilities": "./Security/LowLevelMemoryUtilities/mod.ts",
 		"./security_codesigning": "./security_codesigning/mod.ts",
+		"./security_utilities": "./security_utilities/mod.ts",
 		"./struct": "./struct/mod.ts",
 		"./helpers": "./helpers/mod.ts",
 		"./utilities": "./utilities/mod.ts"

@@ -2,7 +2,7 @@ import {
 	Security_CFError,
 	Security_MacOSError,
 	Security_UnixError,
-} from '../Security/errors.ts';
+} from '../security_utilities/errors.ts';
 import {
 	assertRejectsCFError,
 	assertRejectsMacOSError,

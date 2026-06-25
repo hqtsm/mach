@@ -6,15 +6,6 @@ import { type ArrayBufferLikeData, viewBytes } from '../helpers/memory.ts';
 import type { size_t } from '../libc/stddef.ts';
 import type { uint8_t } from '../libc/stdint.ts';
 import { malloc } from '../libc/stdlib.ts';
-import {
-	Security_Blob,
-	Security_BlobCore,
-	Security_BlobWrapper,
-} from '../Security/blob.ts';
-import {
-	Security_makeCFData,
-	Security_makeCFDictionaryFrom,
-} from '../Security/cfutilities.ts';
 import { errSecCSSignatureInvalid } from '../Security/CSCommon.ts';
 import {
 	kSecCodeMagicDetachedSignature,
@@ -23,13 +14,22 @@ import {
 	kSecCodeMagicEntitlementDER,
 	kSecCodeMagicLaunchConstraint,
 } from '../Security/CSCommonPriv.ts';
-import { Security_MacOSError } from '../Security/errors.ts';
+import {
+	Security_Blob,
+	Security_BlobCore,
+	Security_BlobWrapper,
+} from '../security_utilities/blob.ts';
+import {
+	Security_makeCFData,
+	Security_makeCFDictionaryFrom,
+} from '../security_utilities/cfutilities.ts';
+import { Security_MacOSError } from '../security_utilities/errors.ts';
 import {
 	Security_SuperBlob,
 	Security_SuperBlob_Maker,
 	Security_SuperBlobCore,
 	Security_SuperBlobCore_Maker,
-} from '../Security/superblob.ts';
+} from '../security_utilities/superblob.ts';
 import {
 	Security_CodeSigning_cdComponentIsBlob,
 	Security_CodeSigning_CodeDirectory,

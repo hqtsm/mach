@@ -59,6 +59,7 @@ import {
 	symtab_command,
 	version_min_command,
 } from '../mach-o/loader.ts';
+import { errSecInternalError } from '../Security/SecBase.ts';
 import {
 	assertRejectsMacOSError,
 	assertRejectsUnixError,
@@ -79,7 +80,6 @@ import {
 	Security_MAX_ARCH_COUNT,
 	Security_Universal,
 } from './macho.ts';
-import { errSecInternalError } from './SecBase.ts';
 
 const fixtures = fixtureMachos();
 

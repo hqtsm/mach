@@ -7,7 +7,6 @@ import { type ArrayBufferLikeData, viewBytes } from '../helpers/memory.ts';
 import { CS_VALIDATION_CATEGORY_INVALID } from '../kern/cs_blobs.ts';
 import type { _const, bool, int, uint } from '../libc/c.ts';
 import type { uint32_t, uint8_t } from '../libc/stdint.ts';
-import { Security_Blob } from '../Security/blob.ts';
 import {
 	kSecCodeSignatureNoHash,
 	type SecCSDigestAlgorithm,
@@ -16,12 +15,13 @@ import {
 	kSecCodeMagicRequirement,
 	kSecCodeMagicRequirementSet,
 } from '../Security/CSCommonPriv.ts';
-import type { Security_Endian } from '../Security/endian.ts';
 import type { SecCertificateRef } from '../Security/SecBase.ts';
+import { Security_Blob } from '../security_utilities/blob.ts';
+import type { Security_Endian } from '../security_utilities/endian.ts';
 import {
 	Security_SuperBlob,
 	Security_SuperBlob_Maker,
-} from '../Security/superblob.ts';
+} from '../security_utilities/superblob.ts';
 import type { Security_CodeSigning_CodeDirectory } from './codedirectory.ts';
 
 /**

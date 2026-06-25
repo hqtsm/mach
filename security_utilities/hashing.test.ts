@@ -15,8 +15,6 @@ import {
 } from '../CommonCrypto/CommonDigestSPI.ts';
 import { ENOMEM } from '../libc/errno.ts';
 import { assertThrowsUnixError } from '../spec/assert.ts';
-import { hex } from '../spec/hex.ts';
-import { Security_CCHashInstance } from './hashing.ts';
 import {
 	ABCD,
 	BadReader,
@@ -28,6 +26,8 @@ import {
 	toAsyncIterator,
 	toIterator,
 } from '../spec/hash.ts';
+import { hex } from '../spec/hex.ts';
+import { Security_CCHashInstance } from './hashing.ts';
 
 Deno.test('Security_CCHashInstance: Unsupported', () => {
 	for (

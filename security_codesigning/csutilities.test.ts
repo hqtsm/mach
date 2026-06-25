@@ -6,8 +6,8 @@ import {
 	SecCertificateCreateOidDataFromString,
 	SecCertificateExtension,
 } from '../sec/SecCertificate.ts';
-import { Security_CCHashInstance } from '../Security/hashing.ts';
 import { cssm_data } from '../Security/SecAsn1Types.ts';
+import { Security_CCHashInstance } from '../security_utilities/hashing.ts';
 import { unhex } from '../spec/hex.ts';
 import {
 	Security_CodeSigning_certificateHasField,

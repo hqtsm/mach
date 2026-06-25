@@ -14,8 +14,11 @@ import {
 } from '../libc/stdint.ts';
 import { calloc, memset, realloc } from '../libc/stdlib.ts';
 import { errSecCSTooBig } from '../Security/CSCommon.ts';
-import { Security_MacOSError, Security_UnixError } from '../Security/errors.ts';
-import type { Security_DynamicHash } from '../Security/hashing.ts';
+import {
+	Security_MacOSError,
+	Security_UnixError,
+} from '../security_utilities/errors.ts';
+import type { Security_DynamicHash } from '../security_utilities/hashing.ts';
 import {
 	Security_CodeSigning_CodeDirectory,
 	type Security_CodeSigning_CodeDirectory_HashAlgorithm,
