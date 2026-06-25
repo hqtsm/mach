@@ -1,26 +1,26 @@
 import { assertEquals, assertInstanceOf } from '@std/assert';
 import { PLBoolean, PLData, PLDictionary } from '@hqtsm/plist';
-import { assertThrowsMacOSError } from '../../spec/assert.ts';
+import { assertThrowsMacOSError } from '../spec/assert.ts';
 import {
 	CPU_ARCHITECTURES,
 	fixtureMachos,
 	type FixtureMachoSignatureInfo,
 	fixtureMachoSigned,
-} from '../../spec/fixture.ts';
-import { unhex } from '../../spec/hex.ts';
-import { thin } from '../../spec/macho.ts';
-import { testOOM } from '../../spec/memory.ts';
-import { Security_BlobCore, Security_BlobWrapper } from '../blob.ts';
+} from '../spec/fixture.ts';
+import { unhex } from '../spec/hex.ts';
+import { thin } from '../spec/macho.ts';
+import { testOOM } from '../spec/memory.ts';
+import { Security_BlobCore, Security_BlobWrapper } from '../Security/blob.ts';
 import {
 	errSecCSSignatureInvalid,
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureLinkerSigned,
-} from '../CSCommon.ts';
+} from '../Security/CSCommon.ts';
 import {
 	kSecCodeMagicEntitlement,
 	kSecCodeMagicEntitlementDER,
 	kSecCodeMagicLaunchConstraint,
-} from '../CSCommonPriv.ts';
+} from '../Security/CSCommonPriv.ts';
 import { Security_CodeSigning_CodeDirectory_Builder } from './cdbuilder.ts';
 import {
 	Security_CodeSigning_cdAlternateCodeDirectorySlots,

@@ -4,15 +4,15 @@ import {
 	CS_SHA256_LEN,
 	CS_VALIDATION_CATEGORY_INVALID,
 	CS_VALIDATION_CATEGORY_PLATFORM,
-} from '../../kern/cs_blobs.ts';
-import { PLATFORM_MACOS } from '../../mach-o/loader.ts';
-import { __SecCertificate } from '../../sec/SecCertificate.ts';
-import { unhex } from '../../spec/hex.ts';
+} from '../kern/cs_blobs.ts';
+import { PLATFORM_MACOS } from '../mach-o/loader.ts';
+import { __SecCertificate } from '../sec/SecCertificate.ts';
 import {
 	kSecCodeSignatureHashSHA256,
 	kSecDesignatedRequirementType,
 	kSecHostRequirementType,
-} from '../CSCommon.ts';
+} from '../Security/CSCommon.ts';
+import { unhex } from '../spec/hex.ts';
 import { Security_CodeSigning_CodeDirectory } from './codedirectory.ts';
 import {
 	Security_CodeSigning_Requirement,

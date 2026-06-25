@@ -15,19 +15,19 @@ import {
 	kCCDigestSHA1,
 	kCCDigestSHA256,
 	kCCDigestSHA384,
-} from '../../CommonCrypto/CommonDigestSPI.ts';
-import type { SubtleCryptoDigest } from '../../helpers/crypto.ts';
+} from '../CommonCrypto/CommonDigestSPI.ts';
+import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
 import {
 	sizeAsyncIterators,
 	type SizeIteratorNext,
-} from '../../helpers/iterator.ts';
-import { bufferBytes, pointerBytes } from '../../helpers/memory.ts';
-import type { Reader } from '../../helpers/reader.ts';
-import type { _const, bool, char, int, uchar, uint } from '../../libc/c.ts';
-import type { big_size_t, size_t } from '../../libc/stddef.ts';
-import type { uint32_t, uint64_t, uint8_t } from '../../libc/stdint.ts';
-import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../../mach/vm_param.ts';
-import { Security_Blob } from '../blob.ts';
+} from '../helpers/iterator.ts';
+import { bufferBytes, pointerBytes } from '../helpers/memory.ts';
+import type { Reader } from '../helpers/reader.ts';
+import type { _const, bool, char, int, uchar, uint } from '../libc/c.ts';
+import type { big_size_t, size_t } from '../libc/stddef.ts';
+import type { uint32_t, uint64_t, uint8_t } from '../libc/stdint.ts';
+import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../mach/vm_param.ts';
+import { Security_Blob } from '../Security/blob.ts';
 import {
 	errSecCSSignatureUnsupported,
 	errSecCSUnsupportedDigestAlgorithm,
@@ -36,17 +36,17 @@ import {
 	kSecCodeSignatureHashSHA256Truncated,
 	kSecCodeSignatureHashSHA384,
 	kSecCodeSignatureNoHash,
-} from '../CSCommon.ts';
+} from '../Security/CSCommon.ts';
 import {
 	kSecCodeCDHashLength,
 	kSecCodeMagicCodeDirectory,
-} from '../CSCommonPriv.ts';
-import { Security_MacOSError } from '../errors.ts';
-import type { Security_Endian } from '../endian.ts';
+} from '../Security/CSCommonPriv.ts';
+import { Security_MacOSError } from '../Security/errors.ts';
+import type { Security_Endian } from '../Security/endian.ts';
 import {
 	Security_CCHashInstance,
 	type Security_DynamicHash,
-} from '../hashing.ts';
+} from '../Security/hashing.ts';
 import { Security_CodeSigning_hashFileData } from './csutilities.ts';
 
 const max = (values: number[]) => Math.max(...values);

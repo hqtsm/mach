@@ -1,9 +1,9 @@
 import { toStringTag } from '@hqtsm/class';
 import { Uint8Ptr } from '@hqtsm/struct';
-import type { _const, bool } from '../../libc/c.ts';
-import type { CSSM_DATA } from '../cssmtype.ts';
-import { APPLE_EXTENSION_OID } from '../oidsbase.ts';
-import { cssm_data } from '../SecAsn1Types.ts';
+import type { _const, bool } from '../libc/c.ts';
+import type { CSSM_DATA } from '../Security/cssmtype.ts';
+import { APPLE_EXTENSION_OID } from '../Security/oidsbase.ts';
+import { cssm_data } from '../Security/SecAsn1Types.ts';
 import { Security_CodeSigning_certificateHasField } from './csutilities.ts';
 import { Security_CodeSigning_Requirement_Maker } from './reqmaker.ts';
 import {

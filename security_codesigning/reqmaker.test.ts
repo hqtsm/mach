@@ -1,15 +1,15 @@
 import { assertEquals } from '@std/assert';
 import { Uint8Ptr } from '@hqtsm/struct';
-import { ENOMEM } from '../../libc/errno.ts';
-import { PLATFORM_MACOS } from '../../mach-o/loader.ts';
+import { ENOMEM } from '../libc/errno.ts';
+import { PLATFORM_MACOS } from '../mach-o/loader.ts';
 import {
 	assertThrowsMacOSError,
 	assertThrowsUnixError,
-} from '../../spec/assert.ts';
-import { unhex } from '../../spec/hex.ts';
-import { testOOM } from '../../spec/memory.ts';
-import { errSecCSReqUnsupported } from '../CSCommon.ts';
-import { kSecCodeMagicRequirement } from '../CSCommonPriv.ts';
+} from '../spec/assert.ts';
+import { unhex } from '../spec/hex.ts';
+import { testOOM } from '../spec/memory.ts';
+import { errSecCSReqUnsupported } from '../Security/CSCommon.ts';
+import { kSecCodeMagicRequirement } from '../Security/CSCommonPriv.ts';
 import {
 	Security_CodeSigning_opAnd,
 	Security_CodeSigning_opOr,

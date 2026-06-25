@@ -1,35 +1,35 @@
 import { constant, toStringTag } from '@hqtsm/class';
 import { array, member, type Ptr, Uint8Ptr } from '@hqtsm/struct';
-import type { CFDataRef } from '../../CoreFoundation/CFData.ts';
-import type { CFDictionaryRef } from '../../CoreFoundation/CFDictionary.ts';
-import { type ArrayBufferLikeData, viewBytes } from '../../helpers/memory.ts';
-import type { size_t } from '../../libc/stddef.ts';
-import type { uint8_t } from '../../libc/stdint.ts';
-import { malloc } from '../../libc/stdlib.ts';
+import type { CFDataRef } from '../CoreFoundation/CFData.ts';
+import type { CFDictionaryRef } from '../CoreFoundation/CFDictionary.ts';
+import { type ArrayBufferLikeData, viewBytes } from '../helpers/memory.ts';
+import type { size_t } from '../libc/stddef.ts';
+import type { uint8_t } from '../libc/stdint.ts';
+import { malloc } from '../libc/stdlib.ts';
 import {
 	Security_Blob,
 	Security_BlobCore,
 	Security_BlobWrapper,
-} from '../blob.ts';
+} from '../Security/blob.ts';
 import {
 	Security_makeCFData,
 	Security_makeCFDictionaryFrom,
-} from '../cfutilities.ts';
-import { errSecCSSignatureInvalid } from '../CSCommon.ts';
+} from '../Security/cfutilities.ts';
+import { errSecCSSignatureInvalid } from '../Security/CSCommon.ts';
 import {
 	kSecCodeMagicDetachedSignature,
 	kSecCodeMagicEmbeddedSignature,
 	kSecCodeMagicEntitlement,
 	kSecCodeMagicEntitlementDER,
 	kSecCodeMagicLaunchConstraint,
-} from '../CSCommonPriv.ts';
-import { Security_MacOSError } from '../errors.ts';
+} from '../Security/CSCommonPriv.ts';
+import { Security_MacOSError } from '../Security/errors.ts';
 import {
 	Security_SuperBlob,
 	Security_SuperBlob_Maker,
 	Security_SuperBlobCore,
 	Security_SuperBlobCore_Maker,
-} from '../superblob.ts';
+} from '../Security/superblob.ts';
 import {
 	Security_CodeSigning_cdComponentIsBlob,
 	Security_CodeSigning_CodeDirectory,

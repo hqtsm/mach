@@ -1,20 +1,20 @@
 import { assertEquals, assertGreater, assertRejects } from '@std/assert';
-import type { Reader } from '../../helpers/reader.ts';
-import { CS_SHA1_LEN } from '../../kern/cs_blobs.ts';
-import { ENOMEM } from '../../libc/errno.ts';
-import { UINT32_MAX } from '../../libc/stdint.ts';
-import { PLATFORM_MACOS } from '../../mach-o/loader.ts';
-import {
-	assertRejectsMacOSError,
-	assertRejectsUnixError,
-	assertThrowsUnixError,
-} from '../../spec/assert.ts';
-import { testOOM } from '../../spec/memory.ts';
+import type { Reader } from '../helpers/reader.ts';
+import { CS_SHA1_LEN } from '../kern/cs_blobs.ts';
+import { ENOMEM } from '../libc/errno.ts';
+import { UINT32_MAX } from '../libc/stdint.ts';
+import { PLATFORM_MACOS } from '../mach-o/loader.ts';
 import {
 	errSecCSTooBig,
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
-} from '../CSCommon.ts';
+} from '../Security/CSCommon.ts';
+import {
+	assertRejectsMacOSError,
+	assertRejectsUnixError,
+	assertThrowsUnixError,
+} from '../spec/assert.ts';
+import { testOOM } from '../spec/memory.ts';
 import { Security_CodeSigning_CodeDirectory_Builder } from './cdbuilder.ts';
 import {
 	Security_CodeSigning_CodeDirectory,

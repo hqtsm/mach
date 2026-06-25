@@ -1,7 +1,7 @@
 import { assert, assertEquals, assertRejects } from '@std/assert';
 import { crypto as stdCrypto } from '@std/crypto';
-import type { Reader } from '../../helpers/reader.ts';
-import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../../mach/vm_param.ts';
+import type { Reader } from '../helpers/reader.ts';
+import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../mach/vm_param.ts';
 import {
 	errSecCSSignatureUnsupported,
 	errSecCSUnsupportedDigestAlgorithm,
@@ -11,9 +11,8 @@ import {
 	kSecCodeSignatureHashSHA384,
 	kSecCodeSignatureHashSHA512,
 	kSecCodeSignatureNoHash,
-} from '../CSCommon.ts';
-import { kSecCodeCDHashLength } from '../CSCommonPriv.ts';
-import { Security_CodeSigning_CodeDirectory_Builder } from './cdbuilder.ts';
+} from '../Security/CSCommon.ts';
+import { kSecCodeCDHashLength } from '../Security/CSCommonPriv.ts';
 import {
 	kSecCS_CODEDIRECTORYFILE,
 	kSecCS_ENTITLEMENTDERFILE,
@@ -49,7 +48,8 @@ import {
 	Security_CodeSigning_CodeDirectory,
 	Security_CodeSigning_CodeDirectory_Scatter,
 } from './codedirectory.ts';
-import { assertThrowsMacOSError } from '../../spec/assert.ts';
+import { assertThrowsMacOSError } from '../spec/assert.ts';
+import { Security_CodeSigning_CodeDirectory_Builder } from './cdbuilder.ts';
 
 class ErrorReader implements Reader {
 	#size: number;
