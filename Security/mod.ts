@@ -5,6 +5,8 @@ export * from './oidsbase.ts';
 export * from './SecAsn1Types.ts';
 export * from './SecBase.ts';
 export * from './SecBasePriv.ts';
+export * from './SecCertificateInternal.ts';
+export * from './SecCertificatePriv.ts';
 export * from './SecDigest.ts';
 export * from './SecFramework.ts';
 export * from './SecFrameworkStrings.ts';
