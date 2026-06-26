@@ -67,7 +67,11 @@ export type DERReturn =
  *
  * @template T Property.
  */
-export type DERItemSpec<T extends string> = [T, DERTag, DERShort];
+export type DERItemSpec<T extends string = string> = readonly [
+	T,
+	DERTag,
+	DERShort,
+];
 
 /**
  * Get offsets of item.

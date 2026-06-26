@@ -6,7 +6,7 @@ import {
 	DER_DEC_SAVE_DER,
 } from './DER_Decode.ts';
 import { DERItem } from './DERItem.ts';
-import type { DER_OFFSET } from './libDER.ts';
+import type { DER_OFFSET, DERItemSpec } from './libDER.ts';
 
 /**
  * DER attribute type and value.
@@ -41,15 +41,17 @@ export class DERAttributeTypeAndValue {
 /**
  * DERAttributeTypeAndValue specs.
  */
-export const DERAttributeTypeAndValueItemSpecs = [
+export const DERAttributeTypeAndValueItemSpecs: readonly DERItemSpec<
+	DER_OFFSET<DERAttributeTypeAndValue>
+>[] = [
 	[
-		'type' satisfies DER_OFFSET<DERAttributeTypeAndValue>,
+		'type',
 		ASN1_OBJECT_ID,
 		DER_DEC_NO_OPTS,
 	],
 	[
-		'value' satisfies DER_OFFSET<DERAttributeTypeAndValue>,
-		0,
+		'value',
+		0n,
 		DER_DEC_ASN_ANY | DER_DEC_SAVE_DER,
 	],
-] as const;
+];
