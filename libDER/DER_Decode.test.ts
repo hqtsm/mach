@@ -20,7 +20,6 @@ import {
 } from './DER_Decode.ts';
 import { DERItem } from './DERItem.ts';
 import {
-	DERItemSpec,
 	DR_DecodeError,
 	DR_EndOfSequence,
 	DR_IncompleteSeq,
@@ -434,8 +433,8 @@ Deno.test('DERParseSequenceContent: sequence', () => {
 	const ret = DERParseSequenceContent(
 		item,
 		[
-			new DERItemSpec('a', 0xAn, DER_DEC_NO_OPTS),
-			new DERItemSpec('b', 0xBn, DER_DEC_NO_OPTS),
+			['a', 0xAn, DER_DEC_NO_OPTS],
+			['b', 0xBn, DER_DEC_NO_OPTS],
 		] as const,
 		{ a, b },
 		false,
@@ -459,9 +458,9 @@ Deno.test('DERParseSequenceContent: optional', () => {
 	const ret = DERParseSequenceContent(
 		item,
 		[
-			new DERItemSpec('a', 0xAn, DER_DEC_NO_OPTS),
-			new DERItemSpec('b', 0xBn, DER_DEC_OPTIONAL),
-			new DERItemSpec('c', 0xCn, DER_DEC_NO_OPTS),
+			['a', 0xAn, DER_DEC_NO_OPTS],
+			['b', 0xBn, DER_DEC_OPTIONAL],
+			['c', 0xCn, DER_DEC_NO_OPTS],
 		],
 		{ a, b, c },
 		true,
@@ -486,9 +485,9 @@ Deno.test('DERParseSequenceContent: optional end', () => {
 	const ret = DERParseSequenceContent(
 		item,
 		[
-			new DERItemSpec('a', 0xAn, DER_DEC_NO_OPTS),
-			new DERItemSpec('b', 0xBn, DER_DEC_NO_OPTS),
-			new DERItemSpec('c', 0xCn, DER_DEC_OPTIONAL),
+			['a', 0xAn, DER_DEC_NO_OPTS],
+			['b', 0xBn, DER_DEC_NO_OPTS],
+			['c', 0xCn, DER_DEC_OPTIONAL],
 		] as const,
 		{ a, b, c },
 		false,
@@ -512,8 +511,8 @@ Deno.test('DERParseSequenceContent: save der', () => {
 	const ret = DERParseSequenceContent(
 		item,
 		[
-			new DERItemSpec('a', 0xAn, DER_DEC_SAVE_DER),
-			new DERItemSpec('b', 0xBn, DER_DEC_SAVE_DER),
+			['a', 0xAn, DER_DEC_SAVE_DER],
+			['b', 0xBn, DER_DEC_SAVE_DER],
 		] as const,
 		{ a, b },
 		false,
@@ -534,7 +533,7 @@ Deno.test('DERParseSequenceContent: bad tag', () => {
 	const ret = DERParseSequenceContent(
 		item,
 		[
-			new DERItemSpec('a', 0xBn, DER_DEC_NO_OPTS),
+			['a', 0xBn, DER_DEC_NO_OPTS],
 		] as const,
 		{ a },
 		false,
@@ -551,8 +550,8 @@ Deno.test('DERParseSequenceContent: bad end', () => {
 	const ret = DERParseSequenceContent(
 		item,
 		[
-			new DERItemSpec('a', 0xAn, DER_DEC_NO_OPTS),
-			new DERItemSpec('b', 0xBn, DER_DEC_NO_OPTS),
+			['a', 0xAn, DER_DEC_NO_OPTS],
+			['b', 0xBn, DER_DEC_NO_OPTS],
 		] as const,
 		{ a, b },
 		false,
@@ -568,7 +567,7 @@ Deno.test('DERParseSequenceContent: extra after', () => {
 	const ret = DERParseSequenceContent(
 		item,
 		[
-			new DERItemSpec('a', 0xAn, DER_DEC_NO_OPTS),
+			['a', 0xAn, DER_DEC_NO_OPTS],
 		] as const,
 		{ a },
 		false,
@@ -584,7 +583,7 @@ Deno.test('DERParseSequenceContent: incomplete tag', () => {
 	const ret = DERParseSequenceContent(
 		item,
 		[
-			new DERItemSpec('a', 0xAn, DER_DEC_NO_OPTS),
+			['a', 0xAn, DER_DEC_NO_OPTS],
 		] as const,
 		{ a },
 		false,
@@ -601,8 +600,8 @@ Deno.test('DERParseSequenceContent: bad optional end', () => {
 	const ret = DERParseSequenceContent(
 		item,
 		[
-			new DERItemSpec('a', 0xAn, DER_DEC_NO_OPTS),
-			new DERItemSpec('b', 0xBn, DER_DEC_OPTIONAL),
+			['a', 0xAn, DER_DEC_NO_OPTS],
+			['b', 0xBn, DER_DEC_OPTIONAL],
 		] as const,
 		{ a, b },
 		false,

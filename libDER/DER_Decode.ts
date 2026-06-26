@@ -356,7 +356,7 @@ export function DERParseSequenceContent<T extends string>(
 ): DERReturn {
 	const numItems = itemSpecs.length;
 	if (zero) {
-		for (const { offset } of itemSpecs) {
+		for (const [offset] of itemSpecs) {
 			const item = dest[offset as keyof typeof dest];
 			item.data = null;
 			item.length = 0;
@@ -374,7 +374,7 @@ export function DERParseSequenceContent<T extends string>(
 		if (drtn) {
 			if (drtn === DR_EndOfSequence) {
 				for (let i = itemDex; i < numItems; i++) {
-					if (!(itemSpecs[i].options & DER_DEC_OPTIONAL)) {
+					if (!(itemSpecs[i][2] & DER_DEC_OPTIONAL)) {
 						return DR_IncompleteSeq;
 					}
 				}
@@ -387,7 +387,7 @@ export function DERParseSequenceContent<T extends string>(
 
 		let foundMatch = false;
 		for (let i = itemDex; i < numItems; i++) {
-			const { tag, options, offset } = itemSpecs[i];
+			const [offset, tag, options] = itemSpecs[i];
 			if (
 				(options & DER_DEC_ASN_ANY) ||
 				(foundTag === tag)

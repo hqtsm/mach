@@ -1,4 +1,3 @@
-import { toStringTag } from '@hqtsm/class';
 import type { int } from '../libc/c.ts';
 import type { DERShort, DERTag } from './libDER_config.ts';
 import type { DERItem } from './DERItem.ts';
@@ -68,39 +67,7 @@ export type DERReturn =
  *
  * @template T Property.
  */
-export class DERItemSpec<T extends string> {
-	/**
-	 * Offset.
-	 */
-	public offset: T;
-
-	/**
-	 * Tag.
-	 */
-	public tag: DERTag;
-
-	/**
-	 * Options.
-	 */
-	public options: DERShort;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param offset Offset.
-	 * @param tag Tag.
-	 * @param options Options.
-	 */
-	constructor(offset: T, tag: DERTag, options: DERShort) {
-		this.offset = offset;
-		this.tag = tag;
-		this.options = options;
-	}
-
-	static {
-		toStringTag(this, 'DERItemSpec');
-	}
-}
+export type DERItemSpec<T extends string> = [T, DERTag, DERShort];
 
 /**
  * Get offset of item.
