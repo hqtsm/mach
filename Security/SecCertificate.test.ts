@@ -1,5 +1,9 @@
 import { Uint8Ptr } from '@hqtsm/struct';
-import { assertEquals, assertInstanceOf } from '@std/assert';
+import {
+	assertEquals,
+	assertInstanceOf,
+	assertStrictEquals,
+} from '@std/assert';
 import { kCFStringEncodingASCII } from '../CoreFoundation/CFString.ts';
 import { INT32_MAX, INT32_MIN, UINT32_MAX } from '../libc/stdint.ts';
 import {
@@ -23,7 +27,7 @@ import {
 import { DERItem } from '../libDER/DERItem.ts';
 import { digest } from '../spec/hash.ts';
 import { unhex } from '../spec/hex.ts';
-import { errSecSuccess } from './SecBase.ts';
+import { errSecSuccess, errSecUserCanceled } from './SecBase.ts';
 import { errSecInvalidCertificate } from './SecBasePriv.ts';
 import {
 	__SecCertificate,
@@ -37,6 +41,7 @@ import {
 	copyIntegerContentDescription,
 	copyOidDescription,
 	GetDecimalValueOfString,
+	parseRDNContent,
 	SecCertificateCopyExtensionValue,
 	SecCertificateCopyIssuerSHA256Digest,
 	SecCertificateCopySHA1Digest,
@@ -54,6 +59,98 @@ import {
 
 const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
 const ABCD0 = new Uint8Array([...'ABCD\0'].map((c) => c.charCodeAt(0)));
+
+Deno.test('parseRDNContent: values', () => {
+	const data = unhex([
+		'30 0C 06 03 55 04 03 13 05 48 65 6C 6C 6F',
+		'30 0C 06 03 56 05 06 13 05 57 6F 72 6C 64',
+	].join(' '));
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+	const ctx = { test: 123 };
+	const status = parseRDNContent(
+		item,
+		ctx,
+		(context, type, value, rdnIX) => {
+			assertStrictEquals(context, ctx);
+			const offset = rdnIX ? 14 : 0;
+			assertEquals(rdnIX, rdnIX ? 1 : 0);
+			assertEquals(type.length, 3);
+			assertEquals(type.data![0], data[offset + 4]);
+			assertEquals(type.data![1], data[offset + 5]);
+			assertEquals(type.data![2], data[offset + 6]);
+			assertEquals(value.length, 7);
+			assertEquals(value.data![0], data[offset + 7]);
+			assertEquals(value.data![1], data[offset + 8]);
+			assertEquals(value.data![2], data[offset + 9]);
+			assertEquals(value.data![3], data[offset + 10]);
+			assertEquals(value.data![4], data[offset + 11]);
+			assertEquals(value.data![5], data[offset + 12]);
+			assertEquals(value.data![6], data[offset + 13]);
+			return errSecSuccess;
+		},
+	);
+	assertEquals(status, errSecSuccess);
+});
+
+Deno.test('parseRDNContent: extra', () => {
+	const data = unhex('30 0C 06 03 55 04 03 13 05 48 65 6C 6C 6F 00');
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+	const status = parseRDNContent(
+		item,
+		null,
+		() => errSecSuccess,
+	);
+	assertEquals(status, errSecInvalidCertificate);
+});
+Deno.test('parseRDNContent: cancel', () => {
+	const data = unhex([
+		'30 0C 06 03 55 04 03 13 05 48 65 6C 6C 6F',
+		'00',
+	].join(' '));
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+	const status = parseRDNContent(
+		item,
+		null,
+		(_context, _type, _value, rdnIX) => {
+			assertEquals(rdnIX, 0);
+			return errSecUserCanceled;
+		},
+	);
+	assertEquals(status, errSecUserCanceled);
+});
+
+Deno.test('parseRDNContent: not sequence', () => {
+	const data = unhex('06 03 55 04 03');
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+	const status = parseRDNContent(
+		item,
+		null,
+		() => errSecSuccess,
+	);
+	assertEquals(status, errSecInvalidCertificate);
+});
+
+Deno.test('parseRDNContent: bad sequence', () => {
+	const data = unhex('30 02 05 00');
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+	const status = parseRDNContent(
+		item,
+		null,
+		() => errSecSuccess,
+	);
+	assertEquals(status, errSecInvalidCertificate);
+});
+
+Deno.test('parseRDNContent: empty oid', () => {
+	const data = unhex('30 04 06 00 05 00');
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+	const status = parseRDNContent(
+		item,
+		null,
+		() => errSecSuccess,
+	);
+	assertEquals(status, errSecInvalidCertificate);
+});
 
 Deno.test('SecDERItemCopyOIDDecimalRepresentation', () => {
 	assertEquals(

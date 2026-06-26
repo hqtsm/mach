@@ -36,8 +36,20 @@ import {
 	ASN1_VIDEOTEX_STRING,
 	ASN1_VISIBLE_STRING,
 } from '../libDER/asn1Types.ts';
-import { DERDecodedInfo, DERDecodeItem } from '../libDER/DER_Decode.ts';
+import {
+	DERAttributeTypeAndValue,
+	DERAttributeTypeAndValueItemSpecs,
+} from '../libDER/DER_CertCrl.ts';
+import {
+	DERDecodedInfo,
+	DERDecodeItem,
+	DERDecodeSeqContentInit,
+	DERDecodeSeqNext,
+	DERParseSequenceContent,
+	DERSequence,
+} from '../libDER/DER_Decode.ts';
 import { DERItem } from '../libDER/DERItem.ts';
+import { DR_EndOfSequence, DR_Success } from '../libDER/libDER.ts';
 import { DEROidCompare } from '../libDER/oids.ts';
 import type { DERTag } from '../libDER/libDER_config.ts';
 import type { OSStatus } from '../MacOSX/MacTypes.ts';
@@ -123,6 +135,62 @@ export class __SecCertificate {
 	static {
 		toStringTag(this, '__SecCertificate');
 	}
+}
+
+/**
+ * Parse X.501 name callback.
+ */
+export type parseX501NameCallback<T> = (
+	context: T,
+	type: _const<DERItem>,
+	value: _const<DERItem>,
+	rdnIX: CFIndex,
+) => OSStatus;
+
+/**
+ * Parse RDN content.
+ *
+ * @template T Context type.
+ * @param rdnSetContent RDN set content.
+ * @param context Context.
+ * @param callback Callback.
+ * @returns Status.
+ */
+export function parseRDNContent<T>(
+	rdnSetContent: _const<DERItem>,
+	context: T,
+	callback: parseX501NameCallback<T>,
+): OSStatus {
+	const rdn = new DERSequence();
+	let atv;
+	let drtn = DERDecodeSeqContentInit(rdnSetContent, rdn);
+	const atvContent = new DERDecodedInfo();
+	for (
+		let rdnIX = 0;
+		(drtn = DERDecodeSeqNext(rdn, atvContent)) === DR_Success;
+	) {
+		if (atvContent.tag !== ASN1_CONSTR_SEQUENCE) {
+			return errSecInvalidCertificate;
+		}
+		atv ??= new DERAttributeTypeAndValue();
+		drtn = DERParseSequenceContent(
+			atvContent.content,
+			DERAttributeTypeAndValueItemSpecs,
+			atv,
+			true,
+		);
+		if (drtn || !atv.type.length) {
+			return errSecInvalidCertificate;
+		}
+		const status = callback(context, atv.type, atv.value, rdnIX++);
+		if (status) {
+			return status;
+		}
+	}
+	if (drtn !== DR_EndOfSequence) {
+		return errSecInvalidCertificate;
+	}
+	return errSecSuccess;
 }
 
 const MAX_OID_SIZE = 32;
