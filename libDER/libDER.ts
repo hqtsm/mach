@@ -70,14 +70,11 @@ export type DERReturn =
 export type DERItemSpec<T extends string> = [T, DERTag, DERShort];
 
 /**
- * Get offset of item.
+ * Get offsets of item.
  *
- * @template T Property.
- * @param _type Type.
- * @param offset Offset.
+ * @template T Type.
  * @returns Offset.
  */
-export const DER_OFFSET = <T extends string>(
-	_type: Record<T, DERItem>,
-	offset: T,
-): T => offset;
+export type DER_OFFSET<T> = {
+	[K in keyof T]: T[K] extends DERItem ? K : never;
+}[keyof T];
