@@ -1,5 +1,7 @@
+import { toStringTag } from '@hqtsm/class';
 import type { int } from '../libc/c.ts';
 import type { DERShort, DERTag } from './libDER_config.ts';
+import type { DERItem } from './DERItem.ts';
 
 // enum {
 
@@ -63,20 +65,52 @@ export type DERReturn =
 
 /**
  * DER item spec.
+ *
+ * @template T Property.
  */
-export interface DERItemSpec {
+export class DERItemSpec<T extends string> {
 	/**
 	 * Offset.
 	 */
-	offset: string;
+	public offset: T;
 
 	/**
 	 * Tag.
 	 */
-	tag: DERTag;
+	public tag: DERTag;
 
 	/**
 	 * Options.
 	 */
-	options: DERShort;
+	public options: DERShort;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param offset Offset.
+	 * @param tag Tag.
+	 * @param options Options.
+	 */
+	constructor(offset: T, tag: DERTag, options: DERShort) {
+		this.offset = offset;
+		this.tag = tag;
+		this.options = options;
+	}
+
+	static {
+		toStringTag(this, 'DERItemSpec');
+	}
 }
+
+/**
+ * Get offset of item.
+ *
+ * @template T Property.
+ * @param _type Type.
+ * @param offset Offset.
+ * @returns Offset.
+ */
+export const DER_OFFSET = <T extends string>(
+	_type: Record<T, DERItem>,
+	offset: T,
+): T => offset;

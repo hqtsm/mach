@@ -348,10 +348,10 @@ export function DERDecodeSeqNext(
  * @param zero Zero out destination.
  * @returns Return code.
  */
-export function DERParseSequenceContent<T extends Readonly<DERItemSpec>>(
+export function DERParseSequenceContent<T extends string>(
 	content: _const<DERItem>,
-	itemSpecs: readonly T[],
-	dest: Record<T['offset'], DERItem>,
+	itemSpecs: readonly Readonly<DERItemSpec<T>>[],
+	dest: Record<T, DERItem>,
 	zero: bool,
 ): DERReturn {
 	const numItems = itemSpecs.length;
