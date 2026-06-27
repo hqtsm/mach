@@ -70,6 +70,8 @@ import {
 	SecCopyCertString,
 } from './SecFrameworkStrings.ts';
 
+const MAX_ATTRIBUTE_TYPE_AND_VALUES = 1024;
+
 /**
  * X.509 certificate extension.
  */
@@ -193,6 +195,54 @@ export function parseRDNContent<T>(
 		);
 		if (status) {
 			return status;
+		}
+	}
+	if (drtn !== DR_EndOfSequence) {
+		return errSecInvalidCertificate;
+	}
+	return errSecSuccess;
+}
+
+/**
+ * Parse X.501 name content.
+ *
+ * @param x501NameContent X.501 name content.
+ * @param context Context.
+ * @param callback Callback.
+ * @param localized Localized.
+ * @returns Status.
+ */
+export function parseX501NameContent<T>(
+	x501NameContent: _const<DERItem>,
+	context: T,
+	callback: parseX501NameCallback<T>,
+	localized: bool,
+): OSStatus {
+	const derSeq = new DERSequence();
+	const currDecoded = new DERDecodedInfo();
+	let drtn = DERDecodeSeqContentInit(x501NameContent, derSeq);
+	for (
+		let atv_count = 0;
+		(drtn = DERDecodeSeqNext(derSeq, currDecoded)) === DR_Success;
+	) {
+		if (
+			currDecoded.tag !== ASN1_CONSTR_SET ||
+			!(currDecoded.content.length > 0)
+		) {
+			return errSecInvalidCertificate;
+		}
+		const status = parseRDNContent(
+			currDecoded.content,
+			context,
+			callback,
+			localized,
+		);
+		if (status) {
+			return status;
+		}
+		atv_count++;
+		if (!(atv_count < MAX_ATTRIBUTE_TYPE_AND_VALUES)) {
+			return errSecInvalidCertificate;
 		}
 	}
 	if (drtn !== DR_EndOfSequence) {

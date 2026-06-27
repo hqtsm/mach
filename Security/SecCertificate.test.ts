@@ -27,7 +27,7 @@ import {
 import { DERItem } from '../libDER/DERItem.ts';
 import { digest } from '../spec/hash.ts';
 import { unhex } from '../spec/hex.ts';
-import { errSecSuccess, errSecUserCanceled } from './SecBase.ts';
+import { errSecDecode, errSecSuccess, errSecUserCanceled } from './SecBase.ts';
 import { errSecInvalidCertificate } from './SecBasePriv.ts';
 import {
 	__SecCertificate,
@@ -42,6 +42,7 @@ import {
 	copyOidDescription,
 	GetDecimalValueOfString,
 	parseRDNContent,
+	parseX501NameContent,
 	SecCertificateCopyExtensionValue,
 	SecCertificateCopyIssuerSHA256Digest,
 	SecCertificateCopySHA1Digest,
@@ -156,6 +157,103 @@ Deno.test('parseRDNContent: empty oid', () => {
 		null,
 		() => errSecSuccess,
 		false,
+	);
+	assertEquals(status, errSecInvalidCertificate);
+});
+
+Deno.test('parseX501NameContent: values', () => {
+	const data = unhex([
+		'31 0E 30 0C 06 03 55 04 03 13 05 41 6C 69 63 65',
+		'31 0B 30 09 06 03 55 04 06 13 02 55 53',
+	].join(' '));
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+	const ctx = { i: 0 };
+	const status = parseX501NameContent(
+		item,
+		ctx,
+		(context, type, value, rdnIX, localized) => {
+			assertStrictEquals(context, ctx);
+			assertEquals(localized, false);
+			assertEquals(rdnIX, rdnIX ? 1 : 0);
+			assertEquals(type.length, 3);
+			assertEquals(value.length, ctx.i ? 4 : 7);
+			ctx.i++;
+			return errSecSuccess;
+		},
+		false,
+	);
+	assertEquals(status, errSecSuccess);
+});
+
+Deno.test('parseX501NameContent: bad tag', () => {
+	const data = unhex('30 00 02 01 00 06 00');
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+	const status = parseX501NameContent(
+		item,
+		null,
+		() => errSecSuccess,
+		false,
+	);
+	assertEquals(status, errSecDecode);
+});
+
+Deno.test('parseX501NameContent: bad length', () => {
+	const data = unhex('31 00');
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+	const status = parseX501NameContent(
+		item,
+		null,
+		() => errSecSuccess,
+		false,
+	);
+	assertEquals(status, errSecDecode);
+});
+
+Deno.test('parseX501NameContent: cancel', () => {
+	const data = unhex([
+		'31 0E 30 0C 06 03 55 04 03 13 05 41 6C 69 63 65',
+		'00',
+	].join(' '));
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+	const status = parseX501NameContent(
+		item,
+		null,
+		(_context, _type, _value, _rdnIX, localized) => {
+			assertEquals(localized, true);
+			return errSecUserCanceled;
+		},
+		true,
+	);
+	assertEquals(status, errSecUserCanceled);
+});
+
+Deno.test('parseX501NameContent: extra', () => {
+	const data = unhex([
+		'31 0E 30 0C 06 03 55 04 03 13 05 41 6C 69 63 65',
+		'00',
+	].join(' '));
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+	const status = parseX501NameContent(
+		item,
+		null,
+		() => errSecSuccess,
+		true,
+	);
+	assertEquals(status, errSecInvalidCertificate);
+});
+
+Deno.test('parseX501NameContent: over limit', () => {
+	const data = unhex(
+		new Array(1025)
+			.fill('31 0E 30 0C 06 03 55 04 03 13 05 41 6C 69 63 65')
+			.join(' '),
+	);
+	const item = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+	const status = parseX501NameContent(
+		item,
+		null,
+		() => errSecSuccess,
+		true,
 	);
 	assertEquals(status, errSecInvalidCertificate);
 });
