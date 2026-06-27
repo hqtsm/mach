@@ -5,3 +5,4 @@ export * from './DERItem.ts';
 export * from './libDER.ts';
 export * from './libDER_config.ts';
 export * from './oids.ts';
+export * from './oidsPriv.ts';

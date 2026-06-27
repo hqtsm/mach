@@ -1,7 +1,7 @@
 import { Uint8Ptr } from '@hqtsm/struct';
 import { assertEquals } from '@std/assert';
 import { DERItem } from './DERItem.ts';
-import { DEROidCompare } from './oids.ts';
+import { DEROidCompare } from './oidsPriv.ts';
 
 Deno.test('DEROidCompare', () => {
 	const aData = new Uint8Ptr(new ArrayBuffer(2));
