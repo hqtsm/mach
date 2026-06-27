@@ -348,6 +348,17 @@ Deno.test('Security_SHA1: verify', async () => {
 			engine,
 		);
 	}
+	for (const [engine, crypto] of getEngines()) {
+		const expected = digest('sha1', ABCD);
+		const finish = Security_SHA1.Digest();
+		const hash = new Security_SHA1();
+		hash.subtle = crypto;
+		// deno-lint-ignore no-await-in-loop
+		await hash.update(ABCD);
+		// deno-lint-ignore no-await-in-loop
+		await hash.finish(finish);
+		assertEquals(finish, expected, engine);
+	}
 });
 
 Deno.test('Security_SHA256: verify', async () => {
@@ -363,5 +374,16 @@ Deno.test('Security_SHA256: verify', async () => {
 			true,
 			engine,
 		);
+	}
+	for (const [engine, crypto] of getEngines()) {
+		const expected = digest('sha256', ABCD);
+		const finish = Security_SHA256.Digest();
+		const hash = new Security_SHA256();
+		hash.subtle = crypto;
+		// deno-lint-ignore no-await-in-loop
+		await hash.update(ABCD);
+		// deno-lint-ignore no-await-in-loop
+		await hash.finish(finish);
+		assertEquals(finish, expected, engine);
 	}
 });

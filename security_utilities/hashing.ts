@@ -124,6 +124,15 @@ export abstract class Security_Hash extends Security_Hashing {
 	}
 
 	/**
+	 * Create a digest buffer.
+	 *
+	 * @returns Digest buffer.
+	 */
+	public static Digest(): Uint8Array<ArrayBuffer> {
+		return new Uint8Array(this.digestLength);
+	}
+
+	/**
 	 * Hash crypto.
 	 */
 	public subtle?: SubtleCryptoDigest | null;
