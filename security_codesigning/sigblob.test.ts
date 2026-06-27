@@ -228,7 +228,7 @@ Deno.test('Security_CodeSigning_EmbeddedSignatureBlob: component: data', () => {
 });
 
 Deno.test('Security_CodeSigning_EmbeddedSignatureBlob_Maker: BlobCore', () => {
-	const source = new PLData(16);
+	const source = new PLData(new ArrayBuffer(16));
 	filled(source.buffer);
 
 	const maker = new Security_CodeSigning_EmbeddedSignatureBlob_Maker();
@@ -256,7 +256,7 @@ Deno.test('Security_CodeSigning_EmbeddedSignatureBlob_Maker: BlobCore', () => {
 });
 
 Deno.test('Security_CodeSigning_EmbeddedSignatureBlob_Maker: BlobWrapper', () => {
-	const source = new PLData(16);
+	const source = new PLData(new ArrayBuffer(16));
 	filled(source.buffer);
 
 	const maker = new Security_CodeSigning_EmbeddedSignatureBlob_Maker();

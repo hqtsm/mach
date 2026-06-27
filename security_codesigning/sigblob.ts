@@ -50,7 +50,7 @@ export class Security_CodeSigning_EmbeddedSignatureBlob<
 	public static blobData(
 		slot: Security_CodeSigning_CodeDirectory_SpecialSlot,
 		blob: Security_BlobCore,
-	): CFDataRef {
+	): CFDataRef<ArrayBuffer> {
 		if (
 			Security_CodeSigning_CodeDirectory.slotAttributes(slot) &
 			Security_CodeSigning_cdComponentIsBlob
@@ -74,7 +74,7 @@ export class Security_CodeSigning_EmbeddedSignatureBlob<
 	public static component(
 		_this: Security_CodeSigning_EmbeddedSignatureBlob,
 		slot: Security_CodeSigning_CodeDirectory_SpecialSlot,
-	): CFDataRef | null {
+	): CFDataRef<ArrayBuffer> | null {
 		const blob = Security_CodeSigning_EmbeddedSignatureBlob.find(
 			_this,
 			slot,

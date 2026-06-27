@@ -156,7 +156,7 @@ Deno.test('Security_CodeSigning_Requirement_Context', () => {
 	const dir = new Security_CodeSigning_CodeDirectory(
 		new ArrayBuffer(Security_CodeSigning_CodeDirectory.BYTE_LENGTH),
 	);
-	const packageChecksum = new PLData(CS_SHA256_LEN);
+	const packageChecksum = new PLData(new ArrayBuffer(CS_SHA256_LEN));
 	const secureTimestamp = new PLDate();
 	const teamID = new TextEncoder().encode('TeamID');
 

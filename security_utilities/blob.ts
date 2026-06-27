@@ -507,14 +507,16 @@ export abstract class Security_Blob<
 	 * @param content Data to wrap.
 	 * @returns Blob data.
 	 */
-	public static blobify(content: ArrayBufferLikeData): CFDataRef {
+	public static blobify(
+		content: ArrayBufferLikeData,
+	): CFDataRef<ArrayBuffer> {
 		const { typeMagic } = this;
 		const { BYTE_LENGTH } = Security_BlobCore;
 		const view = viewBytes(content);
 		const size = BYTE_LENGTH + view.byteLength;
 		let data;
 		try {
-			data = new PLData(size);
+			data = new ArrayBuffer(size);
 		} catch (err) {
 			if (!(err instanceof RangeError)) {
 				throw err;
@@ -526,9 +528,9 @@ export abstract class Security_Blob<
 		class B extends Security_Blob {
 			public static override readonly typeMagic = typeMagic;
 		}
-		B.initializeSize(new B(data.buffer), size);
-		new Uint8Array(data.buffer, BYTE_LENGTH).set(view);
-		return data;
+		B.initializeSize(new B(data), size);
+		new Uint8Array(data, BYTE_LENGTH).set(view);
+		return new PLData(data);
 	}
 
 	/**

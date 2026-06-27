@@ -24,7 +24,7 @@ import { Security_CFError } from './errors.ts';
 export function Security_makeCFData(
 	data: ArrayBufferPointer,
 	size: size_t,
-): CFDataRef;
+): CFDataRef<ArrayBuffer>;
 
 /**
  * Make CFData from a generic type.
@@ -53,7 +53,7 @@ export function Security_makeCFData<T>(
 		size(value: T): size_t;
 	},
 	source: T,
-): CFDataRef;
+): CFDataRef<ArrayBuffer>;
 
 /**
  * Make CFData from a buffer pointer and size or generic type.
@@ -69,7 +69,7 @@ export function Security_makeCFData<T>(
 		size(value: T): size_t;
 	},
 	size: T | size_t,
-): CFDataRef {
+): CFDataRef<ArrayBuffer> {
 	let d;
 	let s;
 	if (typeof size === 'number') {
@@ -79,8 +79,9 @@ export function Security_makeCFData<T>(
 		d = (data as { data(value: T): ArrayBufferPointer }).data(size);
 		s = (data as { size(value: T): size_t }).size(size);
 	}
-	const r = new PLData(s);
-	new Uint8Array(r.buffer).set(new Uint8Array(d.buffer, d.byteOffset, s));
+	const a = new ArrayBuffer(s);
+	const r = new PLData(a);
+	new Uint8Array(a).set(new Uint8Array(d.buffer, d.byteOffset, s));
 	return r;
 }
 
