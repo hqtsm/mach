@@ -106,6 +106,8 @@ export abstract class Security_Hash extends Security_Hashing {
 
 	/**
 	 * Verify digest.
+	 * Uses fast fail comparison, not constant time comparison.
+	 * Use constant time comparison when timing attacks are a concern.
 	 *
 	 * @param _this This.
 	 * @param digest Digest to verify against.
@@ -182,6 +184,8 @@ export abstract class Security_DynamicHash extends Security_Hashing {
 
 	/**
 	 * Verify digest.
+	 * Uses fast fail comparison, not constant time comparison.
+	 * Use constant time comparison when timing attacks are a concern.
 	 *
 	 * @param _this This.
 	 * @param digest Digest to verify against.
