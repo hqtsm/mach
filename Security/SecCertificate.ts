@@ -1,4 +1,5 @@
 import { toStringTag } from '@hqtsm/class';
+import type { Ptr } from '@hqtsm/struct';
 import {
 	type CFIndex,
 	CFStringCreateWithBytes,
@@ -54,7 +55,7 @@ import {
 	DR_EndOfSequence,
 	DR_Success,
 } from '../libDER/mod.ts';
-import type { OSStatus } from '../MacOSX/mod.ts';
+import type { OSStatus, UInt8 } from '../MacOSX/mod.ts';
 import { errSecSuccess, type SecCertificateRef } from './SecBase.ts';
 import { errSecInvalidCertificate } from './SecBasePriv.ts';
 import { SecSHA1DigestCreate, SecSHA256DigestCreate } from './SecFramework.ts';
@@ -256,6 +257,30 @@ export function parseX501NameContent<T>(
 		return errSecInvalidCertificate;
 	}
 	return errSecSuccess;
+}
+
+/**
+ * Get length of certificate.
+ *
+ * @param certificate Certificate.
+ * @returns Length.
+ */
+export function SecCertificateGetLength(
+	certificate: SecCertificateRef,
+): CFIndex {
+	return certificate._der.length;
+}
+
+/**
+ * Get byte pointer of certificate.
+ *
+ * @param certificate Certificate.
+ * @returns Byte pointer.
+ */
+export function SecCertificateGetBytePtr(
+	certificate: SecCertificateRef,
+): Ptr<UInt8> | null {
+	return certificate._der.data;
 }
 
 const MAX_OID_SIZE = 32;

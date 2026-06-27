@@ -48,6 +48,8 @@ import {
 	SecCertificateCopySubjectAttributeValue,
 	SecCertificateCreateOidDataFromString,
 	SecCertificateExtension,
+	SecCertificateGetBytePtr,
+	SecCertificateGetLength,
 	SecCertificateIsOidString,
 	SecDERItemCopyOIDDecimalRepresentation,
 } from './SecCertificate.ts';
@@ -256,6 +258,20 @@ Deno.test('parseX501NameContent: over limit', () => {
 		true,
 	);
 	assertEquals(status, errSecInvalidCertificate);
+});
+
+Deno.test('SecCertificateGetLength', () => {
+	const cert = new __SecCertificate();
+	const ptr = new Uint8Ptr(new ArrayBuffer(42));
+	cert._der = new DERItem(ptr, 42);
+	assertEquals(SecCertificateGetLength(cert), 42);
+});
+
+Deno.test('SecCertificateGetBytePtr', () => {
+	const cert = new __SecCertificate();
+	const ptr = new Uint8Ptr(new ArrayBuffer(42));
+	cert._der = new DERItem(ptr, 42);
+	assertStrictEquals(SecCertificateGetBytePtr(cert), ptr);
 });
 
 Deno.test('SecDERItemCopyOIDDecimalRepresentation', () => {
