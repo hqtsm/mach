@@ -124,7 +124,7 @@ export abstract class Security_Hash extends Security_Hashing {
 	/**
 	 * Hash crypto.
 	 */
-	public subtle: SubtleCryptoDigest | null = null;
+	public subtle?: SubtleCryptoDigest | null;
 
 	static {
 		toStringTag(this, 'Security_Hash');
@@ -200,7 +200,7 @@ export abstract class Security_DynamicHash extends Security_Hashing {
 	/**
 	 * Hash crypto.
 	 */
-	public subtle: SubtleCryptoDigest | null = null;
+	public subtle?: SubtleCryptoDigest | null;
 
 	static {
 		toStringTag(this, 'Security_DynamicHash');

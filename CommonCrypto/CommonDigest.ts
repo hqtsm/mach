@@ -306,7 +306,7 @@ export class CCDigestRef {
 	/**
 	 * Optional hash crypto.
 	 */
-	public subtle: SubtleCryptoDigest | null = null;
+	public subtle?: SubtleCryptoDigest | null;
 
 	/**
 	 * Algorithm.

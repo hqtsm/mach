@@ -715,7 +715,7 @@ export class Security_CodeSigning_CodeDirectory_Builder {
 	/**
 	 * Dynamic hash crypto.
 	 */
-	public subtle: SubtleCryptoDigest | null = null;
+	public subtle?: SubtleCryptoDigest | null;
 
 	/**
 	 * Minimum compatibility version.
