@@ -145,6 +145,7 @@ export type parseX501NameCallback<T> = (
 	type: _const<DERItem>,
 	value: _const<DERItem>,
 	rdnIX: CFIndex,
+	localized: bool,
 ) => OSStatus;
 
 /**
@@ -160,6 +161,7 @@ export function parseRDNContent<T>(
 	rdnSetContent: _const<DERItem>,
 	context: T,
 	callback: parseX501NameCallback<T>,
+	localized: bool,
 ): OSStatus {
 	const rdn = new DERSequence();
 	let atv;
@@ -182,7 +184,13 @@ export function parseRDNContent<T>(
 		if (drtn || !atv.type.length) {
 			return errSecInvalidCertificate;
 		}
-		const status = callback(context, atv.type, atv.value, rdnIX++);
+		const status = callback(
+			context,
+			atv.type,
+			atv.value,
+			rdnIX++,
+			localized,
+		);
 		if (status) {
 			return status;
 		}

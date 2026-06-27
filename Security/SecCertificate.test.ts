@@ -70,8 +70,9 @@ Deno.test('parseRDNContent: values', () => {
 	const status = parseRDNContent(
 		item,
 		ctx,
-		(context, type, value, rdnIX) => {
+		(context, type, value, rdnIX, localized) => {
 			assertStrictEquals(context, ctx);
+			assertEquals(localized, false);
 			const offset = rdnIX ? 14 : 0;
 			assertEquals(rdnIX, rdnIX ? 1 : 0);
 			assertEquals(type.length, 3);
@@ -88,6 +89,7 @@ Deno.test('parseRDNContent: values', () => {
 			assertEquals(value.data![6], data[offset + 13]);
 			return errSecSuccess;
 		},
+		false,
 	);
 	assertEquals(status, errSecSuccess);
 });
@@ -99,6 +101,7 @@ Deno.test('parseRDNContent: extra', () => {
 		item,
 		null,
 		() => errSecSuccess,
+		false,
 	);
 	assertEquals(status, errSecInvalidCertificate);
 });
@@ -111,10 +114,12 @@ Deno.test('parseRDNContent: cancel', () => {
 	const status = parseRDNContent(
 		item,
 		null,
-		(_context, _type, _value, rdnIX) => {
+		(_context, _type, _value, rdnIX, localized) => {
 			assertEquals(rdnIX, 0);
+			assertEquals(localized, true);
 			return errSecUserCanceled;
 		},
+		true,
 	);
 	assertEquals(status, errSecUserCanceled);
 });
@@ -126,6 +131,7 @@ Deno.test('parseRDNContent: not sequence', () => {
 		item,
 		null,
 		() => errSecSuccess,
+		false,
 	);
 	assertEquals(status, errSecInvalidCertificate);
 });
@@ -137,6 +143,7 @@ Deno.test('parseRDNContent: bad sequence', () => {
 		item,
 		null,
 		() => errSecSuccess,
+		false,
 	);
 	assertEquals(status, errSecInvalidCertificate);
 });
@@ -148,6 +155,7 @@ Deno.test('parseRDNContent: empty oid', () => {
 		item,
 		null,
 		() => errSecSuccess,
+		false,
 	);
 	assertEquals(status, errSecInvalidCertificate);
 });
