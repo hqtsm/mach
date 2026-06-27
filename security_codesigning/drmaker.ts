@@ -1,15 +1,21 @@
 import { toStringTag } from '@hqtsm/class';
 import { Uint8Ptr } from '@hqtsm/struct';
 import type { _const, bool } from '../libc/mod.ts';
+import { oidOrganizationName } from '../libDER/mod.ts';
 import {
 	APPLE_EXTENSION_OID,
 	type CSSM_DATA,
 	cssm_data,
+	SecCertificateCopySubjectAttributeValue,
 } from '../Security/mod.ts';
+import {
+	Security_CodeSigning_hashOfCertificate,
+} from '../security_codesigning/mod.ts';
+import { Security_SHA1 } from '../security_utilities/mod.ts';
 import { Security_CodeSigning_certificateHasField } from './csutilities.ts';
 import { Security_CodeSigning_Requirement_Maker } from './reqmaker.ts';
 import {
-	type Security_CodeSigning_Requirement,
+	Security_CodeSigning_Requirement,
 	Security_CodeSigning_Requirement_Context,
 } from './requirement.ts';
 
@@ -92,8 +98,48 @@ export class Security_CodeSigning_DRMaker
 	 *
 	 * @param _this This.
 	 */
-	private static nonAppleAnchor(_this: Security_CodeSigning_DRMaker): void {
-		throw new Error('TODO');
+	private static async nonAppleAnchor(
+		_this: Security_CodeSigning_DRMaker,
+	): Promise<void> {
+		const { leafCert } = Security_CodeSigning_Requirement;
+		const leafOrganization = SecCertificateCopySubjectAttributeValue(
+			Security_CodeSigning_Requirement_Context.cert(_this.ctx, leafCert)!,
+			oidOrganizationName,
+		);
+
+		let slot = leafCert;
+		if (leafOrganization !== null) {
+			for (
+				let ca;
+				(ca = Security_CodeSigning_Requirement_Context.cert(
+					_this.ctx,
+					slot + 1,
+				));
+				slot++
+			) {
+				const caOrganization = SecCertificateCopySubjectAttributeValue(
+					ca,
+					oidOrganizationName,
+				);
+				if (caOrganization !== leafOrganization) {
+					break;
+				}
+			}
+			if (
+				slot === (Security_CodeSigning_Requirement_Context.certCount(
+					_this.ctx,
+				) - 1)
+			) {
+				slot = Security_CodeSigning_Requirement.anchorCert;
+			}
+		}
+
+		const authorityHash = Security_SHA1.Digest();
+		await Security_CodeSigning_hashOfCertificate(
+			Security_CodeSigning_Requirement_Context.cert(_this.ctx, slot)!,
+			authorityHash,
+		);
+		Security_CodeSigning_DRMaker.anchor(_this, slot, authorityHash);
 	}
 
 	/**
