@@ -19,6 +19,7 @@ import {
 import {
 	bufferToBytes,
 	pointerBytes,
+	pointerToBytes,
 	type Reader,
 	sizeAsyncIterators,
 	type SizeIteratorNext,
@@ -757,9 +758,7 @@ export class Security_CodeSigning_CodeDirectory<
 				)
 				: Security_CodeSigning_CodeDirectory.generateHash(
 					hash,
-					'buffer' in source
-						? bufferToBytes(source.buffer, source.byteOffset, size)
-						: bufferToBytes(source, 0, size),
+					pointerToBytes(source, size),
 					size,
 					digest,
 				)

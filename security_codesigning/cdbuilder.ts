@@ -2,9 +2,9 @@ import { toStringTag } from '@hqtsm/class';
 import { pointer, type Ptr } from '@hqtsm/struct';
 import {
 	type ArrayBufferLikeData,
-	bufferToBytes,
 	type Reader,
 	type SubtleCryptoDigest,
+	viewToBytes,
 } from '../helpers/mod.ts';
 import {
 	type bool,
@@ -117,11 +117,7 @@ export class Security_CodeSigning_CodeDirectory_Builder {
 		data: ArrayBufferLikeData,
 	): Promise<void> {
 		const hash = Security_CodeSigning_CodeDirectory_Builder.getHash(_this);
-		await hash.update(
-			'buffer' in data
-				? bufferToBytes(data.buffer, data.byteOffset, data.byteLength)
-				: bufferToBytes(data),
-		);
+		await hash.update(viewToBytes(data));
 		const digest = new ArrayBuffer(hash.digestLength());
 		await hash.finish(digest);
 		_this.mSpecial.set(slot, digest);
