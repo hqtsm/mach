@@ -14,6 +14,7 @@ import { unhex } from '../spec/mod.ts';
 import {
 	Security_CodeSigning_certificateHasField,
 	Security_CodeSigning_hashFileData,
+	Security_CodeSigning_hashOfCertificate,
 	Security_CodeSigning_isAppleCA,
 } from './csutilities.ts';
 
@@ -40,6 +41,24 @@ Deno.test('Security_CodeSigning_isAppleCA', async () => {
 		}),
 		true,
 	);
+});
+
+Deno.test('Security_CodeSigning_hashOfCertificate', async () => {
+	const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
+	const cert = new __SecCertificate();
+	cert._der.data = new Uint8Ptr(data.buffer);
+	cert._der.length = data.length;
+
+	const a = new Uint8Array(20);
+	const b = new Uint8Array(20);
+	const [sha1] = await Promise.all([
+		crypto.subtle.digest('SHA-1', data),
+		Security_CodeSigning_hashOfCertificate(data, data.byteLength, a),
+		Security_CodeSigning_hashOfCertificate(cert, b),
+	]);
+	const expected = new Uint8Array(sha1);
+	assertEquals(a, new Uint8Array(expected));
+	assertEquals(b, new Uint8Array(expected));
 });
 
 Deno.test('Security_CodeSigning_hashFileData: full', async () => {

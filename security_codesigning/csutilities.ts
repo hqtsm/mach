@@ -1,5 +1,7 @@
+import type { ArrayBufferPointer } from '@hqtsm/struct';
 import {
 	pointerBytes,
+	pointerToBytes,
 	type Reader,
 	type SubtleCryptoDigest,
 } from '../helpers/mod.ts';
@@ -7,9 +9,14 @@ import type { _const, bool, size_t } from '../libc/mod.ts';
 import {
 	type CSSM_OID,
 	SecCertificateCopyExtensionValue,
+	SecCertificateGetBytePtr,
+	SecCertificateGetLength,
 	type SecCertificateRef,
 } from '../Security/mod.ts';
-import type { Security_DynamicHash } from '../security_utilities/mod.ts';
+import {
+	type Security_DynamicHash,
+	Security_SHA1,
+} from '../security_utilities/mod.ts';
 import {
 	type SecAppleTrustAnchorFlags,
 	SecIsAppleTrustAnchor,
@@ -35,6 +42,57 @@ export async function Security_CodeSigning_isAppleCA(
 	}
 	*/
 	return await SecIsAppleTrustAnchor(cert, flags, subtle);
+}
+
+/**
+ * Hash certificate data.
+ *
+ * @param certData Certificate data.
+ * @param certLength Certificate length.
+ * @param digest SHA-1 digest.
+ */
+export async function Security_CodeSigning_hashOfCertificate(
+	certData: ArrayBufferPointer,
+	certLength: size_t,
+	digest: ArrayBufferLike | ArrayBufferPointer,
+): Promise<void>;
+
+/**
+ * Hash certificate data.
+ *
+ * @param cert Certificate.
+ * @param digest SHA-1 digest.
+ */
+export async function Security_CodeSigning_hashOfCertificate(
+	cert: SecCertificateRef,
+	digest: ArrayBufferLike | ArrayBufferPointer,
+): Promise<void>;
+
+/**
+ * Hash certificate data.
+ *
+ * @param certData Certificate data.
+ * @param certLength Certificate length or SHA-1 digest.
+ * @param digest SHA-1 digest.
+ */
+export async function Security_CodeSigning_hashOfCertificate(
+	certData: ArrayBufferPointer | SecCertificateRef,
+	certLength: size_t | ArrayBufferLike | ArrayBufferPointer,
+	digest?: ArrayBufferLike | ArrayBufferPointer,
+): Promise<void> {
+	if (typeof certLength === 'number') {
+		const sha1 = new Security_SHA1();
+		await sha1.update(
+			pointerToBytes(certData as ArrayBufferPointer, certLength),
+		);
+		await sha1.finish(digest!);
+	} else {
+		await Security_CodeSigning_hashOfCertificate(
+			SecCertificateGetBytePtr(certData as SecCertificateRef)!,
+			SecCertificateGetLength(certData as SecCertificateRef),
+			certLength,
+		);
+	}
 }
 
 /**
