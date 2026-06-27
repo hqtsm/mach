@@ -21,6 +21,7 @@ import {
 	type Security_BlobCore_Offset,
 	Security_LowLevelMemoryUtilities_alignUp,
 	Security_MacOSError,
+	Security_SHA1,
 	Security_UnixError,
 } from '../security_utilities/mod.ts';
 import {
@@ -293,26 +294,33 @@ export class Security_CodeSigning_Requirement_Maker {
 		slot?: int,
 		cert?: ArrayBufferPointer,
 		length?: size_t,
-		subtle?: SubtleCryptoDigest,
+		subtle: SubtleCryptoDigest | null = null,
 	): Promise<void> | void {
 		if (length !== undefined) {
-			return (subtle || crypto.subtle).digest(
-				'SHA-1',
-				bufferBytes(cert!.buffer, cert!.byteOffset, length),
-			).then((d) => {
-				Security_CodeSigning_Requirement_Maker.anchor(
-					_this,
-					slot!,
-					new Uint8Array(d),
+			const digest = new Uint8Array(Security_SHA1.digestLength);
+			const sha1 = new Security_SHA1();
+			sha1.subtle = subtle;
+			return sha1
+				.update(bufferBytes(cert!.buffer, cert!.byteOffset, length))
+				.then(() => sha1.finish(digest))
+				.then(() =>
+					Security_CodeSigning_Requirement_Maker.anchor(
+						_this,
+						slot!,
+						digest,
+					)
 				);
-			});
 		} else if (cert) {
 			Security_CodeSigning_Requirement_Maker.put(
 				_this,
 				Security_CodeSigning_opAnchorHash,
 			);
 			Security_CodeSigning_Requirement_Maker.put(_this, slot!);
-			Security_CodeSigning_Requirement_Maker.putData(_this, cert, 20);
+			Security_CodeSigning_Requirement_Maker.putData(
+				_this,
+				cert,
+				Security_SHA1.digestLength,
+			);
 		} else {
 			Security_CodeSigning_Requirement_Maker.put(
 				_this,
