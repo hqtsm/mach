@@ -79,7 +79,7 @@ export function viewBytes<T extends ArrayBufferLike>(
  * @param length Optional length.
  * @returns Uint8Array<ArrayBuffer>.
  */
-export function bufferBytes(
+export function bufferToBytes(
 	buffer: ArrayBuffer | SharedArrayBuffer,
 	offset?: number,
 	length?: number,
@@ -87,4 +87,35 @@ export function bufferBytes(
 	return isArrayBuffer(buffer)
 		? new Uint8Array(buffer, offset, length)
 		: new Uint8Array(buffer, offset, length).slice();
+}
+
+/**
+ * Pointer to Uint8Array<ArrayBuffer>, copy if necessary.
+ *
+ * @param value Buffer or buffer pointer.
+ * @param length Optional length.
+ * @returns Uint8Array<ArrayBuffer>.
+ */
+export function pointerToBytes<T extends ArrayBufferLike>(
+	value: T | ArrayBufferPointer<T>,
+	length?: number,
+): Uint8Array<ArrayBuffer> {
+	return 'buffer' in value
+		? bufferToBytes(value.buffer, value.byteOffset, length)
+		: bufferToBytes(value, 0, length);
+}
+
+/**
+ * View to Uint8Array<ArrayBuffer>, copy if necessary.
+ *
+ * @template T Buffer type.
+ * @param value Buffer or buffer view.
+ * @returns Uint8Array<ArrayBuffer>.
+ */
+export function viewToBytes<T extends ArrayBufferLike>(
+	value: T | ArrayBufferView<T>,
+): Uint8Array<ArrayBuffer> {
+	return 'buffer' in value
+		? bufferToBytes(value.buffer, value.byteOffset, value.byteLength)
+		: bufferToBytes(value);
 }

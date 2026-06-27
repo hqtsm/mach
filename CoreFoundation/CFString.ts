@@ -1,7 +1,7 @@
 import { BIG_ENDIAN } from '@hqtsm/struct';
 import {
 	type ArrayBufferLikeData,
-	bufferBytes,
+	bufferToBytes,
 	viewBytes,
 } from '../helpers/mod.ts';
 import type { UInt32 } from '../MacOSX/mod.ts';
@@ -150,7 +150,11 @@ export function CFStringCreateWithBytes(
 			});
 			try {
 				s = td.decode(
-					bufferBytes(view.buffer, view.byteOffset, view.byteLength),
+					bufferToBytes(
+						view.buffer,
+						view.byteOffset,
+						view.byteLength,
+					),
 				);
 			} catch {
 				return null;
@@ -159,7 +163,7 @@ export function CFStringCreateWithBytes(
 		}
 		case kCFStringEncodingUTF16: {
 			let label;
-			view = bufferBytes(view.buffer, view.byteOffset, view.byteLength);
+			view = bufferToBytes(view.buffer, view.byteOffset, view.byteLength);
 			if (view.byteLength % 2) {
 				return null;
 			}

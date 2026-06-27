@@ -11,7 +11,7 @@ import {
 } from '../CoreFoundation/mod.ts';
 import {
 	type ArrayBufferLikeData,
-	bufferBytes,
+	bufferToBytes,
 	pointerBytes,
 	type SubtleCryptoDigest,
 	viewBytes,
@@ -670,7 +670,7 @@ export async function SecCertificateCopySHA1Digest(
 		return null;
 	}
 	return await SecSHA1DigestCreate(
-		bufferBytes(data.buffer, data.byteOffset, length),
+		bufferToBytes(data.buffer, data.byteOffset, length),
 		length,
 		subtle,
 	);
@@ -695,7 +695,7 @@ export async function SecCertificateCopyIssuerSHA256Digest(
 		return null;
 	}
 	return await SecSHA256DigestCreate(
-		bufferBytes(data.buffer, data.byteOffset, length),
+		bufferToBytes(data.buffer, data.byteOffset, length),
 		length,
 		subtle,
 	);

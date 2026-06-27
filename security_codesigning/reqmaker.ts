@@ -2,7 +2,7 @@ import { toStringTag } from '@hqtsm/class';
 import { type ArrayBufferPointer, dataView, Ptr } from '@hqtsm/struct';
 import {
 	type ArrayBufferLikeData,
-	bufferBytes,
+	bufferToBytes,
 	pointerBytes,
 	type SubtleCryptoDigest,
 	viewBytes,
@@ -301,7 +301,7 @@ export class Security_CodeSigning_Requirement_Maker {
 			const sha1 = new Security_SHA1();
 			sha1.subtle = subtle;
 			return sha1
-				.update(bufferBytes(cert!.buffer, cert!.byteOffset, length))
+				.update(bufferToBytes(cert!.buffer, cert!.byteOffset, length))
 				.then(() => sha1.finish(digest))
 				.then(() =>
 					Security_CodeSigning_Requirement_Maker.anchor(

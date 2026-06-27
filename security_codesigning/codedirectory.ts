@@ -17,7 +17,7 @@ import {
 	kCCDigestSHA384,
 } from '../CommonCrypto/mod.ts';
 import {
-	bufferBytes,
+	bufferToBytes,
 	pointerBytes,
 	type Reader,
 	sizeAsyncIterators,
@@ -758,8 +758,8 @@ export class Security_CodeSigning_CodeDirectory<
 				: Security_CodeSigning_CodeDirectory.generateHash(
 					hash,
 					'buffer' in source
-						? bufferBytes(source.buffer, source.byteOffset, size)
-						: bufferBytes(source, 0, size),
+						? bufferToBytes(source.buffer, source.byteOffset, size)
+						: bufferToBytes(source, 0, size),
 					size,
 					digest,
 				)
@@ -859,7 +859,7 @@ export class Security_CodeSigning_CodeDirectory<
 		const hash = Security_CodeSigning_CodeDirectory.getHash(_this);
 		hash.subtle = subtle;
 		await hash.update(
-			bufferBytes(
+			bufferToBytes(
 				_this.buffer,
 				_this.byteOffset,
 				Security_CodeSigning_CodeDirectory.size(_this),
