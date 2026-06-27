@@ -297,7 +297,7 @@ export class Security_CodeSigning_Requirement_Maker {
 		subtle: SubtleCryptoDigest | null = null,
 	): Promise<void> | void {
 		if (length !== undefined) {
-			const digest = new Uint8Array(Security_SHA1.digestLength);
+			const digest = Security_SHA1.Digest();
 			const sha1 = new Security_SHA1();
 			sha1.subtle = subtle;
 			return sha1
