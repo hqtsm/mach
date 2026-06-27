@@ -1,12 +1,16 @@
-import { toStringTag } from '@hqtsm/class/symbol';
+import { constant, toStringTag } from '@hqtsm/class';
 import type { ArrayBufferPointer } from '@hqtsm/struct';
 import {
+	CC_SHA1_DIGEST_LENGTH,
+	CC_SHA256_DIGEST_LENGTH,
 	type CCDigestAlg,
 	CCDigestCreate,
 	CCDigestFinal,
 	CCDigestOutputSize,
 	type CCDigestRef,
 	CCDigestUpdate,
+	kCCDigestSHA1,
+	kCCDigestSHA256,
 } from '../CommonCrypto/mod.ts';
 import {
 	type ArrayBufferData,
@@ -16,7 +20,13 @@ import {
 	type SizeIterator,
 	type SubtleCryptoDigest,
 } from '../helpers/mod.ts';
-import { type bool, ENOMEM, type size_t, type uchar } from '../libc/mod.ts';
+import {
+	type bool,
+	ENOMEM,
+	memcmp,
+	type size_t,
+	type uchar,
+} from '../libc/mod.ts';
 import { Security_UnixError } from './errors.ts';
 
 /**
@@ -30,6 +40,95 @@ export type Security_Hashing_Byte = uchar;
 export class Security_Hashing {
 	static {
 		toStringTag(this, 'Security_Hashing');
+	}
+}
+
+/**
+ * Static hasher.
+ */
+export abstract class Security_Hash extends Security_Hashing {
+	/**
+	 * Digest length.
+	 */
+	public static readonly digestLength: number = 0;
+
+	/**
+	 * Digest instance.
+	 */
+	protected abstract readonly mDigest: CCDigestRef;
+
+	public update(
+		source:
+			| Reader
+			| ArrayBufferData,
+	): Promise<void>;
+
+	public update(
+		source:
+			| ArrayBufferPointer<ArrayBuffer>
+			| SizeIterator<ArrayBufferData>
+			| SizeAsyncIterator<ArrayBufferData>,
+		length: size_t,
+	): Promise<void>;
+
+	/**
+	 * Update digest, can only be called once.
+	 *
+	 * @param source Source data.
+	 * @param length Source size.
+	 * @returns Hash digest.
+	 */
+	public async update(
+		source:
+			| Reader
+			| ArrayBufferData
+			| ArrayBufferPointer<ArrayBuffer>
+			| SizeIterator<ArrayBufferData>
+			| SizeAsyncIterator<ArrayBufferData>,
+		length?: size_t,
+	): Promise<void> {
+		const { subtle, mDigest } = this;
+		mDigest.subtle = subtle;
+		await CCDigestUpdate(
+			mDigest,
+			source as ArrayBufferPointer<ArrayBuffer>,
+			length!,
+		);
+	}
+
+	public async finish(
+		digest: ArrayBufferLike | ArrayBufferPointer,
+	): Promise<void> {
+		const { subtle, mDigest } = this;
+		mDigest.subtle = subtle;
+		await CCDigestFinal(mDigest, digest);
+	}
+
+	/**
+	 * Verify digest.
+	 *
+	 * @param _this This.
+	 * @param digest Digest to verify against.
+	 * @returns True if verified, false if not.
+	 */
+	public static async verify(
+		_this: Security_Hash,
+		digest: ArrayBufferLike | ArrayBufferPointer,
+	): Promise<bool> {
+		const l = this.digestLength;
+		const d = new ArrayBuffer(l);
+		await _this.finish(d);
+		return !memcmp(d, digest, l);
+	}
+
+	/**
+	 * Hash crypto.
+	 */
+	public subtle: SubtleCryptoDigest | null = null;
+
+	static {
+		toStringTag(this, 'Security_Hash');
+		constant(this, 'digestLength');
 	}
 }
 
@@ -93,14 +192,9 @@ export abstract class Security_DynamicHash extends Security_Hashing {
 		digest: ArrayBufferLike | ArrayBufferPointer,
 	): Promise<bool> {
 		const l = _this.digestLength();
-		const d = new Uint8Array(l);
+		const d = new ArrayBuffer(l);
 		await _this.finish(d);
-		const e = pointerBytes(digest, l);
-		let diff = 0;
-		for (let i = 0; i < l; i++) {
-			diff |= d[i] ^ e[i];
-		}
-		return !diff;
+		return !memcmp(d, digest, l);
 	}
 
 	/**
@@ -205,5 +299,33 @@ export class Security_CCHashInstance extends Security_DynamicHash {
 
 	static {
 		toStringTag(this, 'Security_CCHashInstance');
+	}
+}
+
+/**
+ * SHA1 hash.
+ */
+export class Security_SHA1 extends Security_Hash {
+	public static override readonly digestLength = CC_SHA1_DIGEST_LENGTH;
+
+	protected readonly mDigest: CCDigestRef = CCDigestCreate(kCCDigestSHA1)!;
+
+	static {
+		toStringTag(this, 'Security_SHA1');
+		constant(this, 'digestLength');
+	}
+}
+
+/**
+ * SHA256 hash.
+ */
+export class Security_SHA256 extends Security_Hash {
+	public static override readonly digestLength = CC_SHA256_DIGEST_LENGTH;
+
+	protected readonly mDigest: CCDigestRef = CCDigestCreate(kCCDigestSHA256)!;
+
+	static {
+		toStringTag(this, 'Security_SHA256');
+		constant(this, 'digestLength');
 	}
 }

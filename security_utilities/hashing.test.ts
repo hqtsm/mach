@@ -27,7 +27,11 @@ import {
 	toAsyncIterator,
 	toIterator,
 } from '../spec/mod.ts';
-import { Security_CCHashInstance } from './hashing.ts';
+import {
+	Security_CCHashInstance,
+	Security_SHA1,
+	Security_SHA256,
+} from './hashing.ts';
 
 Deno.test('Security_CCHashInstance: Unsupported', () => {
 	for (
@@ -326,6 +330,38 @@ Deno.test('Security_CCHashInstance: verify', async () => {
 		assertEquals(
 			await Security_CCHashInstance.verify(hash, unexpected),
 			false,
+		);
+	}
+});
+
+Deno.test('Security_SHA1: verify', async () => {
+	for (const [engine, crypto] of getEngines()) {
+		const expected = digest('sha1', ABCD);
+		const hash = new Security_SHA1();
+		hash.subtle = crypto;
+		// deno-lint-ignore no-await-in-loop
+		await hash.update(ABCD);
+		assertEquals(
+			// deno-lint-ignore no-await-in-loop
+			await Security_SHA1.verify(hash, expected),
+			true,
+			engine,
+		);
+	}
+});
+
+Deno.test('Security_SHA256: verify', async () => {
+	for (const [engine, crypto] of getEngines()) {
+		const expected = digest('sha256', ABCD);
+		const hash = new Security_SHA256();
+		hash.subtle = crypto;
+		// deno-lint-ignore no-await-in-loop
+		await hash.update(ABCD);
+		assertEquals(
+			// deno-lint-ignore no-await-in-loop
+			await Security_SHA256.verify(hash, expected),
+			true,
+			engine,
 		);
 	}
 });
