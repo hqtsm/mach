@@ -46,6 +46,7 @@ import {
 	SecCertificateCopyExtensionValue,
 	SecCertificateCopyIssuerSHA256Digest,
 	SecCertificateCopySHA1Digest,
+	SecCertificateCopySubjectAttributeValue,
 	SecCertificateCreateOidDataFromString,
 	SecCertificateExtension,
 	SecCertificateIsOidString,
@@ -848,6 +849,33 @@ Deno.test('copyAttributeValueFromX501Name', () => {
 		errSecSuccess,
 	);
 	assertEquals(context.result, '0');
+});
+
+Deno.test('SecCertificateCopySubjectAttributeValue', () => {
+	const cert = new __SecCertificate();
+	const oid = unhex('55 04 03');
+	{
+		const data = unhex('31 0E 30 0C 06 03 55 04 03 13 05 41 6C 69 63 65');
+		cert._subject = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+	}
+	assertEquals(
+		SecCertificateCopySubjectAttributeValue(
+			cert,
+			new DERItem(new Uint8Ptr(oid.buffer), oid.byteLength),
+		),
+		'Alice',
+	);
+	{
+		const data = unhex('31 0E 30 0C 06 03 55 04 03');
+		cert._subject = new DERItem(new Uint8Ptr(data.buffer), data.byteLength);
+	}
+	assertEquals(
+		SecCertificateCopySubjectAttributeValue(
+			cert,
+			new DERItem(new Uint8Ptr(oid.buffer), oid.byteLength),
+		),
+		null,
+	);
 });
 
 Deno.test('SecCertificateCopySHA1Digest', async () => {

@@ -125,6 +125,11 @@ export class __SecCertificate {
 	public _der: DERItem = new DERItem();
 
 	/**
+	 * Subject name.
+	 */
+	public _subject: DERItem = new DERItem();
+
+	/**
 	 * Number of certificate extensions.
 	 */
 	public _extensionCount: CFIndex = 0;
@@ -590,6 +595,33 @@ export function copyAttributeValueFromX501Name(
 		context.result = string;
 	}
 	return errSecSuccess;
+}
+
+/**
+ * Get subject attribute value.
+ *
+ * @param cert Certificate.
+ * @param attributeOID Attribute OID.
+ * @returns Attribute value.
+ */
+export function SecCertificateCopySubjectAttributeValue(
+	cert: SecCertificateRef,
+	attributeOID: DERItem,
+): string | null {
+	const context: ATV_Context = {
+		attributeOID,
+		result: null,
+	};
+	const status = parseX501NameContent(
+		cert._subject,
+		context,
+		copyAttributeValueFromX501Name,
+		false,
+	);
+	if (status) {
+		return null;
+	}
+	return context.result;
 }
 
 /**
