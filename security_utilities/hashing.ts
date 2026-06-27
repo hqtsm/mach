@@ -1,20 +1,22 @@
 import { toStringTag } from '@hqtsm/class/symbol';
 import type { ArrayBufferPointer } from '@hqtsm/struct';
 import {
+	type CCDigestAlg,
 	CCDigestCreate,
 	CCDigestFinal,
 	CCDigestOutputSize,
 	type CCDigestRef,
 	CCDigestUpdate,
-} from '../CommonCrypto/CommonDigest.ts';
-import type { CCDigestAlg } from '../CommonCrypto/CommonDigestSPI.ts';
-import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
-import type { SizeAsyncIterator, SizeIterator } from '../helpers/iterator.ts';
-import { type ArrayBufferData, pointerBytes } from '../helpers/memory.ts';
-import type { Reader } from '../helpers/reader.ts';
-import type { bool, uchar } from '../libc/c.ts';
-import type { size_t } from '../libc/stddef.ts';
-import { ENOMEM } from '../libc/errno.ts';
+} from '../CommonCrypto/mod.ts';
+import {
+	type ArrayBufferData,
+	pointerBytes,
+	type Reader,
+	type SizeAsyncIterator,
+	type SizeIterator,
+	type SubtleCryptoDigest,
+} from '../helpers/mod.ts';
+import { type bool, ENOMEM, type size_t, type uchar } from '../libc/mod.ts';
 import { Security_UnixError } from './errors.ts';
 
 /**

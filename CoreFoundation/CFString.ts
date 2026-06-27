@@ -3,8 +3,8 @@ import {
 	type ArrayBufferLikeData,
 	bufferBytes,
 	viewBytes,
-} from '../helpers/memory.ts';
-import type { UInt32 } from '../MacOSX/MacTypes.ts';
+} from '../helpers/mod.ts';
+import type { UInt32 } from '../MacOSX/mod.ts';
 
 /**
  * String encoding.

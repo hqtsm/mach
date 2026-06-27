@@ -4,8 +4,8 @@ import {
 	assertInstanceOf,
 	assertStrictEquals,
 } from '@std/assert';
-import { kCFStringEncodingASCII } from '../CoreFoundation/CFString.ts';
-import { INT32_MAX, INT32_MIN, UINT32_MAX } from '../libc/stdint.ts';
+import { kCFStringEncodingASCII } from '../CoreFoundation/mod.ts';
+import { INT32_MAX, INT32_MIN, UINT32_MAX } from '../libc/mod.ts';
 import {
 	ASN1_BIT_STRING,
 	ASN1_BMP_STRING,
@@ -23,10 +23,9 @@ import {
 	ASN1_UTF8_STRING,
 	ASN1_VIDEOTEX_STRING,
 	ASN1_VISIBLE_STRING,
-} from '../libDER/asn1Types.ts';
-import { DERItem } from '../libDER/DERItem.ts';
-import { digest } from '../spec/hash.ts';
-import { unhex } from '../spec/hex.ts';
+	DERItem,
+} from '../libDER/mod.ts';
+import { digest, unhex } from '../spec/mod.ts';
 import { errSecDecode, errSecSuccess, errSecUserCanceled } from './SecBase.ts';
 import { errSecInvalidCertificate } from './SecBasePriv.ts';
 import {

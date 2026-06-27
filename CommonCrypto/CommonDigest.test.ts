@@ -13,11 +13,11 @@ import {
 	getEngines,
 	getIterators,
 	hashed,
+	hex,
 	ITTER_SIZES,
 	toAsyncIterator,
 	toIterator,
-} from '../spec/hash.ts';
-import { hex } from '../spec/hex.ts';
+} from '../spec/mod.ts';
 import {
 	kCCCallSequenceError,
 	kCCParamError,

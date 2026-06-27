@@ -14,14 +14,15 @@ import {
 	Uint8Ptr,
 	Union,
 } from '@hqtsm/struct';
-import type { _bits, char } from '../libc/c.ts';
 import type {
+	_bits,
+	char,
 	int32_t,
 	uint16_t,
 	uint32_t,
 	uint64_t,
 	uint8_t,
-} from '../libc/stdint.ts';
+} from '../libc/mod.ts';
 
 /**
  * Mach-O header, 32-bit.

@@ -4,7 +4,7 @@ import {
 	assertStrictEquals,
 	assertThrows,
 } from '@std/assert';
-import { testOOM } from '../spec/memory.ts';
+import { testOOM } from '../spec/mod.ts';
 import { ENOMEM } from './errno.ts';
 import { calloc, malloc, memset, realloc } from './stdlib.ts';
 

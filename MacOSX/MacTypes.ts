@@ -8,7 +8,7 @@ import type {
 	uchar,
 	uint,
 	ushort,
-} from '../libc/c.ts';
+} from '../libc/mod.ts';
 
 /**
  * Unsigned 8-bit integer.

@@ -1,9 +1,8 @@
 import { assert, assertEquals, assertInstanceOf } from '@std/assert';
 import { constant } from '@hqtsm/class';
 import { Uint8Ptr } from '@hqtsm/struct';
-import { ENOMEM } from '../libc/errno.ts';
-import { assertThrowsUnixError } from '../spec/assert.ts';
-import { testOOM } from '../spec/memory.ts';
+import { ENOMEM } from '../libc/mod.ts';
+import { assertThrowsUnixError, testOOM } from '../spec/mod.ts';
 import { Security_BlobCore, Security_BlobWrapper } from './blob.ts';
 import {
 	Security_SuperBlob,

@@ -1,14 +1,16 @@
 import { Uint8Ptr } from '@hqtsm/struct';
 import { assertEquals } from '@std/assert';
-import { kCCDigestSHA1 } from '../CommonCrypto/CommonDigestSPI.ts';
-import { cssm_data } from '../Security/SecAsn1Types.ts';
+import { kCCDigestSHA1 } from '../CommonCrypto/mod.ts';
+import {
+	cssm_data,
+	SecCertificateCreateOidDataFromString,
+} from '../Security/mod.ts';
 import {
 	__SecCertificate,
-	SecCertificateCreateOidDataFromString,
 	SecCertificateExtension,
 } from '../Security/SecCertificate.ts';
-import { Security_CCHashInstance } from '../security_utilities/hashing.ts';
-import { unhex } from '../spec/hex.ts';
+import { Security_CCHashInstance } from '../security_utilities/mod.ts';
+import { unhex } from '../spec/mod.ts';
 import {
 	Security_CodeSigning_certificateHasField,
 	Security_CodeSigning_hashFileData,

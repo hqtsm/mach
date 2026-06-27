@@ -1,4 +1,4 @@
-import type { u_int32_t, uint32_t } from '../libc/stdint.ts';
+import type { u_int32_t, uint32_t } from '../libc/mod.ts';
 
 // CF_ENUM(OSStatus) {
 

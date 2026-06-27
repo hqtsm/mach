@@ -1,6 +1,6 @@
 import { constant, toStringTag } from '@hqtsm/class';
 import { int32, Struct, uint32, uint64 } from '@hqtsm/struct';
-import type { int32_t, uint32_t, uint64_t } from '../libc/stdint.ts';
+import type { int32_t, uint32_t, uint64_t } from '../libc/mod.ts';
 
 // Constants for fat_header magic:
 

@@ -1,15 +1,15 @@
-import type { bool } from '../libc/c.ts';
-import type { size_t } from '../libc/stddef.ts';
-import type {
-	int32_t,
-	int64_t,
-	uint16_t,
-	uint32_t,
-	uint64_t,
-	uint8_t,
-} from '../libc/stdint.ts';
-import { memset } from '../libc/stdlib.ts';
-import { memcmp } from '../libc/string.ts';
+import {
+	type bool,
+	type int32_t,
+	type int64_t,
+	memcmp,
+	memset,
+	type size_t,
+	type uint16_t,
+	type uint32_t,
+	type uint64_t,
+	type uint8_t,
+} from '../libc/mod.ts';
 
 /**
  * DER byte.

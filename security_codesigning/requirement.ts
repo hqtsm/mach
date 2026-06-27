@@ -1,27 +1,33 @@
 import { constant, toStringTag } from '@hqtsm/class';
 import { type ArrayBufferPointer, uint32BE } from '@hqtsm/struct';
-import type { CFDataRef } from '../CoreFoundation/CFData.ts';
-import type { CFDateRef } from '../CoreFoundation/CFDate.ts';
-import type { CFDictionaryRef } from '../CoreFoundation/CFDictionary.ts';
-import { type ArrayBufferLikeData, viewBytes } from '../helpers/memory.ts';
-import { CS_VALIDATION_CATEGORY_INVALID } from '../kern/cs_blobs.ts';
-import type { _const, bool, int, uint } from '../libc/c.ts';
-import type { uint32_t, uint8_t } from '../libc/stdint.ts';
-import {
-	kSecCodeSignatureNoHash,
-	type SecCSDigestAlgorithm,
-} from '../Security/CSCommon.ts';
+import type {
+	CFDataRef,
+	CFDateRef,
+	CFDictionaryRef,
+} from '../CoreFoundation/mod.ts';
+import { type ArrayBufferLikeData, viewBytes } from '../helpers/mod.ts';
+import { CS_VALIDATION_CATEGORY_INVALID } from '../kern/mod.ts';
+import type {
+	_const,
+	bool,
+	int,
+	uint,
+	uint32_t,
+	uint8_t,
+} from '../libc/mod.ts';
 import {
 	kSecCodeMagicRequirement,
 	kSecCodeMagicRequirementSet,
-} from '../Security/CSCommonPriv.ts';
-import type { SecCertificateRef } from '../Security/SecBase.ts';
-import { Security_Blob } from '../security_utilities/blob.ts';
-import type { Security_Endian } from '../security_utilities/endian.ts';
+	kSecCodeSignatureNoHash,
+	type SecCertificateRef,
+	type SecCSDigestAlgorithm,
+} from '../Security/mod.ts';
 import {
+	Security_Blob,
+	type Security_Endian,
 	Security_SuperBlob,
 	Security_SuperBlob_Maker,
-} from '../security_utilities/superblob.ts';
+} from '../security_utilities/mod.ts';
 import type { Security_CodeSigning_CodeDirectory } from './codedirectory.ts';
 
 /**

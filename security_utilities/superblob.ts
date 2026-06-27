@@ -12,11 +12,14 @@ import {
 	Security_BlobCore,
 	type Security_BlobCore_Offset,
 } from './blob.ts';
-import type { bool, uint } from '../libc/c.ts';
-import { ENOMEM } from '../libc/errno.ts';
-import type { size_t } from '../libc/stddef.ts';
-import type { uint32_t } from '../libc/stdint.ts';
-import { malloc } from '../libc/stdlib.ts';
+import {
+	type bool,
+	ENOMEM,
+	malloc,
+	type size_t,
+	type uint,
+	type uint32_t,
+} from '../libc/mod.ts';
 import type { Security_Endian } from './endian.ts';
 import { Security_UnixError } from './errors.ts';
 

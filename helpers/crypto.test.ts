@@ -1,7 +1,7 @@
 // deno-lint-ignore no-external-import
 import { createHash } from 'node:crypto';
 import { assertEquals, assertRejects } from '@std/assert';
-import { subtleNode, subtleStreaming } from '../spec/crypto.ts';
+import { subtleNode, subtleStreaming } from '../spec/mod.ts';
 import { subtleCryptoFromNodeCrypto } from './crypto.ts';
 
 const digests = [

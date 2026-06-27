@@ -1,16 +1,14 @@
 import type { ArrayBufferPointer } from '@hqtsm/struct';
-import type { CFIndex } from '../CoreFoundation/CFBase.ts';
+import type { CFIndex } from '../CoreFoundation/mod.ts';
 import {
 	CC_SHA1_DIGEST_LENGTH,
 	CC_SHA256_DIGEST_LENGTH,
 	CCDigest,
-} from '../CommonCrypto/CommonDigest.ts';
-import {
 	kCCDigestSHA1,
 	kCCDigestSHA256,
-} from '../CommonCrypto/CommonDigestSPI.ts';
-import type { SubtleCryptoDigest } from '../helpers/crypto.ts';
-import { INT32_MAX } from '../libc/stdint.ts';
+} from '../CommonCrypto/mod.ts';
+import type { SubtleCryptoDigest } from '../helpers/mod.ts';
+import { INT32_MAX } from '../libc/mod.ts';
 
 /**
  * SHA-1 digest.

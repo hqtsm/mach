@@ -6,15 +6,15 @@ import {
 } from '@std/assert';
 import { constant } from '@hqtsm/class';
 import { uint32BE } from '@hqtsm/struct';
-import { CSMAGIC_BLOBWRAPPER } from '../kern/cs_blobs.ts';
-import { EINVAL, ENOMEM } from '../libc/errno.ts';
-import { errSecAllocate } from '../Security/SecBase.ts';
+import { CSMAGIC_BLOBWRAPPER } from '../kern/mod.ts';
+import { EINVAL, ENOMEM } from '../libc/mod.ts';
+import { errSecAllocate } from '../Security/mod.ts';
 import {
 	assertThrowsMacOSError,
 	assertThrowsUnixError,
-} from '../spec/assert.ts';
-import { unhex } from '../spec/hex.ts';
-import { testOOM } from '../spec/memory.ts';
+	testOOM,
+	unhex,
+} from '../spec/mod.ts';
 import {
 	Security_Blob,
 	Security_BlobCore,

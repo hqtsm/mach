@@ -1,21 +1,18 @@
 import { toStringTag } from '@hqtsm/class';
 import type { ArrayBufferPointer } from '@hqtsm/struct';
-import type {
-	SubtleCryptoDigest,
-	SubtleCryptoDigestAlgorithm,
-	SubtleCryptoExtended,
-} from '../helpers/crypto.ts';
-import type { SizeAsyncIterator, SizeIterator } from '../helpers/iterator.ts';
 import {
 	type ArrayBufferData,
 	pointerBytes,
+	type Reader,
+	type SizeAsyncIterator,
+	type SizeIterator,
+	type SubtleCryptoDigest,
+	type SubtleCryptoDigestAlgorithm,
+	type SubtleCryptoExtended,
 	viewBytes,
-} from '../helpers/memory.ts';
-import type { Reader } from '../helpers/reader.ts';
-import type { int } from '../libc/c.ts';
-import type { size_t } from '../libc/stddef.ts';
-import type { uint32_t, uint64_t } from '../libc/stdint.ts';
-import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../mach/vm_param.ts';
+} from '../helpers/mod.ts';
+import type { int, size_t, uint32_t, uint64_t } from '../libc/mod.ts';
+import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../mach/mod.ts';
 import { CC_MAX_N_DIGESTS } from './ccGlobals.ts';
 import {
 	kCCCallSequenceError,

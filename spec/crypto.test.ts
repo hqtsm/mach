@@ -1,5 +1,5 @@
 import { assertEquals } from '@std/assert';
-import { DigestStream } from '../spec/crypto.ts';
+import { DigestStream } from '../spec/mod.ts';
 
 const digests = [
 	'SHA-1',

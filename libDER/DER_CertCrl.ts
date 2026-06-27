@@ -1,5 +1,5 @@
 import { toStringTag } from '@hqtsm/class';
-import { ASN1_OBJECT_ID } from '../libDER/asn1Types.ts';
+import { ASN1_OBJECT_ID } from './asn1Types.ts';
 import {
 	DER_DEC_ASN_ANY,
 	DER_DEC_NO_OPTS,

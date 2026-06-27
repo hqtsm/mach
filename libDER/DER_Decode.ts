@@ -1,6 +1,6 @@
 import { toStringTag } from '@hqtsm/class';
 import { type Ptr, Uint8Ptr } from '@hqtsm/struct';
-import type { _const, _ptr, bool } from '../libc/c.ts';
+import type { _const, _ptr, bool } from '../libc/mod.ts';
 import { DERItem } from './DERItem.ts';
 import {
 	DER_TAG_SIZE,

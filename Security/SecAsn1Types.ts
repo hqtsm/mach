@@ -1,7 +1,6 @@
 import { toStringTag } from '@hqtsm/class';
 import type { Ptr } from '@hqtsm/struct';
-import type { size_t } from '../libc/stddef.ts';
-import type { uint8_t } from '../libc/stdint.ts';
+import type { size_t, uint8_t } from '../libc/mod.ts';
 
 /**
  * CSSM data.

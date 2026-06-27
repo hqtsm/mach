@@ -1,20 +1,19 @@
 import { assertEquals, assertGreater, assertRejects } from '@std/assert';
-import type { Reader } from '../helpers/reader.ts';
-import { CS_SHA1_LEN } from '../kern/cs_blobs.ts';
-import { ENOMEM } from '../libc/errno.ts';
-import { UINT32_MAX } from '../libc/stdint.ts';
-import { PLATFORM_MACOS } from '../mach-o/loader.ts';
+import type { Reader } from '../helpers/mod.ts';
+import { CS_SHA1_LEN } from '../kern/mod.ts';
+import { ENOMEM, UINT32_MAX } from '../libc/mod.ts';
+import { PLATFORM_MACOS } from '../mach-o/mod.ts';
 import {
 	errSecCSTooBig,
 	kSecCodeSignatureHashSHA1,
 	kSecCodeSignatureHashSHA256,
-} from '../Security/CSCommon.ts';
+} from '../Security/mod.ts';
 import {
 	assertRejectsMacOSError,
 	assertRejectsUnixError,
 	assertThrowsUnixError,
-} from '../spec/assert.ts';
-import { testOOM } from '../spec/memory.ts';
+	testOOM,
+} from '../spec/mod.ts';
 import { Security_CodeSigning_CodeDirectory_Builder } from './cdbuilder.ts';
 import {
 	Security_CodeSigning_CodeDirectory,

@@ -3,7 +3,7 @@ import {
 	Security_CFError,
 	Security_MacOSError,
 	Security_UnixError,
-} from '../security_utilities/errors.ts';
+} from '../security_utilities/mod.ts';
 
 const cfMessage = 'CoreFoundation error';
 

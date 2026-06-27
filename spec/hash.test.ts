@@ -1,5 +1,5 @@
 import { assertEquals, assertInstanceOf } from '@std/assert';
-import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../mach/vm_param.ts';
+import { PAGE_SIZE_ARM64 as PAGE_SIZE } from '../mach/mod.ts';
 import { BadReader, toAsyncIterator, toIterator } from './hash.ts';
 
 Deno.test('BadReader', async () => {

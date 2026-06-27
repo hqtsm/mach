@@ -1,6 +1,6 @@
 import { assertEquals, assertInstanceOf } from '@std/assert';
 import { encodeBinary, encodeXml, PLArray, PLDictionary } from '@hqtsm/plist';
-import { assertThrowsCFError } from '../spec/assert.ts';
+import { assertThrowsCFError } from '../spec/mod.ts';
 import { Security_BlobCore } from './blob.ts';
 import {
 	Security_makeCFData,

@@ -1,6 +1,6 @@
 import { assertEquals } from '@std/assert';
 import { Uint8Ptr } from '@hqtsm/struct';
-import { unhex } from '../spec/hex.ts';
+import { unhex } from '../spec/mod.ts';
 import {
 	SecIsAppleTrustAnchor,
 	SecIsAppleTrustAnchorData,

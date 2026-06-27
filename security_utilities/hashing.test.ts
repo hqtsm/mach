@@ -12,21 +12,21 @@ import {
 	kCCDigestSHA3_256,
 	kCCDigestSHA3_384,
 	kCCDigestSHA3_512,
-} from '../CommonCrypto/CommonDigestSPI.ts';
-import { ENOMEM } from '../libc/errno.ts';
-import { assertThrowsUnixError } from '../spec/assert.ts';
+} from '../CommonCrypto/mod.ts';
+import { ENOMEM } from '../libc/mod.ts';
 import {
 	ABCD,
+	assertThrowsUnixError,
 	BadReader,
 	digest,
 	getCases,
 	getEngines,
 	getIterators,
+	hex,
 	ITTER_SIZES,
 	toAsyncIterator,
 	toIterator,
-} from '../spec/hash.ts';
-import { hex } from '../spec/hex.ts';
+} from '../spec/mod.ts';
 import { Security_CCHashInstance } from './hashing.ts';
 
 Deno.test('Security_CCHashInstance: Unsupported', () => {

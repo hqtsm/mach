@@ -1,4 +1,4 @@
-import type { int, uint } from '../../libc/c.ts';
+import type { int, uint } from '../../libc/mod.ts';
 import {
 	vm_page_mask_arm,
 	vm_page_mask_arm64,

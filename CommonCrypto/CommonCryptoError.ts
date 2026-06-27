@@ -1,4 +1,4 @@
-import type { int32_t } from '../libc/stdint.ts';
+import type { int32_t } from '../libc/mod.ts';
 
 // CCCryptorStatus:
 // enum {

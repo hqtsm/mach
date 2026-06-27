@@ -5,14 +5,13 @@ import {
 	PLData,
 	PLDictionary,
 } from '@hqtsm/plist';
-import type { CFDictionaryRef } from '../CoreFoundation/CFDictionary.ts';
-import type { CFDataRef } from '../CoreFoundation/CFData.ts';
+import type { CFDataRef, CFDictionaryRef } from '../CoreFoundation/mod.ts';
 import {
 	type ArrayBufferLikeData,
 	pointerBytes,
 	viewBytes,
-} from '../helpers/memory.ts';
-import type { size_t } from '../libc/stddef.ts';
+} from '../helpers/mod.ts';
+import type { size_t } from '../libc/mod.ts';
 import { Security_CFError } from './errors.ts';
 
 /**

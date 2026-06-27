@@ -1,29 +1,27 @@
 import { assertEquals, assertInstanceOf } from '@std/assert';
 import { PLBoolean, PLData, PLDictionary } from '@hqtsm/plist';
-import { assertThrowsMacOSError } from '../spec/assert.ts';
 import {
+	assertThrowsMacOSError,
 	CPU_ARCHITECTURES,
 	fixtureMachos,
 	type FixtureMachoSignatureInfo,
 	fixtureMachoSigned,
-} from '../spec/fixture.ts';
-import { unhex } from '../spec/hex.ts';
-import { thin } from '../spec/macho.ts';
-import { testOOM } from '../spec/memory.ts';
+	testOOM,
+	thin,
+	unhex,
+} from '../spec/mod.ts';
 import {
 	errSecCSSignatureInvalid,
-	kSecCodeSignatureHashSHA1,
-	kSecCodeSignatureLinkerSigned,
-} from '../Security/CSCommon.ts';
-import {
 	kSecCodeMagicEntitlement,
 	kSecCodeMagicEntitlementDER,
 	kSecCodeMagicLaunchConstraint,
-} from '../Security/CSCommonPriv.ts';
+	kSecCodeSignatureHashSHA1,
+	kSecCodeSignatureLinkerSigned,
+} from '../Security/mod.ts';
 import {
 	Security_BlobCore,
 	Security_BlobWrapper,
-} from '../security_utilities/blob.ts';
+} from '../security_utilities/mod.ts';
 import { Security_CodeSigning_CodeDirectory_Builder } from './cdbuilder.ts';
 import {
 	Security_CodeSigning_cdAlternateCodeDirectorySlots,

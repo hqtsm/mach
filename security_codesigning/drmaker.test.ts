@@ -1,8 +1,6 @@
 import { assertEquals } from '@std/assert';
-import { pointerBytes } from '../helpers/memory.ts';
-import {
-	SecCertificateCreateOidDataFromString,
-} from '../Security/SecCertificate.ts';
+import { pointerBytes } from '../helpers/mod.ts';
+import { SecCertificateCreateOidDataFromString } from '../Security/mod.ts';
 import * as C from './drmaker.ts';
 
 const entries = <T extends Record<string, unknown>>(obj: T) =>

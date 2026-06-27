@@ -4,7 +4,7 @@ import {
 	assertInstanceOf,
 	assertStrictEquals,
 } from '@std/assert';
-import { unhex } from '../spec/hex.ts';
+import { unhex } from '../spec/mod.ts';
 import {
 	DER_DEC_NO_OPTS,
 	DER_DEC_OPTIONAL,
@@ -26,7 +26,7 @@ import {
 	DR_Success,
 	DR_UnexpectedTag,
 } from './libDER.ts';
-import type { _const } from '../libc/c.ts';
+import type { _const } from '../libc/mod.ts';
 
 Deno.test('DERDecodedInfo', () => {
 	{

@@ -1,4 +1,4 @@
-import type { _const, bool } from '../libc/c.ts';
+import type { _const, bool } from '../libc/mod.ts';
 import type { DERItem } from './DERItem.ts';
 import { DERMemcmp } from './libDER_config.ts';
 

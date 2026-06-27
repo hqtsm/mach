@@ -1,4 +1,4 @@
-import type { int } from '../libc/c.ts';
+import type { int } from '../libc/mod.ts';
 import type { DERShort, DERTag } from './libDER_config.ts';
 import type { DERItem } from './DERItem.ts';
 

@@ -1,7 +1,7 @@
-import type { bool } from '../libc/c.ts';
+import type { bool } from '../libc/mod.ts';
 
 /**
- * Are QARoot certificates enabled.
+ * Are QA root certificates enabled.
  *
  * @returns Always false.
  */

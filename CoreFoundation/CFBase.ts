@@ -1,5 +1,5 @@
 import type { PLNull, PLString } from '@hqtsm/plist';
-import type { size_t } from '../libc/stddef.ts';
+import type { size_t } from '../libc/mod.ts';
 
 /**
  * CF index.

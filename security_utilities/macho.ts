@@ -8,12 +8,19 @@ import {
 	type Ptr,
 	Uint32Ptr,
 } from '@hqtsm/struct';
-import type { Reader } from '../helpers/reader.ts';
-import type { _const, bool, char, uint } from '../libc/c.ts';
-import { EIO, ENOEXEC } from '../libc/errno.ts';
-import type { size_t } from '../libc/stddef.ts';
-import type { uint32_t } from '../libc/stdint.ts';
-import { strlen, strncmp } from '../libc/string.ts';
+import type { Reader } from '../helpers/mod.ts';
+import {
+	type _const,
+	type bool,
+	type char,
+	EIO,
+	ENOEXEC,
+	type size_t,
+	strlen,
+	strncmp,
+	type uint,
+	type uint32_t,
+} from '../libc/mod.ts';
 import {
 	CPU_ARCH_ABI64,
 	CPU_SUBTYPE_MASK,
@@ -21,18 +28,15 @@ import {
 	type cpu_subtype_t,
 	CPU_TYPE_ARM,
 	type cpu_type_t,
-} from '../mach/machine.ts';
-import { PAGE_MASK_ARM64 } from '../mach/vm_param.ts';
+	PAGE_MASK_ARM64,
+} from '../mach/mod.ts';
 import {
+	build_version_command,
 	fat_arch,
 	type fat_arch_64,
 	FAT_CIGAM,
 	fat_header,
 	FAT_MAGIC,
-} from '../mach-o/fat.ts';
-import { errSecInternalError } from '../Security/SecBase.ts';
-import {
-	build_version_command,
 	LC_BUILD_VERSION,
 	LC_CODE_SIGNATURE,
 	LC_DYLIB_CODE_SIGN_DRS,
@@ -63,7 +67,8 @@ import {
 	segment_command_64,
 	symtab_command,
 	version_min_command,
-} from '../mach-o/loader.ts';
+} from '../mach-o/mod.ts';
+import { errSecInternalError } from '../Security/mod.ts';
 import { Security_MacOSError, Security_UnixError } from './errors.ts';
 
 /**

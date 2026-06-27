@@ -11,7 +11,7 @@ import {
 	LITTLE_ENDIAN,
 	Uint8Ptr,
 } from '@hqtsm/struct';
-import { EIO, ENOEXEC } from '../libc/errno.ts';
+import { EIO, ENOEXEC } from '../libc/mod.ts';
 import {
 	CPU_ARCH_ABI64,
 	CPU_SUBTYPE_ARM_ALL,
@@ -25,10 +25,13 @@ import {
 	CPU_TYPE_I386,
 	CPU_TYPE_X86,
 	CPU_TYPE_X86_64,
-} from '../mach/machine.ts';
-import { fat_arch, fat_arch_64, fat_header, FAT_MAGIC } from '../mach-o/fat.ts';
+} from '../mach/mod.ts';
 import {
 	build_version_command,
+	fat_arch,
+	fat_arch_64,
+	fat_header,
+	FAT_MAGIC,
 	LC_BUILD_VERSION,
 	LC_CODE_SIGNATURE,
 	LC_DYLIB_CODE_SIGN_DRS,
@@ -58,20 +61,18 @@ import {
 	segment_command_64,
 	symtab_command,
 	version_min_command,
-} from '../mach-o/loader.ts';
-import { errSecInternalError } from '../Security/SecBase.ts';
+} from '../mach-o/mod.ts';
+import { errSecInternalError } from '../Security/mod.ts';
 import {
 	assertRejectsMacOSError,
 	assertRejectsUnixError,
 	assertThrowsMacOSError,
 	assertThrowsUnixError,
-} from '../spec/assert.ts';
-import {
 	CPU_ARCHITECTURES,
 	fixtureMacho,
 	fixtureMachos,
-} from '../spec/fixture.ts';
-import { thin } from '../spec/macho.ts';
+	thin,
+} from '../spec/mod.ts';
 import {
 	Security_Architecture,
 	Security_MachO,

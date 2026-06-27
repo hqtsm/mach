@@ -1,4 +1,4 @@
-import type { uint32_t } from '../libc/stdint.ts';
+import type { uint32_t } from '../libc/mod.ts';
 
 // Blob types used for code signing:
 // enum {

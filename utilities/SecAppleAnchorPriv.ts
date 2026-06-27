@@ -1,4 +1,4 @@
-import type { uint32_t } from '../libc/stdint.ts';
+import type { uint32_t } from '../libc/mod.ts';
 
 // typedef CF_OPTIONS(uint32_t, SecAppleTrustAnchorFlags) {
 

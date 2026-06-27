@@ -1,13 +1,15 @@
 import { isToStringTag, toStringTag } from '@hqtsm/class';
 import { type Arr, array, Int8Ptr, type Ptr } from '@hqtsm/struct';
-import type { _const, bool, char, int } from '../libc/c.ts';
-import { EFAULT } from '../libc/errno.ts';
-import type { size_t } from '../libc/stddef.ts';
-import type { OSStatus } from '../MacOSX/MacTypes.ts';
 import {
-	errSecCoreFoundationUnknown,
-	errSecSuccess,
-} from '../Security/SecBase.ts';
+	type _const,
+	type bool,
+	type char,
+	EFAULT,
+	type int,
+	type size_t,
+} from '../libc/mod.ts';
+import type { OSStatus } from '../MacOSX/mod.ts';
+import { errSecCoreFoundationUnknown, errSecSuccess } from '../Security/mod.ts';
 
 /**
  * Security error code base.
