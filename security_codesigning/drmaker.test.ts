@@ -94,6 +94,28 @@ function orgCert(): __SecCertificate {
 	return cert;
 }
 
+function nonACert(): __SecCertificate {
+	const cert = new __SecCertificate();
+	const subject = unhex(
+		'31 0E 30 0C 06 03 55 04 0A 13 05 41 6C 70 68 61',
+	);
+	cert._subject.data = new Uint8Ptr(subject.buffer);
+	cert._subject.length = subject.byteLength;
+	cert._der.data = new Uint8Ptr(new ArrayBuffer(0));
+	return cert;
+}
+
+function nonACA(): __SecCertificate {
+	const cert = new __SecCertificate();
+	const subject = unhex(
+		'31 0E 30 0C 06 03 55 04 0A 13 04 52 4F 4F 54',
+	);
+	cert._subject.data = new Uint8Ptr(subject.buffer);
+	cert._subject.length = subject.byteLength;
+	cert._der.data = new Uint8Ptr(new ArrayBuffer(0));
+	return cert;
+}
+
 Deno.test('Security_CodeSigning: OIDs', () => {
 	// Check OIDs against their expected values.
 	for (const [K, V] of entries(oids)) {
@@ -189,6 +211,29 @@ Deno.test('Security_CodeSigning: make: Apple: Other', async () => {
 		orgCert(),
 		aCert(),
 		await appleCA(),
+	];
+
+	const maker = new Security_CodeSigning_DRMaker(ctx);
+	const dr = await Security_CodeSigning_DRMaker.make(maker);
+	assertInstanceOf(dr, Security_CodeSigning_Requirement);
+});
+
+Deno.test('Security_CodeSigning: make: Non-Apple: Self', async () => {
+	const ctx = new Security_CodeSigning_Requirement_Context();
+	ctx.certs = [
+		nonACert(),
+	];
+
+	const maker = new Security_CodeSigning_DRMaker(ctx);
+	const dr = await Security_CodeSigning_DRMaker.make(maker);
+	assertInstanceOf(dr, Security_CodeSigning_Requirement);
+});
+
+Deno.test('Security_CodeSigning: make: Non-Apple: CA', async () => {
+	const ctx = new Security_CodeSigning_Requirement_Context();
+	ctx.certs = [
+		nonACert(),
+		nonACA(),
 	];
 
 	const maker = new Security_CodeSigning_DRMaker(ctx);
