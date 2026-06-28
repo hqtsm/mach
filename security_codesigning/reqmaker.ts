@@ -178,6 +178,61 @@ export class Security_CodeSigning_Requirement_Maker {
 	}
 
 	/**
+	 * Put int.
+	 *
+	 * @param _this This.
+	 * @param value Uint32.
+	 */
+	public static put(
+		_this: Security_CodeSigning_Requirement_Maker,
+		value: uint32_t,
+	): void;
+
+	/**
+	 * Put Expr OP.
+	 *
+	 * @param _this This.
+	 * @param op OP code.
+	 */
+	public static put(
+		_this: Security_CodeSigning_Requirement_Maker,
+		op: Security_CodeSigning_ExprOp,
+	): void;
+
+	/**
+	 * Put Match OP.
+	 *
+	 * @param _this This.
+	 * @param op OP code.
+	 */
+	public static put(
+		_this: Security_CodeSigning_Requirement_Maker,
+		op: Security_CodeSigning_MatchOperation,
+	): void;
+
+	/**
+	 * Put string.
+	 *
+	 * @param _this This.
+	 * @param s String.
+	 */
+	public static put(
+		_this: Security_CodeSigning_Requirement_Maker,
+		s: ArrayBufferLikeData,
+	): void;
+
+	/**
+	 * Put chars.
+	 *
+	 * @param _this This.
+	 * @param s Chars.
+	 */
+	public static put(
+		_this: Security_CodeSigning_Requirement_Maker,
+		s: ArrayBufferPointer,
+	): void;
+
+	/**
 	 * Put data without length.
 	 *
 	 * @param _this This.
@@ -198,7 +253,7 @@ export class Security_CodeSigning_Requirement_Maker {
 		} else {
 			const l = 'byteLength' in data ? data.byteLength : strlen(data);
 			const d = pointerBytes(data, l);
-			Security_CodeSigning_Requirement_Maker.alloc(_this, l).set(d);
+			Security_CodeSigning_Requirement_Maker.putData(_this, d, l);
 		}
 	}
 
@@ -387,8 +442,8 @@ export class Security_CodeSigning_Requirement_Maker {
 			_this,
 			Security_CodeSigning_opInfoKeyValue,
 		);
-		Security_CodeSigning_Requirement_Maker.putData(_this, key);
-		Security_CodeSigning_Requirement_Maker.putData(_this, value);
+		Security_CodeSigning_Requirement_Maker.put(_this, key);
+		Security_CodeSigning_Requirement_Maker.put(_this, value);
 	}
 
 	/**
@@ -405,7 +460,7 @@ export class Security_CodeSigning_Requirement_Maker {
 			_this,
 			Security_CodeSigning_opIdent,
 		);
-		Security_CodeSigning_Requirement_Maker.putData(_this, identifier);
+		Security_CodeSigning_Requirement_Maker.put(_this, identifier);
 	}
 
 	/**
@@ -422,7 +477,11 @@ export class Security_CodeSigning_Requirement_Maker {
 			_this,
 			Security_CodeSigning_opCDHash,
 		);
-		Security_CodeSigning_Requirement_Maker.putData(_this, digest);
+		Security_CodeSigning_Requirement_Maker.putData(
+			_this,
+			pointerBytes(digest),
+			Security_SHA1.digestLength,
+		);
 	}
 
 	/**
@@ -491,9 +550,11 @@ export class Security_CodeSigning_Requirement_Maker {
 				Security_CodeSigning_Requirement.size(req) - BYTE_LENGTH,
 			);
 		} else {
-			const d = new Uint8Array(data.buffer, data.byteOffset, length);
-			Security_CodeSigning_Requirement_Maker.alloc(_this, d.byteLength)
-				.set(d);
+			memcpy(
+				Security_CodeSigning_Requirement_Maker.alloc(_this, length),
+				data,
+				length,
+			);
 		}
 	}
 

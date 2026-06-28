@@ -412,7 +412,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: cdhash', () => {
 	);
 	Security_CodeSigning_Requirement_Maker.cdhash(
 		maker,
-		new Uint8Array([1, 2, 3, 4]),
+		new Uint8Array(20),
 	);
 	Security_CodeSigning_Requirement_Maker.make(maker);
 });
@@ -463,6 +463,17 @@ Deno.test('Security_CodeSigning_Requirement_Maker: copy Requirement', () => {
 		() => Security_CodeSigning_Requirement_Maker.copy(c, dr),
 		errSecCSReqUnsupported,
 	);
+});
+
+Deno.test('Security_CodeSigning_Requirement_Maker: putData', () => {
+	const maker = new Security_CodeSigning_Requirement_Maker(
+		Security_CodeSigning_Requirement.exprForm,
+	);
+	Security_CodeSigning_Requirement_Maker.putData(
+		maker,
+		new Uint8Array([1, 2, 3, 4]).buffer,
+	);
+	Security_CodeSigning_Requirement_Maker.make(maker);
 });
 
 Deno.test('Security_CodeSigning_Requirement_Maker: put', () => {
