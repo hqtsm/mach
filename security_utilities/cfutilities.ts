@@ -158,3 +158,13 @@ export function Security_makeCFDictionaryFrom(
 	}
 	return null;
 }
+
+/**
+ * Convert string to bytes.
+ *
+ * @param str String.
+ * @returns UTF-8 bytes.
+ */
+export function Security_cfString(str: string | null): Uint8Array<ArrayBuffer> {
+	return str ? new TextEncoder().encode(str) : new Uint8Array(0);
+}

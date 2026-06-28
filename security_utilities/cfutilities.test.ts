@@ -3,6 +3,7 @@ import { encodeBinary, encodeXml, PLArray, PLDictionary } from '@hqtsm/plist';
 import { assertThrowsCFError } from '../spec/mod.ts';
 import { Security_BlobCore } from './blob.ts';
 import {
+	Security_cfString,
 	Security_makeCFData,
 	Security_makeCFDictionaryFrom,
 } from './cfutilities.ts';
@@ -56,4 +57,19 @@ Deno.test('Security_makeCFDictionaryFrom: array', () => {
 Deno.test('Security_makeCFDictionaryFrom: bad', () => {
 	const invalid = new TextEncoder().encode('<badplist>');
 	assertEquals(Security_makeCFDictionaryFrom(invalid), null);
+});
+
+Deno.test('Security_cfString', () => {
+	assertEquals(
+		Security_cfString(null),
+		new Uint8Array(),
+	);
+	assertEquals(
+		Security_cfString(''),
+		new Uint8Array(),
+	);
+	assertEquals(
+		Security_cfString('abc'),
+		new Uint8Array([...'abc'].map((c) => c.charCodeAt(0))),
+	);
 });
