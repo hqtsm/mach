@@ -1,6 +1,12 @@
+import { Uint8Ptr } from '@hqtsm/struct';
 import { assertEquals } from '@std/assert';
 import { pointerBytes } from '../helpers/mod.ts';
 import { SecCertificateCreateOidDataFromString } from '../Security/mod.ts';
+import {
+	__SecCertificate,
+	SecCertificateExtension,
+} from '../Security/SecCertificate.ts';
+import { fixtureCert, unhex } from '../spec/mod.ts';
 import { Security_CodeSigning_DRMaker } from './drmaker.ts';
 import * as C from './drmaker.ts';
 import { Security_CodeSigning_Requirement_Context } from './requirement.ts';
@@ -14,6 +20,32 @@ const oids = {
 	Security_CodeSigning_devIdLeafMarkerOID: '1.2.840.113635.100.6.1.13',
 };
 
+async function appleCA(): Promise<__SecCertificate> {
+	const data = await fixtureCert('AppleIncRootCertificate.cer');
+	const cert = new __SecCertificate();
+	cert._der.data = new Uint8Ptr(data.buffer, data.byteOffset);
+	cert._der.length = data.byteLength;
+	return cert;
+}
+
+function iOSCert(): __SecCertificate {
+	const cert = new __SecCertificate();
+	const sce = new SecCertificateExtension();
+	{
+		const d = unhex('2a 86 48 86 f7 63 64 06 02 01');
+		sce.extnID.data = new Uint8Ptr(d.buffer);
+		sce.extnID.length = d.byteLength;
+	}
+	{
+		const d = new Uint8Array();
+		sce.extnValue.data = new Uint8Ptr(d.buffer);
+		sce.extnValue.length = d.byteLength;
+	}
+	cert._extensionCount = 1;
+	cert._extensions = [sce];
+	return cert;
+}
+
 Deno.test('Security_CodeSigning: OIDs', () => {
 	// Check OIDs against their expected values.
 	for (const [K, V] of entries(oids)) {
@@ -24,6 +56,18 @@ Deno.test('Security_CodeSigning: OIDs', () => {
 			K,
 		);
 	}
+});
+
+Deno.test('Security_CodeSigning: isIOSSignature', async () => {
+	const ctx = new Security_CodeSigning_Requirement_Context();
+	ctx.certs = [
+		new __SecCertificate(),
+		iOSCert(),
+		await appleCA(),
+	];
+
+	const maker = new Security_CodeSigning_DRMaker(ctx);
+	assertEquals(Security_CodeSigning_DRMaker['isIOSSignature'](maker), true);
 });
 
 Deno.test('Security_CodeSigning: make: null', async () => {
