@@ -5,3 +5,4 @@ export * from './drmaker.ts';
 export * from './reqmaker.ts';
 export * from './requirement.ts';
 export * from './sigblob.ts';
+export * from './signerutils.ts';
