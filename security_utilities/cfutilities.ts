@@ -166,5 +166,7 @@ export function Security_makeCFDictionaryFrom(
  * @returns UTF-8 bytes.
  */
 export function Security_cfString(str: string | null): Uint8Array<ArrayBuffer> {
-	return str ? new TextEncoder().encode(str) : new Uint8Array(0);
+	return str
+		? new TextEncoder().encode(str) as Uint8Array<ArrayBuffer>
+		: new Uint8Array(0);
 }

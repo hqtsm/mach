@@ -72,4 +72,8 @@ Deno.test('Security_cfString', () => {
 		Security_cfString('abc'),
 		new Uint8Array([...'abc'].map((c) => c.charCodeAt(0))),
 	);
+	assertInstanceOf(
+		Security_cfString('abc').buffer,
+		ArrayBuffer,
+	);
 });
