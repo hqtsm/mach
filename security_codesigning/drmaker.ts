@@ -94,9 +94,10 @@ export class Security_CodeSigning_DRMaker
 	 * @param _this This.
 	 * @returns Requirement instance.
 	 */
-	public static override make(
+	// deno-lint-ignore require-await
+	public static override async make(
 		_this: Security_CodeSigning_DRMaker,
-	): Security_CodeSigning_Requirement {
+	): Promise<Security_CodeSigning_Requirement | null> {
 		throw new Error('TODO');
 	}
 

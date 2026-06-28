@@ -31,7 +31,7 @@ function fibinacci(n: number): number[] {
 	return fib;
 }
 
-Deno.test('Security_CodeSigning_Requirement_Maker: alloc', () => {
+Deno.test('Security_CodeSigning_Requirement_Maker: alloc', async () => {
 	// identifier "com.apple.simple"
 	const data = unhex(
 		'00 00 00 02',
@@ -46,7 +46,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: alloc', () => {
 		data.byteLength,
 	);
 	add.set(data);
-	const r = Security_CodeSigning_Requirement_Maker.make(maker);
+	const r = (await Security_CodeSigning_Requirement_Maker.make(maker))!;
 	const dv = new DataView(
 		r.buffer,
 		r.byteOffset,
@@ -65,7 +65,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: alloc', () => {
 	);
 });
 
-Deno.test('Security_CodeSigning_Requirement_Maker: alloc grow fibonacci', () => {
+Deno.test('Security_CodeSigning_Requirement_Maker: alloc grow fibonacci', async () => {
 	const maker = new Security_CodeSigning_Requirement_Maker(
 		Security_CodeSigning_Requirement.lwcrForm,
 	);
@@ -74,7 +74,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: alloc grow fibonacci', () => 
 		d.fill((size % 255) + 1);
 		Security_CodeSigning_Requirement_Maker.alloc(maker, size).set(d);
 	}
-	const r = Security_CodeSigning_Requirement_Maker.make(maker);
+	const r = (await Security_CodeSigning_Requirement_Maker.make(maker))!;
 	const dv = new DataView(
 		r.buffer,
 		r.byteOffset,
@@ -85,7 +85,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: alloc grow fibonacci', () => 
 	assertEquals(dv.getUint32(8), Security_CodeSigning_Requirement.lwcrForm);
 });
 
-Deno.test('Security_CodeSigning_Requirement_Maker: alloc grow fast', () => {
+Deno.test('Security_CodeSigning_Requirement_Maker: alloc grow fast', async () => {
 	const maker = new Security_CodeSigning_Requirement_Maker(
 		Security_CodeSigning_Requirement.lwcrForm,
 	);
@@ -94,7 +94,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: alloc grow fast', () => {
 		d.fill((size % 255) + 1);
 		Security_CodeSigning_Requirement_Maker.alloc(maker, size).set(d);
 	}
-	const r = Security_CodeSigning_Requirement_Maker.make(maker);
+	const r = (await Security_CodeSigning_Requirement_Maker.make(maker))!;
 	const dv = new DataView(
 		r.buffer,
 		r.byteOffset,
@@ -117,7 +117,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: alloc error', () => {
 	});
 });
 
-Deno.test('Security_CodeSigning_Requirement_Maker: identifier "com.apple.simple"', () => {
+Deno.test('Security_CodeSigning_Requirement_Maker: identifier "com.apple.simple"', async () => {
 	const data = unhex(
 		'FA DE 0C 00 00 00 00 24 00 00 00 01',
 		'00 00 00 02',
@@ -131,7 +131,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: identifier "com.apple.simple"
 		maker,
 		new TextEncoder().encode('com.apple.simple'),
 	);
-	const r = Security_CodeSigning_Requirement_Maker.make(maker);
+	const r = (await Security_CodeSigning_Requirement_Maker.make(maker))!;
 	assertEquals(
 		new Uint8Array(
 			r.buffer,
@@ -142,7 +142,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: identifier "com.apple.simple"
 	);
 });
 
-Deno.test('Security_CodeSigning_Requirement_Maker: anchor apple and identifier "com.apple.simple"', () => {
+Deno.test('Security_CodeSigning_Requirement_Maker: anchor apple and identifier "com.apple.simple"', async () => {
 	const data = unhex(
 		'FA DE 0C 00 00 00 00 2C 00 00 00 01',
 		'00 00 00 06',
@@ -176,7 +176,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: anchor apple and identifier "
 		false,
 	);
 
-	const r = Security_CodeSigning_Requirement_Maker.make(maker);
+	const r = (await Security_CodeSigning_Requirement_Maker.make(maker))!;
 	assertEquals(
 		new Uint8Array(
 			r.buffer,
@@ -187,7 +187,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: anchor apple and identifier "
 	);
 });
 
-Deno.test('Security_CodeSigning_Requirement_Maker: identifier "com.apple.simple" or anchor apple generic', () => {
+Deno.test('Security_CodeSigning_Requirement_Maker: identifier "com.apple.simple" or anchor apple generic', async () => {
 	const data = unhex(
 		'FA DE 0C 00 00 00 00 2C 00 00 00 01',
 		'00 00 00 07',
@@ -215,7 +215,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: identifier "com.apple.simple"
 	Security_CodeSigning_Requirement_Maker_Chain.add(or);
 	assertEquals(Security_CodeSigning_Requirement_Maker_Chain.empty(or), false);
 
-	const r = Security_CodeSigning_Requirement_Maker.make(maker);
+	const r = (await Security_CodeSigning_Requirement_Maker.make(maker))!;
 	assertEquals(
 		new Uint8Array(
 			r.buffer,
@@ -226,7 +226,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: identifier "com.apple.simple"
 	);
 });
 
-Deno.test('Security_CodeSigning_Requirement_Maker: (a and b) or (c and d)', () => {
+Deno.test('Security_CodeSigning_Requirement_Maker: (a and b) or (c and d)', async () => {
 	// identifier "com.apple.app" and anchor apple or
 	// identifier "com.apple.gen" and anchor apple generic
 	const data = unhex(
@@ -281,7 +281,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: (a and b) or (c and d)', () =
 
 	Security_CodeSigning_Requirement_Maker_Chain.add(or);
 
-	const r = Security_CodeSigning_Requirement_Maker.make(maker);
+	const r = (await Security_CodeSigning_Requirement_Maker.make(maker))!;
 	assertEquals(
 		new Uint8Array(
 			r.buffer,
@@ -292,7 +292,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: (a and b) or (c and d)', () =
 	);
 });
 
-Deno.test('Security_CodeSigning_Requirement_Maker: (a or b) and (c or d)', () => {
+Deno.test('Security_CodeSigning_Requirement_Maker: (a or b) and (c or d)', async () => {
 	// (identifier "com.apple.app" or anchor apple) and
 	// (identifier "com.apple.gen" or anchor apple generic)
 	const data = unhex(
@@ -347,7 +347,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: (a or b) and (c or d)', () =>
 
 	Security_CodeSigning_Requirement_Maker_Chain.add(and);
 
-	const r = Security_CodeSigning_Requirement_Maker.make(maker);
+	const r = (await Security_CodeSigning_Requirement_Maker.make(maker))!;
 	assertEquals(
 		new Uint8Array(
 			r.buffer,
@@ -439,7 +439,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: copy Pointer', () => {
 	Security_CodeSigning_Requirement_Maker.make(maker);
 });
 
-Deno.test('Security_CodeSigning_Requirement_Maker: copy Requirement', () => {
+Deno.test('Security_CodeSigning_Requirement_Maker: copy Requirement', async () => {
 	const a = new Security_CodeSigning_Requirement_Maker(
 		Security_CodeSigning_Requirement.exprForm,
 	);
@@ -448,7 +448,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: copy Requirement', () => {
 	);
 	Security_CodeSigning_Requirement_Maker.copy(
 		a,
-		Security_CodeSigning_Requirement_Maker.make(b),
+		(await Security_CodeSigning_Requirement_Maker.make(b))!,
 	);
 	Security_CodeSigning_Requirement_Maker.make(a);
 
@@ -458,7 +458,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: copy Requirement', () => {
 	const d = new Security_CodeSigning_Requirement_Maker(
 		Security_CodeSigning_Requirement.lwcrForm,
 	);
-	const dr = Security_CodeSigning_Requirement_Maker.make(d);
+	const dr = (await Security_CodeSigning_Requirement_Maker.make(d))!;
 	assertThrowsMacOSError(
 		() => Security_CodeSigning_Requirement_Maker.copy(c, dr),
 		errSecCSReqUnsupported,
@@ -488,7 +488,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: put', () => {
 	Security_CodeSigning_Requirement_Maker.make(maker);
 });
 
-Deno.test('Security_CodeSigning_Requirement_Maker: kind', () => {
+Deno.test('Security_CodeSigning_Requirement_Maker: kind', async () => {
 	const maker = new Security_CodeSigning_Requirement_Maker(
 		Security_CodeSigning_Requirement.exprForm,
 	);
@@ -498,7 +498,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: kind', () => {
 	);
 	assertEquals(
 		Security_CodeSigning_Requirement.kind(
-			Security_CodeSigning_Requirement_Maker.make(maker),
+			(await Security_CodeSigning_Requirement_Maker.make(maker))!,
 		),
 		Security_CodeSigning_Requirement.lwcrForm,
 	);

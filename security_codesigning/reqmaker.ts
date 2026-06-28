@@ -623,9 +623,10 @@ export class Security_CodeSigning_Requirement_Maker {
 	 * @param _this This.
 	 * @returns Requirement instance.
 	 */
-	public static make(
+	// deno-lint-ignore require-await
+	public static async make(
 		_this: Security_CodeSigning_Requirement_Maker,
-	): Security_CodeSigning_Requirement {
+	): Promise<Security_CodeSigning_Requirement | null> {
 		const r = new Security_CodeSigning_Requirement(_this.mBuffer!);
 		Security_CodeSigning_Requirement.size(r, _this.mPC);
 		_this.mBuffer = null;
