@@ -469,10 +469,7 @@ Deno.test('Security_CodeSigning_Requirement_Maker: putData', () => {
 	const maker = new Security_CodeSigning_Requirement_Maker(
 		Security_CodeSigning_Requirement.exprForm,
 	);
-	Security_CodeSigning_Requirement_Maker.putData(
-		maker,
-		new Uint8Array([1, 2, 3, 4]).buffer,
-	);
+	Security_CodeSigning_Requirement_Maker.putData(maker, 'string');
 	Security_CodeSigning_Requirement_Maker.make(maker);
 });
 

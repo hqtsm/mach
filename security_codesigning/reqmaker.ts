@@ -5,7 +5,6 @@ import {
 	bufferToBytes,
 	pointerBytes,
 	type SubtleCryptoDigest,
-	viewBytes,
 } from '../helpers/mod.ts';
 import {
 	type bool,
@@ -21,6 +20,7 @@ import {
 import { errSecCSReqUnsupported } from '../Security/mod.ts';
 import {
 	type Security_BlobCore_Offset,
+	Security_cfString,
 	Security_LowLevelMemoryUtilities_alignUp,
 	Security_MacOSError,
 	Security_SHA1,
@@ -278,7 +278,7 @@ export class Security_CodeSigning_Requirement_Maker {
 	 */
 	public static putData(
 		_this: Security_CodeSigning_Requirement_Maker,
-		data: ArrayBufferLikeData,
+		data: string | null,
 	): void;
 
 	/**
@@ -290,15 +290,18 @@ export class Security_CodeSigning_Requirement_Maker {
 	 */
 	public static putData(
 		_this: Security_CodeSigning_Requirement_Maker,
-		data: ArrayBufferLikeData | ArrayBufferPointer,
+		data: ArrayBufferPointer | string | null,
 		length?: size_t,
 	): void {
-		const d = length === undefined
-			? viewBytes(data as ArrayBufferLikeData)
-			: pointerBytes(data, length);
-		const l = d.byteLength;
-		Security_CodeSigning_Requirement_Maker.put(_this, l);
-		memcpy(Security_CodeSigning_Requirement_Maker.alloc(_this, l), d, l);
+		if (data === null || typeof data === 'string') {
+			length = (data = Security_cfString(data)).byteLength;
+		}
+		Security_CodeSigning_Requirement_Maker.put(_this, length!);
+		memcpy(
+			Security_CodeSigning_Requirement_Maker.alloc(_this, length!),
+			data,
+			length!,
+		);
 	}
 
 	/**
