@@ -31,7 +31,14 @@ async function appleCA(): Promise<__SecCertificate> {
 	return cert;
 }
 
-function iOSCert(): __SecCertificate {
+function aCert(): __SecCertificate {
+	const cert = new __SecCertificate();
+	cert._extensions = [];
+	cert._extensionCount = 0;
+	return cert;
+}
+
+function aIOSCert(): __SecCertificate {
 	const cert = new __SecCertificate();
 	const exts = [];
 	{
@@ -49,7 +56,7 @@ function iOSCert(): __SecCertificate {
 	return cert;
 }
 
-function devCert(): __SecCertificate {
+function aDevCert(): __SecCertificate {
 	const cert = new __SecCertificate();
 	const exts = [];
 	{
@@ -64,13 +71,6 @@ function devCert(): __SecCertificate {
 	}
 	cert._extensions = exts;
 	cert._extensionCount = exts.length;
-	return cert;
-}
-
-function otherCert(): __SecCertificate {
-	const cert = new __SecCertificate();
-	cert._extensions = [];
-	cert._extensionCount = 0;
 	return cert;
 }
 
@@ -110,7 +110,7 @@ Deno.test('Security_CodeSigning: isIOSSignature', async () => {
 	const ctx = new Security_CodeSigning_Requirement_Context();
 	ctx.certs = [
 		new __SecCertificate(),
-		iOSCert(),
+		aIOSCert(),
 		await appleCA(),
 	];
 	assertEquals(
@@ -119,7 +119,7 @@ Deno.test('Security_CodeSigning: isIOSSignature', async () => {
 		),
 		true,
 	);
-	ctx.certs[1] = devCert();
+	ctx.certs[1] = aDevCert();
 	assertEquals(
 		Security_CodeSigning_DRMaker['isIOSSignature'](
 			new Security_CodeSigning_DRMaker(ctx),
@@ -132,7 +132,7 @@ Deno.test('Security_CodeSigning: isDeveloperIDSignature', async () => {
 	const ctx = new Security_CodeSigning_Requirement_Context();
 	ctx.certs = [
 		new __SecCertificate(),
-		devCert(),
+		aDevCert(),
 		await appleCA(),
 	];
 	assertEquals(
@@ -141,7 +141,7 @@ Deno.test('Security_CodeSigning: isDeveloperIDSignature', async () => {
 		),
 		true,
 	);
-	ctx.certs[1] = iOSCert();
+	ctx.certs[1] = aIOSCert();
 	assertEquals(
 		Security_CodeSigning_DRMaker['isDeveloperIDSignature'](
 			new Security_CodeSigning_DRMaker(ctx),
@@ -161,7 +161,7 @@ Deno.test('Security_CodeSigning: make: Apple: IOS', async () => {
 	const ctx = new Security_CodeSigning_Requirement_Context();
 	ctx.certs = [
 		commonCert(),
-		iOSCert(),
+		aIOSCert(),
 		await appleCA(),
 	];
 
@@ -174,7 +174,7 @@ Deno.test('Security_CodeSigning: make: Apple: DID', async () => {
 	const ctx = new Security_CodeSigning_Requirement_Context();
 	ctx.certs = [
 		orgCert(),
-		devCert(),
+		aDevCert(),
 		await appleCA(),
 	];
 
@@ -187,7 +187,7 @@ Deno.test('Security_CodeSigning: make: Apple: Other', async () => {
 	const ctx = new Security_CodeSigning_Requirement_Context();
 	ctx.certs = [
 		orgCert(),
-		otherCert(),
+		aCert(),
 		await appleCA(),
 	];
 
