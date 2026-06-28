@@ -29,6 +29,23 @@ export function memcmp(
 }
 
 /**
+ * Memory copy.
+ *
+ * @param dest Destination.
+ * @param src Source.
+ * @param n Number of bytes to copy.
+ * @returns Destination.
+ */
+export function memcpy<T extends ArrayBufferLike | ArrayBufferPointer>(
+	dest: T,
+	src: ArrayBufferLike | ArrayBufferPointer,
+	n: size_t,
+): T {
+	pointerBytes(dest, n).set(pointerBytes(src, n));
+	return dest;
+}
+
+/**
  * Get length of string.
  *
  * @param str Character pointer, null terminated.
