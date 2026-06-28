@@ -33,16 +33,12 @@ function iOSCert(): __SecCertificate {
 	const exts = [];
 	{
 		const ext = new SecCertificateExtension();
-		{
-			const d = unhex('2A 86 48 86 F7 63 64 06 02 01');
-			ext.extnID.data = new Uint8Ptr(d.buffer);
-			ext.extnID.length = d.byteLength;
-		}
-		{
-			const d = new Uint8Array();
-			ext.extnValue.data = new Uint8Ptr(d.buffer);
-			ext.extnValue.length = d.byteLength;
-		}
+		const extnID = unhex('2A 86 48 86 F7 63 64 06 02 01');
+		ext.extnID.data = new Uint8Ptr(extnID.buffer);
+		ext.extnID.length = extnID.byteLength;
+		const extnValue = new Uint8Array();
+		ext.extnValue.data = new Uint8Ptr(extnValue.buffer);
+		ext.extnValue.length = extnValue.byteLength;
 		exts.push(ext);
 	}
 	cert._extensions = exts;
@@ -55,16 +51,12 @@ function devCert(): __SecCertificate {
 	const exts = [];
 	{
 		const ext = new SecCertificateExtension();
-		{
-			const d = unhex('2A 86 48 86 F7 63 64 06 02 06');
-			ext.extnID.data = new Uint8Ptr(d.buffer);
-			ext.extnID.length = d.byteLength;
-		}
-		{
-			const d = new Uint8Array();
-			ext.extnValue.data = new Uint8Ptr(d.buffer);
-			ext.extnValue.length = d.byteLength;
-		}
+		const extnID = unhex('2A 86 48 86 F7 63 64 06 02 06');
+		ext.extnID.data = new Uint8Ptr(extnID.buffer);
+		ext.extnID.length = extnID.byteLength;
+		const extnValue = new Uint8Array();
+		ext.extnValue.data = new Uint8Ptr(extnValue.buffer);
+		ext.extnValue.length = extnValue.byteLength;
 		exts.push(ext);
 	}
 	cert._extensions = exts;
