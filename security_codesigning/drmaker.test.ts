@@ -32,7 +32,25 @@ function iOSCert(): __SecCertificate {
 	const cert = new __SecCertificate();
 	const sce = new SecCertificateExtension();
 	{
-		const d = unhex('2a 86 48 86 f7 63 64 06 02 01');
+		const d = unhex('2A 86 48 86 F7 63 64 06 02 01');
+		sce.extnID.data = new Uint8Ptr(d.buffer);
+		sce.extnID.length = d.byteLength;
+	}
+	{
+		const d = new Uint8Array();
+		sce.extnValue.data = new Uint8Ptr(d.buffer);
+		sce.extnValue.length = d.byteLength;
+	}
+	cert._extensionCount = 1;
+	cert._extensions = [sce];
+	return cert;
+}
+
+function devCert(): __SecCertificate {
+	const cert = new __SecCertificate();
+	const sce = new SecCertificateExtension();
+	{
+		const d = unhex('2A 86 48 86 F7 63 64 06 02 06');
 		sce.extnID.data = new Uint8Ptr(d.buffer);
 		sce.extnID.length = d.byteLength;
 	}
@@ -65,9 +83,41 @@ Deno.test('Security_CodeSigning: isIOSSignature', async () => {
 		iOSCert(),
 		await appleCA(),
 	];
+	assertEquals(
+		Security_CodeSigning_DRMaker['isIOSSignature'](
+			new Security_CodeSigning_DRMaker(ctx),
+		),
+		true,
+	);
+	ctx.certs[1] = devCert();
+	assertEquals(
+		Security_CodeSigning_DRMaker['isIOSSignature'](
+			new Security_CodeSigning_DRMaker(ctx),
+		),
+		false,
+	);
+});
 
-	const maker = new Security_CodeSigning_DRMaker(ctx);
-	assertEquals(Security_CodeSigning_DRMaker['isIOSSignature'](maker), true);
+Deno.test('Security_CodeSigning: isDeveloperIDSignature', async () => {
+	const ctx = new Security_CodeSigning_Requirement_Context();
+	ctx.certs = [
+		new __SecCertificate(),
+		devCert(),
+		await appleCA(),
+	];
+	assertEquals(
+		Security_CodeSigning_DRMaker['isDeveloperIDSignature'](
+			new Security_CodeSigning_DRMaker(ctx),
+		),
+		true,
+	);
+	ctx.certs[1] = iOSCert();
+	assertEquals(
+		Security_CodeSigning_DRMaker['isDeveloperIDSignature'](
+			new Security_CodeSigning_DRMaker(ctx),
+		),
+		false,
+	);
 });
 
 Deno.test('Security_CodeSigning: make: null', async () => {
