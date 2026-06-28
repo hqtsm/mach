@@ -55,6 +55,7 @@ export async function Security_CodeSigning_hashOfCertificate(
 	certData: ArrayBufferPointer,
 	certLength: size_t,
 	digest: ArrayBufferLike | ArrayBufferPointer,
+	subtle?: SubtleCryptoDigest | null,
 ): Promise<void>;
 
 /**
@@ -66,6 +67,7 @@ export async function Security_CodeSigning_hashOfCertificate(
 export async function Security_CodeSigning_hashOfCertificate(
 	cert: SecCertificateRef,
 	digest: ArrayBufferLike | ArrayBufferPointer,
+	subtle?: SubtleCryptoDigest | null,
 ): Promise<void>;
 
 /**
@@ -78,19 +80,22 @@ export async function Security_CodeSigning_hashOfCertificate(
 export async function Security_CodeSigning_hashOfCertificate(
 	certData: ArrayBufferPointer | SecCertificateRef,
 	certLength: size_t | ArrayBufferLike | ArrayBufferPointer,
-	digest?: ArrayBufferLike | ArrayBufferPointer,
+	digest?: ArrayBufferLike | ArrayBufferPointer | SubtleCryptoDigest | null,
+	subtle?: SubtleCryptoDigest | null,
 ): Promise<void> {
 	if (typeof certLength === 'number') {
 		const sha1 = new Security_SHA1();
+		sha1.subtle = subtle;
 		await sha1.update(
 			pointerToBytes(certData as ArrayBufferPointer, certLength),
 		);
-		await sha1.finish(digest!);
+		await sha1.finish(digest as ArrayBufferPointer);
 	} else {
 		await Security_CodeSigning_hashOfCertificate(
 			SecCertificateGetBytePtr(certData as SecCertificateRef)!,
 			SecCertificateGetLength(certData as SecCertificateRef),
 			certLength,
+			digest as SubtleCryptoDigest,
 		);
 	}
 }

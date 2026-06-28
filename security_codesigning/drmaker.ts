@@ -1,5 +1,6 @@
 import { toStringTag } from '@hqtsm/class';
 import { Uint8Ptr } from '@hqtsm/struct';
+import type { SubtleCryptoDigest } from '../helpers/mod.ts';
 import type { _const, bool } from '../libc/mod.ts';
 import {
 	oidCommonName,
@@ -314,6 +315,11 @@ export class Security_CodeSigning_DRMaker
 			)
 		);
 	}
+
+	/**
+	 * Hash crypto.
+	 */
+	public subtle?: SubtleCryptoDigest | null;
 
 	static {
 		toStringTag(this, 'Security_CodeSigning_DRMaker');
