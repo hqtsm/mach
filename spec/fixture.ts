@@ -250,3 +250,9 @@ export async function fixtureMachoSigned(
 		codeResources,
 	};
 }
+
+export async function fixtureCert(
+	name: string,
+): Promise<Uint8Array<ArrayBuffer>> {
+	return await Deno.readFile(`${fixtures()}/certs/${name}`);
+}

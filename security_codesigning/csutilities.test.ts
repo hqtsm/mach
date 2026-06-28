@@ -10,7 +10,7 @@ import {
 	SecCertificateExtension,
 } from '../Security/SecCertificate.ts';
 import { Security_CCHashInstance } from '../security_utilities/mod.ts';
-import { unhex } from '../spec/mod.ts';
+import { fixtureCert } from '../spec/mod.ts';
 import {
 	Security_CodeSigning_certificateHasField,
 	Security_CodeSigning_hashFileData,
@@ -20,25 +20,14 @@ import {
 
 export const ABCD = new Uint8Array([...'ABCD'].map((c) => c.charCodeAt(0)));
 
-const AppleRootCAHash =
-	'b0b1730ecbc7ff4505142c49f1295e6eda6bcaed7e2c68c5be91b5a11001f024';
-
 Deno.test('Security_CodeSigning_isAppleCA', async () => {
 	const sc = new __SecCertificate();
 	assertEquals(await Security_CodeSigning_isAppleCA(sc), false);
-	sc._der.data = new Uint8Ptr(new ArrayBuffer(100));
-	sc._der.length = 100;
+	const data = await fixtureCert('AppleIncRootCertificate.cer');
+	sc._der.data = new Uint8Ptr(data.buffer, data.byteOffset);
+	sc._der.length = data.byteLength;
 	assertEquals(
-		await Security_CodeSigning_isAppleCA(sc, {
-			/**
-			 * Return specific hash.
-			 *
-			 * @returns Promise.
-			 */
-			digest(): Promise<ArrayBuffer> {
-				return Promise.resolve(unhex(AppleRootCAHash).buffer);
-			},
-		}),
+		await Security_CodeSigning_isAppleCA(sc),
 		true,
 	);
 });
