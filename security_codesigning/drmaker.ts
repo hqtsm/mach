@@ -16,7 +16,10 @@ import {
 	Security_CodeSigning_hashOfCertificate,
 } from '../security_codesigning/mod.ts';
 import { Security_SHA1 } from '../security_utilities/mod.ts';
-import { Security_CodeSigning_certificateHasField } from './csutilities.ts';
+import {
+	Security_CodeSigning_certificateHasField,
+	Security_CodeSigning_isAppleCA,
+} from './csutilities.ts';
 import { Security_CodeSigning_Requirement_Maker } from './reqmaker.ts';
 import {
 	Security_CodeSigning_matchEqual,
@@ -94,11 +97,30 @@ export class Security_CodeSigning_DRMaker
 	 * @param _this This.
 	 * @returns Requirement instance.
 	 */
-	// deno-lint-ignore require-await
 	public static override async make(
 		_this: Security_CodeSigning_DRMaker,
 	): Promise<Security_CodeSigning_Requirement | null> {
-		throw new Error('TODO');
+		if (!Security_CodeSigning_Requirement_Context.certCount(_this.ctx)) {
+			return null;
+		}
+
+		Security_CodeSigning_DRMaker.put(_this, Security_CodeSigning_opAnd);
+		Security_CodeSigning_DRMaker.ident(_this, _this.ctx.identifier);
+
+		if (
+			await Security_CodeSigning_isAppleCA(
+				Security_CodeSigning_Requirement_Context.cert(
+					_this.ctx,
+					Security_CodeSigning_Requirement.anchorCert,
+				)!,
+			)
+		) {
+			Security_CodeSigning_DRMaker.appleAnchor(_this);
+		} else {
+			await Security_CodeSigning_DRMaker.nonAppleAnchor(_this);
+		}
+
+		return Security_CodeSigning_Requirement_Maker.make(_this);
 	}
 
 	/**
