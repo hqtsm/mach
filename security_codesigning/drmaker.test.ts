@@ -1,7 +1,9 @@
 import { assertEquals } from '@std/assert';
 import { pointerBytes } from '../helpers/mod.ts';
 import { SecCertificateCreateOidDataFromString } from '../Security/mod.ts';
+import { Security_CodeSigning_DRMaker } from './drmaker.ts';
 import * as C from './drmaker.ts';
+import { Security_CodeSigning_Requirement_Context } from './requirement.ts';
 
 const entries = <T extends Record<string, unknown>>(obj: T) =>
 	Object.entries(obj) as [keyof T, T[keyof T]][];
@@ -22,4 +24,11 @@ Deno.test('Security_CodeSigning: OIDs', () => {
 			K,
 		);
 	}
+});
+
+Deno.test('Security_CodeSigning: make: null', async () => {
+	const ctx = new Security_CodeSigning_Requirement_Context();
+	const maker = new Security_CodeSigning_DRMaker(ctx);
+	const dr = await Security_CodeSigning_DRMaker.make(maker);
+	assertEquals(dr, null);
 });
