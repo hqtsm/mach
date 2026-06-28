@@ -11,6 +11,7 @@ import {
 	type bool,
 	ENOMEM,
 	type int,
+	memcpy,
 	realloc,
 	type size_t,
 	strlen,
@@ -240,8 +241,9 @@ export class Security_CodeSigning_Requirement_Maker {
 		const d = length === undefined
 			? viewBytes(data as ArrayBufferLikeData)
 			: pointerBytes(data, length);
-		Security_CodeSigning_Requirement_Maker.put(_this, d.byteLength);
-		Security_CodeSigning_Requirement_Maker.put(_this, d);
+		const l = d.byteLength;
+		Security_CodeSigning_Requirement_Maker.put(_this, l);
+		memcpy(Security_CodeSigning_Requirement_Maker.alloc(_this, l), d, l);
 	}
 
 	/**
