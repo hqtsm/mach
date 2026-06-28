@@ -1,7 +1,11 @@
 import { toStringTag } from '@hqtsm/class';
 import { Uint8Ptr } from '@hqtsm/struct';
 import type { _const, bool } from '../libc/mod.ts';
-import { oidOrganizationName } from '../libDER/mod.ts';
+import {
+	oidCommonName,
+	oidOrganizationalUnitName,
+	oidOrganizationName,
+} from '../libDER/mod.ts';
 import {
 	APPLE_EXTENSION_OID,
 	type CSSM_DATA,
@@ -15,6 +19,11 @@ import { Security_SHA1 } from '../security_utilities/mod.ts';
 import { Security_CodeSigning_certificateHasField } from './csutilities.ts';
 import { Security_CodeSigning_Requirement_Maker } from './reqmaker.ts';
 import {
+	Security_CodeSigning_matchEqual,
+	Security_CodeSigning_matchExists,
+	Security_CodeSigning_opAnd,
+	Security_CodeSigning_opCertField,
+	Security_CodeSigning_opCertGeneric,
 	Security_CodeSigning_Requirement,
 	Security_CodeSigning_Requirement_Context,
 } from './requirement.ts';
@@ -51,6 +60,13 @@ export const Security_CodeSigning_devIdLeafMarkerOID: _const<CSSM_DATA> =
 		caspianLeafMarker.byteLength,
 		new Uint8Ptr(caspianLeafMarker.buffer),
 	);
+
+const subject_CN = new Uint8Array(
+	[0x73, 0x75, 0x62, 0x6A, 0x65, 0x63, 0x74, 0x2E, 0x43, 0x4E],
+);
+const subject_OU = new Uint8Array(
+	[0x73, 0x75, 0x62, 0x6A, 0x65, 0x63, 0x74, 0x2E, 0x4F, 0x55],
+);
 
 /**
  * Designated Requirements maker.
@@ -90,7 +106,107 @@ export class Security_CodeSigning_DRMaker
 	 * @param _this This.
 	 */
 	private static appleAnchor(_this: Security_CodeSigning_DRMaker): void {
-		throw new Error('TODO');
+		if (Security_CodeSigning_DRMaker.isIOSSignature(_this)) {
+			const leafCN = SecCertificateCopySubjectAttributeValue(
+				Security_CodeSigning_Requirement_Context.cert(
+					_this.ctx,
+					Security_CodeSigning_Requirement.leafCert,
+				)!,
+				oidCommonName,
+			);
+
+			Security_CodeSigning_DRMaker.put(_this, Security_CodeSigning_opAnd);
+			Security_CodeSigning_DRMaker.anchorGeneric(_this);
+
+			Security_CodeSigning_DRMaker.put(_this, Security_CodeSigning_opAnd);
+			Security_CodeSigning_DRMaker.put(
+				_this,
+				Security_CodeSigning_opCertField,
+			);
+			Security_CodeSigning_DRMaker.put(_this, 0);
+			Security_CodeSigning_DRMaker.put(_this, subject_CN);
+			Security_CodeSigning_DRMaker.put(
+				_this,
+				Security_CodeSigning_matchEqual,
+			);
+			Security_CodeSigning_DRMaker.putData(_this, leafCN);
+
+			Security_CodeSigning_DRMaker.put(
+				_this,
+				Security_CodeSigning_opCertGeneric,
+			);
+			Security_CodeSigning_DRMaker.put(_this, 1);
+			Security_CodeSigning_DRMaker.putData(
+				_this,
+				Security_CodeSigning_adcSdkMarkerOID.Data!,
+				Security_CodeSigning_adcSdkMarkerOID.Length,
+			);
+			Security_CodeSigning_DRMaker.put(
+				_this,
+				Security_CodeSigning_matchExists,
+			);
+			return;
+		}
+
+		if (Security_CodeSigning_DRMaker.isDeveloperIDSignature(_this)) {
+			const teamID = SecCertificateCopySubjectAttributeValue(
+				Security_CodeSigning_Requirement_Context.cert(
+					_this.ctx,
+					Security_CodeSigning_Requirement.leafCert,
+				)!,
+				oidOrganizationalUnitName,
+			);
+
+			Security_CodeSigning_DRMaker.put(_this, Security_CodeSigning_opAnd);
+			Security_CodeSigning_DRMaker.anchorGeneric(_this);
+
+			Security_CodeSigning_DRMaker.put(_this, Security_CodeSigning_opAnd);
+			Security_CodeSigning_DRMaker.put(
+				_this,
+				Security_CodeSigning_opCertGeneric,
+			);
+			Security_CodeSigning_DRMaker.put(_this, 1);
+			Security_CodeSigning_DRMaker.putData(
+				_this,
+				caspianSdkMarker,
+				caspianSdkMarker.byteLength,
+			);
+			Security_CodeSigning_DRMaker.put(
+				_this,
+				Security_CodeSigning_matchExists,
+			);
+
+			Security_CodeSigning_DRMaker.put(_this, Security_CodeSigning_opAnd);
+			Security_CodeSigning_DRMaker.put(
+				_this,
+				Security_CodeSigning_opCertGeneric,
+			);
+			Security_CodeSigning_DRMaker.put(_this, 0);
+			Security_CodeSigning_DRMaker.putData(
+				_this,
+				caspianLeafMarker,
+				caspianLeafMarker.byteLength,
+			);
+			Security_CodeSigning_DRMaker.put(
+				_this,
+				Security_CodeSigning_matchExists,
+			);
+
+			Security_CodeSigning_DRMaker.put(
+				_this,
+				Security_CodeSigning_opCertField,
+			);
+			Security_CodeSigning_DRMaker.put(_this, 0);
+			Security_CodeSigning_DRMaker.put(_this, subject_OU);
+			Security_CodeSigning_DRMaker.put(
+				_this,
+				Security_CodeSigning_matchEqual,
+			);
+			Security_CodeSigning_DRMaker.putData(_this, teamID);
+			return;
+		}
+
+		Security_CodeSigning_DRMaker.anchor(_this);
 	}
 
 	/**
