@@ -67,6 +67,13 @@ function devCert(): __SecCertificate {
 	return cert;
 }
 
+function otherCert(): __SecCertificate {
+	const cert = new __SecCertificate();
+	cert._extensions = [];
+	cert._extensionCount = 0;
+	return cert;
+}
+
 function commonCert(): __SecCertificate {
 	const cert = new __SecCertificate();
 	const subject = unhex(
@@ -168,6 +175,19 @@ Deno.test('Security_CodeSigning: make: Apple: DID', async () => {
 	ctx.certs = [
 		orgCert(),
 		devCert(),
+		await appleCA(),
+	];
+
+	const maker = new Security_CodeSigning_DRMaker(ctx);
+	const dr = await Security_CodeSigning_DRMaker.make(maker);
+	assertInstanceOf(dr, Security_CodeSigning_Requirement);
+});
+
+Deno.test('Security_CodeSigning: make: Apple: Other', async () => {
+	const ctx = new Security_CodeSigning_Requirement_Context();
+	ctx.certs = [
+		orgCert(),
+		otherCert(),
 		await appleCA(),
 	];
 
