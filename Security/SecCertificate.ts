@@ -683,7 +683,7 @@ export async function SecCertificateCopySHA1Digest(
  * @param subtle Hash crypto.
  * @returns Digest.
  */
-export async function SecCertificateCopyIssuerSHA256Digest(
+export async function SecCertificateCopySHA256Digest(
 	certificate: SecCertificateRef | null,
 	subtle?: SubtleCryptoDigest | null,
 ): Promise<null | ArrayBuffer> {

@@ -5,7 +5,7 @@ import {
 } from '../helpers/mod.ts';
 import type { bool } from '../libc/mod.ts';
 import {
-	SecCertificateCopyIssuerSHA256Digest,
+	SecCertificateCopySHA256Digest,
 	type SecCertificateRef,
 } from '../Security/mod.ts';
 import type { SecAppleTrustAnchorFlags } from './SecAppleAnchorPriv.ts';
@@ -23,7 +23,7 @@ export async function SecIsAppleTrustAnchor(
 	flags: SecAppleTrustAnchorFlags,
 	subtle?: SubtleCryptoDigest | null,
 ): Promise<bool> {
-	const data = await SecCertificateCopyIssuerSHA256Digest(cert, subtle);
+	const data = await SecCertificateCopySHA256Digest(cert, subtle);
 	return data ? SecIsAppleTrustAnchorData(data, flags) : false;
 }
 

@@ -43,8 +43,8 @@ import {
 	parseRDNContent,
 	parseX501NameContent,
 	SecCertificateCopyExtensionValue,
-	SecCertificateCopyIssuerSHA256Digest,
 	SecCertificateCopySHA1Digest,
+	SecCertificateCopySHA256Digest,
 	SecCertificateCopySubjectAttributeValue,
 	SecCertificateCreateOidDataFromString,
 	SecCertificateExtension,
@@ -909,18 +909,18 @@ Deno.test('SecCertificateCopySHA1Digest', async () => {
 	assertEquals(new Uint8Array(digested), digest('sha1', ABCD));
 });
 
-Deno.test('SecCertificateCopyIssuerSHA256Digest', async () => {
+Deno.test('SecCertificateCopySHA256Digest', async () => {
 	const sc = new __SecCertificate();
-	assertEquals(await SecCertificateCopyIssuerSHA256Digest(null), null);
-	assertEquals(await SecCertificateCopyIssuerSHA256Digest(sc), null);
+	assertEquals(await SecCertificateCopySHA256Digest(null), null);
+	assertEquals(await SecCertificateCopySHA256Digest(sc), null);
 
 	sc._der.data = new Uint8Ptr(new ArrayBuffer(0));
 	sc._der.length = INT32_MAX + 1;
-	assertEquals(await SecCertificateCopyIssuerSHA256Digest(sc), null);
+	assertEquals(await SecCertificateCopySHA256Digest(sc), null);
 
 	sc._der.data = new Uint8Ptr(ABCD.buffer);
 	sc._der.length = ABCD.byteLength;
-	const digested = await SecCertificateCopyIssuerSHA256Digest(sc);
+	const digested = await SecCertificateCopySHA256Digest(sc);
 	assertInstanceOf(digested, ArrayBuffer);
 	assertEquals(new Uint8Array(digested), digest('sha256', ABCD));
 });

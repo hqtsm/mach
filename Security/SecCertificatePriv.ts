@@ -1,7 +1,7 @@
 export {
 	SecCertificateCopyExtensionValue,
-	SecCertificateCopyIssuerSHA256Digest,
 	SecCertificateCopySHA1Digest,
+	SecCertificateCopySHA256Digest,
 	SecCertificateCopySubjectAttributeValue,
 	SecCertificateGetBytePtr,
 	SecCertificateGetLength,
