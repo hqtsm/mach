@@ -13,6 +13,7 @@ import {
 	type int,
 	realloc,
 	type size_t,
+	strlen,
 	type uint,
 	type uint32_t,
 } from '../libc/mod.ts';
@@ -187,15 +188,16 @@ export class Security_CodeSigning_Requirement_Maker {
 			| uint32_t
 			| Security_CodeSigning_ExprOp
 			| Security_CodeSigning_MatchOperation
-			| ArrayBufferLikeData,
+			| ArrayBufferLikeData
+			| ArrayBufferPointer,
 	): void {
 		if (typeof data === 'number') {
 			const d = Security_CodeSigning_Requirement_Maker.alloc(_this, 4);
 			dataView(d.buffer).setUint32(d.byteOffset, data);
 		} else {
-			const d = pointerBytes(data);
-			Security_CodeSigning_Requirement_Maker.alloc(_this, d.byteLength)
-				.set(d);
+			const l = 'byteLength' in data ? data.byteLength : strlen(data);
+			const d = pointerBytes(data, l);
+			Security_CodeSigning_Requirement_Maker.alloc(_this, l).set(d);
 		}
 	}
 

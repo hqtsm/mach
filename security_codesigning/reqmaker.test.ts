@@ -473,6 +473,10 @@ Deno.test('Security_CodeSigning_Requirement_Maker: put', () => {
 		maker,
 		new Uint8Array([1, 2, 3, 4]).buffer,
 	);
+	Security_CodeSigning_Requirement_Maker.put(
+		maker,
+		new Uint8Ptr(new Uint8Array([1, 2, 3, 4, 0]).buffer),
+	);
 	Security_CodeSigning_Requirement_Maker.make(maker);
 });
 
