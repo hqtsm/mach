@@ -1,5 +1,5 @@
 import { Uint8Ptr } from '@hqtsm/struct';
-import { assertEquals } from '@std/assert';
+import { assertEquals, assertInstanceOf } from '@std/assert';
 import { pointerBytes } from '../helpers/mod.ts';
 import { SecCertificateCreateOidDataFromString } from '../Security/mod.ts';
 import {
@@ -9,7 +9,10 @@ import {
 import { fixtureCert, unhex } from '../spec/mod.ts';
 import { Security_CodeSigning_DRMaker } from './drmaker.ts';
 import * as C from './drmaker.ts';
-import { Security_CodeSigning_Requirement_Context } from './requirement.ts';
+import {
+	Security_CodeSigning_Requirement,
+	Security_CodeSigning_Requirement_Context,
+} from './requirement.ts';
 
 const entries = <T extends Record<string, unknown>>(obj: T) =>
 	Object.entries(obj) as [keyof T, T[keyof T]][];
@@ -61,6 +64,26 @@ function devCert(): __SecCertificate {
 	}
 	cert._extensions = exts;
 	cert._extensionCount = exts.length;
+	return cert;
+}
+
+function commonCert(): __SecCertificate {
+	const cert = new __SecCertificate();
+	const subject = unhex(
+		'30 10 31 0E 30 0C 06 03 55 04 03 13 05 41 6C 70 68 61',
+	);
+	cert._subject.data = new Uint8Ptr(subject.buffer);
+	cert._subject.length = subject.byteLength;
+	return cert;
+}
+
+function orgCert(): __SecCertificate {
+	const cert = new __SecCertificate();
+	const subject = unhex(
+		'30 0E 31 0C 30 0A 06 03 55 04 0B 13 03 42 65 74 61',
+	);
+	cert._subject.data = new Uint8Ptr(subject.buffer);
+	cert._subject.length = subject.byteLength;
 	return cert;
 }
 
@@ -125,4 +148,30 @@ Deno.test('Security_CodeSigning: make: null', async () => {
 	const maker = new Security_CodeSigning_DRMaker(ctx);
 	const dr = await Security_CodeSigning_DRMaker.make(maker);
 	assertEquals(dr, null);
+});
+
+Deno.test('Security_CodeSigning: make: Apple: IOS', async () => {
+	const ctx = new Security_CodeSigning_Requirement_Context();
+	ctx.certs = [
+		commonCert(),
+		iOSCert(),
+		await appleCA(),
+	];
+
+	const maker = new Security_CodeSigning_DRMaker(ctx);
+	const dr = await Security_CodeSigning_DRMaker.make(maker);
+	assertInstanceOf(dr, Security_CodeSigning_Requirement);
+});
+
+Deno.test('Security_CodeSigning: make: Apple: DID', async () => {
+	const ctx = new Security_CodeSigning_Requirement_Context();
+	ctx.certs = [
+		orgCert(),
+		devCert(),
+		await appleCA(),
+	];
+
+	const maker = new Security_CodeSigning_DRMaker(ctx);
+	const dr = await Security_CodeSigning_DRMaker.make(maker);
+	assertInstanceOf(dr, Security_CodeSigning_Requirement);
 });
